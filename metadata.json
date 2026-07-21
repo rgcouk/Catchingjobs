@@ -1,0 +1,6 @@
+{
+  "name": "CatchingJobs.co.uk",
+  "description": "Multi-tenant recruitment platform for professional agricultural crews managed by Pullum Ltd, focusing on stable earnings, consistent weekly pay, and high standards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

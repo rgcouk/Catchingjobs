@@ -1,0 +1,47 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+export interface ProfessionalRole {
+  id: string;
+  title: string;
+  sector: 'chicken' | 'turkey';
+  weeklyPayEst: string;
+  payRate: string;
+  shiftPattern: string;
+  requirements: string[];
+  description: string;
+  trainingStandards: string[];
+}
+
+export interface Region {
+  id: string;
+  name: string;
+  county: string;
+  activeCrews: number;
+  featuredRoles: string[];
+  seoCopy: string;
+}
+
+export interface TenantConfig {
+  id: 'chicken' | 'turkey';
+  subdomain: string;
+  title: string;
+  tagline: string;
+  accentColor: string;
+  introCopy: string;
+  standards: string[];
+}
+
+export interface ApplicationData {
+  name: string;
+  email?: string;
+  phone: string;
+  town: string;
+  hasRightToWork: boolean | null;
+  hasDrivingLicense: boolean | null;
+  shiftAvailability: string;
+  authProvider?: 'google' | 'facebook';
+  avatarUrl?: string;
+}
