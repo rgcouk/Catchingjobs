@@ -4,16 +4,15 @@
  */
 
 import React from 'react';
-import { 
-  MapPin, 
-  Users, 
-  ShieldCheck, 
-  Clock, 
-  ChevronRight, 
+import {
+  MapPin,
+  Users,
+  ShieldCheck,
+  Clock,
   ChevronLeft,
   Quote,
-  PhoneCall,
-  Award
+  Phone,
+  ArrowRight,
 } from 'lucide-react';
 import { REGIONS, TENANTS } from '../data';
 
@@ -24,17 +23,24 @@ interface RegionLanderProps {
   onJoinRoster: () => void;
 }
 
-export default function RegionLander({ regionId, sectorId, onBackToSector, onJoinRoster }: RegionLanderProps) {
-  const region = REGIONS.find(r => r.id === regionId);
+export default function RegionLander({
+  regionId,
+  sectorId,
+  onBackToSector,
+  onJoinRoster,
+}: RegionLanderProps) {
+  const region = REGIONS.find((r) => r.id === regionId);
   const tenant = TENANTS[sectorId];
 
   if (!region) {
     return (
-      <div className="text-center py-12 bg-white border border-slate-200 rounded-lg">
-        <p className="text-slate-600 font-mono font-bold">Error: Regional page context not found.</p>
-        <button 
+      <div className="text-center py-8 bg-white border border-slate-200 rounded-lg max-w-sm mx-auto">
+        <p className="text-slate-600 font-mono font-bold text-xs">
+          Error: Regional page context not found.
+        </p>
+        <button
           onClick={onBackToSector}
-          className="text-xs bg-slate-900 text-white p-2.5 rounded-md mt-4 cursor-pointer font-medium"
+          className="text-xs bg-[var(--color-ink)] text-white px-4 py-2 rounded mt-3 cursor-pointer font-medium"
           id="btn-error-back"
         >
           Return to Sector
@@ -43,153 +49,131 @@ export default function RegionLander({ regionId, sectorId, onBackToSector, onJoi
     );
   }
 
-  // Localized Testimonials highlighting stable earnings, Friday pay, and Pullum Ltd's quality
   const testimonials = [
     {
-      quote: `Pullum Ltd runs the most organized catching crews in ${region.name}. There are no surprises. The hours are guaranteed, and the pay is deposited into my account every single Friday morning without fail. The Lantra training they sponsored completely changed my perspective on physical agricultural labor.`,
+      quote: `Pullum Ltd runs the most organized catching crews in ${region.name}. The hours are guaranteed, and the pay is deposited into my account every single Friday morning without fail.`,
       author: `Arthur K.`,
-      role: `Senior Crew Team Leader, ${region.name} Roster`
+      role: `Senior Catching Crew Leader`,
     },
     {
-      quote: `As a farm manager supervising major broiler units, I demand absolute safety and animal welfare compliance. Pullum Ltd's crews in ${region.name} are disciplined, professional, and safety-certified. They understand commercial operations.`,
+      quote: `As a farm manager, I demand absolute safety and animal welfare compliance. Pullum Ltd's catching crews in ${region.name} are disciplined, professional, and safety-certified.`,
       author: `Mark R.`,
-      role: `Agricultural Facility Manager, ${region.name} Site`
-    }
+      role: `Agricultural Facility Manager`,
+    },
   ];
 
   return (
-    <div className="space-y-6 font-sans">
-      
-      {/* Back navigation */}
-      <div>
-        <button
-          onClick={onBackToSector}
-          className="text-xs text-slate-500 hover:text-slate-900 font-mono flex items-center gap-1 p-1 hover:bg-slate-100 rounded transition-colors cursor-pointer"
-          id="btn-region-back"
-        >
-          <ChevronLeft className="w-3.5 h-3.5" />
-          Back to {tenant.title}
-        </button>
-      </div>
-
-      {/* Main Regional Header Card (Barebones style) */}
-      <section className="bg-white border border-slate-200 rounded-lg p-6 sm:p-8 space-y-6 shadow-sm">
-        <div className="flex flex-col lg:flex-row gap-6 justify-between items-start">
-          
-          <div className="space-y-4 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-slate-200 bg-slate-100 text-slate-700">
-                {tenant.subdomain}.catchingjobs.co.uk/{region.id}/
-              </span>
-              <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-slate-200 bg-slate-100 text-slate-700">
-                SEO Landing Zone
-              </span>
+    <div className="font-sans w-full pb-10">
+      {/* 1. Full-Width Edge-to-Edge Hero */}
+      <section className="relative bg-[var(--color-ink)] text-white overflow-hidden min-h-[40vh] flex items-center border-b border-slate-900/10">
+        {/* Subtle background decoration */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--color-accent)] opacity-10 rounded-full filter blur-[100px] translate-x-1/3 -translate-y-1/3"></div>
+        
+        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 relative z-10 flex flex-col md:flex-row gap-8 justify-between items-center">
+          <div className="space-y-5 flex-1 text-center md:text-left">
+            <div>
+              <button
+                onClick={onBackToSector}
+                className="text-xs font-bold text-[var(--color-accent)] hover:text-white flex items-center gap-1 p-1.5 -ml-1.5 rounded-md hover:bg-white/5 transition-colors cursor-pointer mb-3 w-fit mx-auto md:mx-0"
+                id="btn-region-back"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Back to {tenant.title}
+              </button>
+              
+              <div className="inline-flex items-center gap-1 text-[10px] font-bold text-[var(--color-ink)] bg-white px-2 py-1 rounded uppercase tracking-wider mx-auto md:mx-0 shadow-sm">
+                <MapPin className="w-3.5 h-3.5 text-[var(--color-accent)]" />
+                {region.name} Catching Area
+              </div>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight leading-none">
-              Professional Agricultural Crews in <span className="text-slate-950 font-black underline decoration-slate-300">{region.name}</span>
+            <h1 className="text-3xl sm:text-4xl font-display text-white leading-tight tracking-tight">
+              Join our professional catching crews in {region.name}.
             </h1>
 
-            {/* Core SEO Content Block */}
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <p className="text-sm text-white/80 leading-snug font-medium max-w-xl mx-auto md:mx-0">
               {region.seoCopy}
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-2 border-t border-slate-100">
-              <div className="flex items-center gap-1.5 text-xs text-slate-600 font-mono">
-                <Users className="w-4 h-4 text-slate-500" />
+            <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-4 border-t border-white/10">
+              <div className="flex items-center gap-1.5 text-xs text-white/90 font-bold">
+                <Users className="w-4 h-4 text-[var(--color-accent)]" />
                 <span>{region.activeCrews} Active Local Crews</span>
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-slate-600 font-mono">
-                <ShieldCheck className="w-4 h-4 text-slate-500" />
+              <div className="flex items-center gap-1.5 text-xs text-white/90 font-bold">
+                <ShieldCheck className="w-4 h-4 text-[var(--color-accent)]" />
                 <span>100% Safety Certified</span>
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-slate-600 font-mono">
-                <Clock className="w-4 h-4 text-slate-500" />
-                <span>Guaranteed 40-50 Hours Roster</span>
+              <div className="flex items-center gap-1.5 text-xs text-white/90 font-bold">
+                <Clock className="w-4 h-4 text-[var(--color-accent)]" />
+                <span>Guaranteed Hours</span>
               </div>
             </div>
           </div>
 
-          {/* CTA box */}
-          <div className="bg-slate-50 border border-slate-200 p-5 rounded-lg w-full lg:w-80 shrink-0 space-y-4">
-            <div className="space-y-1.5">
-              <span className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest block">
-                Roster Allocation
-              </span>
-              <h3 className="font-bold text-slate-900 text-sm leading-tight">
-                Allocating {region.name} Positions
-              </h3>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
-                Positions on Pullum Ltd rosters across {region.name} agricultural units are highly competitive. Complete your credentials screening for priority review.
-              </p>
-            </div>
+          {/* CTA Action Box */}
+          <div className="bg-white rounded-2xl p-6 w-full md:w-[320px] shrink-0 shadow-xl text-center space-y-4">
+            <h3 className="font-display text-2xl text-[var(--color-ink)] leading-tight">
+              Apply Now
+            </h3>
+            <p className="text-xs text-[var(--color-ink-2)] leading-snug font-medium">
+              Positions on our {region.name} rosters are competitive. Apply today to start your clearance process.
+            </p>
+            
+            <div className="space-y-3 pt-2 border-t border-slate-100">
+              <button
+                onClick={onJoinRoster}
+                className="w-full bg-[var(--color-accent)] hover:bg-[var(--color-focus)] text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer hover:-translate-y-0.5"
+                id="btn-trigger-wizard-region"
+              >
+                <span>Join Catching Team</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
 
-            <button
-              onClick={onJoinRoster}
-              className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 px-4 rounded-md text-xs tracking-wide transition-all shadow shrink-0 flex items-center justify-center gap-1 cursor-pointer"
-              id="btn-trigger-wizard-region"
-            >
-              <span>Join Our Team</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
+              <a
+                href="tel:01522504311"
+                className="w-full bg-slate-50 hover:bg-slate-100 text-[var(--color-ink)] border border-slate-200 font-bold py-2.5 px-4 rounded-xl text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+                id="btn-regional-phone"
+              >
+                <Phone className="w-4 h-4 text-[var(--color-accent)]" />
+                <span>Call Coordinator</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content Wrapper */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+        {/* Testimonials */}
+        <section className="space-y-6 w-full">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="space-y-1 max-w-2xl">
+              <h2 className="text-2xl font-display text-[var(--color-ink)] leading-tight">
+                Feedback from {region.name} Catchers
+              </h2>
+            </div>
           </div>
 
-        </div>
-      </section>
-
-      {/* Local Testimonials */}
-      <section className="space-y-4">
-        <div>
-          <span className="text-[10px] tracking-wider text-slate-400 font-mono font-bold uppercase block">
-            Verified local feedback
-          </span>
-          <h2 className="text-base font-bold text-slate-900">
-            Operational Testimonials in {region.name}
-          </h2>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-4">
-          {testimonials.map((t, idx) => (
-            <div 
-              key={idx}
-              className="bg-white border border-slate-200 p-5 rounded-lg flex flex-col justify-between space-y-3 relative shadow-sm"
-            >
-              <Quote className="absolute top-4 right-4 w-8 h-8 text-slate-100 pointer-events-none" />
-              <p className="text-xs text-slate-650 leading-relaxed italic relative z-10">
-                "{t.quote}"
-              </p>
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-500">
-                <span className="font-bold text-slate-800">{t.author}</span>
-                <span>{t.role}</span>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {testimonials.map((t, idx) => (
+              <div
+                key={idx}
+                className="bg-white border border-slate-200 p-6 rounded-2xl flex flex-col justify-between space-y-4 relative shadow-sm hover:shadow-md transition-shadow"
+              >
+                <Quote className="absolute top-4 right-4 w-8 h-8 text-slate-100 pointer-events-none" />
+                <p className="text-xs text-[var(--color-ink-2)] leading-snug relative z-10 font-medium italic pr-6">
+                  "{t.quote}"
+                </p>
+                <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <span className="font-bold text-[var(--color-ink)] text-sm">{t.author}</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{t.role}</span>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Local Coordinator Details */}
-      <section className="bg-white border border-slate-200 rounded-lg p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
-        <div className="space-y-1">
-          <h4 className="font-bold text-slate-900 text-sm">
-            Need Direct Assistance in {region.name}?
-          </h4>
-          <p className="text-xs text-slate-500 leading-normal">
-            Our regional operations desk is open 24/7 for security clearance queries, welfare checks, and compliance coordination.
-          </p>
-        </div>
-
-        <div className="shrink-0 w-full sm:w-auto">
-          <a
-            href="tel:01522504311"
-            className="text-xs font-mono font-medium text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200 py-2 px-4 rounded-md block sm:inline-block text-center cursor-pointer shadow-sm transition-colors"
-            id="btn-regional-phone"
-          >
-            Call 01522 504 311 (Lincolnshire HQ)
-          </a>
-        </div>
-      </section>
-
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

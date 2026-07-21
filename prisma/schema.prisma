@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Application {
+  id                    Int      @id @default(autoincrement())
+  rosterRef             String   @unique
+  name                  String
+  email                 String?
+  phone                 String
+  town                  String
+  hasRightToWork        Boolean?
+  hasDrivingLicense     Boolean?
+  shiftAvailability     String
+  authProvider          String?
+  avatarUrl             String?
+  sector                String
+  timestamp             String
+  contacted             Boolean  @default(false)
+  safetyResourcesSent   Boolean  @default(false)
+  safetyTasksCompleted  Boolean  @default(false)
+  
+  // Compliance details
+  dateOfBirth           String?
+  niNumber              String?
+  addressLine1          String?
+  postcode              String?
+  emergencyName         String?
+  emergencyPhone        String?
+  emergencyRelation     String?
+  bankName              String?
+  bankAccountName       String?
+  bankAccountNumber     String?
+  bankSortCode          String?
+  hasAsthmaOrAllergies  Boolean?
+  hasBackIssues         Boolean?
+  isFitToLift           Boolean?
+  declarationSigned     Boolean  @default(false)
+  profileFormCompleted  Boolean  @default(false)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}

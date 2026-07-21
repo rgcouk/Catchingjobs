@@ -4,13 +4,13 @@
  */
 
 import React, { useState } from 'react';
-import { 
-  Users, 
-  CheckCircle, 
-  PhoneCall, 
-  Trash2, 
-  Search, 
-  ShieldCheck, 
+import {
+  Users,
+  CheckCircle,
+  PhoneCall,
+  Trash2,
+  Search,
+  ShieldCheck,
   UserX,
   FileCheck2,
   Lock,
@@ -29,7 +29,7 @@ import {
   EyeOff,
   HeartPulse,
   CreditCard,
-  Calendar
+  Calendar,
 } from 'lucide-react';
 import { ApplicationData } from '../types';
 
@@ -40,7 +40,7 @@ interface SubmittedApplication extends ApplicationData {
   contacted?: boolean;
   safetyResourcesSent?: boolean;
   safetyTasksCompleted?: boolean;
-  
+
   // Compliance Profile details
   dateOfBirth?: string;
   niNumber?: string;
@@ -69,18 +69,18 @@ interface RosterPortalProps {
   onCompleteSafetyTasks: (ref: string) => void;
 }
 
-export default function RosterPortal({ 
-  applications, 
-  onClear, 
-  onRemove, 
+export default function RosterPortal({
+  applications,
+  onClear,
+  onRemove,
   onToggleContacted,
   onSendSafetyResources,
-  onCompleteSafetyTasks
+  onCompleteSafetyTasks,
 }: RosterPortalProps) {
   const [search, setSearch] = useState('');
   const [filterSector, setFilterSector] = useState<'all' | 'chicken' | 'turkey'>('all');
   const [filterContacted, setFilterContacted] = useState<'all' | 'pending' | 'contacted'>('all');
-  
+
   // Interactive messaging state
   const [messagingRef, setMessagingRef] = useState<string | null>(null);
   const [customMsgText, setCustomMsgText] = useState('');
@@ -103,14 +103,23 @@ export default function RosterPortal({
   };
 
   // Quick message template generators
-  const applyTemplate = (type: 'interview' | 'documents' | 'roster', candidate: SubmittedApplication) => {
+  const applyTemplate = (
+    type: 'interview' | 'documents' | 'roster',
+    candidate: SubmittedApplication,
+  ) => {
     const divisionName = candidate.sector === 'chicken' ? 'Broiler Catching' : 'Turkey Loading';
     if (type === 'interview') {
-      setCustomMsgText(`Hi ${candidate.name}, Pullum Ltd recruitment team here. We reviewed your application for the ${divisionName} role and would like to invite you for a quick phone interview. Are you free for a call sometime this week?`);
+      setCustomMsgText(
+        `Hi ${candidate.name}, Pullum Ltd recruitment team here. We reviewed your application for the ${divisionName} role and would like to invite you for a quick phone interview. Are you free for a call sometime this week?`,
+      );
     } else if (type === 'documents') {
-      setCustomMsgText(`Hi ${candidate.name}, Pullum Ltd compliance here. To proceed with your application for poultry deployments in ${candidate.town}, could you please reply with a photo of your UK Right to Work document or share code? Thank you.`);
+      setCustomMsgText(
+        `Hi ${candidate.name}, Pullum Ltd compliance here. To proceed with your application for poultry deployments in ${candidate.town}, could you please reply with a photo of your UK Right to Work document or share code? Thank you.`,
+      );
     } else if (type === 'roster') {
-      setCustomMsgText(`Hi ${candidate.name}, Pullum Ltd here. We have active shifts starting near ${candidate.town} shortly. Are you still available to join our local harvesting squads? Let us know. Thanks!`);
+      setCustomMsgText(
+        `Hi ${candidate.name}, Pullum Ltd here. We have active shifts starting near ${candidate.town} shortly. Are you still available to join our local harvesting squads? Let us know. Thanks!`,
+      );
     }
   };
 
@@ -118,28 +127,31 @@ export default function RosterPortal({
   const startMessaging = (candidate: SubmittedApplication) => {
     setMessagingRef(candidate.rosterRef);
     const divisionName = candidate.sector === 'chicken' ? 'Broiler Catching' : 'Turkey Loading';
-    setCustomMsgText(`Hi ${candidate.name}, Pullum Ltd recruitment here. Thank you for your application to join our ${divisionName} roster in ${candidate.town}. We are reviewing candidate logs shortly.`);
+    setCustomMsgText(
+      `Hi ${candidate.name}, Pullum Ltd recruitment here. Thank you for your application to join our ${divisionName} roster in ${candidate.town}. We are reviewing candidate logs shortly.`,
+    );
   };
 
   // Filter candidates based on search query, sector and contacted status
-  const filteredApps = applications.filter(app => {
-    const matchesSearch = app.name.toLowerCase().includes(search.toLowerCase()) || 
-                          app.town.toLowerCase().includes(search.toLowerCase()) ||
-                          app.rosterRef.toLowerCase().includes(search.toLowerCase());
-    
+  const filteredApps = applications.filter((app) => {
+    const matchesSearch =
+      app.name.toLowerCase().includes(search.toLowerCase()) ||
+      app.town.toLowerCase().includes(search.toLowerCase()) ||
+      app.rosterRef.toLowerCase().includes(search.toLowerCase());
+
     const matchesSector = filterSector === 'all' || app.sector === filterSector;
-    
+
     const isAppContacted = !!app.contacted;
-    const matchesContacted = filterContacted === 'all' || 
-                             (filterContacted === 'pending' && !isAppContacted) ||
-                             (filterContacted === 'contacted' && isAppContacted);
-    
+    const matchesContacted =
+      filterContacted === 'all' ||
+      (filterContacted === 'pending' && !isAppContacted) ||
+      (filterContacted === 'contacted' && isAppContacted);
+
     return matchesSearch && matchesSector && matchesContacted;
   });
 
   return (
     <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm font-sans text-xs">
-      
       {/* Portal Header - Barebones White */}
       <div className="bg-white border-b border-slate-200 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
@@ -152,9 +164,7 @@ export default function RosterPortal({
                 ADMIN ACCESS
               </span>
             </div>
-            <h4 className="font-bold text-slate-900 mt-0.5">
-              Candidate Roster CRM
-            </h4>
+            <h4 className="font-bold text-slate-900 mt-0.5">Candidate Roster CRM</h4>
           </div>
         </div>
 
@@ -218,33 +228,45 @@ export default function RosterPortal({
         {filteredApps.length === 0 ? (
           <div className="py-12 px-4 text-center space-y-2 text-slate-400">
             <UserX className="w-8 h-8 mx-auto text-slate-300" />
-            <p className="font-mono text-[10px] font-bold">No candidate logs found matching criteria.</p>
+            <p className="font-mono text-[10px] font-bold">
+              No candidate logs found matching criteria.
+            </p>
           </div>
         ) : (
           filteredApps.map((app) => {
             const isMessaging = messagingRef === app.rosterRef;
             return (
-              <div 
+              <div
                 key={app.rosterRef}
                 className={`p-4 border-b last:border-b-0 transition-all ${
-                  app.contacted 
-                    ? 'border-slate-150 bg-white opacity-95 hover:opacity-100' 
+                  app.contacted
+                    ? 'border-slate-150 bg-white opacity-95 hover:opacity-100'
                     : 'border-slate-200 bg-white ring-1 ring-slate-100 shadow-sm'
                 }`}
               >
-                
                 {/* Candidate main row */}
                 <div className="flex flex-col gap-2 relative group">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-2.5">
                       {/* Imported Social Avatar */}
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs font-mono shrink-0 text-white shadow-sm ${
-                        app.authProvider === 'google' ? 'bg-emerald-600' : app.authProvider === 'facebook' ? 'bg-purple-600' : 'bg-slate-700'
-                      }`}>
-                        {app.name.split(' ').map(n => n[0]).join('')}
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs font-mono shrink-0 text-white shadow-sm ${
+                          app.authProvider === 'google'
+                            ? 'bg-emerald-600'
+                            : app.authProvider === 'facebook'
+                              ? 'bg-purple-600'
+                              : 'bg-slate-700'
+                        }`}
+                      >
+                        {app.name
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')}
                       </div>
                       <div className="space-y-0.5 min-w-0">
-                        <h5 className="font-bold text-slate-900 text-[13px] truncate">{app.name}</h5>
+                        <h5 className="font-bold text-slate-900 text-[13px] truncate">
+                          {app.name}
+                        </h5>
                         {app.email && (
                           <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1 truncate">
                             <Mail className="w-3 h-3 text-slate-400" />
@@ -264,14 +286,18 @@ export default function RosterPortal({
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
-                  
+
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50 text-slate-700">
                       {app.sector}.catching
                     </span>
                     {app.authProvider && (
                       <span className="text-[9px] font-mono font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-0.5">
-                        {app.authProvider === 'google' ? <Chrome className="w-2.5 h-2.5 text-red-500" /> : <Facebook className="w-2.5 h-2.5 fill-[#1877F2] text-white" />}
+                        {app.authProvider === 'google' ? (
+                          <Chrome className="w-2.5 h-2.5 text-red-500" />
+                        ) : (
+                          <Facebook className="w-2.5 h-2.5 fill-[#1877F2] text-white" />
+                        )}
                         {app.authProvider}
                       </span>
                     )}
@@ -289,7 +315,8 @@ export default function RosterPortal({
                     {app.safetyResourcesSent ? (
                       app.safetyTasksCompleted ? (
                         <span className="text-[9px] font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                          <CheckCircle className="w-2.5 h-2.5 text-emerald-700" /> SAFETY TASKS: COMPLETED
+                          <CheckCircle className="w-2.5 h-2.5 text-emerald-700" /> SAFETY TASKS:
+                          COMPLETED
                         </span>
                       ) : (
                         <span className="text-[9px] font-mono font-bold bg-sky-50 text-sky-800 border border-sky-200 px-1.5 py-0.5 rounded flex items-center gap-0.5 animate-pulse">
@@ -314,7 +341,7 @@ export default function RosterPortal({
                     </button>
 
                     <button
-                      onClick={() => isMessaging ? setMessagingRef(null) : startMessaging(app)}
+                      onClick={() => (isMessaging ? setMessagingRef(null) : startMessaging(app))}
                       className="text-[11px] px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-colors cursor-pointer flex items-center gap-1"
                     >
                       <MessageSquare className="w-3 h-3" />
@@ -351,27 +378,33 @@ export default function RosterPortal({
                       <span className="text-[9px] uppercase font-mono font-bold text-slate-400 block tracking-wider">
                         Safety Culture App Integration
                       </span>
-                      <a 
-                        href="https://safetyculture.com" 
-                        target="_blank" 
+                      <a
+                        href="https://safetyculture.com"
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="text-[9px] font-mono font-bold text-slate-600 hover:text-slate-900 flex items-center gap-0.5 underline shrink-0"
                       >
-                        Launch Safety Culture <ExternalLink className="w-2.5 h-2.5 text-slate-500" />
+                        Launch Safety Culture{' '}
+                        <ExternalLink className="w-2.5 h-2.5 text-slate-500" />
                       </a>
                     </div>
-                    
+
                     <p className="text-[10px] text-slate-600 font-sans leading-relaxed">
-                      Onboarding resources and compliance tasks generated. Link sent to candidate's device for task tracking.
+                      Onboarding resources and compliance tasks generated. Link sent to candidate's
+                      device for task tracking.
                     </p>
 
                     <div className="flex items-center gap-2">
-                      <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border ${
-                        app.safetyTasksCompleted 
-                          ? 'bg-emerald-100 text-emerald-950 border-emerald-200' 
-                          : 'bg-amber-100 text-amber-950 border-amber-200'
-                      }`}>
-                        {app.safetyTasksCompleted ? 'STATUS: ALL TASKS COMPLETED' : 'STATUS: AWAITING TASK COMPLETION'}
+                      <span
+                        className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border ${
+                          app.safetyTasksCompleted
+                            ? 'bg-emerald-100 text-emerald-950 border-emerald-200'
+                            : 'bg-amber-100 text-amber-950 border-amber-200'
+                        }`}
+                      >
+                        {app.safetyTasksCompleted
+                          ? 'STATUS: ALL TASKS COMPLETED'
+                          : 'STATUS: AWAITING TASK COMPLETION'}
                       </span>
                     </div>
                   </div>
@@ -380,9 +413,11 @@ export default function RosterPortal({
                 {/* Candidate detailed attributes grid */}
                 <div className="grid grid-cols-2 gap-2 text-[10px] font-mono bg-slate-50 p-2.5 rounded border border-slate-150 mt-2.5">
                   <div>
-                    <span className="text-slate-400 block uppercase text-[8px] font-bold">Phone</span>
-                    <a 
-                      href={`tel:${app.phone}`} 
+                    <span className="text-slate-400 block uppercase text-[8px] font-bold">
+                      Phone
+                    </span>
+                    <a
+                      href={`tel:${app.phone}`}
                       className="text-slate-800 hover:underline font-bold flex items-center gap-1 mt-0.5"
                     >
                       <PhoneCall className="w-3 h-3 text-slate-500" />
@@ -390,17 +425,23 @@ export default function RosterPortal({
                     </a>
                   </div>
                   <div>
-                    <span className="text-slate-400 block uppercase text-[8px] font-bold">Town</span>
+                    <span className="text-slate-400 block uppercase text-[8px] font-bold">
+                      Town
+                    </span>
                     <span className="text-slate-700 font-bold block mt-0.5">{app.town}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block uppercase text-[8px] font-bold">Right to Work</span>
+                    <span className="text-slate-400 block uppercase text-[8px] font-bold">
+                      Right to Work
+                    </span>
                     <span className="text-slate-700 font-bold block mt-0.5">
                       {app.hasRightToWork ? 'YES' : 'NO'}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block uppercase text-[8px] font-bold">License</span>
+                    <span className="text-slate-400 block uppercase text-[8px] font-bold">
+                      License
+                    </span>
                     <span className="text-slate-700 font-bold block mt-0.5">
                       {app.hasDrivingLicense ? 'YES' : 'NO'}
                     </span>
@@ -416,13 +457,17 @@ export default function RosterPortal({
                         GLAA Compliance Profile (Jotform)
                       </span>
                       <button
-                        onClick={() => setExpandedComplianceRefs(prev => ({
-                          ...prev,
-                          [app.rosterRef]: !prev[app.rosterRef]
-                        }))}
+                        onClick={() =>
+                          setExpandedComplianceRefs((prev) => ({
+                            ...prev,
+                            [app.rosterRef]: !prev[app.rosterRef],
+                          }))
+                        }
                         className="text-[9px] font-mono font-bold text-emerald-700 hover:text-emerald-900 underline cursor-pointer"
                       >
-                        {expandedComplianceRefs[app.rosterRef] ? 'Hide Compliance' : 'Review Compliance'}
+                        {expandedComplianceRefs[app.rosterRef]
+                          ? 'Hide Compliance'
+                          : 'Review Compliance'}
                       </button>
                     </div>
 
@@ -431,65 +476,114 @@ export default function RosterPortal({
                         {/* Personal Identity Grid */}
                         <div className="grid grid-cols-2 gap-2 text-slate-700">
                           <div>
-                            <span className="block font-mono text-[8px] text-slate-400 uppercase font-bold">Date of Birth</span>
+                            <span className="block font-mono text-[8px] text-slate-400 uppercase font-bold">
+                              Date of Birth
+                            </span>
                             <span className="font-semibold text-slate-900">
-                              {app.dateOfBirth ? new Date(app.dateOfBirth).toLocaleDateString('en-GB') : 'Not provided'}
+                              {app.dateOfBirth
+                                ? new Date(app.dateOfBirth).toLocaleDateString('en-GB')
+                                : 'Not provided'}
                             </span>
                           </div>
                           <div>
-                            <span className="block font-mono text-[8px] text-slate-400 uppercase font-bold">NI Number</span>
+                            <span className="block font-mono text-[8px] text-slate-400 uppercase font-bold">
+                              NI Number
+                            </span>
                             <span className="font-mono font-bold text-slate-900 tracking-wide bg-emerald-100/60 px-1 py-0.5 rounded border border-emerald-200">
                               {app.niNumber || 'Not provided'}
                             </span>
                           </div>
                           <div className="col-span-2">
-                            <span className="block font-mono text-[8px] text-slate-400 uppercase font-bold">Home Address</span>
+                            <span className="block font-mono text-[8px] text-slate-400 uppercase font-bold">
+                              Home Address
+                            </span>
                             <span className="font-semibold text-slate-850">
-                              {app.addressLine1 ? `${app.addressLine1}, ${app.postcode}` : 'Not provided'}
+                              {app.addressLine1
+                                ? `${app.addressLine1}, ${app.postcode}`
+                                : 'Not provided'}
                             </span>
                           </div>
                         </div>
 
                         {/* Emergency Contact */}
                         <div className="bg-white/80 p-2 rounded border border-emerald-100 text-slate-700">
-                          <span className="block font-mono text-[8px] text-slate-400 uppercase font-bold mb-1">Emergency Contact (Next of Kin)</span>
+                          <span className="block font-mono text-[8px] text-slate-400 uppercase font-bold mb-1">
+                            Emergency Contact (Next of Kin)
+                          </span>
                           <div className="grid grid-cols-2 gap-1 text-[9.5px]">
-                            <div><strong>Name:</strong> {app.emergencyName || 'N/A'}</div>
-                            <div><strong>Relation:</strong> {app.emergencyRelation || 'N/A'}</div>
-                            <div className="col-span-2"><strong>Phone:</strong> {app.emergencyPhone || 'N/A'}</div>
+                            <div>
+                              <strong>Name:</strong> {app.emergencyName || 'N/A'}
+                            </div>
+                            <div>
+                              <strong>Relation:</strong> {app.emergencyRelation || 'N/A'}
+                            </div>
+                            <div className="col-span-2">
+                              <strong>Phone:</strong> {app.emergencyPhone || 'N/A'}
+                            </div>
                           </div>
                         </div>
 
                         {/* Bank Details */}
                         <div className="bg-white/80 p-2 rounded border border-emerald-100 text-slate-700 font-mono">
-                          <span className="block text-slate-400 uppercase text-[8px] font-bold mb-1">Weekly Wages Bank Routing</span>
+                          <span className="block text-slate-400 uppercase text-[8px] font-bold mb-1">
+                            Weekly Wages Bank Routing
+                          </span>
                           <div className="grid grid-cols-2 gap-1 text-[9px]">
-                            <div>Bank: <span className="text-slate-800 font-bold font-sans">{app.bankName || 'N/A'}</span></div>
-                            <div>Holder: <span className="text-slate-800 font-bold font-sans">{app.bankAccountName || 'N/A'}</span></div>
-                            <div>Acc #: <span className="text-slate-950 font-bold">{app.bankAccountNumber || 'N/A'}</span></div>
-                            <div>Sort Code: <span className="text-slate-950 font-bold">{app.bankSortCode?.replace(/(\d{2})(\d{2})(\d{2})/, '$1-$2-$3') || 'N/A'}</span></div>
+                            <div>
+                              Bank:{' '}
+                              <span className="text-slate-800 font-bold font-sans">
+                                {app.bankName || 'N/A'}
+                              </span>
+                            </div>
+                            <div>
+                              Holder:{' '}
+                              <span className="text-slate-800 font-bold font-sans">
+                                {app.bankAccountName || 'N/A'}
+                              </span>
+                            </div>
+                            <div>
+                              Acc #:{' '}
+                              <span className="text-slate-950 font-bold">
+                                {app.bankAccountNumber || 'N/A'}
+                              </span>
+                            </div>
+                            <div>
+                              Sort Code:{' '}
+                              <span className="text-slate-950 font-bold">
+                                {app.bankSortCode?.replace(/(\d{2})(\d{2})(\d{2})/, '$1-$2-$3') ||
+                                  'N/A'}
+                              </span>
+                            </div>
                           </div>
                         </div>
 
                         {/* Medical & Declaration Checkbox */}
                         <div className="space-y-1 text-slate-600">
-                          <span className="block font-mono text-[8px] text-slate-400 uppercase font-bold">Medical Declarations</span>
+                          <span className="block font-mono text-[8px] text-slate-400 uppercase font-bold">
+                            Medical Declarations
+                          </span>
                           <div className="flex flex-col gap-1 text-[9.5px]">
                             <div className="flex items-center justify-between">
                               <span>Asthma/Respiratory/Allergies?</span>
-                              <span className={`font-bold px-1.5 rounded ${app.hasAsthmaOrAllergies ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>
+                              <span
+                                className={`font-bold px-1.5 rounded ${app.hasAsthmaOrAllergies ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}
+                              >
                                 {app.hasAsthmaOrAllergies ? 'YES' : 'NO'}
                               </span>
                             </div>
                             <div className="flex items-center justify-between">
                               <span>Back/Neck/Joint Issues?</span>
-                              <span className={`font-bold px-1.5 rounded ${app.hasBackIssues ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>
+                              <span
+                                className={`font-bold px-1.5 rounded ${app.hasBackIssues ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}
+                              >
                                 {app.hasBackIssues ? 'YES' : 'NO'}
                               </span>
                             </div>
                             <div className="flex items-center justify-between">
                               <span>Fit for Repeated 15-20kg lifting?</span>
-                              <span className={`font-bold px-1.5 rounded ${app.isFitToLift ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+                              <span
+                                className={`font-bold px-1.5 rounded ${app.isFitToLift ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}
+                              >
                                 {app.isFitToLift ? 'YES' : 'NO'}
                               </span>
                             </div>
@@ -501,7 +595,10 @@ export default function RosterPortal({
                 ) : (
                   <div className="mt-2.5 border border-dashed border-slate-200 rounded-md bg-slate-50/50 p-2 text-[10px] text-slate-500 font-sans flex items-center gap-1.5">
                     <X className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span>Compliance registration form is <strong className="text-amber-700 font-bold">incomplete</strong>.</span>
+                    <span>
+                      Compliance registration form is{' '}
+                      <strong className="text-amber-700 font-bold">incomplete</strong>.
+                    </span>
                   </div>
                 )}
 
@@ -513,7 +610,7 @@ export default function RosterPortal({
                         <Send className="w-3 h-3" />
                         PRE-FILL CHAT: {app.name}
                       </span>
-                      <button 
+                      <button
                         onClick={() => setMessagingRef(null)}
                         className="text-slate-500 hover:text-white cursor-pointer"
                       >
@@ -588,10 +685,10 @@ export default function RosterPortal({
       <div className="bg-slate-50 p-3.5 border-t border-slate-200 text-[9px] text-slate-400 font-mono flex gap-1.5 items-start">
         <FileCheck2 className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" />
         <p className="leading-tight">
-          Logs bind to browser memory cache. Submitting inquiries in region screens populates them here. Mark resources as sent to link tasks with Safety Culture.
+          Logs bind to browser memory cache. Submitting inquiries in region screens populates them
+          here. Mark resources as sent to link tasks with Safety Culture.
         </p>
       </div>
-
     </div>
   );
 }

@@ -1,30 +1,47 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@600&family=JetBrains+Mono:wght@500&display=swap');
+@import 'tailwindcss';
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Lora", Georgia, serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Lora', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --color-paper: oklch(99% 0.01 260);
+  --color-paper-2: oklch(96% 0.01 260);
+  --color-ink: oklch(25% 0.06 260);
+  --color-ink-2: oklch(45% 0.05 260);
+  --color-rule: oklch(92% 0.01 260);
+  --color-accent: oklch(65% 0.2 45);
+  --color-focus: oklch(65% 0.2 45);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-short: 220ms;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: #f4f7f5; /* Light Soft Mint/Grey Background */
-  color: #1e293b; /* Deep Charcoal Text */
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  overflow-x: clip;
 }
 
-/* Custom scrollbar matching the professional slate design */
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: var(--font-display);
+  font-style: normal;
+  letter-spacing: -0.02em;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f4f7f5;
+  background: var(--color-paper);
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--color-rule);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--color-ink-2);
 }
