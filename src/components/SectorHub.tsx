@@ -30,20 +30,22 @@ interface SectorHubProps {
 
 export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: SectorHubProps) {
   const tenant = TENANTS[sectorId];
-  
+
   const sectorName = sectorId === 'chicken' ? 'Chicken Catching' : 'Turkey Catching';
-  const industryName = sectorId === 'chicken' ? 'Broiler & Breeder Industry' : 'Commercial Turkey Harvesting';
-  const heroImage = sectorId === 'chicken' 
-    ? 'https://images.unsplash.com/photo-1548817294-4361e1b4020a?auto=format&fit=crop&q=80&w=2000'
-    : 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=2000';
+  const industryName =
+    sectorId === 'chicken' ? 'Broiler & Breeder Industry' : 'Commercial Turkey Harvesting';
+  const heroImage =
+    sectorId === 'chicken'
+      ? 'https://images.unsplash.com/photo-1548817294-4361e1b4020a?auto=format&fit=crop&q=80&w=2000'
+      : 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=2000';
 
   return (
     <div className="font-sans w-full pb-10">
       {/* 1. Full-Width Edge-to-Edge Hero */}
-      <section 
+      <section
         className="relative flex items-center bg-cover bg-center min-h-[40vh] sm:min-h-[45vh] border-b border-slate-900/10"
-        style={{ 
-          backgroundImage: `linear-gradient(to right, rgba(11, 29, 58, 0.95), rgba(11, 29, 58, 0.5)), url('${heroImage}')` 
+        style={{
+          backgroundImage: `linear-gradient(to right, rgba(11, 29, 58, 0.95), rgba(11, 29, 58, 0.5)), url('${heroImage}')`,
         }}
       >
         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 relative z-10">
@@ -57,7 +59,8 @@ export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: Se
               Start Your Career in <span className="text-[var(--color-accent)]">{sectorName}</span>.
             </h1>
             <p className="text-sm sm:text-base text-white/90 leading-snug font-medium max-w-xl">
-              {tenant.introCopy} Regular schedules and guaranteed weekly payroll for dedicated catching crews.
+              {tenant.introCopy} Regular schedules and guaranteed weekly payroll for dedicated
+              catching crews.
             </p>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
@@ -85,14 +88,16 @@ export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: Se
 
       {/* Main Content Wrapper */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
-        
         {/* 2. Operational Recruiting Locations (THE FUNNEL) */}
         <div className="space-y-5 w-full">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-1 max-w-2xl">
-              <h2 className="text-2xl font-display text-[var(--color-ink)] leading-tight">Local Catching Hubs</h2>
+              <h2 className="text-2xl font-display text-[var(--color-ink)] leading-tight">
+                Local Catching Hubs
+              </h2>
               <p className="text-sm text-[var(--color-ink-2)] font-medium leading-snug">
-                Explore our operational catching corridors and active region directories for {industryName}.
+                Explore our operational catching corridors and active region directories for{' '}
+                {industryName}.
               </p>
             </div>
           </div>
@@ -152,7 +157,8 @@ export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: Se
                 Right place for catching work.
               </h3>
               <p className="text-xs text-white/80 font-medium mt-1">
-                Join one of the UK’s most trusted Poultry Catching Companies, <span className="italic opacity-80">(probably)</span>.
+                Join one of the UK’s most trusted Poultry Catching Companies,{' '}
+                <span className="italic opacity-80">(probably)</span>.
               </p>
             </div>
 
@@ -181,9 +187,12 @@ export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: Se
         <section className="space-y-6 pt-4 w-full">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-2 max-w-2xl">
-              <h2 className="text-2xl font-display text-[var(--color-ink)] leading-tight">We Offer Catchers</h2>
+              <h2 className="text-2xl font-display text-[var(--color-ink)] leading-tight">
+                We Offer Catchers
+              </h2>
               <p className="text-sm text-[var(--color-ink-2)] font-medium leading-snug">
-                A professional approach to poultry catching, built on security, respect, and career growth.
+                A professional approach to poultry catching, built on security, respect, and career
+                growth.
               </p>
             </div>
           </div>
@@ -195,7 +204,8 @@ export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: Se
                 <h3 className="font-bold text-[var(--color-ink)] text-sm">Competitive Pay</h3>
               </div>
               <p className="text-[var(--color-ink-2)] text-[11px] font-medium leading-snug">
-                Highly competitive catching rates paid on time, every week, with transparent structures.
+                Highly competitive catching rates paid on time, every week, with transparent
+                structures.
               </p>
             </div>
 
@@ -215,7 +225,8 @@ export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: Se
                 <h3 className="font-bold text-[var(--color-ink)] text-sm">Supportive Crews</h3>
               </div>
               <p className="text-[var(--color-ink-2)] text-[11px] font-medium leading-snug">
-                Work alongside professionals. Clean transport, catching safety gear, and supportive members.
+                Work alongside professionals. Clean transport, catching safety gear, and supportive
+                members.
               </p>
             </div>
 
@@ -235,7 +246,8 @@ export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: Se
                 <h3 className="font-bold text-[var(--color-ink)] text-sm">Career Progression</h3>
               </div>
               <p className="text-[var(--color-ink-2)] text-[11px] font-medium leading-snug">
-                Clear pathways from catching operative to driver, catching supervisor, or regional team manager. We actively invest in your agricultural career progression.
+                Clear pathways from catching operative to driver, catching supervisor, or regional
+                team manager. We actively invest in your agricultural career progression.
               </p>
             </div>
           </div>

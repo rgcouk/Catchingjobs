@@ -68,7 +68,7 @@ export default function RegionLander({
       <section className="relative bg-[var(--color-ink)] text-white overflow-hidden min-h-[40vh] flex items-center border-b border-slate-900/10">
         {/* Subtle background decoration */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--color-accent)] opacity-10 rounded-full filter blur-[100px] translate-x-1/3 -translate-y-1/3"></div>
-        
+
         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 relative z-10 flex flex-col md:flex-row gap-8 justify-between items-center">
           <div className="space-y-5 flex-1 text-center md:text-left">
             <div>
@@ -80,7 +80,7 @@ export default function RegionLander({
                 <ChevronLeft className="w-4 h-4" />
                 Back to {tenant.title}
               </button>
-              
+
               <div className="inline-flex items-center gap-1 text-[10px] font-bold text-[var(--color-ink)] bg-white px-2 py-1 rounded uppercase tracking-wider mx-auto md:mx-0 shadow-sm">
                 <MapPin className="w-3.5 h-3.5 text-[var(--color-accent)]" />
                 {region.name} Catching Area
@@ -117,9 +117,10 @@ export default function RegionLander({
               Apply Now
             </h3>
             <p className="text-xs text-[var(--color-ink-2)] leading-snug font-medium">
-              Positions on our {region.name} rosters are competitive. Apply today to start your clearance process.
+              Positions on our {region.name} rosters are competitive. Apply today to start your
+              clearance process.
             </p>
-            
+
             <div className="space-y-3 pt-2 border-t border-slate-100">
               <button
                 onClick={onJoinRoster}
@@ -167,7 +168,9 @@ export default function RegionLander({
                 </p>
                 <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
                   <span className="font-bold text-[var(--color-ink)] text-sm">{t.author}</span>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{t.role}</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                    {t.role}
+                  </span>
                 </div>
               </div>
             ))}

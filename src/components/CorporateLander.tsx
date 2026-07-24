@@ -5,9 +5,7 @@
 
 import React from 'react';
 import {
-  Building2,
   ShieldCheck,
-  Award,
   ArrowRight,
   Users,
   Star,

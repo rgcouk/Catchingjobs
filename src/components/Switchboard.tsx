@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   MapPin,
   ArrowRight,
@@ -14,8 +14,6 @@ import {
   FileText,
   Download,
   Users,
-  ShieldCheck,
-  Star,
   Rocket,
   Sun,
   Brain,
@@ -31,8 +29,6 @@ interface SwitchboardProps {
 }
 
 export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-
   // Static news articles
   const news = [
     {
@@ -40,14 +36,16 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
       date: '15 July 2026',
       title: 'Pullum Ltd Secures Landmark East Midlands Catching Contract',
       category: 'Business',
-      summary: 'Our poultry catching division has finalized an exclusive multi-year contract covering major broiler growers in Lincolnshire and Yorkshire.',
+      summary:
+        'Our poultry catching division has finalized an exclusive multi-year contract covering major broiler growers in Lincolnshire and Yorkshire.',
     },
     {
       id: 'news-2',
       date: '02 July 2026',
       title: 'Expanded Catching Crew Operations & Transport Networks',
       category: 'Operations',
-      summary: 'Pullum Ltd has added direct minibus pickup points across our regional catching hubs, ensuring seamless worker transit and punctual arrival times.',
+      summary:
+        'Pullum Ltd has added direct minibus pickup points across our regional catching hubs, ensuring seamless worker transit and punctual arrival times.',
     },
   ];
 
@@ -90,10 +88,11 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
   return (
     <div className="font-sans w-full">
       {/* 1. Full-Width Edge-to-Edge Hero */}
-      <section 
+      <section
         className="relative flex items-center bg-cover bg-center min-h-[40vh] sm:min-h-[45vh] border-b border-slate-900/10"
-        style={{ 
-          backgroundImage: "linear-gradient(to right, rgba(11, 29, 58, 0.95), rgba(11, 29, 58, 0.5)), url('https://images.unsplash.com/photo-1592982537447-6f2e2ee67d8f?auto=format&fit=crop&q=80&w=2500')" 
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, rgba(11, 29, 58, 0.95), rgba(11, 29, 58, 0.5)), url('https://images.unsplash.com/photo-1592982537447-6f2e2ee67d8f?auto=format&fit=crop&q=80&w=2500')",
         }}
       >
         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 relative z-10">
@@ -104,10 +103,12 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
             </span>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display text-white leading-tight tracking-tight">
-              Join the elite ranks of professional <span className="text-[var(--color-accent)]">poultry catchers</span>.
+              Join the elite ranks of professional{' '}
+              <span className="text-[var(--color-accent)]">poultry catchers</span>.
             </h1>
             <p className="text-sm sm:text-base text-white/90 leading-snug font-medium max-w-xl">
-              Get fast-tracked onto live regional catching schedules. High pay, guaranteed weekly rosters, and supportive, reliable catching squads.
+              Get fast-tracked onto live regional catching schedules. High pay, guaranteed weekly
+              rosters, and supportive, reliable catching squads.
             </p>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
@@ -135,14 +136,18 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
 
       {/* Main Content Wrapper */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
-        
         {/* 2. Core Actions: Catching Divisions and Regions (PRIORITY FUNNEL) */}
         <div className="space-y-8 w-full">
           <div className="space-y-5">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div className="space-y-1 max-w-2xl">
-                <h2 className="text-2xl font-display text-[var(--color-ink)] leading-tight">Select Your Catching Division</h2>
-                <p className="text-sm text-[var(--color-ink-2)] font-medium leading-snug">Choose between our specialized poultry catching paths to view current open schedules and catching operative roles.</p>
+                <h2 className="text-2xl font-display text-[var(--color-ink)] leading-tight">
+                  Select Your Catching Division
+                </h2>
+                <p className="text-sm text-[var(--color-ink-2)] font-medium leading-snug">
+                  Choose between our specialized poultry catching paths to view current open
+                  schedules and catching operative roles.
+                </p>
               </div>
             </div>
 
@@ -151,16 +156,28 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
                 onClick={() => onNavigate('chicken', '')}
                 className="group relative bg-white border border-slate-200 rounded-xl cursor-pointer overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col"
               >
-                <div className="h-32 bg-slate-100 relative bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1548817294-4361e1b4020a?auto=format&fit=crop&q=80&w=800')" }}>
+                <div
+                  className="h-32 bg-slate-100 relative bg-cover bg-center"
+                  style={{
+                    backgroundImage:
+                      "url('https://images.unsplash.com/photo-1548817294-4361e1b4020a?auto=format&fit=crop&q=80&w=800')",
+                  }}
+                >
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                   <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
-                    <span className="text-white font-bold tracking-tight text-lg drop-shadow-md">Chicken Catching</span>
-                    <span className="text-[9px] bg-[var(--color-accent)] text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider shadow-sm">Recruiting</span>
+                    <span className="text-white font-bold tracking-tight text-lg drop-shadow-md">
+                      Chicken Catching
+                    </span>
+                    <span className="text-[9px] bg-[var(--color-accent)] text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider shadow-sm">
+                      Recruiting
+                    </span>
                   </div>
                 </div>
                 <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                   <p className="text-xs text-[var(--color-ink-2)] leading-snug font-medium">
-                    Operating in highly disciplined, welfare-compliant chicken catching teams. We recruit for both entry-level catching roles and experienced catching team leaders.
+                    Operating in highly disciplined, welfare-compliant chicken catching teams. We
+                    recruit for both entry-level catching roles and experienced catching team
+                    leaders.
                   </p>
                   <div className="pt-3 mt-auto border-t border-slate-100 flex items-center justify-between text-sm font-bold text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
                     <span>Explore Roles</span>
@@ -173,16 +190,27 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
                 onClick={() => onNavigate('turkey', '')}
                 className="group relative bg-white border border-slate-200 rounded-xl cursor-pointer overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col"
               >
-                <div className="h-32 bg-slate-100 relative bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=800')" }}>
+                <div
+                  className="h-32 bg-slate-100 relative bg-cover bg-center"
+                  style={{
+                    backgroundImage:
+                      "url('https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=800')",
+                  }}
+                >
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                   <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
-                    <span className="text-white font-bold tracking-tight text-lg drop-shadow-md">Turkey Catching</span>
-                    <span className="text-[9px] bg-[var(--color-accent)] text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider shadow-sm">Recruiting</span>
+                    <span className="text-white font-bold tracking-tight text-lg drop-shadow-md">
+                      Turkey Catching
+                    </span>
+                    <span className="text-[9px] bg-[var(--color-accent)] text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider shadow-sm">
+                      Recruiting
+                    </span>
                   </div>
                 </div>
                 <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                   <p className="text-xs text-[var(--color-ink-2)] leading-snug font-medium">
-                    Specialized squads handling commercial turkey catching operations. Earn leading weekly wages with structured heavy-catching shift patterns.
+                    Specialized squads handling commercial turkey catching operations. Earn leading
+                    weekly wages with structured heavy-catching shift patterns.
                   </p>
                   <div className="pt-3 mt-auto border-t border-slate-100 flex items-center justify-between text-sm font-bold text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
                     <span>Explore Roles</span>
@@ -196,8 +224,13 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
           <div className="space-y-5 pt-8 border-t border-slate-200">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div className="space-y-1 max-w-2xl">
-                <h2 className="text-2xl font-display text-[var(--color-ink)] leading-tight">Find Local Catching Crews</h2>
-                <p className="text-sm text-[var(--color-ink-2)] font-medium leading-snug">Select your nearest region to check active poultry catching vacancies and sign up with local catching squads.</p>
+                <h2 className="text-2xl font-display text-[var(--color-ink)] leading-tight">
+                  Find Local Catching Crews
+                </h2>
+                <p className="text-sm text-[var(--color-ink-2)] font-medium leading-snug">
+                  Select your nearest region to check active poultry catching vacancies and sign up
+                  with local catching squads.
+                </p>
               </div>
             </div>
 
@@ -232,9 +265,12 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
 
         {/* 3. The "Why Pullum" Split Feature (SECONDARY CONTENT) */}
         <section className="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden shadow-sm border border-slate-200 bg-white">
-          <div 
+          <div
             className="min-h-[200px] md:min-h-[300px] bg-cover bg-center"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1596422846543-74c6ca27bb5e?auto=format&fit=crop&q=80&w=1000')" }}
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1596422846543-74c6ca27bb5e?auto=format&fit=crop&q=80&w=1000')",
+            }}
           ></div>
           <div className="p-6 md:p-8 flex flex-col justify-center space-y-5">
             <div>
@@ -242,7 +278,9 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
                 Right place for catching jobs.
               </h3>
               <p className="text-xs text-[var(--color-ink-2)] leading-snug font-medium">
-                Join one of the UK’s most trusted Poultry Catching Companies. Whether you're an experienced catching squad looking for better rates, or someone new eager to begin your catching career.
+                Join one of the UK’s most trusted Poultry Catching Companies. Whether you're an
+                experienced catching squad looking for better rates, or someone new eager to begin
+                your catching career.
               </p>
             </div>
 
@@ -271,12 +309,15 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
         <section className="bg-slate-50 rounded-2xl p-6 md:p-8 border border-slate-200">
           <div className="flex flex-col md:flex-row gap-8 items-start">
             <div className="md:w-1/3 space-y-2">
-              <h2 className="text-xl font-display text-[var(--color-ink)] leading-tight">We Offer Catchers</h2>
+              <h2 className="text-xl font-display text-[var(--color-ink)] leading-tight">
+                We Offer Catchers
+              </h2>
               <p className="text-xs text-[var(--color-ink-2)] leading-snug font-medium">
-                A professional approach to poultry catching, built on security, respect, and growth. Competitive rates paid weekly.
+                A professional approach to poultry catching, built on security, respect, and growth.
+                Competitive rates paid weekly.
               </p>
             </div>
-            
+
             <div className="md:w-2/3 grid sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <h3 className="font-bold text-sm text-[var(--color-ink)] flex items-center gap-1.5">
@@ -284,7 +325,8 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
                   Flexible Shifts
                 </h3>
                 <p className="text-[11px] text-[var(--color-ink-2)] leading-snug font-medium">
-                  Choose catching schedules that align with your lifestyle. Multiple patterns available.
+                  Choose catching schedules that align with your lifestyle. Multiple patterns
+                  available.
                 </p>
               </div>
 
@@ -294,7 +336,8 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
                   Supportive Teams
                 </h3>
                 <p className="text-[11px] text-[var(--color-ink-2)] leading-snug font-medium">
-                  Work alongside professionals. Clean transport, safety gear, and supportive members.
+                  Work alongside professionals. Clean transport, safety gear, and supportive
+                  members.
                 </p>
               </div>
 
@@ -304,7 +347,8 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
                   Career Progression
                 </h3>
                 <p className="text-[11px] text-[var(--color-ink-2)] leading-snug font-medium">
-                  Pathways from catcher to driver or team manager. We invest in your career and provide full Lantra certification.
+                  Pathways from catcher to driver or team manager. We invest in your career and
+                  provide full Lantra certification.
                 </p>
               </div>
             </div>
@@ -323,7 +367,9 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
               {news.map((item, idx) => (
                 <div key={item.id} className={`group ${idx !== 0 ? 'pt-4' : ''}`}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] text-slate-400 font-mono font-bold">{item.date}</span>
+                    <span className="text-[10px] text-slate-400 font-mono font-bold">
+                      {item.date}
+                    </span>
                     <span className="text-[8px] font-bold text-[var(--color-accent)] bg-[var(--color-accent)]/10 px-1.5 py-0.5 rounded uppercase tracking-tight">
                       {item.category}
                     </span>
@@ -331,7 +377,9 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
                   <h4 className="font-bold text-xs text-[var(--color-ink)] leading-snug group-hover:text-[var(--color-accent)] transition-colors mb-1">
                     {item.title}
                   </h4>
-                  <p className="text-[var(--color-ink-2)] leading-snug text-[11px] font-medium">{item.summary}</p>
+                  <p className="text-[var(--color-ink-2)] leading-snug text-[11px] font-medium">
+                    {item.summary}
+                  </p>
                 </div>
               ))}
             </div>
@@ -345,7 +393,10 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
             </div>
             <div className="space-y-3">
               {events.map((evt) => (
-                <div key={evt.id} className="p-3 bg-slate-50 border border-slate-100 rounded-lg space-y-1.5 hover:border-slate-300 transition-colors">
+                <div
+                  key={evt.id}
+                  className="p-3 bg-slate-50 border border-slate-100 rounded-lg space-y-1.5 hover:border-slate-300 transition-colors"
+                >
                   <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 font-bold">
                     <span className="text-[var(--color-ink)]">{evt.date}</span>
                     <span>{evt.time}</span>
@@ -368,7 +419,10 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
             </div>
             <div className="space-y-3">
               {resources.map((res, idx) => (
-                <div key={idx} className="group p-3 bg-slate-50 border border-slate-100 rounded-lg hover:bg-white hover:border-slate-200 hover:shadow-sm transition-all duration-200">
+                <div
+                  key={idx}
+                  className="group p-3 bg-slate-50 border border-slate-100 rounded-lg hover:bg-white hover:border-slate-200 hover:shadow-sm transition-all duration-200"
+                >
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[8px] font-bold text-slate-500 uppercase tracking-tight">
                       {res.type}
@@ -390,7 +444,6 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
             </div>
           </div>
         </section>
-
       </div>
     </div>
   );

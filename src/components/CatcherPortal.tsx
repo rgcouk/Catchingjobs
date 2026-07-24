@@ -3,7 +3,6 @@ import {
   Lock,
   User,
   LogOut,
-  CheckCircle2,
   FileText,
   Send,
   Sparkles,
@@ -29,14 +28,12 @@ import { SubmittedApplication } from '../App';
 interface CatcherPortalProps {
   applications: SubmittedApplication[];
   onApply: () => void;
-  onCompleteSafetyTasks: (ref: string) => void;
   onUpdateProfile: (ref: string, data: Partial<SubmittedApplication>) => void;
 }
 
 export default function CatcherPortal({
   applications,
   onApply,
-  onCompleteSafetyTasks,
   onUpdateProfile,
 }: CatcherPortalProps) {
   // Authentication states
@@ -71,6 +68,7 @@ export default function CatcherPortal({
   // Sync form states when currentUser changes
   useEffect(() => {
     if (currentUser) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDob(currentUser.dateOfBirth || '');
       setNiNumber(currentUser.niNumber || '');
       setAddressLine1(currentUser.addressLine1 || '');
@@ -151,9 +149,11 @@ export default function CatcherPortal({
     if (currentUser) {
       const refreshed = applications.find((app) => app.rosterRef === currentUser.rosterRef);
       if (refreshed) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentUser(refreshed);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applications]);
 
   const handleProfileSubmit = (e: React.FormEvent) => {

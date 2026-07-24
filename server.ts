@@ -84,6 +84,51 @@ app.post('/api/applications', async (req, res) => {
   }
 });
 
+// Intake Wizard Webhook
+app.post('/api/webhook/intake', async (req, res) => {
+  try {
+    const {
+      name,
+      phone,
+      town,
+      postcode,
+      hasRightToWork,
+      hasDrivingLicense,
+      shiftAvailability,
+      sector
+    } = req.body;
+
+    const prefix = (sector || 'chi').substring(0, 3).toUpperCase();
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+    const rosterRef = `PL-${prefix}-${randomNum}`;
+
+    const timestamp = new Date().toLocaleString('en-GB', { 
+      day: '2-digit', month: '2-digit', year: 'numeric', 
+      hour: '2-digit', minute: '2-digit' 
+    });
+
+    const application = await prisma.application.create({
+      data: {
+        rosterRef,
+        name,
+        phone,
+        town,
+        postcode,
+        hasRightToWork,
+        hasDrivingLicense,
+        shiftAvailability: shiftAvailability || 'Any',
+        sector: sector || 'chicken',
+        timestamp,
+      },
+    });
+
+    res.status(201).json({ success: true, application });
+  } catch (error) {
+    console.error('Error processing intake webhook:', error);
+    res.status(500).json({ error: 'Failed to process application' });
+  }
+});
+
 // Update an existing application
 app.put('/api/applications/:rosterRef', async (req, res) => {
   try {

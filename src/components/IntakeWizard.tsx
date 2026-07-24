@@ -6,7 +6,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  User,
   Phone,
   MapPin,
   CheckCircle2,
@@ -16,11 +15,8 @@ import {
   PhoneCall,
   AlertTriangle,
   Info,
-  FileCheck,
   Facebook,
   Chrome,
-  Check,
-  Mail,
   UserCheck,
   Sparkles,
   RefreshCw,
@@ -57,6 +53,8 @@ export default function IntakeWizard({
 
   // Simulated authentication process logs
   const [authProgressMessage, setAuthProgressMessage] = useState('');
+
+  const [generatedRef, setGeneratedRef] = useState('');
 
   // Onboarding wizard steps
   const [step, setStep] = useState(1);
@@ -139,7 +137,10 @@ export default function IntakeWizard({
     }
   };
 
-  const handleSelectionChange = (name: keyof Omit<ApplicationData, 'name'>, value: any) => {
+  const handleSelectionChange = (
+    name: keyof Omit<ApplicationData, 'name'>,
+    value: string | boolean | null,
+  ) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
@@ -198,6 +199,7 @@ export default function IntakeWizard({
     } else if (step === 2) {
       if (validateStep2()) {
         const uniqueRef = `PL-${sectorId === 'chicken' ? 'CHI' : 'TUR'}-${Math.floor(1000 + Math.random() * 9000)}`;
+        setGeneratedRef(uniqueRef);
         setStep(3);
 
         // Final submit combining social profile details and onboarding questions!
@@ -873,8 +875,7 @@ export default function IntakeWizard({
                   Your Assigned Roster ID
                 </div>
                 <div className="text-xl font-mono font-black text-slate-900 tracking-widest">
-                  PL-{sectorId === 'chicken' ? 'CHI' : 'TUR'}-
-                  {Math.floor(1000 + Math.random() * 8999)}
+                  {generatedRef}
                 </div>
                 <p className="text-[10px] text-slate-500 leading-snug">
                   Please quote this identifier during coordination calls. Registered to{' '}

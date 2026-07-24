@@ -4,23 +4,9 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation, Navigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import {
-  ShieldCheck,
-  Layers,
-  MapPin,
-  PhoneCall,
-  Lock,
-  SlidersHorizontal,
-  ChevronRight,
-  Database,
-  Building2,
-  HelpCircle,
-  Briefcase,
-  X,
-  Sparkles,
-  Send,
-} from 'lucide-react';
+import { ShieldCheck, Lock, Database, Building2, HelpCircle, X, Send } from 'lucide-react';
 
 import Switchboard from './components/Switchboard';
 import SectorHub from './components/SectorHub';
@@ -31,7 +17,7 @@ import CorporateLander from './components/CorporateLander';
 import CatcherPortal from './components/CatcherPortal';
 
 import { ApplicationData } from './types';
-import { REGIONS, TENANTS } from './data';
+import { REGIONS } from './data';
 
 export interface SubmittedApplication extends ApplicationData {
   rosterRef: string;
@@ -60,16 +46,36 @@ export interface SubmittedApplication extends ApplicationData {
   profileFormCompleted?: boolean;
 }
 
+// Wrapper to extract Region parameters
+function RegionRoute({
+  sectorId,
+  onJoinRoster,
+  onNavigate,
+}: {
+  sectorId: 'chicken' | 'turkey';
+  onJoinRoster: () => void;
+  onNavigate: (sub: 'chicken' | 'turkey', reg: string) => void;
+}) {
+  const { regionId } = useParams<{ regionId: string }>();
+  if (!regionId) return null;
+  return (
+    <RegionLander
+      regionId={regionId}
+      sectorId={sectorId}
+      onBackToSector={() => onNavigate(sectorId, '')}
+      onJoinRoster={onJoinRoster}
+    />
+  );
+}
+
 export default function App() {
-  // Simulated address state - Default to 'root' (directory is first page)
-  const [subdomain, setSubdomain] = useState<
-    'root' | 'chicken' | 'turkey' | 'corporate' | 'portal'
-  >('root');
-  const [regionId, setRegionId] = useState<string>('');
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [showWizard, setShowWizard] = useState<boolean>(false);
 
   // Interactive administrator panel state
-  const [showPortal, setShowPortal] = useState<boolean>(false); // Start hidden/collapsed for pristine user experience, can toggle with header button
+  const [showPortal, setShowPortal] = useState<boolean>(false);
   const [applications, setApplications] = useState<SubmittedApplication[]>([]);
   const [activeNotification, setActiveNotification] = useState<{
     name: string;
@@ -93,23 +99,20 @@ export default function App() {
     fetchApplications();
   }, []);
 
-  // Instead of updating all applications in local storage, we just update the local state.
-  // Mutations to the API are done directly in the handlers.
-  const saveApplications = (newApps: SubmittedApplication[]) => {
-    setApplications(newApps);
-  };
-
-  // Simulated browser navigation handler
   const handleNavigate = (
     sub: 'root' | 'chicken' | 'turkey' | 'corporate' | 'portal',
     reg: string,
   ) => {
-    setSubdomain(sub);
-    setRegionId(reg);
+    let target = '/';
+    if (sub === 'corporate') target = '/corporate';
+    if (sub === 'portal') target = '/portal';
+    if (sub === 'chicken') target = reg ? `/chickens/${reg}` : '/chickens';
+    if (sub === 'turkey') target = reg ? `/turkeys/${reg}` : '/turkeys';
+
+    navigate(target);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Callback from successful submission in the intake wizard
   const handleWizardSuccess = async (
     data: ApplicationData & { rosterRef: string; sector: 'chicken' | 'turkey' },
   ) => {
@@ -130,7 +133,7 @@ export default function App() {
     };
 
     try {
-      const res = await fetch('/api/applications', {
+      const res = await fetch('/api/webhook/intake', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newApp),
@@ -139,14 +142,12 @@ export default function App() {
         const savedApp = await res.json();
         setApplications((prev) => [savedApp, ...prev]);
 
-        // Trigger admin alert notification
         setActiveNotification({
           name: data.name,
           ref: data.rosterRef,
           sector: data.sector === 'chicken' ? 'Chicken catching' : 'Turkey catching',
         });
 
-        // Auto open the Portal CRM drawer for real-time visibility
         setShowPortal(true);
       }
     } catch (e) {
@@ -201,7 +202,6 @@ export default function App() {
     }
   };
 
-  // Portal modification handlers
   const handlePurgePortal = async () => {
     try {
       await fetch('/api/applications', { method: 'DELETE' });
@@ -237,12 +237,24 @@ export default function App() {
     }
   };
 
-  // Determine current active region metadata
-  const currentRegion = REGIONS.find((r) => r.id === regionId);
+  const path = location.pathname;
+  const pathParts = path.split('/');
+  const regionIdFromPath = pathParts.length > 2 ? pathParts[2] : '';
+  const currentRegion = REGIONS.find((r) => r.id === regionIdFromPath);
+
+  const activeTab =
+    path === '/corporate'
+      ? 'corporate'
+      : path === '/portal'
+        ? 'portal'
+        : path.startsWith('/chickens')
+          ? 'chicken'
+          : path.startsWith('/turkeys')
+            ? 'turkey'
+            : 'root';
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-slate-200 selection:text-slate-900 antialiased">
-      {/* 2. Full-Width Glass Navigation (Pullum Inspired) */}
       <nav className="fixed top-0 left-0 right-0 z-50 h-[72px] bg-[var(--color-paper)]/95 backdrop-blur-md border-b border-[var(--color-rule)] flex items-center justify-center transition-all">
         <div className="w-full max-w-[1200px] px-6 lg:px-8 flex items-center justify-between">
           <div
@@ -264,7 +276,7 @@ export default function App() {
                 <button
                   onClick={() => handleNavigate('root', '')}
                   className={`text-sm font-medium transition-colors cursor-pointer ${
-                    subdomain === 'root'
+                    activeTab === 'root'
                       ? 'text-[var(--color-accent)]'
                       : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)]'
                   }`}
@@ -276,7 +288,7 @@ export default function App() {
                 <button
                   onClick={() => handleNavigate('chicken', '')}
                   className={`text-sm font-medium transition-colors cursor-pointer ${
-                    subdomain === 'chicken' && !regionId
+                    activeTab === 'chicken' && !regionIdFromPath
                       ? 'text-[var(--color-accent)]'
                       : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)]'
                   }`}
@@ -288,7 +300,7 @@ export default function App() {
                 <button
                   onClick={() => handleNavigate('turkey', '')}
                   className={`text-sm font-medium transition-colors cursor-pointer ${
-                    subdomain === 'turkey' && !regionId
+                    activeTab === 'turkey' && !regionIdFromPath
                       ? 'text-[var(--color-accent)]'
                       : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)]'
                   }`}
@@ -302,7 +314,7 @@ export default function App() {
               <button
                 onClick={() => handleNavigate('portal', '')}
                 className={`text-sm font-bold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                  subdomain === 'portal'
+                  activeTab === 'portal'
                     ? 'text-[var(--color-accent)]'
                     : 'text-[var(--color-ink)] hover:text-[var(--color-accent)]'
                 }`}
@@ -310,7 +322,7 @@ export default function App() {
                 <Lock className="w-4 h-4" />
                 <span className="hidden sm:inline">Log In</span>
               </button>
-              
+
               <button
                 onClick={() => setShowWizard(true)}
                 className="bg-[var(--color-accent)] hover:bg-[var(--color-focus)] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors cursor-pointer inline-flex items-center gap-2 shadow-sm"
@@ -334,7 +346,6 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Real-time Admin Notification Toast / Banner */}
       <AnimatePresence>
         {activeNotification && (
           <motion.div
@@ -375,58 +386,76 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* 3. Main Workspace Area */}
       <main className="flex-1 w-full pt-[72px] flex flex-col lg:flex-row relative">
-        {/* Left Column: Interactive Routing Content */}
         <div className="flex-1 space-y-6">
-          {subdomain === 'corporate' && (
-            <CorporateLander
-              onNavigate={(sub, reg) => handleNavigate(sub, reg)}
-              onApply={() => setShowWizard(true)}
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Switchboard onNavigate={handleNavigate} onApply={() => setShowWizard(true)} />
+              }
             />
-          )}
-
-          {subdomain === 'root' && (
-            <Switchboard
-              onNavigate={(sub, reg) => handleNavigate(sub, reg)}
-              onApply={() => setShowWizard(true)}
+            <Route
+              path="/corporate"
+              element={
+                <CorporateLander onNavigate={handleNavigate} onApply={() => setShowWizard(true)} />
+              }
             />
-          )}
-
-          {subdomain !== 'root' &&
-            subdomain !== 'corporate' &&
-            subdomain !== 'portal' &&
-            !regionId && (
-              <SectorHub
-                sectorId={subdomain}
-                onSelectRegion={(reg) => handleNavigate(subdomain, reg)}
-                onJoinRoster={() => setShowWizard(true)}
-              />
-            )}
-
-          {subdomain !== 'root' &&
-            subdomain !== 'corporate' &&
-            subdomain !== 'portal' &&
-            regionId && (
-              <RegionLander
-                regionId={regionId}
-                sectorId={subdomain}
-                onBackToSector={() => handleNavigate(subdomain, '')}
-                onJoinRoster={() => setShowWizard(true)}
-              />
-            )}
-
-          {subdomain === 'portal' && (
-            <CatcherPortal
-              applications={applications}
-              onApply={() => setShowWizard(true)}
-              onCompleteSafetyTasks={handleCompleteSafetyTasks}
-              onUpdateProfile={handleUpdateProfile}
+            <Route
+              path="/portal"
+              element={
+                <CatcherPortal
+                  applications={applications}
+                  onApply={() => setShowWizard(true)}
+                  onCompleteSafetyTasks={handleCompleteSafetyTasks}
+                  onUpdateProfile={handleUpdateProfile}
+                />
+              }
             />
-          )}
+            <Route
+              path="/chickens"
+              element={
+                <SectorHub
+                  sectorId="chicken"
+                  onSelectRegion={(reg) => handleNavigate('chicken', reg)}
+                  onJoinRoster={() => setShowWizard(true)}
+                />
+              }
+            />
+            <Route
+              path="/turkeys"
+              element={
+                <SectorHub
+                  sectorId="turkey"
+                  onSelectRegion={(reg) => handleNavigate('turkey', reg)}
+                  onJoinRoster={() => setShowWizard(true)}
+                />
+              }
+            />
+            <Route
+              path="/chickens/:regionId"
+              element={
+                <RegionRoute
+                  sectorId="chicken"
+                  onJoinRoster={() => setShowWizard(true)}
+                  onNavigate={handleNavigate}
+                />
+              }
+            />
+            <Route
+              path="/turkeys/:regionId"
+              element={
+                <RegionRoute
+                  sectorId="turkey"
+                  onJoinRoster={() => setShowWizard(true)}
+                  onNavigate={handleNavigate}
+                />
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </div>
 
-        {/* Right Column / Drawer: Admin Coordinator Portal */}
         {showPortal && (
           <div className="w-full lg:w-96 shrink-0 self-start">
             <RosterPortal
@@ -441,11 +470,9 @@ export default function App() {
         )}
       </main>
 
-      {/* 4. Intake Wizard Modal Overlay */}
       <AnimatePresence>
         {showWizard && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop filter */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -454,7 +481,6 @@ export default function App() {
               className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]"
             />
 
-            {/* Centered card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.98, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -462,11 +488,11 @@ export default function App() {
               className="relative z-10 w-full max-w-lg"
             >
               <IntakeWizard
-                sectorId={subdomain === 'root' ? 'chicken' : subdomain}
+                sectorId={activeTab === 'root' || activeTab === 'chicken' ? 'chicken' : 'turkey'}
                 regionName={currentRegion ? currentRegion.name : 'all'}
                 onSuccess={(data) => {
                   handleWizardSuccess(data);
-                  setShowWizard(false); // Auto-close wizard on success for fast-track feedback
+                  setShowWizard(false);
                 }}
                 onClose={() => setShowWizard(false)}
               />
@@ -475,7 +501,6 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* 5. Minimalist Footprint Footer (Ft1/Ft4 hybrid) */}
       <footer className="border-t border-[var(--color-rule)] bg-[var(--color-paper)] pt-12 pb-16 px-4 shrink-0">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start justify-between gap-12">
           <div className="space-y-4 max-w-sm">
@@ -488,7 +513,7 @@ export default function App() {
               </span>
             </div>
             <p className="text-sm text-[var(--color-ink-2)] leading-relaxed">
-              CatchingJobs.co.uk is the agricultural recruitment platform managed by Pullum Ltd. 
+              CatchingJobs.co.uk is the agricultural recruitment platform managed by Pullum Ltd.
               Stable earnings. Consistent weekly pay. Certified training.
             </p>
           </div>

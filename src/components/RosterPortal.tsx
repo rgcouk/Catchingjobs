@@ -13,7 +13,6 @@ import {
   ShieldCheck,
   UserX,
   FileCheck2,
-  Lock,
   MessageSquare,
   Send,
   X,
@@ -25,11 +24,6 @@ import {
   Chrome,
   ExternalLink,
   Sparkles,
-  Eye,
-  EyeOff,
-  HeartPulse,
-  CreditCard,
-  Calendar,
 } from 'lucide-react';
 import { ApplicationData } from '../types';
 
@@ -198,7 +192,7 @@ export default function RosterPortal({
           <Filter className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           <select
             value={filterSector}
-            onChange={(e) => setFilterSector(e.target.value as any)}
+            onChange={(e) => setFilterSector(e.target.value as 'all' | 'chicken' | 'turkey')}
             className="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-slate-400"
             id="filter-sector-dropdown"
           >
@@ -212,7 +206,9 @@ export default function RosterPortal({
           <CheckCircle className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           <select
             value={filterContacted}
-            onChange={(e) => setFilterContacted(e.target.value as any)}
+            onChange={(e) =>
+              setFilterContacted(e.target.value as 'all' | 'contacted' | 'uncontacted')
+            }
             className="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-slate-400"
             id="filter-status-dropdown"
           >
