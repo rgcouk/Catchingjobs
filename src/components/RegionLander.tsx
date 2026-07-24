@@ -32,17 +32,17 @@ export default function RegionLander({
 }: RegionLanderProps) {
   let region = REGIONS.find((r) => r.id === regionId);
   let town;
-  
+
   if (!region) {
     // Try to find a town
     for (const r of REGIONS) {
       if (r.towns) {
-        const found = r.towns.find(t => t.id === regionId);
+        const found = r.towns.find((t) => t.id === regionId);
         if (found) {
           region = {
             ...r,
             name: found.name,
-            seoCopy: found.localizedCopy
+            seoCopy: found.localizedCopy,
           };
           town = found;
           break;
@@ -83,40 +83,39 @@ export default function RegionLander({
     },
   ];
 
-
   const jsonLd = {
-    "@context": "https://schema.org/",
-    "@type": "JobPosting",
-    "title": `Poultry Catcher - ${region.name}`,
-    "description": region.seoCopy,
-    "identifier": {
-      "@type": "PropertyValue",
-      "name": "Pullum Ltd",
-      "value": `${sectorId}-${regionId}`
+    '@context': 'https://schema.org/',
+    '@type': 'JobPosting',
+    title: `Poultry Catcher - ${region.name}`,
+    description: region.seoCopy,
+    identifier: {
+      '@type': 'PropertyValue',
+      name: 'Pullum Ltd',
+      value: `${sectorId}-${regionId}`,
     },
-    "hiringOrganization": {
-      "@type": "Organization",
-      "name": "Pullum Ltd",
-      "sameAs": "https://catchingjobs.co.uk"
+    hiringOrganization: {
+      '@type': 'Organization',
+      name: 'Pullum Ltd',
+      sameAs: 'https://catchingjobs.co.uk',
     },
-    "jobLocation": {
-      "@type": "Place",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": region.name,
-        "addressCountry": "UK"
-      }
+    jobLocation: {
+      '@type': 'Place',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: region.name,
+        addressCountry: 'UK',
+      },
     },
-    "employmentType": "FULL_TIME",
-    "baseSalary": {
-      "@type": "MonetaryAmount",
-      "currency": "GBP",
-      "value": {
-        "@type": "QuantitativeValue",
-        "value": 750,
-        "unitText": "WEEK"
-      }
-    }
+    employmentType: 'FULL_TIME',
+    baseSalary: {
+      '@type': 'MonetaryAmount',
+      currency: 'GBP',
+      value: {
+        '@type': 'QuantitativeValue',
+        value: 750,
+        unitText: 'WEEK',
+      },
+    },
   };
 
   return (
@@ -130,9 +129,7 @@ export default function RegionLander({
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`Poultry Catching Jobs in ${region.name}`} />
         <meta name="twitter:description" content={region.seoCopy} />
-        <script type="application/ld+json">
-          {JSON.stringify(jsonLd)}
-        </script>
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
       {/* 1. Full-Width Edge-to-Edge Hero */}
       <section className="relative bg-[var(--color-ink)] text-white overflow-hidden min-h-[40vh] flex items-center border-b border-slate-900/10">

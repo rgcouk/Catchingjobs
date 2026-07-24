@@ -57,8 +57,8 @@ const PortalDashboard = () => {
           dateOfBirth: data.dateOfBirth,
           addressLine1: data.addressLine1,
           postcode: data.postcode,
-          declarationSigned: data.declarationSigned === 'on'
-        })
+          declarationSigned: data.declarationSigned === 'on',
+        }),
       });
       if (!res.ok) throw new Error('Failed to submit onboarding');
       alert('Onboarding data saved successfully!');
@@ -79,54 +79,112 @@ const PortalDashboard = () => {
 
         return (
           <div className="p-6 max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold font-display text-[var(--color-ink)] mb-4">Welcome to Your Portal</h1>
+            <h1 className="text-2xl font-bold font-display text-[var(--color-ink)] mb-4">
+              Welcome to Your Portal
+            </h1>
             <div className="bg-white p-6 rounded-lg shadow-sm border border-[var(--color-rule)] mb-6">
               <h2 className="text-xl font-semibold mb-2">Complete Your Onboarding</h2>
-              <p className="text-slate-600 mb-6">Please complete the following steps to finalize your registration.</p>
-              
+              <p className="text-slate-600 mb-6">
+                Please complete the following steps to finalize your registration.
+              </p>
+
               <div className="space-y-4">
                 <div className="flex items-start gap-4 p-4 border border-[var(--color-rule)] rounded-lg bg-slate-50">
-                  <div className="w-8 h-8 rounded-full bg-[var(--color-accent)] text-white flex items-center justify-center font-bold shrink-0">1</div>
+                  <div className="w-8 h-8 rounded-full bg-[var(--color-accent)] text-white flex items-center justify-center font-bold shrink-0">
+                    1
+                  </div>
                   <div className="flex-1">
                     <h3 className="font-semibold">Identity & Basic Details</h3>
-                    <p className="text-sm text-slate-600 mt-1 mb-4">Fill out your NI Number, Address, and Date of Birth.</p>
-                    
+                    <p className="text-sm text-slate-600 mt-1 mb-4">
+                      Fill out your NI Number, Address, and Date of Birth.
+                    </p>
+
                     {isCompleted ? (
                       <div className="text-green-600 font-medium">✓ Completed</div>
                     ) : (
-                      <form onSubmit={handleOnboardingSubmit} className="space-y-4 max-w-md bg-white p-4 rounded border">
+                      <form
+                        onSubmit={handleOnboardingSubmit}
+                        className="space-y-4 max-w-md bg-white p-4 rounded border"
+                      >
                         <div>
                           <label className="block text-sm font-medium mb-1">Date of Birth</label>
-                          <input type="date" name="dateOfBirth" required className="w-full border rounded px-3 py-2" defaultValue={app?.dateOfBirth ? new Date(app.dateOfBirth).toISOString().split('T')[0] : ''} />
+                          <input
+                            type="date"
+                            name="dateOfBirth"
+                            required
+                            className="w-full border rounded px-3 py-2"
+                            defaultValue={
+                              app?.dateOfBirth
+                                ? new Date(app.dateOfBirth).toISOString().split('T')[0]
+                                : ''
+                            }
+                          />
                         </div>
                         <div>
                           <label className="block text-sm font-medium mb-1">NI Number</label>
-                          <input name="niNumber" required className="w-full border rounded px-3 py-2" defaultValue={app?.niNumber || ''} />
+                          <input
+                            name="niNumber"
+                            required
+                            className="w-full border rounded px-3 py-2"
+                            defaultValue={app?.niNumber || ''}
+                          />
                         </div>
                         <div>
                           <label className="block text-sm font-medium mb-1">Address Line 1</label>
-                          <input name="addressLine1" required className="w-full border rounded px-3 py-2" defaultValue={app?.addressLine1 || ''} />
+                          <input
+                            name="addressLine1"
+                            required
+                            className="w-full border rounded px-3 py-2"
+                            defaultValue={app?.addressLine1 || ''}
+                          />
                         </div>
                         <div>
                           <label className="block text-sm font-medium mb-1">Postcode</label>
-                          <input name="postcode" required className="w-full border rounded px-3 py-2" defaultValue={app?.postcode || ''} />
+                          <input
+                            name="postcode"
+                            required
+                            className="w-full border rounded px-3 py-2"
+                            defaultValue={app?.postcode || ''}
+                          />
                         </div>
                         <div className="flex items-center gap-2">
-                          <input type="checkbox" name="declarationSigned" id="decl" required defaultChecked={app?.declarationSigned} />
-                          <label htmlFor="decl" className="text-sm">I declare this information is true</label>
+                          <input
+                            type="checkbox"
+                            name="declarationSigned"
+                            id="decl"
+                            required
+                            defaultChecked={app?.declarationSigned}
+                          />
+                          <label htmlFor="decl" className="text-sm">
+                            I declare this information is true
+                          </label>
                         </div>
-                        <button type="submit" className="w-full bg-[var(--color-accent)] text-white px-4 py-2 rounded">Submit Details</button>
+                        <button
+                          type="submit"
+                          className="w-full bg-[var(--color-accent)] text-white px-4 py-2 rounded"
+                        >
+                          Submit Details
+                        </button>
                       </form>
                     )}
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-4 p-4 border border-[var(--color-rule)] rounded-lg bg-slate-50 opacity-75">
-                  <div className="w-8 h-8 rounded-full bg-slate-300 text-white flex items-center justify-center font-bold shrink-0">2</div>
+                  <div className="w-8 h-8 rounded-full bg-slate-300 text-white flex items-center justify-center font-bold shrink-0">
+                    2
+                  </div>
                   <div>
                     <h3 className="font-semibold">Safety Training</h3>
-                    <p className="text-sm text-slate-600 mt-1">Review the safety guidelines and complete the brief assessment.</p>
-                    <button className="mt-3 px-4 py-2 bg-white border border-[var(--color-rule)] text-sm font-medium rounded hover:bg-slate-50 transition-colors" disabled>Locked</button>
+                    <p className="text-sm text-slate-600 mt-1">
+                      Review the safety guidelines and complete the brief assessment.
+                    </p>
+                    <button
+                      className="mt-3 px-4 py-2 bg-white border border-[var(--color-rule)] text-sm font-medium rounded hover:bg-slate-50 transition-colors"
+                      disabled
+                    >
+                      Locked
+                    </button>
                   </div>
                 </div>
               </div>
@@ -136,7 +194,9 @@ const PortalDashboard = () => {
       case 'applications':
         return (
           <div className="p-6 max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold font-display text-[var(--color-ink)] mb-4">My Applications</h1>
+            <h1 className="text-2xl font-bold font-display text-[var(--color-ink)] mb-4">
+              My Applications
+            </h1>
             <div className="bg-white rounded-lg shadow-sm border border-[var(--color-rule)] overflow-hidden">
               <table className="w-full text-left text-sm">
                 <thead className="bg-slate-50 border-b border-[var(--color-rule)]">
@@ -147,20 +207,26 @@ const PortalDashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--color-rule)]">
-                  {applications.map(app => (
+                  {applications.map((app) => (
                     <tr key={app.id}>
-                      <td className="px-6 py-4 font-medium">{app.jobPosting?.title || 'Unknown Job'}</td>
+                      <td className="px-6 py-4 font-medium">
+                        {app.jobPosting?.title || 'Unknown Job'}
+                      </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                           {app.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-600">{new Date(app.createdAt).toLocaleDateString()}</td>
+                      <td className="px-6 py-4 text-slate-600">
+                        {new Date(app.createdAt).toLocaleDateString()}
+                      </td>
                     </tr>
                   ))}
                   {applications.length === 0 && (
                     <tr>
-                      <td colSpan={3} className="px-6 py-4 text-center text-slate-500">No applications found.</td>
+                      <td colSpan={3} className="px-6 py-4 text-center text-slate-500">
+                        No applications found.
+                      </td>
                     </tr>
                   )}
                 </tbody>
@@ -177,14 +243,14 @@ const PortalDashboard = () => {
     <div className="flex h-screen bg-slate-50 w-full overflow-hidden">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 md:hidden" 
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <aside 
+      <aside
         className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-[var(--color-rule)] flex flex-col transform transition-transform duration-200 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
       >
         <div className="h-16 flex items-center px-6 border-b border-[var(--color-rule)]">
@@ -209,8 +275,8 @@ const PortalDashboard = () => {
                       setSidebarOpen(false);
                     }}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
-                      activeTab === item.id 
-                        ? 'bg-[var(--color-accent)] text-white shadow-sm' 
+                      activeTab === item.id
+                        ? 'bg-[var(--color-accent)] text-white shadow-sm'
                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
@@ -242,17 +308,15 @@ const PortalDashboard = () => {
               User<span className="text-[var(--color-accent)]">Portal</span>
             </span>
           </div>
-          <button 
+          <button
             onClick={() => setSidebarOpen(true)}
             className="p-2 rounded-md text-slate-600 hover:bg-slate-100"
           >
             <Menu className="w-6 h-6" />
           </button>
         </header>
-        
-        <div className="flex-1 overflow-y-auto">
-          {renderContent()}
-        </div>
+
+        <div className="flex-1 overflow-y-auto">{renderContent()}</div>
       </main>
     </div>
   );

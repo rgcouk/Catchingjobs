@@ -5,7 +5,19 @@
 
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate, useParams } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 import { motion, AnimatePresence } from 'motion/react';
+
+function ProtectedRoute({ children, role }: { children: React.ReactNode; role?: string }) {
+  const { user, loading } = useAuth();
+  if (loading)
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (role && user.role !== role) return <Navigate to="/" replace />;
+  return <>{children}</>;
+}
 import { ShieldCheck, Lock, Database, Building2, HelpCircle, X, Send } from 'lucide-react';
 
 import Switchboard from './components/Switchboard';
@@ -71,7 +83,7 @@ function RegionRoute({
   );
 }
 
-export default function App() {
+function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -315,9 +327,9 @@ export default function App() {
 
             <div className="flex items-center gap-4 border-l border-[var(--color-rule)] pl-6 ml-2">
               <button
-                onClick={() => handleNavigate('portal', '')}
+                onClick={() => navigate('/login')}
                 className={`text-sm font-bold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === 'portal'
+                  path === '/login'
                     ? 'text-[var(--color-accent)]'
                     : 'text-[var(--color-ink)] hover:text-[var(--color-accent)]'
                 }`}
@@ -404,8 +416,24 @@ export default function App() {
                 <CorporateLander onNavigate={handleNavigate} onApply={() => setShowWizard(true)} />
               }
             />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/user-portal" element={<PortalDashboard />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute role="ADMIN">
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/user-portal"
+              element={
+                <ProtectedRoute>
+                  <PortalDashboard />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/portal"
               element={
@@ -536,5 +564,13 @@ export default function App() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function AppWrapper() {
+  return (
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   );
 }

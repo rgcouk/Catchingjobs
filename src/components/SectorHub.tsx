@@ -105,22 +105,24 @@ export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: Se
           <div className="grid md:grid-cols-2 gap-3">
             {REGIONS.flatMap((region) => {
               if (region.towns && region.towns.length > 0) {
-                return region.towns.map(town => ({
+                return region.towns.map((town) => ({
                   id: town.id,
                   name: town.name,
                   copy: town.localizedCopy,
                   activeCrews: region.activeCrews,
-                  type: 'Town'
+                  type: 'Town',
                 }));
               }
-              return [{
-                id: region.id,
-                name: region.name,
-                copy: region.seoCopy,
-                activeCrews: region.activeCrews,
-                type: 'Region'
-              }];
-            }).map(item => (
+              return [
+                {
+                  id: region.id,
+                  name: region.name,
+                  copy: region.seoCopy,
+                  activeCrews: region.activeCrews,
+                  type: 'Region',
+                },
+              ];
+            }).map((item) => (
               <div
                 key={item.id}
                 className="group bg-white border border-slate-200 hover:border-[var(--color-ink)] rounded-xl p-4 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"

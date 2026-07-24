@@ -133,22 +133,25 @@ export const REGIONS: Region[] = [
         name: 'Boston',
         pickupPoint: 'Boston Marketplace / Main Depot',
         surroundingAreas: ['Kirton', 'Sutterton', 'Spalding'],
-        localizedCopy: 'Serving Boston, Kirton, Sutterton, and Spalding. Vans leave nightly from Boston Marketplace. We offer fair labor recruitment under strict GLAA compliance. Please note: Pullum Ltd does not provide visa sponsorships for these roles.'
+        localizedCopy:
+          'Serving Boston, Kirton, Sutterton, and Spalding. Vans leave nightly from Boston Marketplace. We offer fair labor recruitment under strict GLAA compliance. Please note: Pullum Ltd does not provide visa sponsorships for these roles.',
       },
       {
         id: 'lincoln',
         name: 'Lincoln',
         pickupPoint: 'Lincoln Central Hub',
         surroundingAreas: ['Washingborough', 'Branston', 'Cherry Willingham'],
-        localizedCopy: 'Serving Lincoln and surrounding agricultural zones. Vans leave nightly from Lincoln Central Hub. Fair labor recruitment and GLAA compliant practices guaranteed. No visa sponsorships available.'
+        localizedCopy:
+          'Serving Lincoln and surrounding agricultural zones. Vans leave nightly from Lincoln Central Hub. Fair labor recruitment and GLAA compliant practices guaranteed. No visa sponsorships available.',
       },
       {
         id: 'grantham',
         name: 'Grantham',
         pickupPoint: 'Grantham Station Outpost',
         surroundingAreas: ['Barrowby', 'Gonerby', 'Colsterworth'],
-        localizedCopy: 'Serving Grantham, Barrowby, Gonerby, and Colsterworth. Vans leave nightly from Grantham Station Outpost. Strict GLAA compliance. Note: No visa sponsorships are provided.'
-      }
+        localizedCopy:
+          'Serving Grantham, Barrowby, Gonerby, and Colsterworth. Vans leave nightly from Grantham Station Outpost. Strict GLAA compliance. Note: No visa sponsorships are provided.',
+      },
     ],
   },
   {
@@ -165,8 +168,9 @@ export const REGIONS: Region[] = [
         name: 'Attleborough',
         pickupPoint: 'Attleborough Town Center',
         surroundingAreas: ['Wymondham', 'Besthorpe', 'Snetterton'],
-        localizedCopy: 'Serving Attleborough, Wymondham, Besthorpe, and Snetterton. Vans leave nightly from Attleborough Town Center. Fully GLAA compliant recruitment with no hidden fees. No visa sponsorship available.'
-      }
+        localizedCopy:
+          'Serving Attleborough, Wymondham, Besthorpe, and Snetterton. Vans leave nightly from Attleborough Town Center. Fully GLAA compliant recruitment with no hidden fees. No visa sponsorship available.',
+      },
     ],
   },
   {
