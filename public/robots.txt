@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://catchingjobs.co.uk/sitemap.xml
