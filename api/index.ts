@@ -96,6 +96,33 @@ app.post('/api/applications', async (req, res) => {
   }
 });
 
+// Clerk Webhook for user sync
+app.post('/api/webhook/clerk', async (req, res) => {
+  try {
+    const evt = req.body;
+    const { id, email_addresses } = evt?.data || {};
+    const email = email_addresses && email_addresses.length > 0 ? email_addresses[0].email_address : `${id}@placeholder.com`;
+
+    if (evt?.type === 'user.created' || evt?.type === 'user.updated') {
+      await prisma.user.upsert({
+        where: { id: id as string },
+        update: { email: email as string },
+        create: {
+          id: id as string,
+          email: email as string,
+          passwordHash: '',
+          role: 'WORKER'
+        }
+      });
+    }
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Error processing clerk webhook:', error);
+    res.status(500).json({ error: 'Failed to process clerk webhook' });
+  }
+});
+
 // Intake Wizard Webhook
 app.post('/api/webhook/intake', async (req, res) => {
   try {

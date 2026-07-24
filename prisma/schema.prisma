@@ -29,6 +29,7 @@ model Application {
   contacted             Boolean  @default(false)
   safetyResourcesSent   Boolean  @default(false)
   safetyTasksCompleted  Boolean  @default(false)
+  status                String   @default("NEW")
   
   // Compliance details
   dateOfBirth           String?

@@ -100,7 +100,9 @@ const AdminDashboard = () => {
         body: JSON.stringify({
           title: data.title,
           description: data.description,
-          townId: data.townId ? parseInt(data.townId as string, 10) : undefined,
+          payRate: data.payRate,
+          sector: data.sector,
+          townId: data.townId ? data.townId.toString() : undefined,
           status: 'ACTIVE',
         }),
       });
@@ -141,7 +143,7 @@ const AdminDashboard = () => {
                       className="p-3 bg-slate-50 border border-[var(--color-rule)] rounded shadow-sm"
                     >
                       <p className="font-medium text-sm">
-                        {app.firstName} {app.lastName}
+                        {app.name}
                       </p>
                       <p className="text-xs text-slate-500">
                         {app.jobPosting?.title || 'Unknown Job'}
@@ -167,7 +169,7 @@ const AdminDashboard = () => {
                       className="p-3 bg-slate-50 border border-[var(--color-rule)] rounded shadow-sm"
                     >
                       <p className="font-medium text-sm">
-                        {app.firstName} {app.lastName}
+                        {app.name}
                       </p>
                       <p className="text-xs text-slate-500">
                         {app.jobPosting?.title || 'Unknown Job'}
@@ -193,7 +195,7 @@ const AdminDashboard = () => {
                       className="p-3 bg-slate-50 border border-[var(--color-rule)] rounded shadow-sm"
                     >
                       <p className="font-medium text-sm">
-                        {app.firstName} {app.lastName}
+                        {app.name}
                       </p>
                       <p className="text-xs text-slate-500">
                         {app.jobPosting?.title || 'Unknown Job'}
@@ -313,6 +315,23 @@ const AdminDashboard = () => {
                     className="w-full border rounded px-3 py-2"
                     rows={3}
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Pay Rate</label>
+                  <input
+                    name="payRate"
+                    required
+                    className="w-full border rounded px-3 py-2"
+                    placeholder="e.g. £15/hr"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Sector</label>
+                  <select name="sector" required className="w-full border rounded px-3 py-2">
+                    <option value="">Select Sector...</option>
+                    <option value="chicken">Chicken</option>
+                    <option value="turkey">Turkey</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Town</label>

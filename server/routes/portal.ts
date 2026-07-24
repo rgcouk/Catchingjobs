@@ -5,8 +5,29 @@ export default function createPortalRouter(prisma: any) {
 
   // Temporary helper to get user id from headers/query until auth is set up
   const getUserId = (req: any) => {
-    const userId = req.headers['x-user-id'] || req.query.userId;
+    const userId = req.auth?.userId || req.headers['x-user-id'] || req.query.userId;
     return userId ? (userId as string) : null;
+  };
+
+  const getOrCreateUser = async (userId: string) => {
+    let user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { application: true }
+    });
+
+    if (!user) {
+      // Self-heal missed Clerk webhooks
+      user = await prisma.user.create({
+        data: {
+          id: userId,
+          email: `${userId}@placeholder.clerk.com`,
+          passwordHash: '',
+          role: 'WORKER'
+        },
+        include: { application: true }
+      });
+    }
+    return user;
   };
 
   // Get worker profile & compliance status
@@ -15,11 +36,7 @@ export default function createPortalRouter(prisma: any) {
       const userId = getUserId(req);
       if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: { application: true }
-      });
-      if (!user) return res.status(404).json({ error: 'User not found' });
+      const user = await getOrCreateUser(userId);
 
       // Remove password hash from response
       const { passwordHash, ...userWithoutPassword } = user;
@@ -36,9 +53,7 @@ export default function createPortalRouter(prisma: any) {
       const userId = getUserId(req);
       if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
-      const user = await prisma.user.findUnique({
-        where: { id: userId }
-      });
+      const user = await getOrCreateUser(userId);
       if (!user || !user.applicationId) return res.status(404).json({ error: 'No associated application found' });
 
       const {
@@ -71,9 +86,7 @@ export default function createPortalRouter(prisma: any) {
       const userId = getUserId(req);
       if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
-      const user = await prisma.user.findUnique({
-        where: { id: userId }
-      });
+      const user = await getOrCreateUser(userId);
       if (!user || !user.applicationId) return res.json([]);
 
       const application = await prisma.application.findUnique({
