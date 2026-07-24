@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ClipboardList, UserCheck, LogOut, Menu, User } from 'lucide-react';
+import { useUser, useClerk } from '@clerk/clerk-react';
 
-const PortalDashboard = () => {
+interface PortalDashboardProps {
+  setShowWizard: (show: boolean) => void;
+}
+
+const PortalDashboard = ({ setShowWizard }: PortalDashboardProps) => {
   const [activeTab, setActiveTab] = useState('onboarding');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
@@ -10,9 +15,10 @@ const PortalDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Hardcode userId=1 for now as per the backend temporary auth setup.
-  // In a real app, this would be provided via Context/Auth state.
-  const USER_ID = '1';
+  const { user } = useUser();
+  const { signOut } = useClerk();
+
+  const USER_ID = user?.id || '';
 
   const navItems = [
     { id: 'onboarding', label: 'Portal Onboarding', icon: UserCheck },
@@ -27,10 +33,15 @@ const PortalDashboard = () => {
     setLoading(true);
     setError(null);
     try {
+      if (!USER_ID) return;
       if (activeTab === 'onboarding') {
         const res = await fetch(`/api/portal/me?userId=${USER_ID}`);
         if (!res.ok) throw new Error('Failed to fetch profile');
-        setProfile(await res.json());
+        const data = await res.json();
+        setProfile(data);
+        if (!data?.application) {
+          setShowWizard(true);
+        }
       } else if (activeTab === 'applications') {
         const res = await fetch(`/api/portal/applications?userId=${USER_ID}`);
         if (!res.ok) throw new Error('Failed to fetch applications');
@@ -289,7 +300,7 @@ const PortalDashboard = () => {
           </ul>
         </nav>
         <div className="p-4 border-t border-[var(--color-rule)]">
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
+          <button onClick={() => signOut()} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors cursor-pointer">
             <LogOut className="w-5 h-5" />
             Sign Out
           </button>

@@ -6,7 +6,7 @@ export default function createPortalRouter(prisma: any) {
   // Temporary helper to get user id from headers/query until auth is set up
   const getUserId = (req: any) => {
     const userId = req.headers['x-user-id'] || req.query.userId;
-    return userId ? parseInt(userId as string, 10) : null;
+    return userId ? (userId as string) : null;
   };
 
   // Get worker profile & compliance status

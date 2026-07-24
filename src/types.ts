@@ -44,6 +44,7 @@ export interface TenantConfig {
 }
 
 export interface ApplicationData {
+  userId?: string;
   name: string;
   email?: string;
   phone: string;

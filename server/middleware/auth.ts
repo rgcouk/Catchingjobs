@@ -1,4 +1,4 @@
-import { Response, NextFunction, Request } from 'express';
+import type { Response, NextFunction, Request } from 'express';
 import { requireAuth } from '@clerk/express';
 
 export interface AuthRequest extends Request {

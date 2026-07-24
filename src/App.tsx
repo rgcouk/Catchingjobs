@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate, useParams } from 'react-router-dom';
-import { useAuth, useUser, SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
+import { useAuth, useUser, SignedIn, SignedOut, UserButton, AuthenticateWithRedirectCallback } from '@clerk/clerk-react';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import { motion, AnimatePresence } from 'motion/react';
@@ -158,13 +158,15 @@ function App() {
         const savedApp = await res.json();
         setApplications((prev) => [savedApp, ...prev]);
 
-        setActiveNotification({
-          name: data.name,
-          ref: data.rosterRef,
-          sector: data.sector === 'chicken' ? 'Chicken catching' : 'Turkey catching',
-        });
+        if (!location.pathname.includes('/user-portal')) {
+          setActiveNotification({
+            name: data.name,
+            ref: data.rosterRef,
+            sector: data.sector === 'chicken' ? 'Chicken catching' : 'Turkey catching',
+          });
 
-        setShowPortal(true);
+          setShowPortal(true);
+        }
       }
     } catch (e) {
       console.error('Failed to create application:', e);
@@ -424,6 +426,7 @@ function App() {
             />
             <Route path="/login/*" element={<Login />} />
             <Route path="/register/*" element={<Register />} />
+            <Route path="/sso-callback" element={<AuthenticateWithRedirectCallback signInForceRedirectUrl="/user-portal" signUpForceRedirectUrl="/user-portal" />} />
             <Route
               path="/admin"
               element={
@@ -436,7 +439,7 @@ function App() {
               path="/user-portal"
               element={
                 <ProtectedRoute>
-                  <PortalDashboard />
+                  <PortalDashboard setShowWizard={setShowWizard} />
                 </ProtectedRoute>
               }
             />

@@ -100,7 +100,9 @@ app.post('/api/applications', async (req, res) => {
 app.post('/api/webhook/intake', async (req, res) => {
   try {
     const {
+      userId,
       name,
+      email,
       phone,
       town,
       postcode,
@@ -119,10 +121,24 @@ app.post('/api/webhook/intake', async (req, res) => {
       hour: '2-digit', minute: '2-digit' 
     });
 
+    if (userId) {
+      // Upsert the user in our database if they don't exist yet
+      await prisma.user.upsert({
+        where: { id: userId },
+        update: {},
+        create: {
+          id: userId,
+          email: email || `${userId}@placeholder.clerk.com`,
+          passwordHash: '',
+        }
+      });
+    }
+
     const application = await prisma.application.create({
       data: {
         rosterRef,
         name,
+        email,
         phone,
         town,
         postcode,
@@ -131,6 +147,9 @@ app.post('/api/webhook/intake', async (req, res) => {
         shiftAvailability: shiftAvailability || 'Any',
         sector: sector || 'chicken',
         timestamp,
+        ...(userId ? {
+          user: { connect: { id: userId } }
+        } : {})
       },
     });
 
