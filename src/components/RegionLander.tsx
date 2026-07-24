@@ -14,6 +14,7 @@ import {
   Phone,
   ArrowRight,
 } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 import { REGIONS, TENANTS } from '../data';
 
 interface RegionLanderProps {
@@ -62,8 +63,57 @@ export default function RegionLander({
     },
   ];
 
+
+  const jsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "JobPosting",
+    "title": `Poultry Catcher - ${region.name}`,
+    "description": region.seoCopy,
+    "identifier": {
+      "@type": "PropertyValue",
+      "name": "Pullum Ltd",
+      "value": `${sectorId}-${regionId}`
+    },
+    "hiringOrganization": {
+      "@type": "Organization",
+      "name": "Pullum Ltd",
+      "sameAs": "https://catchingjobs.co.uk"
+    },
+    "jobLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": region.name,
+        "addressCountry": "UK"
+      }
+    },
+    "employmentType": "FULL_TIME",
+    "baseSalary": {
+      "@type": "MonetaryAmount",
+      "currency": "GBP",
+      "value": {
+        "@type": "QuantitativeValue",
+        "value": 750,
+        "unitText": "WEEK"
+      }
+    }
+  };
+
   return (
     <div className="font-sans w-full pb-10">
+      <Helmet>
+        <title>{`Poultry Catching Jobs in ${region.name} | CatchingJobs.co.uk`}</title>
+        <meta name="description" content={region.seoCopy} />
+        <meta property="og:title" content={`Poultry Catching Jobs in ${region.name}`} />
+        <meta property="og:description" content={region.seoCopy} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`Poultry Catching Jobs in ${region.name}`} />
+        <meta name="twitter:description" content={region.seoCopy} />
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLd)}
+        </script>
+      </Helmet>
       {/* 1. Full-Width Edge-to-Edge Hero */}
       <section className="relative bg-[var(--color-ink)] text-white overflow-hidden min-h-[40vh] flex items-center border-b border-slate-900/10">
         {/* Subtle background decoration */}
