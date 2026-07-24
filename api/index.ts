@@ -1,21 +1,16 @@
 import express from 'express';
-import { PrismaClient } from './src/generated/prisma/client.ts';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
-import Database from 'better-sqlite3';
+import { PrismaClient } from '../src/generated/prisma/client/index.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import createAdminRouter from './server/routes/admin.ts';
-import createPortalRouter from './server/routes/portal.ts';
+import createAdminRouter from '../server/routes/admin.ts';
+import createPortalRouter from '../server/routes/portal.ts';
 import { clerkMiddleware } from '@clerk/express';
-import { authenticate } from './server/middleware/auth.ts';
+import { authenticate } from '../server/middleware/auth.ts';
 
 dotenv.config();
 
 const app = express();
-const db = new Database('./dev.db');
-const adapter = new PrismaBetterSqlite3(db);
-const prisma = new PrismaClient({ adapter });
-const PORT = 3001;
+const prisma = new PrismaClient();
 
 app.use(express.json());
 app.use(cookieParser());
@@ -181,6 +176,4 @@ app.delete('/api/applications', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend server listening on port ${PORT}`);
-});
+export default app;
