@@ -5,17 +5,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate, useParams } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { useAuth, useUser, SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import { motion, AnimatePresence } from 'motion/react';
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode; role?: string }) {
-  const { user, loading } = useAuth();
-  if (loading)
+  const { isLoaded, userId } = useAuth();
+  const { user } = useUser();
+  if (!isLoaded)
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  if (!user) return <Navigate to="/login" replace />;
-  if (role && user.role !== role) return <Navigate to="/" replace />;
+  if (!userId) return <Navigate to="/login" replace />;
+  if (role && user?.publicMetadata?.role !== role) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
 import { ShieldCheck, Lock, Database, Building2, HelpCircle, X, Send } from 'lucide-react';
@@ -326,23 +327,28 @@ function App() {
             </ul>
 
             <div className="flex items-center gap-4 border-l border-[var(--color-rule)] pl-6 ml-2">
-              <button
-                onClick={() => navigate('/login')}
-                className={`text-sm font-bold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                  path === '/login'
-                    ? 'text-[var(--color-accent)]'
-                    : 'text-[var(--color-ink)] hover:text-[var(--color-accent)]'
-                }`}
-              >
-                <Lock className="w-4 h-4" />
-                <span className="hidden sm:inline">Log In</span>
-              </button>
+              <SignedOut>
+                <button
+                  onClick={() => navigate('/login')}
+                  className={`text-sm font-bold transition-colors cursor-pointer flex items-center gap-1.5 ${
+                    path === '/login'
+                      ? 'text-[var(--color-accent)]'
+                      : 'text-[var(--color-ink)] hover:text-[var(--color-accent)]'
+                  }`}
+                >
+                  <Lock className="w-4 h-4" />
+                  <span className="hidden sm:inline">Log In / Sign Up</span>
+                </button>
+              </SignedOut>
+              <SignedIn>
+                <UserButton afterSignOutUrl="/" />
+              </SignedIn>
 
               <button
                 onClick={() => setShowWizard(true)}
                 className="bg-[var(--color-accent)] hover:bg-[var(--color-focus)] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors cursor-pointer inline-flex items-center gap-2 shadow-sm"
               >
-                Sign Up
+                Apply Now
               </button>
 
               <button
@@ -567,10 +573,4 @@ function App() {
   );
 }
 
-export default function AppWrapper() {
-  return (
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-  );
-}
+export default App;

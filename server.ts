@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import createAdminRouter from './server/routes/admin.ts';
 import createPortalRouter from './server/routes/portal.ts';
-import createAuthRouter from './server/routes/auth.ts';
+import { clerkMiddleware } from '@clerk/express';
 import { authenticate } from './server/middleware/auth.ts';
 
 dotenv.config();
@@ -20,8 +20,7 @@ const PORT = 3001;
 app.use(express.json());
 app.use(cookieParser());
 
-// Auth Routes
-app.use('/api/auth', createAuthRouter(prisma));
+app.use(clerkMiddleware({ secretKey: process.env.CLERK_SECRET_KEY }));
 
 // Admin & Portal Routes
 app.use('/api/admin', authenticate, createAdminRouter(prisma));

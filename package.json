@@ -12,6 +12,9 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\""
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.61.9",
+    "@clerk/express": "^2.1.45",
+    "@clerk/react": "^6.12.7",
     "@google/genai": "^2.4.0",
     "@prisma/adapter-better-sqlite3": "^7.9.0",
     "@prisma/client": "^7.9.0",
