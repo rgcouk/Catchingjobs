@@ -30,7 +30,27 @@ export default function RegionLander({
   onBackToSector,
   onJoinRoster,
 }: RegionLanderProps) {
-  const region = REGIONS.find((r) => r.id === regionId);
+  let region = REGIONS.find((r) => r.id === regionId);
+  let town;
+  
+  if (!region) {
+    // Try to find a town
+    for (const r of REGIONS) {
+      if (r.towns) {
+        const found = r.towns.find(t => t.id === regionId);
+        if (found) {
+          region = {
+            ...r,
+            name: found.name,
+            seoCopy: found.localizedCopy
+          };
+          town = found;
+          break;
+        }
+      }
+    }
+  }
+
   const tenant = TENANTS[sectorId];
 
   if (!region) {
