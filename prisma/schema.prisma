@@ -48,6 +48,59 @@ model Application {
   declarationSigned     Boolean  @default(false)
   profileFormCompleted  Boolean  @default(false)
 
+  // Relationships
+  jobPostingId          Int?
+  jobPosting            JobPosting? @relation(fields: [jobPostingId], references: [id])
+  user                  User?
+
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  email          String    @unique
+  passwordHash   String
+  role           String    @default("WORKER") // "ADMIN" or "WORKER"
+  
+  // Link to their application/compliance data
+  applicationId  Int?      @unique
+  application    Application? @relation(fields: [applicationId], references: [id])
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Region {
+  id            String    @id
+  name          String
+  county        String
+  activeCrews   Int       @default(0)
+  seoCopy       String
+  towns         Town[]
+}
+
+model Town {
+  id            String    @id
+  name          String
+  pickupPoint   String
+  surrounding   String
+  localizedCopy String
+  regionId      String
+  region        Region    @relation(fields: [regionId], references: [id], onDelete: Cascade)
+}
+
+model JobPosting {
+  id            Int       @id @default(autoincrement())
+  title         String
+  sector        String
+  townId        String
+  description   String
+  payRate       String
+  status        String    @default("ACTIVE")
+  
+  applications  Application[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }

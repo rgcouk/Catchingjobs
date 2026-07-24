@@ -16,6 +16,9 @@ import RosterPortal from './components/RosterPortal';
 import CorporateLander from './components/CorporateLander';
 import CatcherPortal from './components/CatcherPortal';
 
+import AdminDashboard from './pages/admin/AdminDashboard';
+import PortalDashboard from './pages/portal/PortalDashboard';
+
 import { ApplicationData } from './types';
 import { REGIONS } from './data';
 
@@ -401,6 +404,8 @@ export default function App() {
                 <CorporateLander onNavigate={handleNavigate} onApply={() => setShowWizard(true)} />
               }
             />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/user-portal" element={<PortalDashboard />} />
             <Route
               path="/portal"
               element={

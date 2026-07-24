@@ -3,6 +3,8 @@ import { PrismaClient } from './src/generated/prisma/client.ts';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import Database from 'better-sqlite3';
 import dotenv from 'dotenv';
+import createAdminRouter from './server/routes/admin.ts';
+import createPortalRouter from './server/routes/portal.ts';
 
 dotenv.config();
 
@@ -13,6 +15,10 @@ const prisma = new PrismaClient({ adapter });
 const PORT = 3001;
 
 app.use(express.json());
+
+// Admin & Portal Routes
+app.use('/api/admin', createAdminRouter(prisma));
+app.use('/api/portal', createPortalRouter(prisma));
 
 // Get all applications
 app.get('/api/applications', async (req, res) => {
