@@ -422,8 +422,8 @@ function App() {
                 <CorporateLander onNavigate={handleNavigate} onApply={() => setShowWizard(true)} />
               }
             />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/login/*" element={<Login />} />
+            <Route path="/register/*" element={<Register />} />
             <Route
               path="/admin"
               element={

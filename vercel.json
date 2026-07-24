@@ -1,3 +1,9 @@
 {
-  "name": "catchingjobs"
+  "name": "catchingjobs",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
