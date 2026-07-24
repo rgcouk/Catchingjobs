@@ -345,7 +345,7 @@ function App() {
               </SignedIn>
 
               <button
-                onClick={() => setShowWizard(true)}
+                onClick={() => navigate('/register')}
                 className="bg-[var(--color-accent)] hover:bg-[var(--color-focus)] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors cursor-pointer inline-flex items-center gap-2 shadow-sm"
               >
                 Apply Now
@@ -413,13 +413,13 @@ function App() {
             <Route
               path="/"
               element={
-                <Switchboard onNavigate={handleNavigate} onApply={() => setShowWizard(true)} />
+                <Switchboard onNavigate={handleNavigate} onApply={() => navigate('/register')} />
               }
             />
             <Route
               path="/corporate"
               element={
-                <CorporateLander onNavigate={handleNavigate} onApply={() => setShowWizard(true)} />
+                <CorporateLander onNavigate={handleNavigate} onApply={() => navigate('/register')} />
               }
             />
             <Route path="/login/*" element={<Login />} />
@@ -445,7 +445,7 @@ function App() {
               element={
                 <CatcherPortal
                   applications={applications}
-                  onApply={() => setShowWizard(true)}
+                  onApply={() => navigate('/register')}
                   onCompleteSafetyTasks={handleCompleteSafetyTasks}
                   onUpdateProfile={handleUpdateProfile}
                 />
@@ -457,7 +457,7 @@ function App() {
                 <SectorHub
                   sectorId="chicken"
                   onSelectRegion={(reg) => handleNavigate('chicken', reg)}
-                  onJoinRoster={() => setShowWizard(true)}
+                  onJoinRoster={() => navigate('/register')}
                 />
               }
             />
@@ -467,7 +467,7 @@ function App() {
                 <SectorHub
                   sectorId="turkey"
                   onSelectRegion={(reg) => handleNavigate('turkey', reg)}
-                  onJoinRoster={() => setShowWizard(true)}
+                  onJoinRoster={() => navigate('/register')}
                 />
               }
             />
@@ -476,7 +476,7 @@ function App() {
               element={
                 <RegionRoute
                   sectorId="chicken"
-                  onJoinRoster={() => setShowWizard(true)}
+                  onJoinRoster={() => navigate('/register')}
                   onNavigate={handleNavigate}
                 />
               }
@@ -486,7 +486,7 @@ function App() {
               element={
                 <RegionRoute
                   sectorId="turkey"
-                  onJoinRoster={() => setShowWizard(true)}
+                  onJoinRoster={() => navigate('/register')}
                   onNavigate={handleNavigate}
                 />
               }
