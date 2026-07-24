@@ -15,6 +15,14 @@ export interface ProfessionalRole {
   trainingStandards: string[];
 }
 
+export interface TownHub {
+  id: string;
+  name: string;
+  pickupPoint: string;
+  surroundingAreas: string[];
+  localizedCopy: string;
+}
+
 export interface Region {
   id: string;
   name: string;
@@ -22,6 +30,7 @@ export interface Region {
   activeCrews: number;
   featuredRoles: string[];
   seoCopy: string;
+  towns?: TownHub[];
 }
 
 export interface TenantConfig {

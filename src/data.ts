@@ -127,6 +127,29 @@ export const REGIONS: Region[] = [
     featuredRoles: ['poultry-operative', 'crew-leader'],
     seoCopy:
       'Lincolnshire stands as the agricultural heartland of the UK. Pullum Ltd supplies premier poultry harvesting crews to major commercial operations throughout Boston, Sleaford, Grantham, and Lincoln. Our local crews enjoy consistent 50-hour workweeks with zero downtime, high-status weekly earnings, and professional career progression in structured environments.',
+    towns: [
+      {
+        id: 'boston',
+        name: 'Boston',
+        pickupPoint: 'Boston Marketplace / Main Depot',
+        surroundingAreas: ['Kirton', 'Sutterton', 'Spalding'],
+        localizedCopy: 'Serving Boston, Kirton, Sutterton, and Spalding. Vans leave nightly from Boston Marketplace. We offer fair labor recruitment under strict GLAA compliance. Please note: Pullum Ltd does not provide visa sponsorships for these roles.'
+      },
+      {
+        id: 'lincoln',
+        name: 'Lincoln',
+        pickupPoint: 'Lincoln Central Hub',
+        surroundingAreas: ['Washingborough', 'Branston', 'Cherry Willingham'],
+        localizedCopy: 'Serving Lincoln and surrounding agricultural zones. Vans leave nightly from Lincoln Central Hub. Fair labor recruitment and GLAA compliant practices guaranteed. No visa sponsorships available.'
+      },
+      {
+        id: 'grantham',
+        name: 'Grantham',
+        pickupPoint: 'Grantham Station Outpost',
+        surroundingAreas: ['Barrowby', 'Gonerby', 'Colsterworth'],
+        localizedCopy: 'Serving Grantham, Barrowby, Gonerby, and Colsterworth. Vans leave nightly from Grantham Station Outpost. Strict GLAA compliance. Note: No visa sponsorships are provided.'
+      }
+    ],
   },
   {
     id: 'norfolk',
@@ -136,6 +159,15 @@ export const REGIONS: Region[] = [
     featuredRoles: ['poultry-operative', 'safety-supervisor'],
     seoCopy:
       "With its dense concentration of agricultural operations, Norfolk is a key hub for our poultry catching and loading divisions. Recruiting in Norwich, Thetford, King's Lynn, and Diss, we offer stable year-round contracts under Pullum Ltd's strict professional code. Earn consistent high wages and secure verified training credentials.",
+    towns: [
+      {
+        id: 'attleborough',
+        name: 'Attleborough',
+        pickupPoint: 'Attleborough Town Center',
+        surroundingAreas: ['Wymondham', 'Besthorpe', 'Snetterton'],
+        localizedCopy: 'Serving Attleborough, Wymondham, Besthorpe, and Snetterton. Vans leave nightly from Attleborough Town Center. Fully GLAA compliant recruitment with no hidden fees. No visa sponsorship available.'
+      }
+    ],
   },
   {
     id: 'yorkshire',
