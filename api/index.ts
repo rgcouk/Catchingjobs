@@ -1,5 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '../src/generated/prisma/client/index.js';
+import { PrismaPg } from '@prisma/adapter-pg';
+import pg from 'pg';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import createAdminRouter from '../server/routes/admin.ts';
@@ -10,7 +12,10 @@ import { authenticate } from '../server/middleware/auth.ts';
 dotenv.config();
 
 const app = express();
-const prisma = new PrismaClient();
+
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 app.use(express.json());
 app.use(cookieParser());
