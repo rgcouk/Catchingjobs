@@ -103,13 +103,29 @@ export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: Se
           </div>
 
           <div className="grid md:grid-cols-2 gap-3">
-            {REGIONS.flatMap((region) => 
-              (region.towns || []).map(town => (
+            {REGIONS.flatMap((region) => {
+              if (region.towns && region.towns.length > 0) {
+                return region.towns.map(town => ({
+                  id: town.id,
+                  name: town.name,
+                  copy: town.localizedCopy,
+                  activeCrews: region.activeCrews,
+                  type: 'Town'
+                }));
+              }
+              return [{
+                id: region.id,
+                name: region.name,
+                copy: region.seoCopy,
+                activeCrews: region.activeCrews,
+                type: 'Region'
+              }];
+            }).map(item => (
               <div
-                key={town.id}
+                key={item.id}
                 className="group bg-white border border-slate-200 hover:border-[var(--color-ink)] rounded-xl p-4 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
-                onClick={() => onSelectRegion(town.id)}
-                id={`dir-region-seo-${town.id}`}
+                onClick={() => onSelectRegion(item.id)}
+                id={`dir-region-seo-${item.id}`}
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-start gap-4">
@@ -118,26 +134,26 @@ export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: Se
                     </div>
                     <div className="space-y-1">
                       <h3 className="font-bold text-[var(--color-ink)] text-base transition-colors">
-                        {town.name} Catching Area
+                        {item.name} Catching Area
                       </h3>
                       <p className="text-[11px] text-[var(--color-ink-2)] font-medium leading-snug max-w-2xl line-clamp-2">
-                        {town.localizedCopy}
+                        {item.copy}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex flex-col items-start md:items-end gap-2 shrink-0 pl-14 md:pl-0">
                     <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold text-[var(--color-ink)] bg-slate-100 px-2 py-0.5 rounded group-hover:bg-[var(--color-accent)] group-hover:text-white transition-colors">
-                      {region.activeCrews} Active Catching Crews
+                      {item.activeCrews} Active Catching Crews
                     </span>
                     <div className="flex items-center gap-1 text-sm font-bold text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors mt-1">
-                      <span>View Town</span>
+                      <span>View {item.type}</span>
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
                 </div>
               </div>
-            )))}
+            ))}
           </div>
         </div>
 
