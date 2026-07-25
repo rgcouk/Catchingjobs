@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, MapPin, Briefcase, Settings, LogOut, Menu } from 'lucide-react';
+import { LayoutDashboard, MapPin, Briefcase, Settings, LogOut, Menu, Plus, Edit, Trash2 } from 'lucide-react';
 import { useAuth } from '@clerk/clerk-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Select } from '../../components/ui/select';
+import { Badge } from '../../components/ui/badge';
+import { Label } from '../../components/ui/label';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../../components/ui/table';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('kanban');
@@ -16,10 +23,10 @@ const AdminDashboard = () => {
   const [error, setError] = useState<string | null>(null);
 
   const navItems = [
-    { id: 'kanban', label: 'Applications Kanban', icon: LayoutDashboard },
-    { id: 'locations', label: 'Location Manager', icon: MapPin },
-    { id: 'jobs', label: 'Job Manager', icon: Briefcase },
-    { id: 'settings', label: 'Admin Settings', icon: Settings },
+    { id: 'kanban', label: 'Applications', icon: LayoutDashboard },
+    { id: 'locations', label: 'Locations', icon: MapPin },
+    { id: 'jobs', label: 'Job Postings', icon: Briefcase },
+    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   useEffect(() => {
@@ -90,7 +97,7 @@ const AdminDashboard = () => {
         },
         body: JSON.stringify({
           ...data,
-          regionId: data.regionId ? parseInt(data.regionId as string, 10) : undefined,
+          regionId: data.regionId ? data.regionId : undefined,
         }),
       });
       if (!res.ok) throw new Error('Failed to create location');
@@ -101,6 +108,40 @@ const AdminDashboard = () => {
     }
   };
 
+  const deleteLocation = async (type: string, id: string) => {
+    if (!window.confirm(`Are you sure you want to delete this ${type}?`)) return;
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/admin/locations/${type}/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Failed to delete location');
+      fetchData();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  const handleEditLocation = async (type: string, id: string, currentName: string) => {
+    const newName = window.prompt(`Enter new name for this ${type}:`, currentName);
+    if (!newName || newName === currentName) return;
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/admin/locations/${type}/${id}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ name: newName })
+      });
+      if (!res.ok) throw new Error('Failed to update location');
+      fetchData();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
   const handleJobSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -132,93 +173,86 @@ const AdminDashboard = () => {
   };
 
   const renderContent = () => {
-    if (loading) return <div className="p-6">Loading...</div>;
-    if (error) return <div className="p-6 text-red-500">Error: {error}</div>;
+    if (loading) return <div className="p-8 flex justify-center text-[var(--color-ink-2)]">Loading dashboard data...</div>;
+    if (error) return <div className="p-8 text-red-500 font-medium">Error: {error}</div>;
 
     switch (activeTab) {
       case 'kanban':
         const newApps = applications.filter((a) => a.status === 'NEW' || a.status === 'SUBMITTED');
-        const reviewApps = applications.filter(
-          (a) => a.status === 'REVIEWING' || a.status === 'INTERVIEW',
-        );
+        const reviewApps = applications.filter((a) => a.status === 'REVIEWING' || a.status === 'INTERVIEW');
         const hiredApps = applications.filter((a) => a.status === 'HIRED');
 
         return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold font-display text-[var(--color-ink)] mb-4">
-              Applications Kanban
-            </h1>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white p-4 rounded-lg shadow-sm border border-[var(--color-rule)]">
-                <h3 className="font-semibold text-lg border-b border-[var(--color-rule)] pb-2 mb-4">
-                  New / Submitted
-                </h3>
-                <div className="space-y-3">
+          <div className="p-8">
+            <div className="mb-8">
+              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Applications Kanban</h1>
+              <p className="text-[var(--color-ink-2)] mt-1">Manage and track applicant progression.</p>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* New Column */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-[var(--color-rule)]">
+                  <h3 className="font-semibold text-lg text-[var(--color-ink)]">Inbox</h3>
+                  <Badge variant="secondary">{newApps.length}</Badge>
+                </div>
+                <div className="space-y-4">
                   {newApps.map((app) => (
-                    <div
-                      key={app.id}
-                      className="p-3 bg-[var(--color-paper-2)] border border-[var(--color-rule)] rounded shadow-sm"
-                    >
-                      <p className="font-medium text-sm text-[var(--color-ink)]">
-                        {app.name}
-                      </p>
-                      <p className="text-xs text-[var(--color-ink-2)]">
-                        {app.jobPosting?.title || 'Unknown Job'}
-                      </p>
-                      <button
-                        onClick={() => updateApplicationStatus(app.id, 'REVIEWING')}
-                        className="mt-2 text-xs font-semibold text-[var(--color-accent)] hover:opacity-80 transition-opacity whitespace-nowrap"
-                      >
-                        Move to Review
-                      </button>
-                    </div>
+                    <Card key={app.id}>
+                      <CardHeader className="p-4 pb-2">
+                        <CardTitle className="text-base">{app.name}</CardTitle>
+                        <CardDescription>{app.jobPosting?.title || 'General Application'}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-4 pt-0 flex justify-end">
+                        <Button variant="outline" size="sm" onClick={() => updateApplicationStatus(app.id, 'REVIEWING')}>
+                          Move to Review
+                        </Button>
+                      </CardContent>
+                    </Card>
                   ))}
+                  {newApps.length === 0 && <div className="text-sm text-[var(--color-ink-2)] text-center py-8 bg-[var(--color-paper)] rounded-lg border border-dashed border-[var(--color-rule)]">No new applications</div>}
                 </div>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow-sm border border-[var(--color-rule)]">
-                <h3 className="font-semibold text-lg border-b border-[var(--color-rule)] pb-2 mb-4">
-                  In Review / Interview
-                </h3>
-                <div className="space-y-3">
+
+              {/* Review Column */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-[var(--color-rule)]">
+                  <h3 className="font-semibold text-lg text-[var(--color-ink)]">In Review</h3>
+                  <Badge variant="warning">{reviewApps.length}</Badge>
+                </div>
+                <div className="space-y-4">
                   {reviewApps.map((app) => (
-                    <div
-                      key={app.id}
-                      className="p-3 bg-[var(--color-paper-2)] border border-[var(--color-rule)] rounded shadow-sm"
-                    >
-                      <p className="font-medium text-sm text-[var(--color-ink)]">
-                        {app.name}
-                      </p>
-                      <p className="text-xs text-[var(--color-ink-2)]">
-                        {app.jobPosting?.title || 'Unknown Job'}
-                      </p>
-                      <button
-                        onClick={() => updateApplicationStatus(app.id, 'HIRED')}
-                        className="mt-2 text-xs font-semibold text-[var(--color-accent)] hover:opacity-80 transition-opacity whitespace-nowrap"
-                      >
-                        Mark as Hired
-                      </button>
-                    </div>
+                    <Card key={app.id} className="border-[var(--color-accent)] shadow-sm">
+                      <CardHeader className="p-4 pb-2">
+                        <CardTitle className="text-base">{app.name}</CardTitle>
+                        <CardDescription>{app.jobPosting?.title || 'General Application'}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-4 pt-0 flex justify-end">
+                        <Button size="sm" onClick={() => updateApplicationStatus(app.id, 'HIRED')}>
+                          Mark as Hired
+                        </Button>
+                      </CardContent>
+                    </Card>
                   ))}
+                  {reviewApps.length === 0 && <div className="text-sm text-[var(--color-ink-2)] text-center py-8 bg-[var(--color-paper)] rounded-lg border border-dashed border-[var(--color-rule)]">No applications in review</div>}
                 </div>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow-sm border border-[var(--color-rule)]">
-                <h3 className="font-semibold text-lg border-b border-[var(--color-rule)] pb-2 mb-4">
-                  Hired
-                </h3>
-                <div className="space-y-3">
+
+              {/* Hired Column */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-[var(--color-rule)]">
+                  <h3 className="font-semibold text-lg text-[var(--color-ink)]">Hired</h3>
+                  <Badge variant="success">{hiredApps.length}</Badge>
+                </div>
+                <div className="space-y-4">
                   {hiredApps.map((app) => (
-                    <div
-                      key={app.id}
-                      className="p-3 bg-[var(--color-paper-2)] border border-[var(--color-rule)] rounded shadow-sm"
-                    >
-                      <p className="font-medium text-sm text-[var(--color-ink)]">
-                        {app.name}
-                      </p>
-                      <p className="text-xs text-[var(--color-ink-2)]">
-                        {app.jobPosting?.title || 'Unknown Job'}
-                      </p>
-                    </div>
+                    <Card key={app.id} className="bg-slate-50 opacity-80">
+                      <CardHeader className="p-4 pb-2">
+                        <CardTitle className="text-base">{app.name}</CardTitle>
+                        <CardDescription>{app.jobPosting?.title || 'General Application'}</CardDescription>
+                      </CardHeader>
+                    </Card>
                   ))}
+                  {hiredApps.length === 0 && <div className="text-sm text-[var(--color-ink-2)] text-center py-8 bg-[var(--color-paper)] rounded-lg border border-dashed border-[var(--color-rule)]">No hires yet</div>}
                 </div>
               </div>
             </div>
@@ -226,192 +260,248 @@ const AdminDashboard = () => {
         );
       case 'locations':
         return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold font-display text-[var(--color-ink)] mb-4">
-              Location Manager
-            </h1>
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-[var(--color-rule)] mb-6">
-              <h2 className="text-lg font-semibold mb-4">Add Location</h2>
-              <form onSubmit={handleLocationSubmit} className="space-y-4 max-w-md">
-                <div>
-                  <label className="block text-sm font-medium mb-1">ID (Slug)</label>
-                  <input
-                    name="id"
-                    required
-                    className="w-full border rounded px-3 py-2"
-                    placeholder="e.g. norfolk-region"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Name</label>
-                  <input
-                    name="name"
-                    required
-                    className="w-full border rounded px-3 py-2"
-                    placeholder="e.g. Norfolk"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Type</label>
-                  <select name="type" className="w-full border rounded px-3 py-2">
-                    <option value="region">Region</option>
-                    <option value="town">Town</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">County (Region only)</label>
-                  <input name="county" className="w-full border rounded px-3 py-2" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Region ID (Town only)</label>
-                  <select name="regionId" className="w-full border rounded px-3 py-2">
-                    <option value="">Select Region...</option>
-                    {locations.map((r) => (
-                      <option key={r.id} value={r.id}>
-                        {r.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <button
-                  type="submit"
-                  className="bg-[var(--color-accent)] text-white px-4 py-2 rounded"
-                >
-                  Create Location
-                </button>
-              </form>
+          <div className="p-8">
+            <div className="mb-8">
+              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Location Manager</h1>
+              <p className="text-[var(--color-ink-2)] mt-1">Add and organise regions and operational towns.</p>
             </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <Card className="lg:col-span-1 h-fit">
+                <CardHeader>
+                  <CardTitle>Add Location</CardTitle>
+                  <CardDescription>Create a new region or town.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleLocationSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>ID (Slug)</Label>
+                      <Input name="id" required placeholder="e.g. norfolk-region" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Name</Label>
+                      <Input name="name" required placeholder="e.g. Norfolk" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Type</Label>
+                      <Select name="type">
+                        <option value="region">Region</option>
+                        <option value="town">Town</option>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>County (Region only)</Label>
+                      <Input name="county" placeholder="Optional" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Parent Region (Town only)</Label>
+                      <Select name="regionId">
+                        <option value="">Select Region...</option>
+                        {locations.map((r) => (
+                          <option key={r.id} value={r.id}>{r.name}</option>
+                        ))}
+                      </Select>
+                    </div>
+                    <Button type="submit" className="w-full mt-4">
+                      <Plus className="w-4 h-4 mr-2" /> Create Location
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-[var(--color-rule)]">
-              <h2 className="text-lg font-semibold mb-4">Existing Regions & Towns</h2>
-              <ul className="space-y-4">
-                {locations.map((region) => (
-                  <li key={region.id} className="border p-4 rounded bg-slate-50">
-                    <strong className="text-lg">
-                      {region.name} ({region.id})
-                    </strong>
-                    <ul className="ml-4 mt-2 list-disc list-inside">
-                      {region.towns?.map((town: any) => (
-                        <li key={town.id}>
-                          {town.name} ({town.id})
-                        </li>
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle>Directory</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Region</TableHead>
+                        <TableHead>Towns</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {locations.map((region) => (
+                        <TableRow key={region.id}>
+                          <TableCell className="font-medium align-top py-4">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                {region.name}
+                                <div className="text-xs text-[var(--color-ink-2)] mt-1 font-mono">{region.id}</div>
+                              </div>
+                              <div className="flex space-x-1">
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleEditLocation('region', region.id, region.name)}>
+                                  <Edit className="w-4 h-4 text-[var(--color-ink-2)]" />
+                                </Button>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => deleteLocation('region', region.id)}>
+                                  <Trash2 className="w-4 h-4 text-red-500" />
+                                </Button>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-4">
+                            <div className="flex flex-wrap gap-2">
+                              {region.towns?.map((town: any) => (
+                                <Badge key={town.id} variant="secondary" className="flex items-center gap-1 group">
+                                  {town.name}
+                                  <button onClick={() => handleEditLocation('town', town.id, town.name)} className="opacity-0 group-hover:opacity-100 transition-opacity ml-1">
+                                    <Edit className="w-3 h-3 text-[var(--color-ink-2)] hover:text-[var(--color-ink)]" />
+                                  </button>
+                                  <button onClick={() => deleteLocation('town', town.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Trash2 className="w-3 h-3 text-red-500 hover:text-red-700" />
+                                  </button>
+                                </Badge>
+                              ))}
+                              {(!region.towns || region.towns.length === 0) && (
+                                <span className="text-sm text-[var(--color-ink-2)] italic">No towns added</span>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
                       ))}
-                    </ul>
-                  </li>
-                ))}
-              </ul>
+                      {locations.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={2} className="text-center py-8 text-[var(--color-ink-2)]">No locations found.</TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
             </div>
           </div>
         );
       case 'jobs':
-        // Get all towns from locations for the dropdown
         const allTowns = locations.flatMap((r) => r.towns || []);
 
         return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold font-display text-[var(--color-ink)] mb-4">
-              Job Manager
-            </h1>
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-[var(--color-rule)] mb-6">
-              <h2 className="text-lg font-semibold mb-4">Add Job Posting</h2>
-              <form onSubmit={handleJobSubmit} className="space-y-4 max-w-md">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Title</label>
-                  <input
-                    name="title"
-                    required
-                    className="w-full border rounded px-3 py-2"
-                    placeholder="e.g. Chicken Catcher"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Description</label>
-                  <textarea
-                    name="description"
-                    required
-                    className="w-full border rounded px-3 py-2"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Pay Rate</label>
-                  <input
-                    name="payRate"
-                    required
-                    className="w-full border rounded px-3 py-2"
-                    placeholder="e.g. £15/hr"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Sector</label>
-                  <select name="sector" required className="w-full border rounded px-3 py-2">
-                    <option value="">Select Sector...</option>
-                    <option value="chicken">Chicken</option>
-                    <option value="turkey">Turkey</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Town</label>
-                  <select name="townId" required className="w-full border rounded px-3 py-2">
-                    <option value="">Select Town...</option>
-                    {allTowns.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <button
-                  type="submit"
-                  className="bg-[var(--color-accent)] text-white px-4 py-2 rounded"
-                >
-                  Create Job
-                </button>
-              </form>
+          <div className="p-8">
+            <div className="mb-8">
+              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Job Manager</h1>
+              <p className="text-[var(--color-ink-2)] mt-1">Publish new catching roles.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-[var(--color-rule)]">
-              <h2 className="text-lg font-semibold mb-4">Existing Jobs</h2>
-              <ul className="space-y-2">
-                {jobs.map((job) => (
-                  <li key={job.id} className="border-b pb-2">
-                    <h3 className="font-semibold">{job.title}</h3>
-                    <p className="text-sm text-slate-600">
-                      Town ID: {job.townId} | Status: {job.status}
-                    </p>
-                  </li>
-                ))}
-              </ul>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <Card className="lg:col-span-1 h-fit">
+                <CardHeader>
+                  <CardTitle>Post a Job</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleJobSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Title</Label>
+                      <Input name="title" required placeholder="e.g. Chicken Catcher" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Description</Label>
+                      <textarea
+                        name="description"
+                        required
+                        className="flex min-h-[80px] w-full rounded-md border border-[var(--color-rule)] bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                        rows={3}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Pay Rate</Label>
+                      <Input name="payRate" required placeholder="e.g. £15/hr" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Sector</Label>
+                      <Select name="sector" required>
+                        <option value="">Select Sector...</option>
+                        <option value="chicken">Chicken</option>
+                        <option value="turkey">Turkey</option>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Town</Label>
+                      <Select name="townId" required>
+                        <option value="">Select Town...</option>
+                        {allTowns.map((t) => (
+                          <option key={t.id} value={t.id}>{t.name}</option>
+                        ))}
+                      </Select>
+                    </div>
+                    <Button type="submit" className="w-full mt-4">
+                      <Plus className="w-4 h-4 mr-2" /> Publish Job
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle>Active Roles</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Role Title</TableHead>
+                        <TableHead>Location</TableHead>
+                        <TableHead>Pay</TableHead>
+                        <TableHead>Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {jobs.map((job) => (
+                        <TableRow key={job.id}>
+                          <TableCell className="font-medium">{job.title}</TableCell>
+                          <TableCell className="text-[var(--color-ink-2)]">{job.townId}</TableCell>
+                          <TableCell className="text-[var(--color-ink-2)]">{job.payRate}</TableCell>
+                          <TableCell>
+                            <Badge variant={job.status === 'ACTIVE' ? 'success' : 'default'}>{job.status}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {jobs.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center py-8 text-[var(--color-ink-2)]">No active jobs.</TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
             </div>
           </div>
         );
       case 'settings':
         return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold font-display text-[var(--color-ink)] mb-4">
-              Admin Settings
-            </h1>
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-[var(--color-rule)]">
-              <h2 className="text-lg font-semibold mb-4">System Users</h2>
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b">
-                    <th className="pb-2">Email</th>
-                    <th className="pb-2">Role</th>
-                    <th className="pb-2">Created</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((u) => (
-                    <tr key={u.id} className="border-b last:border-0">
-                      <td className="py-2">{u.email}</td>
-                      <td className="py-2">{u.role}</td>
-                      <td className="py-2">{new Date(u.createdAt).toLocaleDateString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="p-8 max-w-5xl">
+            <div className="mb-8">
+              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Admin Settings</h1>
+              <p className="text-[var(--color-ink-2)] mt-1">Manage system configurations and users.</p>
             </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>System Users</CardTitle>
+                <CardDescription>All registered users in the platform.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Created</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users.map((u) => (
+                      <TableRow key={u.id}>
+                        <TableCell className="font-medium">{u.email}</TableCell>
+                        <TableCell>
+                          <Badge variant={u.role === 'ADMIN' ? 'accent' : 'secondary'}>{u.role}</Badge>
+                        </TableCell>
+                        <TableCell className="text-[var(--color-ink-2)]">{new Date(u.createdAt).toLocaleDateString()}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
           </div>
         );
       default:
@@ -420,28 +510,27 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[var(--color-paper-2)] w-full overflow-hidden text-[var(--color-ink)]">
-      {/* Mobile Sidebar Overlay */}
+    <div className="flex h-[100dvh] bg-[var(--color-paper-2)] w-full overflow-hidden text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-white">
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-[var(--color-ink)]/50 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-[var(--color-ink)]/20 backdrop-blur-sm z-40 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
       <aside
-        className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-[var(--color-paper)] border-r border-[var(--color-rule)] flex flex-col transform transition-transform duration-[var(--dur-short)] ease-[var(--ease-out)] ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
+        className={`fixed md:static inset-y-0 left-0 z-50 w-72 bg-white border-r border-[var(--color-rule)] flex flex-col transform transition-transform duration-[var(--dur-short)] ease-[var(--ease-out)] ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
       >
-        <div className="h-16 flex items-center px-6 border-b border-[var(--color-rule)]">
-          <span className="font-display font-bold text-lg text-[var(--color-ink)]">
+        <div className="h-16 flex items-center px-6 border-b border-[var(--color-rule)] shrink-0">
+          <span className="font-display font-bold text-xl tracking-tight text-[var(--color-ink)]">
             Admin<span className="text-[var(--color-accent)]">Panel</span>
           </span>
         </div>
-        <nav className="flex-1 overflow-y-auto py-4">
-          <ul className="space-y-1 px-3">
+        <nav className="flex-1 overflow-y-auto py-6 px-4">
+          <ul className="space-y-1.5">
             {navItems.map((item) => {
               const Icon = item.icon;
+              const isActive = activeTab === item.id;
               return (
                 <li key={item.id}>
                   <button
@@ -449,13 +538,13 @@ const AdminDashboard = () => {
                       setActiveTab(item.id);
                       setSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] ${
-                      activeTab === item.id
-                        ? 'bg-[var(--color-ink)] text-[var(--color-paper)] shadow-sm'
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-[var(--dur-short)] ease-[var(--ease-out)] min-h-[48px] ${
+                      isActive
+                        ? 'bg-[var(--color-ink)] text-white shadow-md'
                         : 'text-[var(--color-ink-2)] hover:bg-[var(--color-paper-2)] hover:text-[var(--color-ink)]'
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-[var(--color-ink-2)]'}`} />
                     {item.label}
                   </button>
                 </li>
@@ -463,24 +552,22 @@ const AdminDashboard = () => {
             })}
           </ul>
         </nav>
-        <div className="p-4 border-t border-[var(--color-rule)]">
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-paper-2)] rounded-md transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]">
+        <div className="p-4 border-t border-[var(--color-rule)] shrink-0">
+          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-[var(--color-ink-2)] hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] min-h-[48px] cursor-pointer">
             <LogOut className="w-5 h-5" />
             Sign Out
           </button>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Mobile Header */}
-        <header className="h-16 bg-white border-b border-[var(--color-rule)] flex items-center justify-between px-4 md:hidden">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-[var(--color-paper-2)]">
+        <header className="h-16 bg-white border-b border-[var(--color-rule)] flex items-center justify-between px-4 md:hidden shrink-0">
           <span className="font-display font-bold text-lg text-[var(--color-ink)]">
             Admin<span className="text-[var(--color-accent)]">Panel</span>
           </span>
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-md text-slate-600 hover:bg-slate-100"
+            className="p-2 rounded-md text-[var(--color-ink-2)] hover:bg-slate-100 min-w-[48px] min-h-[48px] flex items-center justify-center"
           >
             <Menu className="w-6 h-6" />
           </button>

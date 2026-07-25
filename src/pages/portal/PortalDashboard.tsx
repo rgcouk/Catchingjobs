@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ClipboardList, UserCheck, LogOut, Menu, User, CheckCircle2, Lock, ArrowRight, Briefcase } from 'lucide-react';
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Select } from '../../components/ui/select';
+import { Badge } from '../../components/ui/badge';
+import { Label } from '../../components/ui/label';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../../components/ui/table';
 
 const PortalDashboard = () => {
   const [activeTab, setActiveTab] = useState('onboarding');
@@ -39,7 +46,6 @@ const PortalDashboard = () => {
         if (!res.ok) throw new Error('Failed to fetch profile');
         const data = await res.json();
         setProfile(data);
-        setProfile(data);
       } else if (activeTab === 'applications') {
         const res = await fetch(`/api/portal/applications?userId=${USER_ID}`, { headers });
         if (!res.ok) throw new Error('Failed to fetch applications');
@@ -54,25 +60,11 @@ const PortalDashboard = () => {
 
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    hasRightToWork: false,
-    hasDrivingLicense: false,
-    sector: 'chicken',
-    niNumber: '',
-    dateOfBirth: '',
-    addressLine1: '',
-    postcode: '',
-    bankName: '',
-    bankAccountName: '',
-    bankAccountNumber: '',
-    bankSortCode: '',
-    emergencyName: '',
-    emergencyPhone: '',
-    emergencyRelation: '',
-    hasAsthmaOrAllergies: false,
-    hasBackIssues: false,
-    isFitToLift: false,
+    name: '', phone: '', hasRightToWork: false, hasDrivingLicense: false, sector: 'chicken',
+    niNumber: '', dateOfBirth: '', addressLine1: '', postcode: '',
+    bankName: '', bankAccountName: '', bankAccountNumber: '', bankSortCode: '',
+    emergencyName: '', emergencyPhone: '', emergencyRelation: '',
+    hasAsthmaOrAllergies: false, hasBackIssues: false, isFitToLift: false,
   });
 
   useEffect(() => {
@@ -138,23 +130,9 @@ const PortalDashboard = () => {
     }
   };
 
-  const Badge = ({ children, variant = 'default' }: { children: React.ReactNode, variant?: 'default' | 'success' | 'warning' | 'accent' }) => {
-    const variants = {
-      default: 'bg-[var(--color-rule)] text-[var(--color-ink)]',
-      success: 'bg-green-100 text-green-800',
-      warning: 'bg-yellow-100 text-yellow-800',
-      accent: 'bg-[var(--color-accent)] text-white',
-    };
-    return (
-      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${variants[variant]}`}>
-        {children}
-      </span>
-    );
-  };
-
   const renderContent = () => {
-    if (loading) return <div className="p-6 max-w-4xl mx-auto flex items-center justify-center text-[var(--color-ink-2)]"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent)]"></div></div>;
-    if (error) return <div className="p-6 max-w-4xl mx-auto text-red-500 bg-red-50 rounded-lg m-6">Error: {error}</div>;
+    if (loading) return <div className="p-6 max-w-4xl mx-auto flex justify-center text-[var(--color-ink-2)]">Loading portal...</div>;
+    if (error) return <div className="p-6 max-w-4xl mx-auto text-red-500 font-medium">Error: {error}</div>;
 
     switch (activeTab) {
       case 'onboarding':
@@ -171,246 +149,139 @@ const PortalDashboard = () => {
             </header>
 
             <div className="space-y-6">
-              <div className={`p-6 rounded-xl border transition-all duration-[var(--dur-short)] ${isCompleted ? 'bg-[var(--color-paper-2)] border-[var(--color-rule)]' : 'bg-white border-[var(--color-accent)] shadow-sm'}`}>
-                <div className="flex items-start gap-4">
+              <Card className={`transition-all duration-[var(--dur-short)] ${isCompleted ? 'bg-[var(--color-paper-2)]' : 'border-[var(--color-accent)] shadow-md'}`}>
+                <CardHeader className="flex flex-row items-start gap-4 space-y-0">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0 transition-colors ${isCompleted ? 'bg-[var(--color-rule)] text-[var(--color-ink-2)]' : 'bg-[var(--color-accent)] text-white'}`}>
                     {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : '1'}
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-lg text-[var(--color-ink)]">Identity & Basic Details</h3>
-                    <p className="text-sm text-[var(--color-ink-2)] mt-1 mb-6">
+                    <CardTitle className="text-xl">Identity & Details</CardTitle>
+                    <CardDescription className="mt-1">
                       Fill out your NI Number, Address, and Date of Birth to legally work with us.
-                    </p>
-
-                    {isCompleted ? (
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 rounded-md text-sm font-medium border border-green-200">
-                        <CheckCircle2 className="w-4 h-4" /> Completed successfully
-                      </div>
-                    ) : (
-                      <form
-                        onSubmit={handleOnboardingSubmit}
-                        className="space-y-4 bg-[var(--color-paper-2)] p-5 rounded-lg border border-[var(--color-rule)]"
-                      >
-                        {currentStep === 1 && (
-                          <div className="space-y-4">
-                            <div>
-                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Full Name</label>
-                              <input
-                                name="name"
-                                required
-                                value={formData.name}
-                                onChange={handleChange}
-                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Phone Number</label>
-                              <input
-                                name="phone"
-                                required
-                                value={formData.phone}
-                                onChange={handleChange}
-                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Sector</label>
-                              <select
-                                name="sector"
-                                required
-                                value={formData.sector}
-                                onChange={handleChange}
-                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
-                              >
-                                <option value="chicken">Chicken Catching</option>
-                                <option value="turkey">Turkey Catching</option>
-                              </select>
-                            </div>
-                            <div className="flex items-center gap-3 pt-2">
-                              <div className="flex items-center justify-center w-6 h-6">
-                                <input
-                                  type="checkbox"
-                                  name="hasRightToWork"
-                                  id="hasRightToWork"
-                                  checked={formData.hasRightToWork}
-                                  onChange={handleChange}
-                                  className="w-4 h-4 rounded border-[var(--color-rule)] text-[var(--color-accent)] focus:ring-[var(--color-focus)]"
-                                />
-                              </div>
-                              <label htmlFor="hasRightToWork" className="text-sm font-medium text-[var(--color-ink)]">
-                                I have the right to work in the UK
-                              </label>
-                            </div>
-                            <div className="flex items-center gap-3 pt-2">
-                              <div className="flex items-center justify-center w-6 h-6">
-                                <input
-                                  type="checkbox"
-                                  name="hasDrivingLicense"
-                                  id="hasDrivingLicense"
-                                  checked={formData.hasDrivingLicense}
-                                  onChange={handleChange}
-                                  className="w-4 h-4 rounded border-[var(--color-rule)] text-[var(--color-accent)] focus:ring-[var(--color-focus)]"
-                                />
-                              </div>
-                              <label htmlFor="hasDrivingLicense" className="text-sm font-medium text-[var(--color-ink)]">
-                                I have a valid driving license
-                              </label>
-                            </div>
-                          </div>
-                        )}
-
-                        {currentStep === 2 && (
-                          <div className="space-y-4">
-                            <div>
-                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">National Insurance Number</label>
-                              <input
-                                name="niNumber"
-                                required
-                                value={formData.niNumber}
-                                onChange={handleChange}
-                                placeholder="QQ 12 34 56 A"
-                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Date of Birth</label>
-                              <input
-                                type="date"
-                                name="dateOfBirth"
-                                required
-                                value={formData.dateOfBirth}
-                                onChange={handleChange}
-                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Address Line 1</label>
-                              <input
-                                name="addressLine1"
-                                required
-                                value={formData.addressLine1}
-                                onChange={handleChange}
-                                placeholder="123 Farm Lane"
-                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Postcode</label>
-                              <input
-                                name="postcode"
-                                required
-                                value={formData.postcode}
-                                onChange={handleChange}
-                                placeholder="NR1 1AA"
-                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
-                              />
-                            </div>
-                          </div>
-                        )}
-
-                        {currentStep === 3 && (
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Bank Name</label>
-                                <input name="bankName" required value={formData.bankName} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Account Name</label>
-                                <input name="bankAccountName" required value={formData.bankAccountName} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Account Number</label>
-                                <input name="bankAccountNumber" required value={formData.bankAccountNumber} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Sort Code</label>
-                                <input name="bankSortCode" required value={formData.bankSortCode} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
-                              </div>
-                            </div>
-
-                            <hr className="border-[var(--color-rule)] my-4" />
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Emergency Name</label>
-                                <input name="emergencyName" required value={formData.emergencyName} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Emergency Phone</label>
-                                <input name="emergencyPhone" required value={formData.emergencyPhone} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Emergency Relation</label>
-                                <input name="emergencyRelation" required value={formData.emergencyRelation} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
-                              </div>
-                            </div>
-
-                            <hr className="border-[var(--color-rule)] my-4" />
-
-                            <div className="space-y-2">
-                              <label className="flex items-start gap-3">
-                                <div className="flex items-center justify-center w-6 h-6 shrink-0">
-                                  <input type="checkbox" name="hasAsthmaOrAllergies" checked={formData.hasAsthmaOrAllergies} onChange={handleChange} className="w-4 h-4 rounded border-[var(--color-rule)] text-[var(--color-accent)] focus:ring-[var(--color-focus)]" />
-                                </div>
-                                <span className="text-sm font-medium text-[var(--color-ink)] pt-1">I have asthma or allergies</span>
-                              </label>
-                              <label className="flex items-start gap-3">
-                                <div className="flex items-center justify-center w-6 h-6 shrink-0">
-                                  <input type="checkbox" name="hasBackIssues" checked={formData.hasBackIssues} onChange={handleChange} className="w-4 h-4 rounded border-[var(--color-rule)] text-[var(--color-accent)] focus:ring-[var(--color-focus)]" />
-                                </div>
-                                <span className="text-sm font-medium text-[var(--color-ink)] pt-1">I have back issues or injuries</span>
-                              </label>
-                              <label className="flex items-start gap-3">
-                                <div className="flex items-center justify-center w-6 h-6 shrink-0">
-                                  <input type="checkbox" name="isFitToLift" checked={formData.isFitToLift} onChange={handleChange} className="w-4 h-4 rounded border-[var(--color-rule)] text-[var(--color-accent)] focus:ring-[var(--color-focus)]" />
-                                </div>
-                                <span className="text-sm font-medium text-[var(--color-ink)] pt-1">I am fit to lift heavy objects regularly</span>
-                              </label>
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="pt-4 flex gap-3">
-                          {currentStep > 1 && (
-                            <button
-                              type="button"
-                              onClick={prevStep}
-                              className="px-4 py-2 bg-[var(--color-paper)] border border-[var(--color-rule)] text-[var(--color-ink)] rounded-lg font-medium min-h-[48px] hover:bg-[var(--color-paper-2)] transition-colors"
-                            >
-                              Back
-                            </button>
-                          )}
-                          <button
-                            type="submit"
-                            className="flex-1 bg-[var(--color-accent)] text-white px-4 py-2 rounded-lg font-medium min-h-[48px] hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-                          >
-                            {currentStep === 3 ? 'Complete Onboarding' : 'Continue'} <ArrowRight className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </form>
-                    )}
+                    </CardDescription>
                   </div>
-                </div>
-              </div>
+                </CardHeader>
+                <CardContent className="ml-14">
+                  {isCompleted ? (
+                    <Badge variant="success" className="px-3 py-1 text-sm rounded-md gap-2 font-medium flex w-fit">
+                      <CheckCircle2 className="w-4 h-4" /> Completed successfully
+                    </Badge>
+                  ) : (
+                    <form onSubmit={handleOnboardingSubmit} className="space-y-6 bg-[var(--color-paper-2)] p-6 rounded-xl border border-[var(--color-rule)]">
+                      {currentStep === 1 && (
+                        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+                          <div className="space-y-2">
+                            <Label>Full Name</Label>
+                            <Input name="name" required value={formData.name} onChange={handleChange} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Phone Number</Label>
+                            <Input name="phone" required value={formData.phone} onChange={handleChange} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Sector</Label>
+                            <Select name="sector" required value={formData.sector} onChange={handleChange}>
+                              <option value="chicken">Chicken Catching</option>
+                              <option value="turkey">Turkey Catching</option>
+                            </Select>
+                          </div>
+                          <div className="flex items-center gap-3 pt-2">
+                            <Input type="checkbox" name="hasRightToWork" id="hasRightToWork" checked={formData.hasRightToWork} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                            <Label htmlFor="hasRightToWork">I have the right to work in the UK</Label>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <Input type="checkbox" name="hasDrivingLicense" id="hasDrivingLicense" checked={formData.hasDrivingLicense} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                            <Label htmlFor="hasDrivingLicense">I have a valid driving license</Label>
+                          </div>
+                        </div>
+                      )}
 
-              <div className="flex items-start gap-4 p-6 border border-[var(--color-rule)] rounded-xl bg-[var(--color-paper)] opacity-60">
-                <div className="w-10 h-10 rounded-full bg-[var(--color-rule)] text-[var(--color-ink-2)] flex items-center justify-center font-bold shrink-0">
-                  <Lock className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg text-[var(--color-ink)]">Safety Training</h3>
-                  <p className="text-sm text-[var(--color-ink-2)] mt-1 mb-3">
-                    Review the safety guidelines and complete the brief assessment.
-                  </p>
-                  <button
-                    className="px-4 py-2 bg-[var(--color-rule)] text-[var(--color-ink-2)] text-sm font-medium rounded-lg min-h-[44px] cursor-not-allowed"
-                    disabled
-                  >
-                    Locked until details saved
-                  </button>
-                </div>
-              </div>
+                      {currentStep === 2 && (
+                        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+                          <div className="space-y-2">
+                            <Label>National Insurance Number</Label>
+                            <Input name="niNumber" required value={formData.niNumber} onChange={handleChange} placeholder="QQ 12 34 56 A" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Date of Birth</Label>
+                            <Input type="date" name="dateOfBirth" required value={formData.dateOfBirth} onChange={handleChange} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Address Line 1</Label>
+                            <Input name="addressLine1" required value={formData.addressLine1} onChange={handleChange} placeholder="123 Farm Lane" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Postcode</Label>
+                            <Input name="postcode" required value={formData.postcode} onChange={handleChange} placeholder="NR1 1AA" />
+                          </div>
+                        </div>
+                      )}
+
+                      {currentStep === 3 && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2"><Label>Bank Name</Label><Input name="bankName" required value={formData.bankName} onChange={handleChange} /></div>
+                            <div className="space-y-2"><Label>Account Name</Label><Input name="bankAccountName" required value={formData.bankAccountName} onChange={handleChange} /></div>
+                            <div className="space-y-2"><Label>Account Number</Label><Input name="bankAccountNumber" required value={formData.bankAccountNumber} onChange={handleChange} /></div>
+                            <div className="space-y-2"><Label>Sort Code</Label><Input name="bankSortCode" required value={formData.bankSortCode} onChange={handleChange} /></div>
+                          </div>
+                          
+                          <hr className="border-[var(--color-rule)]" />
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-2"><Label>Emergency Contact</Label><Input name="emergencyName" required value={formData.emergencyName} onChange={handleChange} /></div>
+                            <div className="space-y-2"><Label>Phone</Label><Input name="emergencyPhone" required value={formData.emergencyPhone} onChange={handleChange} /></div>
+                            <div className="space-y-2"><Label>Relation</Label><Input name="emergencyRelation" required value={formData.emergencyRelation} onChange={handleChange} /></div>
+                          </div>
+
+                          <hr className="border-[var(--color-rule)]" />
+
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-3">
+                              <Input type="checkbox" name="hasAsthmaOrAllergies" checked={formData.hasAsthmaOrAllergies} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                              <Label>I have asthma or allergies</Label>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <Input type="checkbox" name="hasBackIssues" checked={formData.hasBackIssues} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                              <Label>I have back issues or injuries</Label>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <Input type="checkbox" name="isFitToLift" checked={formData.isFitToLift} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                              <Label>I am fit to lift heavy objects regularly</Label>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex gap-3 pt-2">
+                        {currentStep > 1 && (
+                          <Button type="button" variant="outline" onClick={prevStep} className="w-24">
+                            Back
+                          </Button>
+                        )}
+                        <Button type="submit" className="flex-1">
+                          {currentStep === 3 ? 'Complete Onboarding' : 'Continue'} <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </div>
+                    </form>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="opacity-60 bg-[var(--color-paper-2)]">
+                <CardHeader className="flex flex-row items-start gap-4 space-y-0">
+                  <div className="w-10 h-10 rounded-full bg-[var(--color-rule)] text-[var(--color-ink-2)] flex items-center justify-center font-bold shrink-0">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="text-xl">Safety Training</CardTitle>
+                    <CardDescription className="mt-1 mb-4">
+                      Review the safety guidelines and complete the brief assessment.
+                    </CardDescription>
+                    <Button variant="secondary" disabled className="w-full sm:w-auto">Locked until details saved</Button>
+                  </div>
+                </CardHeader>
+              </Card>
             </div>
           </div>
         );
@@ -424,51 +295,47 @@ const PortalDashboard = () => {
               <p className="text-[var(--color-ink-2)] mt-1">Track the status of your recent applications.</p>
             </header>
             
-            <div className="bg-white rounded-xl shadow-sm border border-[var(--color-rule)] overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm min-w-[500px]">
-                  <thead className="bg-[var(--color-paper-2)] border-b border-[var(--color-rule)] text-[var(--color-ink-2)]">
-                    <tr>
-                      <th className="px-6 py-4 font-medium">Role applied for</th>
-                      <th className="px-6 py-4 font-medium">Status</th>
-                      <th className="px-6 py-4 font-medium">Date Applied</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--color-rule)]">
-                    {applications.map((app) => (
-                      <tr key={app.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                              <Briefcase className="w-4 h-4" />
-                            </div>
-                            <span className="font-semibold text-[var(--color-ink)]">{app.jobPosting?.title || 'Unknown Job'}</span>
+            <Card>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Date Applied</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {applications.map((app) => (
+                    <TableRow key={app.id}>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                            <Briefcase className="w-4 h-4" />
                           </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <Badge variant={app.status === 'HIRED' ? 'success' : app.status === 'REVIEWING' ? 'warning' : 'default'}>
-                            {app.status}
-                          </Badge>
-                        </td>
-                        <td className="px-6 py-4 text-[var(--color-ink-2)] font-medium">
-                          {new Date(app.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-                        </td>
-                      </tr>
-                    ))}
-                    {applications.length === 0 && (
-                      <tr>
-                        <td colSpan={3} className="px-6 py-12 text-center text-[var(--color-ink-2)] border-dashed">
-                          <div className="flex flex-col items-center justify-center">
-                            <ClipboardList className="w-12 h-12 text-[var(--color-rule)] mb-3" />
-                            <p>No applications found.</p>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+                          {app.jobPosting?.title || 'Unknown Job'}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={app.status === 'HIRED' ? 'success' : app.status === 'REVIEWING' ? 'warning' : 'secondary'}>
+                          {app.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-[var(--color-ink-2)]">
+                        {new Date(app.createdAt).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {applications.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center py-12 text-[var(--color-ink-2)]">
+                        <ClipboardList className="w-12 h-12 text-[var(--color-rule)] mb-3 mx-auto" />
+                        No applications found.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </Card>
           </div>
         );
       default:
@@ -478,7 +345,6 @@ const PortalDashboard = () => {
 
   return (
     <div className="flex h-[100dvh] bg-[var(--color-paper)] w-full overflow-hidden text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-white">
-      {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-[var(--color-ink)]/20 backdrop-blur-sm z-40 md:hidden"
@@ -486,7 +352,6 @@ const PortalDashboard = () => {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`fixed md:static inset-y-0 left-0 z-50 w-72 bg-white border-r border-[var(--color-rule)] flex flex-col transform transition-transform duration-[var(--dur-short)] ease-[var(--ease-out)] ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
       >
@@ -534,9 +399,7 @@ const PortalDashboard = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-[var(--color-paper-2)]">
-        {/* Mobile Header */}
         <header className="h-16 bg-white border-b border-[var(--color-rule)] flex items-center justify-between px-4 md:hidden shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-[var(--color-ink)] flex items-center justify-center text-white shrink-0">

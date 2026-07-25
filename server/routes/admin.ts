@@ -21,7 +21,7 @@ export default function createAdminRouter(prisma: any) {
       const { id, name, county, seoCopy, type, regionId, pickupPoint, surrounding, localizedCopy } = req.body;
       if (type === 'region') {
         const region = await prisma.region.create({
-          data: { id, name, county, seoCopy: seoCopy || '' }
+          data: { id, name, county: county || '', seoCopy: seoCopy || '' }
         });
         res.status(201).json(region);
       } else if (type === 'town') {
@@ -35,6 +35,49 @@ export default function createAdminRouter(prisma: any) {
     } catch (error) {
       console.error('Error creating location:', error);
       res.status(500).json({ error: 'Failed to create location' });
+    }
+  });
+
+  router.patch('/locations/:type/:id', async (req, res) => {
+    try {
+      const { type, id } = req.params;
+      const { name, county, seoCopy, regionId, pickupPoint, surrounding, localizedCopy } = req.body;
+      if (type === 'region') {
+        const region = await prisma.region.update({
+          where: { id },
+          data: { name, county, seoCopy }
+        });
+        res.json(region);
+      } else if (type === 'town') {
+        const town = await prisma.town.update({
+          where: { id },
+          data: { name, pickupPoint, surrounding, localizedCopy, regionId }
+        });
+        res.json(town);
+      } else {
+        res.status(400).json({ error: 'Invalid location type' });
+      }
+    } catch (error) {
+      console.error('Error updating location:', error);
+      res.status(500).json({ error: 'Failed to update location' });
+    }
+  });
+
+  router.delete('/locations/:type/:id', async (req, res) => {
+    try {
+      const { type, id } = req.params;
+      if (type === 'region') {
+        await prisma.region.delete({ where: { id } });
+        res.status(204).send();
+      } else if (type === 'town') {
+        await prisma.town.delete({ where: { id } });
+        res.status(204).send();
+      } else {
+        res.status(400).json({ error: 'Invalid location type' });
+      }
+    } catch (error) {
+      console.error('Error deleting location:', error);
+      res.status(500).json({ error: 'Failed to delete location' });
     }
   });
 
