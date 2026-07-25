@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, MapPin, Briefcase, Settings, LogOut, Menu } from 'lucide-react';
+import { useAuth } from '@clerk/clerk-react';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('kanban');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const { getToken } = useAuth();
 
   const [applications, setApplications] = useState<any[]>([]);
   const [locations, setLocations] = useState<any[]>([]);
@@ -28,20 +30,23 @@ const AdminDashboard = () => {
     setLoading(true);
     setError(null);
     try {
+      const token = await getToken();
+      const headers = { Authorization: `Bearer ${token}` };
+      
       if (activeTab === 'kanban') {
-        const res = await fetch('/api/admin/applications');
+        const res = await fetch('/api/admin/applications', { headers });
         if (!res.ok) throw new Error('Failed to fetch applications');
         setApplications(await res.json());
       } else if (activeTab === 'locations') {
-        const res = await fetch('/api/admin/locations');
+        const res = await fetch('/api/admin/locations', { headers });
         if (!res.ok) throw new Error('Failed to fetch locations');
         setLocations(await res.json());
       } else if (activeTab === 'jobs') {
-        const res = await fetch('/api/admin/job-postings');
+        const res = await fetch('/api/admin/job-postings', { headers });
         if (!res.ok) throw new Error('Failed to fetch jobs');
         setJobs(await res.json());
       } else if (activeTab === 'settings') {
-        const res = await fetch('/api/admin/users');
+        const res = await fetch('/api/admin/users', { headers });
         if (!res.ok) throw new Error('Failed to fetch users');
         setUsers(await res.json());
       }
@@ -54,9 +59,13 @@ const AdminDashboard = () => {
 
   const updateApplicationStatus = async (id: number, status: string) => {
     try {
+      const token = await getToken();
       const res = await fetch(`/api/admin/applications/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ status }),
       });
       if (!res.ok) throw new Error('Failed to update status');
@@ -72,9 +81,13 @@ const AdminDashboard = () => {
     const data = Object.fromEntries(formData.entries());
 
     try {
+      const token = await getToken();
       const res = await fetch('/api/admin/locations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           ...data,
           regionId: data.regionId ? parseInt(data.regionId as string, 10) : undefined,
@@ -94,9 +107,13 @@ const AdminDashboard = () => {
     const data = Object.fromEntries(formData.entries());
 
     try {
+      const token = await getToken();
       const res = await fetch('/api/admin/job-postings', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           title: data.title,
           description: data.description,
@@ -140,17 +157,17 @@ const AdminDashboard = () => {
                   {newApps.map((app) => (
                     <div
                       key={app.id}
-                      className="p-3 bg-slate-50 border border-[var(--color-rule)] rounded shadow-sm"
+                      className="p-3 bg-[var(--color-paper-2)] border border-[var(--color-rule)] rounded shadow-sm"
                     >
-                      <p className="font-medium text-sm">
+                      <p className="font-medium text-sm text-[var(--color-ink)]">
                         {app.name}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-[var(--color-ink-2)]">
                         {app.jobPosting?.title || 'Unknown Job'}
                       </p>
                       <button
                         onClick={() => updateApplicationStatus(app.id, 'REVIEWING')}
-                        className="mt-2 text-xs text-[var(--color-accent)]"
+                        className="mt-2 text-xs font-semibold text-[var(--color-accent)] hover:opacity-80 transition-opacity whitespace-nowrap"
                       >
                         Move to Review
                       </button>
@@ -166,17 +183,17 @@ const AdminDashboard = () => {
                   {reviewApps.map((app) => (
                     <div
                       key={app.id}
-                      className="p-3 bg-slate-50 border border-[var(--color-rule)] rounded shadow-sm"
+                      className="p-3 bg-[var(--color-paper-2)] border border-[var(--color-rule)] rounded shadow-sm"
                     >
-                      <p className="font-medium text-sm">
+                      <p className="font-medium text-sm text-[var(--color-ink)]">
                         {app.name}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-[var(--color-ink-2)]">
                         {app.jobPosting?.title || 'Unknown Job'}
                       </p>
                       <button
                         onClick={() => updateApplicationStatus(app.id, 'HIRED')}
-                        className="mt-2 text-xs text-[var(--color-accent)]"
+                        className="mt-2 text-xs font-semibold text-[var(--color-accent)] hover:opacity-80 transition-opacity whitespace-nowrap"
                       >
                         Mark as Hired
                       </button>
@@ -192,12 +209,12 @@ const AdminDashboard = () => {
                   {hiredApps.map((app) => (
                     <div
                       key={app.id}
-                      className="p-3 bg-slate-50 border border-[var(--color-rule)] rounded shadow-sm"
+                      className="p-3 bg-[var(--color-paper-2)] border border-[var(--color-rule)] rounded shadow-sm"
                     >
-                      <p className="font-medium text-sm">
+                      <p className="font-medium text-sm text-[var(--color-ink)]">
                         {app.name}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-[var(--color-ink-2)]">
                         {app.jobPosting?.title || 'Unknown Job'}
                       </p>
                     </div>
@@ -403,18 +420,18 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 w-full overflow-hidden">
+    <div className="flex h-screen bg-[var(--color-paper-2)] w-full overflow-hidden text-[var(--color-ink)]">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-[var(--color-ink)]/50 backdrop-blur-sm z-40 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-[var(--color-rule)] flex flex-col transform transition-transform duration-200 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
+        className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-[var(--color-paper)] border-r border-[var(--color-rule)] flex flex-col transform transition-transform duration-[var(--dur-short)] ease-[var(--ease-out)] ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
       >
         <div className="h-16 flex items-center px-6 border-b border-[var(--color-rule)]">
           <span className="font-display font-bold text-lg text-[var(--color-ink)]">
@@ -432,10 +449,10 @@ const AdminDashboard = () => {
                       setActiveTab(item.id);
                       setSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] ${
                       activeTab === item.id
-                        ? 'bg-[var(--color-accent)] text-white shadow-sm'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                        ? 'bg-[var(--color-ink)] text-[var(--color-paper)] shadow-sm'
+                        : 'text-[var(--color-ink-2)] hover:bg-[var(--color-paper-2)] hover:text-[var(--color-ink)]'
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -447,7 +464,7 @@ const AdminDashboard = () => {
           </ul>
         </nav>
         <div className="p-4 border-t border-[var(--color-rule)]">
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
+          <button className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-paper-2)] rounded-md transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]">
             <LogOut className="w-5 h-5" />
             Sign Out
           </button>

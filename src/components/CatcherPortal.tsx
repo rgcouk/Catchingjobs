@@ -23,17 +23,16 @@ import {
   EyeOff,
   ShieldCheck,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { SubmittedApplication } from '../App';
 
 interface CatcherPortalProps {
   applications: SubmittedApplication[];
-  onApply: () => void;
   onUpdateProfile: (ref: string, data: Partial<SubmittedApplication>) => void;
 }
 
 export default function CatcherPortal({
   applications,
-  onApply,
   onUpdateProfile,
 }: CatcherPortalProps) {
   // Authentication states
@@ -351,12 +350,12 @@ export default function CatcherPortal({
           </div>
 
           <div className="text-center pt-2">
-            <button
-              onClick={onApply}
+            <Link
+              to="/register"
               className="text-xs text-slate-600 hover:text-slate-900 underline font-medium cursor-pointer"
             >
               Don't have a Roster ID yet? Apply to join our squads
-            </button>
+            </Link>
           </div>
         </div>
       ) : (

@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   ShieldCheck,
   ArrowRight,
@@ -22,11 +23,10 @@ import {
 } from 'lucide-react';
 
 interface CorporateLanderProps {
-  onNavigate: (subdomain: 'root' | 'chicken' | 'turkey' | 'corporate', regionId: string) => void;
-  onApply?: () => void;
+  onNavigate: (sector: string, region: string) => void;
 }
 
-export default function CorporateLander({ onNavigate, onApply }: CorporateLanderProps) {
+export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
   return (
     <div className="space-y-10 font-sans">
       {/* 1. Hero Section */}
@@ -54,15 +54,14 @@ export default function CorporateLander({ onNavigate, onApply }: CorporateLander
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 relative z-10">
-          <button
-            onClick={onApply}
-            className="bg-slate-900 hover:bg-slate-850 text-white font-semibold py-3 px-6 rounded-lg text-sm tracking-wide transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
-            id="btn-apply-today"
+        <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 relative z-10">
+          <Link
+            to="/register"
+            className="w-full sm:w-auto bg-[var(--color-accent)] hover:bg-[var(--color-focus)] text-white px-8 py-3.5 rounded-full font-bold transition-all shadow-lg shadow-[var(--color-accent)]/25 flex items-center justify-center gap-2"
           >
-            <span>Apply Today</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+            Apply Now
+            <ArrowRight className="w-5 h-5" />
+          </Link>
 
           <a
             href="tel:01522504311"

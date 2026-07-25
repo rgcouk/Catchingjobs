@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   MapPin,
   ChevronRight,
@@ -25,10 +26,9 @@ import { TENANTS, REGIONS } from '../data';
 interface SectorHubProps {
   sectorId: 'chicken' | 'turkey';
   onSelectRegion: (regionId: string) => void;
-  onJoinRoster: () => void;
 }
 
-export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: SectorHubProps) {
+export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) {
   const tenant = TENANTS[sectorId];
 
   const sectorName = sectorId === 'chicken' ? 'Chicken Catching' : 'Turkey Catching';
@@ -64,14 +64,14 @@ export default function SectorHub({ sectorId, onSelectRegion, onJoinRoster }: Se
             </p>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-              <button
-                onClick={onJoinRoster}
+              <Link
+                to="/register"
                 className="bg-[var(--color-accent)] hover:bg-[var(--color-focus)] text-white font-bold py-2.5 px-6 rounded-md text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:-translate-y-0.5"
                 id="btn-apply-today-sector"
               >
                 <span>Apply for Catching Roles</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </Link>
 
               <a
                 href="tel:01522504311"

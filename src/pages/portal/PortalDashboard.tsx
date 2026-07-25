@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ClipboardList, UserCheck, LogOut, Menu, User } from 'lucide-react';
-import { useUser, useClerk } from '@clerk/clerk-react';
-
+import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
 interface PortalDashboardProps {
   setShowWizard: (show: boolean) => void;
 }
@@ -17,6 +16,7 @@ const PortalDashboard = ({ setShowWizard }: PortalDashboardProps) => {
 
   const { user } = useUser();
   const { signOut } = useClerk();
+  const { getToken } = useAuth();
 
   const USER_ID = user?.id || '';
 
@@ -34,8 +34,11 @@ const PortalDashboard = ({ setShowWizard }: PortalDashboardProps) => {
     setError(null);
     try {
       if (!USER_ID) return;
+      const token = await getToken();
+      const headers = { Authorization: `Bearer ${token}` };
+
       if (activeTab === 'onboarding') {
-        const res = await fetch(`/api/portal/me?userId=${USER_ID}`);
+        const res = await fetch(`/api/portal/me?userId=${USER_ID}`, { headers });
         if (!res.ok) throw new Error('Failed to fetch profile');
         const data = await res.json();
         setProfile(data);
@@ -43,7 +46,7 @@ const PortalDashboard = ({ setShowWizard }: PortalDashboardProps) => {
           setShowWizard(true);
         }
       } else if (activeTab === 'applications') {
-        const res = await fetch(`/api/portal/applications?userId=${USER_ID}`);
+        const res = await fetch(`/api/portal/applications?userId=${USER_ID}`, { headers });
         if (!res.ok) throw new Error('Failed to fetch applications');
         setApplications(await res.json());
       }
@@ -60,9 +63,13 @@ const PortalDashboard = ({ setShowWizard }: PortalDashboardProps) => {
     const data = Object.fromEntries(formData.entries());
 
     try {
+      const token = await getToken();
       const res = await fetch(`/api/portal/onboarding?userId=${USER_ID}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           niNumber: data.niNumber,
           dateOfBirth: data.dateOfBirth,

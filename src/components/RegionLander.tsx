@@ -14,6 +14,7 @@ import {
   Phone,
   ArrowRight,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { REGIONS, TENANTS } from '../data';
 
@@ -21,14 +22,12 @@ interface RegionLanderProps {
   regionId: string;
   sectorId: 'chicken' | 'turkey';
   onBackToSector: () => void;
-  onJoinRoster: () => void;
 }
 
 export default function RegionLander({
   regionId,
   sectorId,
   onBackToSector,
-  onJoinRoster,
 }: RegionLanderProps) {
   let region = REGIONS.find((r) => r.id === regionId);
   let town;
@@ -189,14 +188,14 @@ export default function RegionLander({
             </p>
 
             <div className="space-y-3 pt-2 border-t border-slate-100">
-              <button
-                onClick={onJoinRoster}
+              <Link
+                to="/register"
                 className="w-full bg-[var(--color-accent)] hover:bg-[var(--color-focus)] text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer hover:-translate-y-0.5"
                 id="btn-trigger-wizard-region"
               >
                 <span>Join Catching Team</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </Link>
 
               <a
                 href="tel:01522504311"

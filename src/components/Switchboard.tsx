@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   MapPin,
   ArrowRight,
@@ -25,10 +26,9 @@ import { REGIONS } from '../data';
 
 interface SwitchboardProps {
   onNavigate: (subdomain: 'root' | 'chicken' | 'turkey' | 'corporate', regionId: string) => void;
-  onApply?: () => void;
 }
 
-export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
+export default function Switchboard({ onNavigate }: SwitchboardProps) {
   // Static news articles
   const news = [
     {
@@ -112,14 +112,14 @@ export default function Switchboard({ onNavigate, onApply }: SwitchboardProps) {
             </p>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-              <button
-                onClick={onApply}
+              <Link
+                to="/register"
                 className="bg-[var(--color-accent)] hover:bg-[var(--color-focus)] text-white font-bold py-2.5 px-6 rounded-md text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:-translate-y-0.5"
                 id="btn-apply-today-switchboard"
               >
                 <span>Apply for Catching Roles</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </Link>
 
               <a
                 href="tel:01522504311"

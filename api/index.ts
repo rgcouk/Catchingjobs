@@ -8,6 +8,7 @@ import createAdminRouter from '../server/routes/admin.ts';
 import createPortalRouter from '../server/routes/portal.ts';
 import { clerkMiddleware } from '@clerk/express';
 import { authenticate } from '../server/middleware/auth.ts';
+import { Webhook } from 'svix';
 
 dotenv.config();
 
@@ -17,7 +18,11 @@ const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    (req as any).rawBody = buf;
+  }
+}));
 app.use(cookieParser());
 
 app.use(clerkMiddleware({ secretKey: process.env.CLERK_SECRET_KEY }));
@@ -98,8 +103,38 @@ app.post('/api/applications', async (req, res) => {
 
 // Clerk Webhook for user sync
 app.post('/api/webhook/clerk', async (req, res) => {
+  const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
+
+  if (!WEBHOOK_SECRET) {
+    throw new Error('Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env');
+  }
+
+  // Get the headers and body
+  const svix_id = req.headers['svix-id'] as string;
+  const svix_timestamp = req.headers['svix-timestamp'] as string;
+  const svix_signature = req.headers['svix-signature'] as string;
+
+  if (!svix_id || !svix_timestamp || !svix_signature) {
+    return res.status(400).json({ error: 'Missing svix headers' });
+  }
+
+  const payload = (req as any).rawBody.toString('utf8');
+  const wh = new Webhook(WEBHOOK_SECRET);
+
+  let evt;
+
   try {
-    const evt = req.body;
+    evt = wh.verify(payload, {
+      'svix-id': svix_id,
+      'svix-timestamp': svix_timestamp,
+      'svix-signature': svix_signature,
+    });
+  } catch (err) {
+    console.error('Error verifying clerk webhook:', err);
+    return res.status(400).json({ error: 'Webhook verification failed' });
+  }
+
+  try {
     const { id, email_addresses } = evt?.data || {};
     const email = email_addresses && email_addresses.length > 0 ? email_addresses[0].email_address : `${id}@placeholder.com`;
 
@@ -118,8 +153,8 @@ app.post('/api/webhook/clerk', async (req, res) => {
 
     res.status(200).json({ success: true });
   } catch (error) {
-    console.error('Error processing clerk webhook:', error);
-    res.status(500).json({ error: 'Failed to process clerk webhook' });
+    console.error('Error processing clerk webhook data:', error);
+    res.status(500).json({ error: 'Failed to process clerk webhook data' });
   }
 });
 
