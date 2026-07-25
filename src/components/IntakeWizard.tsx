@@ -18,7 +18,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import { ApplicationData } from '../types';
-import { useUser } from '@clerk/react';
+import { useUser } from '@clerk/clerk-react';
 
 interface IntakeWizardProps {
   sectorId: 'chicken' | 'turkey';

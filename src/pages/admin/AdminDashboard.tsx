@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, MapPin, Briefcase, Settings, LogOut, Menu } from 'lucide-react';
-import { useAuth } from '@clerk/react';
+import { useAuth } from '@clerk/clerk-react';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('kanban');

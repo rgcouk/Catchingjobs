@@ -1,5 +1,5 @@
 import React from 'react';
-import { SignIn } from '@clerk/react';
+import { SignIn } from '@clerk/clerk-react';
 
 export default function Login() {
   return (
