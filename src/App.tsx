@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate, useParams, Link } from 'react-router-dom';
-import { useAuth, useUser, SignedIn, SignedOut, UserButton, AuthenticateWithRedirectCallback } from '@clerk/clerk-react';
+import { useAuth, useUser, SignedIn, SignedOut, UserButton, AuthenticateWithRedirectCallback } from '@clerk/react';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import { motion, AnimatePresence } from 'motion/react';

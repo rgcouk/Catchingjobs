@@ -1,5 +1,5 @@
 import React from 'react';
-import { SignUp } from '@clerk/clerk-react';
+import { SignUp } from '@clerk/react';
 
 export default function Register() {
   return (

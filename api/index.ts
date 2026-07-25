@@ -25,7 +25,7 @@ app.use(express.json({
 }));
 app.use(cookieParser());
 
-app.use(clerkMiddleware({ secretKey: process.env.CLERK_SECRET_KEY }));
+app.use(clerkMiddleware({ secretKey: process.env.CLERK_SECRET_KEY, publishableKey: process.env.VITE_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY }));
 
 // Admin & Portal Routes
 app.use('/api/admin', authenticate, createAdminRouter(prisma));
@@ -118,7 +118,7 @@ app.post('/api/webhook/clerk', async (req, res) => {
     return res.status(400).json({ error: 'Missing svix headers' });
   }
 
-  const payload = (req as any).rawBody.toString('utf8');
+  const payload = (req as any).rawBody ? (req as any).rawBody.toString('utf8') : JSON.stringify(req.body);
   const wh = new Webhook(WEBHOOK_SECRET);
 
   let evt;

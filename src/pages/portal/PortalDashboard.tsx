@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ClipboardList, UserCheck, LogOut, Menu, User } from 'lucide-react';
-import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
+import { useUser, useClerk, useAuth } from '@clerk/react';
 interface PortalDashboardProps {
   setShowWizard: (show: boolean) => void;
 }
