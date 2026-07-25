@@ -207,7 +207,7 @@ export default function RosterPortal({
           <select
             value={filterContacted}
             onChange={(e) =>
-              setFilterContacted(e.target.value as 'all' | 'contacted' | 'uncontacted')
+              setFilterContacted(e.target.value as 'all' | 'contacted' | 'pending')
             }
             className="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-slate-400"
             id="filter-status-dropdown"

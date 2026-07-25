@@ -28,7 +28,7 @@ import { SubmittedApplication } from '../App';
 
 interface CatcherPortalProps {
   applications: SubmittedApplication[];
-  onUpdateProfile: (ref: string, data: Partial<SubmittedApplication>) => void;
+  onUpdateProfile: (ref: string, data: Partial<SubmittedApplication>) => void | Promise<void>;
 }
 
 export default function CatcherPortal({

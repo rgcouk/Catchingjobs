@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation, Navigate, useParams } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, Navigate, useParams, Link } from 'react-router-dom';
 import { useAuth, useUser, SignedIn, SignedOut, UserButton, AuthenticateWithRedirectCallback } from '@clerk/clerk-react';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
@@ -65,11 +65,9 @@ export interface SubmittedApplication extends ApplicationData {
 // Wrapper to extract Region parameters
 function RegionRoute({
   sectorId,
-  onJoinRoster,
   onNavigate,
 }: {
   sectorId: 'chicken' | 'turkey';
-  onJoinRoster: () => void;
   onNavigate: (sub: 'chicken' | 'turkey', reg: string) => void;
 }) {
   const { regionId } = useParams<{ regionId: string }>();
@@ -79,7 +77,6 @@ function RegionRoute({
       regionId={regionId}
       sectorId={sectorId}
       onBackToSector={() => onNavigate(sectorId, '')}
-      onJoinRoster={onJoinRoster}
     />
   );
 }
@@ -422,7 +419,6 @@ function App() {
               element={
                 <CatcherPortal
                   applications={applications}
-                  onCompleteSafetyTasks={handleCompleteSafetyTasks}
                   onUpdateProfile={handleUpdateProfile}
                 />
               }

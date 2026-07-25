@@ -52,6 +52,6 @@ export interface ApplicationData {
   hasRightToWork: boolean | null;
   hasDrivingLicense: boolean | null;
   shiftAvailability: string;
-  authProvider?: 'google' | 'facebook';
+  authProvider?: 'google' | 'facebook' | 'clerk';
   avatarUrl?: string;
 }
