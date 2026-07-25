@@ -1,13 +1,13 @@
 import express from 'express';
-import { PrismaClient } from '../src/generated/prisma/client.ts';
+import { PrismaClient } from '../src/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import createAdminRouter from '../server/routes/admin.ts';
-import createPortalRouter from '../server/routes/portal.ts';
+import createAdminRouter from '../server/routes/admin';
+import createPortalRouter from '../server/routes/portal';
 import { clerkMiddleware } from '@clerk/express';
-import { authenticate } from '../server/middleware/auth.ts';
+import { authenticate } from '../server/middleware/auth';
 import { Webhook } from 'svix';
 
 dotenv.config();
