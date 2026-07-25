@@ -54,7 +54,7 @@ export default function createPortalRouter(prisma: any) {
       if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
       const user = await getOrCreateUser(userId);
-      if (!user || !user.applicationId) return res.status(404).json({ error: 'No associated application found' });
+      if (!user) return res.status(404).json({ error: 'User not found' });
 
       const {
         niNumber, dateOfBirth, addressLine1, postcode,
@@ -63,16 +63,42 @@ export default function createPortalRouter(prisma: any) {
         hasAsthmaOrAllergies, hasBackIssues, isFitToLift, declarationSigned
       } = req.body;
 
-      const application = await prisma.application.update({
-        where: { id: user.applicationId },
-        data: {
-          niNumber, dateOfBirth, addressLine1, postcode,
-          bankName, bankAccountName, bankAccountNumber, bankSortCode,
-          emergencyName, emergencyPhone, emergencyRelation,
-          hasAsthmaOrAllergies, hasBackIssues, isFitToLift, declarationSigned,
-          profileFormCompleted: true
-        }
-      });
+      let application;
+      if (!user.applicationId) {
+        // Create an application if one doesn't exist
+        application = await prisma.application.create({
+          data: {
+            rosterRef: `PL-PRT-${Math.floor(1000 + Math.random() * 9000)}`,
+            name: user.email?.split('@')[0] || 'Unknown',
+            email: user.email || '',
+            phone: '',
+            town: '',
+            postcode: postcode || '',
+            hasRightToWork: true,
+            hasDrivingLicense: false,
+            shiftAvailability: 'Any',
+            sector: 'chicken',
+            timestamp: new Date().toISOString(),
+            niNumber, dateOfBirth, addressLine1,
+            bankName, bankAccountName, bankAccountNumber, bankSortCode,
+            emergencyName, emergencyPhone, emergencyRelation,
+            hasAsthmaOrAllergies, hasBackIssues, isFitToLift, declarationSigned,
+            profileFormCompleted: true,
+            user: { connect: { id: user.id } }
+          }
+        });
+      } else {
+        application = await prisma.application.update({
+          where: { id: user.applicationId },
+          data: {
+            niNumber, dateOfBirth, addressLine1, postcode,
+            bankName, bankAccountName, bankAccountNumber, bankSortCode,
+            emergencyName, emergencyPhone, emergencyRelation,
+            hasAsthmaOrAllergies, hasBackIssues, isFitToLift, declarationSigned,
+            profileFormCompleted: true
+          }
+        });
+      }
       res.json(application);
     } catch (error) {
       console.error('Error updating onboarding:', error);
