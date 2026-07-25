@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ClipboardList, UserCheck, LogOut, Menu, User, CheckCircle2, Lock, ArrowRight, Briefcase } from 'lucide-react';
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
 
-interface PortalDashboardProps {
-  setShowWizard: (show: boolean) => void;
-}
-
-const PortalDashboard = ({ setShowWizard }: PortalDashboardProps) => {
+const PortalDashboard = () => {
   const [activeTab, setActiveTab] = useState('onboarding');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
@@ -43,9 +39,7 @@ const PortalDashboard = ({ setShowWizard }: PortalDashboardProps) => {
         if (!res.ok) throw new Error('Failed to fetch profile');
         const data = await res.json();
         setProfile(data);
-        if (!data?.application) {
-          setShowWizard(true);
-        }
+        setProfile(data);
       } else if (activeTab === 'applications') {
         const res = await fetch(`/api/portal/applications?userId=${USER_ID}`, { headers });
         if (!res.ok) throw new Error('Failed to fetch applications');
@@ -58,10 +52,74 @@ const PortalDashboard = ({ setShowWizard }: PortalDashboardProps) => {
     }
   };
 
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    hasRightToWork: false,
+    hasDrivingLicense: false,
+    sector: 'chicken',
+    niNumber: '',
+    dateOfBirth: '',
+    addressLine1: '',
+    postcode: '',
+    bankName: '',
+    bankAccountName: '',
+    bankAccountNumber: '',
+    bankSortCode: '',
+    emergencyName: '',
+    emergencyPhone: '',
+    emergencyRelation: '',
+    hasAsthmaOrAllergies: false,
+    hasBackIssues: false,
+    isFitToLift: false,
+  });
+
+  useEffect(() => {
+    if (profile?.application) {
+      setFormData(prev => ({
+        ...prev,
+        name: profile.application.name || prev.name,
+        phone: profile.application.phone || prev.phone,
+        hasRightToWork: profile.application.hasRightToWork ?? prev.hasRightToWork,
+        hasDrivingLicense: profile.application.hasDrivingLicense ?? prev.hasDrivingLicense,
+        sector: profile.application.sector || prev.sector,
+        niNumber: profile.application.niNumber || prev.niNumber,
+        dateOfBirth: profile.application.dateOfBirth ? new Date(profile.application.dateOfBirth).toISOString().split('T')[0] : prev.dateOfBirth,
+        addressLine1: profile.application.addressLine1 || prev.addressLine1,
+        postcode: profile.application.postcode || prev.postcode,
+        bankName: profile.application.bankName || prev.bankName,
+        bankAccountName: profile.application.bankAccountName || prev.bankAccountName,
+        bankAccountNumber: profile.application.bankAccountNumber || prev.bankAccountNumber,
+        bankSortCode: profile.application.bankSortCode || prev.bankSortCode,
+        emergencyName: profile.application.emergencyName || prev.emergencyName,
+        emergencyPhone: profile.application.emergencyPhone || prev.emergencyPhone,
+        emergencyRelation: profile.application.emergencyRelation || prev.emergencyRelation,
+        hasAsthmaOrAllergies: profile.application.hasAsthmaOrAllergies ?? prev.hasAsthmaOrAllergies,
+        hasBackIssues: profile.application.hasBackIssues ?? prev.hasBackIssues,
+        isFitToLift: profile.application.isFitToLift ?? prev.isFitToLift,
+      }));
+    }
+  }, [profile]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target as HTMLInputElement;
+    const checked = (e.target as HTMLInputElement).checked;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 3));
+  const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
+
   const handleOnboardingSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    if (currentStep < 3) {
+      nextStep();
+      return;
+    }
 
     try {
       const token = await getToken();
@@ -71,13 +129,7 @@ const PortalDashboard = ({ setShowWizard }: PortalDashboardProps) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          niNumber: data.niNumber,
-          dateOfBirth: data.dateOfBirth,
-          addressLine1: data.addressLine1,
-          postcode: data.postcode,
-          declarationSigned: data.declarationSigned === 'on',
-        }),
+        body: JSON.stringify(formData),
       });
       if (!res.ok) throw new Error('Failed to submit onboarding');
       fetchData();
@@ -137,73 +189,203 @@ const PortalDashboard = ({ setShowWizard }: PortalDashboardProps) => {
                     ) : (
                       <form
                         onSubmit={handleOnboardingSubmit}
-                        className="space-y-4 max-w-lg bg-[var(--color-paper-2)] p-5 rounded-lg border border-[var(--color-rule)]"
+                        className="space-y-4 bg-[var(--color-paper-2)] p-5 rounded-lg border border-[var(--color-rule)]"
                       >
-                        <div>
-                          <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Date of Birth</label>
-                          <input
-                            type="date"
-                            name="dateOfBirth"
-                            required
-                            className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
-                            defaultValue={
-                              app?.dateOfBirth
-                                ? new Date(app.dateOfBirth).toISOString().split('T')[0]
-                                : ''
-                            }
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">National Insurance Number</label>
-                          <input
-                            name="niNumber"
-                            required
-                            className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
-                            placeholder="QQ 12 34 56 A"
-                            defaultValue={app?.niNumber || ''}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Address Line 1</label>
-                          <input
-                            name="addressLine1"
-                            required
-                            className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
-                            placeholder="123 Farm Lane"
-                            defaultValue={app?.addressLine1 || ''}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Postcode</label>
-                          <input
-                            name="postcode"
-                            required
-                            className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
-                            placeholder="NR1 1AA"
-                            defaultValue={app?.postcode || ''}
-                          />
-                        </div>
-                        <div className="flex items-center gap-3 pt-2">
-                          <div className="flex items-center justify-center w-6 h-6">
-                            <input
-                              type="checkbox"
-                              name="declarationSigned"
-                              id="decl"
-                              required
-                              className="w-4 h-4 rounded border-[var(--color-rule)] text-[var(--color-accent)] focus:ring-[var(--color-focus)]"
-                              defaultChecked={app?.declarationSigned}
-                            />
+                        {currentStep === 1 && (
+                          <div className="space-y-4">
+                            <div>
+                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Full Name</label>
+                              <input
+                                name="name"
+                                required
+                                value={formData.name}
+                                onChange={handleChange}
+                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Phone Number</label>
+                              <input
+                                name="phone"
+                                required
+                                value={formData.phone}
+                                onChange={handleChange}
+                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Sector</label>
+                              <select
+                                name="sector"
+                                required
+                                value={formData.sector}
+                                onChange={handleChange}
+                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
+                              >
+                                <option value="chicken">Chicken Catching</option>
+                                <option value="turkey">Turkey Catching</option>
+                              </select>
+                            </div>
+                            <div className="flex items-center gap-3 pt-2">
+                              <div className="flex items-center justify-center w-6 h-6">
+                                <input
+                                  type="checkbox"
+                                  name="hasRightToWork"
+                                  id="hasRightToWork"
+                                  checked={formData.hasRightToWork}
+                                  onChange={handleChange}
+                                  className="w-4 h-4 rounded border-[var(--color-rule)] text-[var(--color-accent)] focus:ring-[var(--color-focus)]"
+                                />
+                              </div>
+                              <label htmlFor="hasRightToWork" className="text-sm font-medium text-[var(--color-ink)]">
+                                I have the right to work in the UK
+                              </label>
+                            </div>
+                            <div className="flex items-center gap-3 pt-2">
+                              <div className="flex items-center justify-center w-6 h-6">
+                                <input
+                                  type="checkbox"
+                                  name="hasDrivingLicense"
+                                  id="hasDrivingLicense"
+                                  checked={formData.hasDrivingLicense}
+                                  onChange={handleChange}
+                                  className="w-4 h-4 rounded border-[var(--color-rule)] text-[var(--color-accent)] focus:ring-[var(--color-focus)]"
+                                />
+                              </div>
+                              <label htmlFor="hasDrivingLicense" className="text-sm font-medium text-[var(--color-ink)]">
+                                I have a valid driving license
+                              </label>
+                            </div>
                           </div>
-                          <label htmlFor="decl" className="text-sm font-medium text-[var(--color-ink-2)]">
-                            I declare this information is true and correct.
-                          </label>
-                        </div>
-                        <div className="pt-2">
+                        )}
+
+                        {currentStep === 2 && (
+                          <div className="space-y-4">
+                            <div>
+                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">National Insurance Number</label>
+                              <input
+                                name="niNumber"
+                                required
+                                value={formData.niNumber}
+                                onChange={handleChange}
+                                placeholder="QQ 12 34 56 A"
+                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Date of Birth</label>
+                              <input
+                                type="date"
+                                name="dateOfBirth"
+                                required
+                                value={formData.dateOfBirth}
+                                onChange={handleChange}
+                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Address Line 1</label>
+                              <input
+                                name="addressLine1"
+                                required
+                                value={formData.addressLine1}
+                                onChange={handleChange}
+                                placeholder="123 Farm Lane"
+                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Postcode</label>
+                              <input
+                                name="postcode"
+                                required
+                                value={formData.postcode}
+                                onChange={handleChange}
+                                placeholder="NR1 1AA"
+                                className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none transition-all bg-white"
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {currentStep === 3 && (
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Bank Name</label>
+                                <input name="bankName" required value={formData.bankName} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Account Name</label>
+                                <input name="bankAccountName" required value={formData.bankAccountName} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Account Number</label>
+                                <input name="bankAccountNumber" required value={formData.bankAccountNumber} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Sort Code</label>
+                                <input name="bankSortCode" required value={formData.bankSortCode} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
+                              </div>
+                            </div>
+
+                            <hr className="border-[var(--color-rule)] my-4" />
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Emergency Name</label>
+                                <input name="emergencyName" required value={formData.emergencyName} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Emergency Phone</label>
+                                <input name="emergencyPhone" required value={formData.emergencyPhone} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-ink)]">Emergency Relation</label>
+                                <input name="emergencyRelation" required value={formData.emergencyRelation} onChange={handleChange} className="w-full border border-[var(--color-rule)] rounded-lg px-3 py-2 min-h-[48px] focus:ring-2 focus:ring-[var(--color-focus)] outline-none bg-white" />
+                              </div>
+                            </div>
+
+                            <hr className="border-[var(--color-rule)] my-4" />
+
+                            <div className="space-y-2">
+                              <label className="flex items-start gap-3">
+                                <div className="flex items-center justify-center w-6 h-6 shrink-0">
+                                  <input type="checkbox" name="hasAsthmaOrAllergies" checked={formData.hasAsthmaOrAllergies} onChange={handleChange} className="w-4 h-4 rounded border-[var(--color-rule)] text-[var(--color-accent)] focus:ring-[var(--color-focus)]" />
+                                </div>
+                                <span className="text-sm font-medium text-[var(--color-ink)] pt-1">I have asthma or allergies</span>
+                              </label>
+                              <label className="flex items-start gap-3">
+                                <div className="flex items-center justify-center w-6 h-6 shrink-0">
+                                  <input type="checkbox" name="hasBackIssues" checked={formData.hasBackIssues} onChange={handleChange} className="w-4 h-4 rounded border-[var(--color-rule)] text-[var(--color-accent)] focus:ring-[var(--color-focus)]" />
+                                </div>
+                                <span className="text-sm font-medium text-[var(--color-ink)] pt-1">I have back issues or injuries</span>
+                              </label>
+                              <label className="flex items-start gap-3">
+                                <div className="flex items-center justify-center w-6 h-6 shrink-0">
+                                  <input type="checkbox" name="isFitToLift" checked={formData.isFitToLift} onChange={handleChange} className="w-4 h-4 rounded border-[var(--color-rule)] text-[var(--color-accent)] focus:ring-[var(--color-focus)]" />
+                                </div>
+                                <span className="text-sm font-medium text-[var(--color-ink)] pt-1">I am fit to lift heavy objects regularly</span>
+                              </label>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="pt-4 flex gap-3">
+                          {currentStep > 1 && (
+                            <button
+                              type="button"
+                              onClick={prevStep}
+                              className="px-4 py-2 bg-[var(--color-paper)] border border-[var(--color-rule)] text-[var(--color-ink)] rounded-lg font-medium min-h-[48px] hover:bg-[var(--color-paper-2)] transition-colors"
+                            >
+                              Back
+                            </button>
+                          )}
                           <button
                             type="submit"
-                            className="w-full bg-[var(--color-accent)] text-white px-4 py-2 rounded-lg font-medium min-h-[48px] hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                            className="flex-1 bg-[var(--color-accent)] text-white px-4 py-2 rounded-lg font-medium min-h-[48px] hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                           >
-                            Save Details <ArrowRight className="w-4 h-4" />
+                            {currentStep === 3 ? 'Complete Onboarding' : 'Continue'} <ArrowRight className="w-4 h-4" />
                           </button>
                         </div>
                       </form>

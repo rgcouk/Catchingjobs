@@ -85,8 +85,6 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [showWizard, setShowWizard] = useState<boolean>(false);
-
   // Interactive administrator panel state
   const [showPortal, setShowPortal] = useState<boolean>(false);
   const [applications, setApplications] = useState<SubmittedApplication[]>([]);
@@ -410,7 +408,7 @@ function App() {
               path="/user-portal"
               element={
                 <ProtectedRoute>
-                  <PortalDashboard setShowWizard={setShowWizard} />
+                  <PortalDashboard />
                 </ProtectedRoute>
               }
             />
@@ -477,48 +475,7 @@ function App() {
         )}
       </main>
 
-      <AnimatePresence>
-        {showWizard && (
-          <div className="fixed inset-0 z-[100] flex items-stretch justify-end">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowWizard(false)}
-              className="absolute inset-0 bg-[var(--color-ink)]/20 backdrop-blur-sm"
-            />
 
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="relative z-10 w-full max-w-lg bg-[var(--color-paper)] h-full overflow-y-auto border-l border-[var(--color-rule)] shadow-2xl flex flex-col"
-            >
-              <div className="sticky top-0 z-20 flex items-center justify-between p-4 bg-[var(--color-paper)]/90 backdrop-blur-md border-b border-[var(--color-rule)]">
-                <span className="font-display font-semibold text-lg">Applicant Intake</span>
-                <button
-                  onClick={() => setShowWizard(false)}
-                  className="p-2 rounded-full hover:bg-[var(--color-paper-2)] transition-colors text-[var(--color-ink-2)] hover:text-[var(--color-ink)]"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="flex-1 p-6">
-                <IntakeWizard
-                  sectorId={activeTab === 'root' || activeTab === 'chicken' ? 'chicken' : 'turkey'}
-                  regionName={currentRegion ? currentRegion.name : 'all'}
-                  onSuccess={(data) => {
-                    handleWizardSuccess(data);
-                    setShowWizard(false);
-                  }}
-                  onClose={() => setShowWizard(false)}
-                />
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       <footer className="border-t border-[var(--color-rule)] bg-[var(--color-paper)] pt-24 pb-32 px-6 lg:px-8 mt-auto shrink-0 relative overflow-hidden">
         <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-end justify-between gap-12">
