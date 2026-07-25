@@ -4,10 +4,10 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import createAdminRouter from '../server/routes/admin';
-import createPortalRouter from '../server/routes/portal';
+import createAdminRouter from '../server/routes/admin.js';
+import createPortalRouter from '../server/routes/portal.js';
 import { clerkMiddleware } from '@clerk/express';
-import { authenticate } from '../server/middleware/auth';
+import { authenticate } from '../server/middleware/auth.js';
 import { Webhook } from 'svix';
 
 dotenv.config();
