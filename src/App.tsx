@@ -33,7 +33,6 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import PortalDashboard from './pages/portal/PortalDashboard';
 
 import { ApplicationData } from './types';
-import { REGIONS } from './data';
 
 export interface SubmittedApplication extends ApplicationData {
   rosterRef: string;
@@ -253,7 +252,6 @@ function App() {
   const path = location.pathname;
   const pathParts = path.split('/');
   const regionIdFromPath = pathParts.length > 2 ? pathParts[2] : '';
-  const currentRegion = REGIONS.find((r) => r.id === regionIdFromPath);
 
   const activeTab =
     path === '/corporate'

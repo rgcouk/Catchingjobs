@@ -31,6 +31,20 @@ app.use(clerkMiddleware({ secretKey: process.env.CLERK_SECRET_KEY, publishableKe
 app.use('/api/admin', authenticate, createAdminRouter(prisma));
 app.use('/api/portal', authenticate, createPortalRouter(prisma));
 
+// Public Locations
+app.get('/api/locations', async (req, res) => {
+  try {
+    const regions = await prisma.region.findMany({
+      include: { towns: true },
+      orderBy: { name: 'asc' }
+    });
+    res.json(regions);
+  } catch (error) {
+    console.error('Error fetching public locations:', error);
+    res.status(500).json({ error: 'Failed to fetch locations' });
+  }
+});
+
 // Get all applications
 app.get('/api/applications', async (req, res) => {
   try {

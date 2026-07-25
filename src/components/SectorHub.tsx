@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   MapPin,
@@ -21,7 +21,7 @@ import {
   GraduationCap,
   GitBranch,
 } from 'lucide-react';
-import { TENANTS, REGIONS } from '../data';
+import { TENANTS } from '../data';
 
 interface SectorHubProps {
   sectorId: 'chicken' | 'turkey';
@@ -30,6 +30,16 @@ interface SectorHubProps {
 
 export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) {
   const tenant = TENANTS[sectorId];
+  const [regions, setRegions] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/api/locations')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setRegions(data);
+      })
+      .catch(console.error);
+  }, []);
 
   const sectorName = sectorId === 'chicken' ? 'Chicken Catching' : 'Turkey Catching';
   const industryName =
@@ -103,9 +113,9 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
           </div>
 
           <div className="grid md:grid-cols-2 gap-3">
-            {REGIONS.flatMap((region) => {
+            {regions.flatMap((region) => {
               if (region.towns && region.towns.length > 0) {
-                return region.towns.map((town) => ({
+                return region.towns.map((town: any) => ({
                   id: town.id,
                   name: town.name,
                   copy: town.localizedCopy,

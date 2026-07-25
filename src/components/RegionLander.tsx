@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   MapPin,
   Users,
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { REGIONS, TENANTS } from '../data';
+import { TENANTS } from '../data';
 
 interface RegionLanderProps {
   regionId: string;
@@ -29,28 +29,50 @@ export default function RegionLander({
   sectorId,
   onBackToSector,
 }: RegionLanderProps) {
-  let region = REGIONS.find((r) => r.id === regionId);
-  let town;
-
-  if (!region) {
-    // Try to find a town
-    for (const r of REGIONS) {
-      if (r.towns) {
-        const found = r.towns.find((t) => t.id === regionId);
-        if (found) {
-          region = {
-            ...r,
-            name: found.name,
-            seoCopy: found.localizedCopy,
-          };
-          town = found;
-          break;
-        }
-      }
-    }
-  }
-
+  const [region, setRegion] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const tenant = TENANTS[sectorId];
+
+  useEffect(() => {
+    fetch('/api/locations')
+      .then(res => res.json())
+      .then((data: any[]) => {
+        let foundRegion = data.find((r) => r.id === regionId);
+        
+        if (!foundRegion) {
+          for (const r of data) {
+            if (r.towns) {
+              const foundTown = r.towns.find((t: any) => t.id === regionId);
+              if (foundTown) {
+                foundRegion = {
+                  ...r,
+                  name: foundTown.name,
+                  seoCopy: foundTown.localizedCopy,
+                };
+                break;
+              }
+            }
+          }
+        }
+        
+        setRegion(foundRegion || null);
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.error(e);
+        setLoading(false);
+      });
+  }, [regionId]);
+
+  if (loading) {
+    return (
+      <div className="text-center py-8 bg-white border border-slate-200 rounded-lg max-w-sm mx-auto mt-10">
+        <p className="text-slate-600 font-mono font-bold text-xs">
+          Loading regional context...
+        </p>
+      </div>
+    );
+  }
 
   if (!region) {
     return (
