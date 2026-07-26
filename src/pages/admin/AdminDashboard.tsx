@@ -8,7 +8,8 @@ import { Select } from '../../components/ui/select';
 import { Badge } from '../../components/ui/badge';
 import { Label } from '../../components/ui/label';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../../components/ui/table';
-
+import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogContent } from '../../components/ui/dialog';
+import { MessageSquare, PhoneCall, Mail, CheckCircle, Smartphone, Check, Sparkles } from 'lucide-react';
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('kanban');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -21,6 +22,9 @@ const AdminDashboard = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [selectedApp, setSelectedApp] = useState<any | null>(null);
+  const [customMsgText, setCustomMsgText] = useState('');
 
   const navItems = [
     { id: 'kanban', label: 'Applications', icon: LayoutDashboard },
@@ -77,6 +81,30 @@ const AdminDashboard = () => {
       });
       if (!res.ok) throw new Error('Failed to update status');
       fetchData();
+      if (selectedApp && selectedApp.id === id) {
+        setSelectedApp({ ...selectedApp, status });
+      }
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  const patchApplicationField = async (id: number, field: string, value: any) => {
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/admin/applications/${id}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ [field]: value }),
+      });
+      if (!res.ok) throw new Error(`Failed to update ${field}`);
+      fetchData();
+      if (selectedApp && selectedApp.id === id) {
+        setSelectedApp({ ...selectedApp, [field]: value });
+      }
     } catch (err: any) {
       alert(err.message);
     }
@@ -172,6 +200,38 @@ const AdminDashboard = () => {
     }
   };
 
+  // Quick message template generators
+  const applyTemplate = (type: 'interview' | 'documents' | 'roster', candidate: any) => {
+    const divisionName = candidate.sector === 'chicken' ? 'Broiler Catching' : 'Turkey Loading';
+    if (type === 'interview') {
+      setCustomMsgText(
+        `Hi ${candidate.name}, Pullum Ltd recruitment team here. We reviewed your application for the ${divisionName} role and would like to invite you for a quick phone interview. Are you free for a call sometime this week?`,
+      );
+    } else if (type === 'documents') {
+      setCustomMsgText(
+        `Hi ${candidate.name}, Pullum Ltd compliance here. To proceed with your application for poultry deployments in ${candidate.town}, could you please reply with a photo of your UK Right to Work document or share code? Thank you.`,
+      );
+    } else if (type === 'roster') {
+      setCustomMsgText(
+        `Hi ${candidate.name}, Pullum Ltd here. We have active shifts starting near ${candidate.town} shortly. Are you still available to join our local harvesting squads? Let us know. Thanks!`,
+      );
+    }
+  };
+
+  const getWhatsAppLink = (phone: string, text: string) => {
+    let clean = (phone || '').replace(/[^\d+]/g, '');
+    if (clean.startsWith('0') && !clean.startsWith('+')) {
+      clean = '44' + clean.substring(1);
+    } else if (clean.startsWith('+')) {
+      clean = clean.substring(1);
+    }
+    return `https://wa.me/${clean}?text=${encodeURIComponent(text)}`;
+  };
+
+  const getMailLink = (name: string, text: string) => {
+    return `mailto:?subject=Pullum Ltd Application Status - ${name}&body=${encodeURIComponent(text)}`;
+  };
+
   const renderContent = () => {
     if (loading) return <div className="p-8 flex justify-center text-[var(--color-ink-2)]">Loading dashboard data...</div>;
     if (error) return <div className="p-8 text-red-500 font-medium">Error: {error}</div>;
@@ -199,10 +259,18 @@ const AdminDashboard = () => {
                   {newApps.map((app) => (
                     <Card key={app.id}>
                       <CardHeader className="p-4 pb-2">
-                        <CardTitle className="text-base">{app.name}</CardTitle>
-                        <CardDescription>{app.jobPosting?.title || 'General Application'}</CardDescription>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-base">{app.name}</CardTitle>
+                            <CardDescription>{app.jobPosting?.title || 'General Application'}</CardDescription>
+                          </div>
+                          <Badge variant="secondary" className="text-[10px] uppercase font-mono">{app.sector}</Badge>
+                        </div>
                       </CardHeader>
-                      <CardContent className="p-4 pt-0 flex justify-end">
+                      <CardContent className="p-4 pt-0 flex gap-2 justify-end">
+                        <Button variant="ghost" size="sm" onClick={() => setSelectedApp(app)}>
+                          View Details
+                        </Button>
                         <Button variant="outline" size="sm" onClick={() => updateApplicationStatus(app.id, 'REVIEWING')}>
                           Move to Review
                         </Button>
@@ -223,10 +291,18 @@ const AdminDashboard = () => {
                   {reviewApps.map((app) => (
                     <Card key={app.id} className="border-[var(--color-accent)] shadow-sm">
                       <CardHeader className="p-4 pb-2">
-                        <CardTitle className="text-base">{app.name}</CardTitle>
-                        <CardDescription>{app.jobPosting?.title || 'General Application'}</CardDescription>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-base">{app.name}</CardTitle>
+                            <CardDescription>{app.jobPosting?.title || 'General Application'}</CardDescription>
+                          </div>
+                          <Badge variant="warning" className="text-[10px] uppercase font-mono">{app.sector}</Badge>
+                        </div>
                       </CardHeader>
-                      <CardContent className="p-4 pt-0 flex justify-end">
+                      <CardContent className="p-4 pt-0 flex gap-2 justify-end">
+                        <Button variant="ghost" size="sm" onClick={() => setSelectedApp(app)}>
+                          Details
+                        </Button>
                         <Button size="sm" onClick={() => updateApplicationStatus(app.id, 'HIRED')}>
                           Mark as Hired
                         </Button>
@@ -247,9 +323,19 @@ const AdminDashboard = () => {
                   {hiredApps.map((app) => (
                     <Card key={app.id} className="bg-slate-50 opacity-80">
                       <CardHeader className="p-4 pb-2">
-                        <CardTitle className="text-base">{app.name}</CardTitle>
-                        <CardDescription>{app.jobPosting?.title || 'General Application'}</CardDescription>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-base">{app.name}</CardTitle>
+                            <CardDescription>{app.jobPosting?.title || 'General Application'}</CardDescription>
+                          </div>
+                          <Badge variant="success" className="text-[10px] uppercase font-mono">{app.sector}</Badge>
+                        </div>
                       </CardHeader>
+                      <CardContent className="p-4 pt-0 flex gap-2 justify-end">
+                        <Button variant="ghost" size="sm" onClick={() => setSelectedApp(app)}>
+                          Details
+                        </Button>
+                      </CardContent>
                     </Card>
                   ))}
                   {hiredApps.length === 0 && <div className="text-sm text-[var(--color-ink-2)] text-center py-8 bg-[var(--color-paper)] rounded-lg border border-dashed border-[var(--color-rule)]">No hires yet</div>}
@@ -574,6 +660,152 @@ const AdminDashboard = () => {
         </header>
 
         <div className="flex-1 overflow-y-auto">{renderContent()}</div>
+
+        <Dialog open={!!selectedApp} onOpenChange={(open) => {
+          if (!open) {
+            setSelectedApp(null);
+            setCustomMsgText('');
+          }
+        }}>
+          {selectedApp && (
+            <>
+              <DialogHeader>
+                <div className="flex justify-between items-start pr-8">
+                  <div>
+                    <DialogTitle className="text-xl">{selectedApp.name}</DialogTitle>
+                    <DialogDescription className="mt-1 flex items-center gap-2">
+                      <Badge variant="secondary" className="uppercase font-mono text-[10px]">{selectedApp.sector}</Badge>
+                      <span>{selectedApp.jobPosting?.title || 'General Application'}</span>
+                    </DialogDescription>
+                  </div>
+                </div>
+              </DialogHeader>
+              <DialogContent>
+                <div className="grid grid-cols-2 gap-4 text-sm bg-[var(--color-paper-2)] p-4 rounded-lg border border-[var(--color-rule)]">
+                  <div>
+                    <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Phone</span>
+                    <a href={`tel:${selectedApp.phone}`} className="font-medium flex items-center gap-1 mt-0.5 hover:underline">
+                      <PhoneCall className="w-3 h-3 text-[var(--color-ink-2)]" />
+                      {selectedApp.phone}
+                    </a>
+                  </div>
+                  {selectedApp.email && (
+                    <div>
+                      <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Email</span>
+                      <a href={`mailto:${selectedApp.email}`} className="font-medium flex items-center gap-1 mt-0.5 hover:underline">
+                        <Mail className="w-3 h-3 text-[var(--color-ink-2)]" />
+                        <span className="truncate max-w-[150px]">{selectedApp.email}</span>
+                      </a>
+                    </div>
+                  )}
+                  <div>
+                    <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Town</span>
+                    <span className="font-medium block mt-0.5">{selectedApp.town}</span>
+                  </div>
+                  <div>
+                    <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Right to Work</span>
+                    <span className="font-medium block mt-0.5">{selectedApp.hasRightToWork ? 'Yes' : 'No'}</span>
+                  </div>
+                </div>
+
+                {/* Safety Culture Status */}
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  {selectedApp.contacted ? (
+                    <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200 flex items-center gap-1 font-mono text-[9px] uppercase">
+                      <Check className="w-3 h-3 text-emerald-600" /> Contacted
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200 font-mono text-[9px] uppercase">
+                      Pending Review
+                    </Badge>
+                  )}
+
+                  {selectedApp.safetyResourcesSent ? (
+                    selectedApp.safetyTasksCompleted ? (
+                      <Badge variant="outline" className="bg-emerald-100 text-emerald-900 border-emerald-300 flex items-center gap-1 font-mono text-[9px] uppercase">
+                        <CheckCircle className="w-3 h-3 text-emerald-700" /> Safety Tasks: Completed
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="bg-sky-50 text-sky-800 border-sky-200 flex items-center gap-1 animate-pulse font-mono text-[9px] uppercase">
+                        <Sparkles className="w-3 h-3 text-sky-600" /> Safety Tasks: Sent
+                      </Badge>
+                    )
+                  ) : (
+                    <Badge variant="outline" className="bg-slate-100 text-slate-600 border-slate-200 font-mono text-[9px] uppercase">
+                      Safety Tasks: Not Sent
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap items-center gap-2 mt-2 border-b border-[var(--color-rule)] pb-4">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => patchApplicationField(selectedApp.id, 'contacted', !selectedApp.contacted)}
+                  >
+                    {selectedApp.contacted ? 'Mark Pending' : 'Mark Contacted'}
+                  </Button>
+                  
+                  {!selectedApp.safetyResourcesSent ? (
+                    <Button 
+                      variant="default" 
+                      size="sm" 
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                      onClick={() => patchApplicationField(selectedApp.id, 'safetyResourcesSent', true)}
+                    >
+                      Send Safety Tasks
+                    </Button>
+                  ) : !selectedApp.safetyTasksCompleted ? (
+                    <Button 
+                      variant="default" 
+                      size="sm" 
+                      className="bg-sky-600 hover:bg-sky-700 text-white"
+                      onClick={() => patchApplicationField(selectedApp.id, 'safetyTasksCompleted', true)}
+                    >
+                      Simulate Task Completion
+                    </Button>
+                  ) : null}
+                </div>
+
+                <div className="mt-2">
+                  <h4 className="text-sm font-semibold mb-2">Quick Message</h4>
+                  <div className="flex gap-2 mb-3">
+                    <Button variant="outline" size="sm" className="text-xs" onClick={() => applyTemplate('interview', selectedApp)}>Interview</Button>
+                    <Button variant="outline" size="sm" className="text-xs" onClick={() => applyTemplate('documents', selectedApp)}>Documents</Button>
+                    <Button variant="outline" size="sm" className="text-xs" onClick={() => applyTemplate('roster', selectedApp)}>Roster</Button>
+                  </div>
+                  <textarea
+                    value={customMsgText}
+                    onChange={(e) => setCustomMsgText(e.target.value)}
+                    placeholder="Type your message or select a template..."
+                    className="w-full h-24 p-2 text-sm border border-[var(--color-rule)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] mb-3 resize-none"
+                  />
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="default" 
+                      className="w-full bg-[#25D366] hover:bg-[#1DA851] text-white"
+                      onClick={() => window.open(getWhatsAppLink(selectedApp.phone, customMsgText), '_blank')}
+                      disabled={!customMsgText}
+                    >
+                      <Smartphone className="w-4 h-4 mr-2" />
+                      WhatsApp
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={() => window.open(getMailLink(selectedApp.name, customMsgText), '_blank')}
+                      disabled={!customMsgText || !selectedApp.email}
+                    >
+                      <Mail className="w-4 h-4 mr-2" />
+                      Email
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </>
+          )}
+        </Dialog>
       </main>
     </div>
   );
