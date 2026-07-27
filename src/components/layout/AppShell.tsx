@@ -88,9 +88,10 @@ export default function AppShell({ children, navItems, defaultTab = 'dashboard',
 
   return (
     <AppShellContext.Provider value={{ isSidebarOpen, setSidebarOpen, isMobile, navItems: displayedNavItems, activeTab, setActiveTab, userType }}>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-white focus:text-black">Skip to main content</a>
       <div className="relative flex h-[100dvh] w-full overflow-hidden bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-white">
         <Sidebar />
-        <main
+        <main id="main-content"
           className={`flex flex-col flex-1 min-w-0 transition-all duration-[var(--dur-short)] ease-[var(--ease-out)] ${
             isSidebarOpen ? 'md:ml-64' : 'md:ml-[72px]'
           }`}

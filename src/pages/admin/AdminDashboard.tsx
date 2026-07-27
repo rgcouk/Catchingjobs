@@ -231,7 +231,7 @@ const AdminDashboard = () => {
 
   const renderContent = () => {
     if (loading) return <div className="p-8 flex justify-center text-[var(--color-ink-2)]">Loading dashboard data...</div>;
-    if (error) return <div className="p-8 text-red-500 font-medium">Error: {error}</div>;
+    if (error) return <div className="p-8 text-[var(--color-error)] font-medium">Error: {error}</div>;
 
     switch (activeTab) {
       case 'dashboard':
@@ -285,8 +285,17 @@ const AdminDashboard = () => {
                       {filteredApps.map((app) => (
                         <TableRow 
                           key={app.id}
-                          className={`cursor-pointer transition-colors ${selectedApp?.id === app.id ? 'bg-[var(--color-paper)]' : 'hover:bg-[var(--color-paper-2)]'}`}
+                          className={`cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] ${selectedApp?.id === app.id ? 'bg-[var(--color-paper)]' : 'hover:bg-[var(--color-paper-2)]'}`}
                           onClick={() => setSelectedApp(app)}
+                          tabIndex={0}
+                          role="button"
+                          aria-selected={selectedApp?.id === app.id}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              setSelectedApp(app);
+                            }
+                          }}
                         >
                           <TableCell className="font-medium">{app.name}</TableCell>
                           <TableCell>
@@ -391,11 +400,11 @@ const AdminDashboard = () => {
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
                         {selectedApp.contacted ? (
-                          <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200 flex items-center gap-1 font-mono text-[9px] uppercase">
-                            <Check className="w-3 h-3 text-emerald-600" /> Contacted
+                          <Badge variant="outline" className="bg-[var(--color-success-muted)] text-[var(--color-success-text)] border-[var(--color-success-border)] flex items-center gap-1 font-mono text-[9px] uppercase">
+                            <Check className="w-3 h-3 text-[var(--color-success)]" /> Contacted
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200 font-mono text-[9px] uppercase">
+                          <Badge variant="outline" className="bg-[var(--color-warning-muted)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] font-mono text-[9px] uppercase">
                             Pending Review
                           </Badge>
                         )}
@@ -412,16 +421,16 @@ const AdminDashboard = () => {
                       <div className="flex items-center justify-between">
                         {selectedApp.safetyResourcesSent ? (
                           selectedApp.safetyTasksCompleted ? (
-                            <Badge variant="outline" className="bg-emerald-100 text-emerald-900 border-emerald-300 flex items-center gap-1 font-mono text-[9px] uppercase">
-                              <CheckCircle className="w-3 h-3 text-emerald-700" /> Tasks Completed
+                            <Badge variant="outline" className="bg-[var(--color-success-muted)] text-emerald-900 border-[var(--color-success-border)] flex items-center gap-1 font-mono text-[9px] uppercase">
+                              <CheckCircle className="w-3 h-3 text-[var(--color-success-text)]" /> Tasks Completed
                             </Badge>
                           ) : (
-                            <Badge variant="outline" className="bg-sky-50 text-sky-800 border-sky-200 flex items-center gap-1 animate-pulse font-mono text-[9px] uppercase">
-                              <Sparkles className="w-3 h-3 text-sky-600" /> Tasks Sent
+                            <Badge variant="outline" className="bg-[var(--color-info-muted)] text-[var(--color-info-text)] border-[var(--color-info-border)] flex items-center gap-1 animate-pulse font-mono text-[9px] uppercase">
+                              <Sparkles className="w-3 h-3 text-[var(--color-info)]" /> Tasks Sent
                             </Badge>
                           )
                         ) : (
-                          <Badge variant="outline" className="bg-slate-100 text-slate-600 border-slate-200 font-mono text-[9px] uppercase">
+                          <Badge variant="outline" className="bg-[var(--color-neutral-muted)] text-[var(--color-neutral-text)] border-[var(--color-neutral-border)] font-mono text-[9px] uppercase">
                             Tasks Not Sent
                           </Badge>
                         )}
@@ -430,7 +439,7 @@ const AdminDashboard = () => {
                           <Button 
                             variant="default" 
                             size="sm" 
-                            className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+                            className="h-8 text-xs bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-white"
                             onClick={() => patchApplicationField(selectedApp.id, 'safetyResourcesSent', true)}
                           >
                             Send Tasks
@@ -439,7 +448,7 @@ const AdminDashboard = () => {
                           <Button 
                             variant="default" 
                             size="sm" 
-                            className="h-8 text-xs bg-sky-600 hover:bg-sky-700 text-white"
+                            className="h-8 text-xs bg-[var(--color-info)] hover:bg-[var(--color-info-hover)] text-white"
                             onClick={() => patchApplicationField(selectedApp.id, 'safetyTasksCompleted', true)}
                           >
                             Simulate Completion
@@ -465,7 +474,7 @@ const AdminDashboard = () => {
                     <div className="flex gap-2">
                       <Button 
                         variant="default" 
-                        className="flex-1 bg-[#25D366] hover:bg-[#1DA851] text-white"
+                        className="flex-1 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-white"
                         onClick={() => window.open(getWhatsAppLink(selectedApp.phone, customMsgText), '_blank')}
                         disabled={!customMsgText}
                       >
@@ -505,16 +514,16 @@ const AdminDashboard = () => {
                 <CardContent>
                   <form key={isEditingLocation ? editingLocationData?.id : 'new'} onSubmit={handleLocationSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label>ID (Slug)</Label>
-                      <Input name="id" required defaultValue={editingLocationData?.id || ''} placeholder="e.g. norfolk-region" disabled={isEditingLocation} />
+                      <Label htmlFor="id">ID (Slug)</Label>
+                      <Input id="id" name="id" required defaultValue={editingLocationData?.id || ''} placeholder="e.g. norfolk-region" disabled={isEditingLocation} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Name</Label>
-                      <Input name="name" required defaultValue={editingLocationData?.name || ''} placeholder="e.g. Norfolk" />
+                      <Label htmlFor="name">Name</Label>
+                      <Input id="name" name="name" required defaultValue={editingLocationData?.name || ''} placeholder="e.g. Norfolk" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Type</Label>
-                      <Select name="type" defaultValue={editingLocationData?.type || 'region'} disabled={isEditingLocation}>
+                      <Label htmlFor="type">Type</Label>
+                      <Select id="type" name="type" defaultValue={editingLocationData?.type || 'region'} disabled={isEditingLocation}>
                         <option value="region">Region</option>
                         <option value="town">Town</option>
                       </Select>
@@ -529,16 +538,16 @@ const AdminDashboard = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Phone Number</Label>
-                      <Input name="phoneNumber" defaultValue={editingLocationData?.phoneNumber || ''} placeholder="Optional contact number" />
+                      <Label htmlFor="phoneNumber">Phone Number</Label>
+                      <Input id="phoneNumber" name="phoneNumber" defaultValue={editingLocationData?.phoneNumber || ''} placeholder="Optional contact number" />
                     </div>
                     <div className="space-y-2">
-                      <Label>County (Region only)</Label>
-                      <Input name="county" defaultValue={editingLocationData?.county || ''} placeholder="Optional" />
+                      <Label htmlFor="county">County (Region only)</Label>
+                      <Input id="county" name="county" defaultValue={editingLocationData?.county || ''} placeholder="Optional" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Parent Region (Town only)</Label>
-                      <Select name="regionId" defaultValue={editingLocationData?.regionId || ''}>
+                      <Label htmlFor="regionId">Parent Region (Town only)</Label>
+                      <Select id="regionId" name="regionId" defaultValue={editingLocationData?.regionId || ''}>
                         <option value="">Select Region...</option>
                         {locations.map((r) => (
                           <option key={r.id} value={r.id}>{r.name}</option>
@@ -585,7 +594,7 @@ const AdminDashboard = () => {
                                   <Edit className="w-4 h-4 text-[var(--color-ink-2)]" />
                                 </Button>
                                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => deleteLocation('region', region.id)}>
-                                  <Trash2 className="w-4 h-4 text-red-500" />
+                                  <Trash2 className="w-4 h-4 text-[var(--color-error)]" />
                                 </Button>
                               </div>
                             </div>
@@ -599,7 +608,7 @@ const AdminDashboard = () => {
                                     <Edit className="w-3 h-3 text-[var(--color-ink-2)] hover:text-[var(--color-ink)]" />
                                   </button>
                                   <button onClick={() => deleteLocation('town', town.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Trash2 className="w-3 h-3 text-red-500 hover:text-red-700" />
+                                    <Trash2 className="w-3 h-3 text-[var(--color-error)] hover:text-[var(--color-error)]" />
                                   </button>
                                 </Badge>
                               ))}
@@ -640,8 +649,8 @@ const AdminDashboard = () => {
                 <CardContent>
                   <form onSubmit={handleJobSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Title</Label>
-                      <Input name="title" required placeholder="e.g. Chicken Catcher" />
+                      <Label htmlFor="title">Title</Label>
+                      <Input id="title" name="title" required placeholder="e.g. Chicken Catcher" />
                     </div>
                     <div className="space-y-2">
                       <Label>Description</Label>
@@ -653,20 +662,20 @@ const AdminDashboard = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Pay Rate</Label>
-                      <Input name="payRate" required placeholder="e.g. £15/hr" />
+                      <Label htmlFor="payRate">Pay Rate</Label>
+                      <Input id="payRate" name="payRate" required placeholder="e.g. £15/hr" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Sector</Label>
-                      <Select name="sector" required>
+                      <Label htmlFor="sector">Sector</Label>
+                      <Select id="sector" name="sector" required>
                         <option value="">Select Sector...</option>
                         <option value="chicken">Chicken</option>
                         <option value="turkey">Turkey</option>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Town</Label>
-                      <Select name="townId" required>
+                      <Label htmlFor="townId">Town</Label>
+                      <Select id="townId" name="townId" required>
                         <option value="">Select Town...</option>
                         {allTowns.map((t) => (
                           <option key={t.id} value={t.id}>{t.name}</option>
