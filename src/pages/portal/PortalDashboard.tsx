@@ -128,7 +128,7 @@ const PortalDashboard = () => {
         body: JSON.stringify(formData),
       });
       if (!res.ok) throw new Error('Failed to submit onboarding');
-      fetchData();
+      await fetchData();
     } catch (err: any) {
       alert(err.message);
     }
@@ -138,7 +138,7 @@ const PortalDashboard = () => {
     e.preventDefault();
     try {
       const token = await getToken();
-      const res = await fetch(`/api/portal/onboarding?userId=${USER_ID}`, {
+      const res = await fetch(`/api/portal/settings?userId=${USER_ID}`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ const PortalDashboard = () => {
       });
       if (!res.ok) throw new Error('Failed to update settings');
       alert('Settings saved successfully');
-      fetchData();
+      await fetchData();
     } catch (err: any) {
       alert(err.message);
     }
@@ -173,7 +173,7 @@ const PortalDashboard = () => {
       });
       if (!res.ok) throw new Error('Failed to submit training');
       setShowTraining(false);
-      fetchData();
+      await fetchData();
     } catch (err: any) {
       alert(err.message);
     }
@@ -221,16 +221,16 @@ const PortalDashboard = () => {
                       {currentStep === 1 && (
                         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
                           <div className="space-y-2">
-                            <Label>Full Name</Label>
-                            <Input name="name" required value={formData.name} onChange={handleChange} />
+                            <Label htmlFor="name">Full Name</Label>
+                            <Input id="name" name="name" required value={formData.name} onChange={handleChange} />
                           </div>
                           <div className="space-y-2">
-                            <Label>Phone Number</Label>
-                            <Input name="phone" required value={formData.phone} onChange={handleChange} />
+                            <Label htmlFor="phone">Phone Number</Label>
+                            <Input id="phone" name="phone" required value={formData.phone} onChange={handleChange} />
                           </div>
                           <div className="space-y-2">
-                            <Label>Sector</Label>
-                            <Select name="sector" required value={formData.sector} onChange={handleChange}>
+                            <Label htmlFor="sector">Sector</Label>
+                            <Select id="sector" name="sector" required value={formData.sector} onChange={handleChange}>
                               <option value="chicken">Chicken Catching</option>
                               <option value="turkey">Turkey Catching</option>
                             </Select>
@@ -249,20 +249,20 @@ const PortalDashboard = () => {
                       {currentStep === 2 && (
                         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
                           <div className="space-y-2">
-                            <Label>National Insurance Number</Label>
-                            <Input name="niNumber" required value={formData.niNumber} onChange={handleChange} placeholder="QQ 12 34 56 A" />
+                            <Label htmlFor="niNumber">National Insurance Number</Label>
+                            <Input id="niNumber" name="niNumber" required value={formData.niNumber} onChange={handleChange} placeholder="QQ 12 34 56 A" />
                           </div>
                           <div className="space-y-2">
                             <Label>Date of Birth</Label>
                             <Input type="date" name="dateOfBirth" required value={formData.dateOfBirth} onChange={handleChange} />
                           </div>
                           <div className="space-y-2">
-                            <Label>Address Line 1</Label>
-                            <Input name="addressLine1" required value={formData.addressLine1} onChange={handleChange} placeholder="123 Farm Lane" />
+                            <Label htmlFor="addressLine1">Address Line 1</Label>
+                            <Input id="addressLine1" name="addressLine1" required value={formData.addressLine1} onChange={handleChange} placeholder="123 Farm Lane" />
                           </div>
                           <div className="space-y-2">
-                            <Label>Postcode</Label>
-                            <Input name="postcode" required value={formData.postcode} onChange={handleChange} placeholder="NR1 1AA" />
+                            <Label htmlFor="postcode">Postcode</Label>
+                            <Input id="postcode" name="postcode" required value={formData.postcode} onChange={handleChange} placeholder="NR1 1AA" />
                           </div>
                         </div>
                       )}
@@ -270,34 +270,41 @@ const PortalDashboard = () => {
                       {currentStep === 3 && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2"><Label>Bank Name</Label><Input name="bankName" required value={formData.bankName} onChange={handleChange} /></div>
-                            <div className="space-y-2"><Label>Account Name</Label><Input name="bankAccountName" required value={formData.bankAccountName} onChange={handleChange} /></div>
-                            <div className="space-y-2"><Label>Account Number</Label><Input name="bankAccountNumber" required value={formData.bankAccountNumber} onChange={handleChange} /></div>
-                            <div className="space-y-2"><Label>Sort Code</Label><Input name="bankSortCode" required value={formData.bankSortCode} onChange={handleChange} /></div>
+                            <div className="space-y-2"><Label htmlFor="bankName">Bank Name</Label>
+                            <Input id="bankName" name="bankName" required value={formData.bankName} onChange={handleChange} /></div>
+                            <div className="space-y-2"><Label htmlFor="bankAccountName">Account Name</Label>
+                            <Input id="bankAccountName" name="bankAccountName" required value={formData.bankAccountName} onChange={handleChange} /></div>
+                            <div className="space-y-2"><Label htmlFor="bankAccountNumber">Account Number</Label>
+                            <Input id="bankAccountNumber" name="bankAccountNumber" required value={formData.bankAccountNumber} onChange={handleChange} /></div>
+                            <div className="space-y-2"><Label htmlFor="bankSortCode">Sort Code</Label>
+                            <Input id="bankSortCode" name="bankSortCode" required value={formData.bankSortCode} onChange={handleChange} /></div>
                           </div>
                           
                           <hr className="border-[var(--color-rule)]" />
                           
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="space-y-2"><Label>Emergency Contact</Label><Input name="emergencyName" required value={formData.emergencyName} onChange={handleChange} /></div>
-                            <div className="space-y-2"><Label>Phone</Label><Input name="emergencyPhone" required value={formData.emergencyPhone} onChange={handleChange} /></div>
-                            <div className="space-y-2"><Label>Relation</Label><Input name="emergencyRelation" required value={formData.emergencyRelation} onChange={handleChange} /></div>
+                            <div className="space-y-2"><Label htmlFor="emergencyName">Emergency Contact</Label>
+                            <Input id="emergencyName" name="emergencyName" required value={formData.emergencyName} onChange={handleChange} /></div>
+                            <div className="space-y-2"><Label htmlFor="emergencyPhone">Phone</Label>
+                            <Input id="emergencyPhone" name="emergencyPhone" required value={formData.emergencyPhone} onChange={handleChange} /></div>
+                            <div className="space-y-2"><Label htmlFor="emergencyRelation">Relation</Label>
+                            <Input id="emergencyRelation" name="emergencyRelation" required value={formData.emergencyRelation} onChange={handleChange} /></div>
                           </div>
 
                           <hr className="border-[var(--color-rule)]" />
 
                           <div className="space-y-3">
                             <div className="flex items-center gap-3">
-                              <Input type="checkbox" name="hasAsthmaOrAllergies" checked={formData.hasAsthmaOrAllergies} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
-                              <Label>I have asthma or allergies</Label>
+                              <Input type="checkbox" name="hasAsthmaOrAllergies" id="hasAsthmaOrAllergies" checked={formData.hasAsthmaOrAllergies} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                              <Label htmlFor="hasAsthmaOrAllergies">I have asthma or allergies</Label>
                             </div>
                             <div className="flex items-center gap-3">
-                              <Input type="checkbox" name="hasBackIssues" checked={formData.hasBackIssues} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
-                              <Label>I have back issues or injuries</Label>
+                              <Input type="checkbox" name="hasBackIssues" id="hasBackIssues" checked={formData.hasBackIssues} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                              <Label htmlFor="hasBackIssues">I have back issues or injuries</Label>
                             </div>
                             <div className="flex items-center gap-3">
-                              <Input type="checkbox" name="isFitToLift" checked={formData.isFitToLift} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
-                              <Label>I am fit to lift heavy objects regularly</Label>
+                              <Input type="checkbox" name="isFitToLift" id="isFitToLift" checked={formData.isFitToLift} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                              <Label htmlFor="isFitToLift">I am fit to lift heavy objects regularly</Label>
                             </div>
                           </div>
                         </div>
@@ -548,16 +555,16 @@ const PortalDashboard = () => {
                 <form className="space-y-6" onSubmit={handleSettingsSubmit}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Full Name</Label>
-                      <Input name="name" value={formData.name} onChange={handleChange} />
+                      <Label htmlFor="name">Full Name</Label>
+                            <Input id="name" name="name" value={formData.name} onChange={handleChange} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Phone Number</Label>
-                      <Input name="phone" value={formData.phone} onChange={handleChange} />
+                      <Label htmlFor="phone">Phone Number</Label>
+                            <Input id="phone" name="phone" value={formData.phone} onChange={handleChange} />
                     </div>
                     <div className="space-y-2">
-                      <Label>National Insurance Number</Label>
-                      <Input name="niNumber" value={formData.niNumber} onChange={handleChange} />
+                      <Label htmlFor="niNumber">National Insurance Number</Label>
+                            <Input id="niNumber" name="niNumber" value={formData.niNumber} onChange={handleChange} />
                     </div>
                     <div className="space-y-2">
                       <Label>Date of Birth</Label>
@@ -569,30 +576,37 @@ const PortalDashboard = () => {
                   <h3 className="font-semibold">Address</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Address Line 1</Label>
-                      <Input name="addressLine1" value={formData.addressLine1} onChange={handleChange} />
+                      <Label htmlFor="addressLine1">Address Line 1</Label>
+                            <Input id="addressLine1" name="addressLine1" value={formData.addressLine1} onChange={handleChange} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Postcode</Label>
-                      <Input name="postcode" value={formData.postcode} onChange={handleChange} />
+                      <Label htmlFor="postcode">Postcode</Label>
+                            <Input id="postcode" name="postcode" value={formData.postcode} onChange={handleChange} />
                     </div>
                   </div>
 
                   <hr className="border-[var(--color-rule)]" />
                   <h3 className="font-semibold">Bank Details</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2"><Label>Bank Name</Label><Input name="bankName" value={formData.bankName} onChange={handleChange} /></div>
-                    <div className="space-y-2"><Label>Account Name</Label><Input name="bankAccountName" value={formData.bankAccountName} onChange={handleChange} /></div>
-                    <div className="space-y-2"><Label>Account Number</Label><Input name="bankAccountNumber" value={formData.bankAccountNumber} onChange={handleChange} /></div>
-                    <div className="space-y-2"><Label>Sort Code</Label><Input name="bankSortCode" value={formData.bankSortCode} onChange={handleChange} /></div>
+                    <div className="space-y-2"><Label htmlFor="bankName">Bank Name</Label>
+                            <Input id="bankName" name="bankName" value={formData.bankName} onChange={handleChange} /></div>
+                    <div className="space-y-2"><Label htmlFor="bankAccountName">Account Name</Label>
+                            <Input id="bankAccountName" name="bankAccountName" value={formData.bankAccountName} onChange={handleChange} /></div>
+                    <div className="space-y-2"><Label htmlFor="bankAccountNumber">Account Number</Label>
+                            <Input id="bankAccountNumber" name="bankAccountNumber" value={formData.bankAccountNumber} onChange={handleChange} /></div>
+                    <div className="space-y-2"><Label htmlFor="bankSortCode">Sort Code</Label>
+                            <Input id="bankSortCode" name="bankSortCode" value={formData.bankSortCode} onChange={handleChange} /></div>
                   </div>
 
                   <hr className="border-[var(--color-rule)]" />
                   <h3 className="font-semibold">Emergency Contact</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2"><Label>Name</Label><Input name="emergencyName" value={formData.emergencyName} onChange={handleChange} /></div>
-                    <div className="space-y-2"><Label>Phone</Label><Input name="emergencyPhone" value={formData.emergencyPhone} onChange={handleChange} /></div>
-                    <div className="space-y-2"><Label>Relation</Label><Input name="emergencyRelation" value={formData.emergencyRelation} onChange={handleChange} /></div>
+                    <div className="space-y-2"><Label htmlFor="emergencyName">Name</Label>
+                            <Input id="emergencyName" name="emergencyName" value={formData.emergencyName} onChange={handleChange} /></div>
+                    <div className="space-y-2"><Label htmlFor="emergencyPhone">Phone</Label>
+                            <Input id="emergencyPhone" name="emergencyPhone" value={formData.emergencyPhone} onChange={handleChange} /></div>
+                    <div className="space-y-2"><Label htmlFor="emergencyRelation">Relation</Label>
+                            <Input id="emergencyRelation" name="emergencyRelation" value={formData.emergencyRelation} onChange={handleChange} /></div>
                   </div>
 
                   <div className="pt-4">

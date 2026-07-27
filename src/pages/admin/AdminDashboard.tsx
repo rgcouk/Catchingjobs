@@ -78,7 +78,7 @@ const AdminDashboard = () => {
         body: JSON.stringify({ status }),
       });
       if (!res.ok) throw new Error('Failed to update status');
-      fetchData();
+      await fetchData();
       if (selectedApp && selectedApp.id === id) {
         setSelectedApp({ ...selectedApp, status });
       }
@@ -99,7 +99,7 @@ const AdminDashboard = () => {
         body: JSON.stringify({ [field]: value }),
       });
       if (!res.ok) throw new Error(`Failed to update ${field}`);
-      fetchData();
+      await fetchData();
       if (selectedApp && selectedApp.id === id) {
         setSelectedApp({ ...selectedApp, [field]: value });
       }
@@ -117,7 +117,7 @@ const AdminDashboard = () => {
       const token = await getToken();
       const method = isEditingLocation ? 'PATCH' : 'POST';
       const url = isEditingLocation 
-        ? `/api/admin/locations/${data.type}/${data.id}`
+        ? `/api/admin/locations/${editingLocationData.type}/${editingLocationData.id}`
         : '/api/admin/locations';
         
       const res = await fetch(url, {
@@ -135,7 +135,7 @@ const AdminDashboard = () => {
       
       setIsEditingLocation(false);
       setEditingLocationData(null);
-      fetchData();
+      await fetchData();
     } catch (err: any) {
       alert(err.message);
     }
@@ -150,7 +150,7 @@ const AdminDashboard = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) throw new Error('Failed to delete location');
-      fetchData();
+      await fetchData();
     } catch (err: any) {
       alert(err.message);
     }
@@ -191,7 +191,7 @@ const AdminDashboard = () => {
       });
       if (!res.ok) throw new Error('Failed to create job');
       e.currentTarget.reset();
-      fetchData();
+      await fetchData();
     } catch (err: any) {
       alert(err.message);
     }
