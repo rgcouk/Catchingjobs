@@ -130,7 +130,7 @@ const PortalDashboard = () => {
 
   const renderContent = () => {
     if (loading) return <div className="p-6 max-w-4xl mx-auto flex justify-center text-[var(--color-ink-2)]">Loading portal...</div>;
-    if (error) return <div className="p-6 max-w-4xl mx-auto text-red-500 font-medium">Error: {error}</div>;
+    if (error) return <div className="p-6 max-w-4xl mx-auto text-[var(--color-accent)] font-medium">Error: {error}</div>;
 
     switch (activeTab) {
       case 'onboarding':
@@ -307,7 +307,7 @@ const PortalDashboard = () => {
                     <TableRow key={app.id}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-[var(--color-paper-2)] border border-[var(--color-rule)] text-[var(--color-ink)] flex items-center justify-center shrink-0">
                             <Briefcase className="w-4 h-4" />
                           </div>
                           {app.jobPosting?.title || 'Unknown Job'}

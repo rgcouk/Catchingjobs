@@ -52,10 +52,10 @@ export default function AppShell({ children, navItems, defaultTab = 'dashboard',
 
   return (
     <AppShellContext.Provider value={{ isSidebarOpen, setSidebarOpen, isMobile, navItems, activeTab, setActiveTab, userType }}>
-      <div className="relative flex h-[100dvh] w-full overflow-hidden bg-slate-50 text-slate-900 selection:bg-blue-600 selection:text-white">
+      <div className="relative flex h-[100dvh] w-full overflow-hidden bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-white">
         <Sidebar />
         <main
-          className={`flex flex-col flex-1 min-w-0 transition-all duration-300 ease-in-out ${
+          className={`flex flex-col flex-1 min-w-0 transition-all duration-[var(--dur-short)] ease-[var(--ease-out)] ${
             isSidebarOpen ? 'md:ml-64' : 'md:ml-[72px]'
           }`}
         >
