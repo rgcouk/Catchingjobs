@@ -26,6 +26,9 @@ const AdminDashboard = () => {
   const [selectedApp, setSelectedApp] = useState<any | null>(null);
   const [customMsgText, setCustomMsgText] = useState('');
 
+  const [isEditingLocation, setIsEditingLocation] = useState(false);
+  const [editingLocationData, setEditingLocationData] = useState<any>(null);
+
   const navItems = [
     { id: 'kanban', label: 'Applications', icon: LayoutDashboard },
     { id: 'locations', label: 'Locations', icon: MapPin },
@@ -117,8 +120,13 @@ const AdminDashboard = () => {
 
     try {
       const token = await getToken();
-      const res = await fetch('/api/admin/locations', {
-        method: 'POST',
+      const method = isEditingLocation ? 'PATCH' : 'POST';
+      const url = isEditingLocation 
+        ? `/api/admin/locations/${data.type}/${data.id}`
+        : '/api/admin/locations';
+        
+      const res = await fetch(url, {
+        method,
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -128,8 +136,10 @@ const AdminDashboard = () => {
           regionId: data.regionId ? data.regionId : undefined,
         }),
       });
-      if (!res.ok) throw new Error('Failed to create location');
-      e.currentTarget.reset();
+      if (!res.ok) throw new Error(`Failed to ${isEditingLocation ? 'update' : 'create'} location`);
+      
+      setIsEditingLocation(false);
+      setEditingLocationData(null);
       fetchData();
     } catch (err: any) {
       alert(err.message);
@@ -151,25 +161,17 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleEditLocation = async (type: string, id: string, currentName: string) => {
-    const newName = window.prompt(`Enter new name for this ${type}:`, currentName);
-    if (!newName || newName === currentName) return;
-    try {
-      const token = await getToken();
-      const res = await fetch(`/api/admin/locations/${type}/${id}`, {
-        method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
-        },
-        body: JSON.stringify({ name: newName })
-      });
-      if (!res.ok) throw new Error('Failed to update location');
-      fetchData();
-    } catch (err: any) {
-      alert(err.message);
-    }
+  const handleEditLocation = (type: string, id: string, locationData: any) => {
+    setIsEditingLocation(true);
+    setEditingLocationData({ type, id, ...locationData });
+    // This will populate the form on the left side
   };
+  
+  const handleCancelEditLocation = () => {
+    setIsEditingLocation(false);
+    setEditingLocationData(null);
+  };
+
   const handleJobSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -238,110 +240,232 @@ const AdminDashboard = () => {
 
     switch (activeTab) {
       case 'kanban':
-        const newApps = applications.filter((a) => a.status === 'NEW' || a.status === 'SUBMITTED');
-        const reviewApps = applications.filter((a) => a.status === 'REVIEWING' || a.status === 'INTERVIEW');
-        const hiredApps = applications.filter((a) => a.status === 'HIRED');
-
         return (
-          <div className="p-8">
-            <div className="mb-8">
-              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Applications Kanban</h1>
-              <p className="text-[var(--color-ink-2)] mt-1">Manage and track applicant progression.</p>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* New Column */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-[var(--color-rule)]">
-                  <h3 className="font-semibold text-lg text-[var(--color-ink)]">Inbox</h3>
-                  <Badge variant="secondary">{newApps.length}</Badge>
+          <div className="flex h-full w-full">
+            {/* Main Table Area */}
+            <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto ${selectedApp ? 'hidden lg:flex' : 'flex'}`}>
+              <div className="p-8">
+                <div className="mb-8">
+                  <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Applications</h1>
+                  <p className="text-[var(--color-ink-2)] mt-1">Manage and track applicant progression.</p>
                 </div>
-                <div className="space-y-4">
-                  {newApps.map((app) => (
-                    <Card key={app.id}>
-                      <CardHeader className="p-4 pb-2">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <CardTitle className="text-base">{app.name}</CardTitle>
-                            <CardDescription>{app.jobPosting?.title || 'General Application'}</CardDescription>
-                          </div>
-                          <Badge variant="secondary" className="text-[10px] uppercase font-mono">{app.sector}</Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0 flex gap-2 justify-end">
-                        <Button variant="ghost" size="sm" onClick={() => setSelectedApp(app)}>
-                          View Details
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => updateApplicationStatus(app.id, 'REVIEWING')}>
-                          Move to Review
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                  {newApps.length === 0 && <div className="text-sm text-[var(--color-ink-2)] text-center py-8 bg-[var(--color-paper)] rounded-lg border border-dashed border-[var(--color-rule)]">No new applications</div>}
-                </div>
-              </div>
-
-              {/* Review Column */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-[var(--color-rule)]">
-                  <h3 className="font-semibold text-lg text-[var(--color-ink)]">In Review</h3>
-                  <Badge variant="warning">{reviewApps.length}</Badge>
-                </div>
-                <div className="space-y-4">
-                  {reviewApps.map((app) => (
-                    <Card key={app.id} className="border-[var(--color-accent)] shadow-sm">
-                      <CardHeader className="p-4 pb-2">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <CardTitle className="text-base">{app.name}</CardTitle>
-                            <CardDescription>{app.jobPosting?.title || 'General Application'}</CardDescription>
-                          </div>
-                          <Badge variant="warning" className="text-[10px] uppercase font-mono">{app.sector}</Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0 flex gap-2 justify-end">
-                        <Button variant="ghost" size="sm" onClick={() => setSelectedApp(app)}>
-                          Details
-                        </Button>
-                        <Button size="sm" onClick={() => updateApplicationStatus(app.id, 'HIRED')}>
-                          Mark as Hired
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                  {reviewApps.length === 0 && <div className="text-sm text-[var(--color-ink-2)] text-center py-8 bg-[var(--color-paper)] rounded-lg border border-dashed border-[var(--color-rule)]">No applications in review</div>}
-                </div>
-              </div>
-
-              {/* Hired Column */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-[var(--color-rule)]">
-                  <h3 className="font-semibold text-lg text-[var(--color-ink)]">Hired</h3>
-                  <Badge variant="success">{hiredApps.length}</Badge>
-                </div>
-                <div className="space-y-4">
-                  {hiredApps.map((app) => (
-                    <Card key={app.id} className="bg-slate-50 opacity-80">
-                      <CardHeader className="p-4 pb-2">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <CardTitle className="text-base">{app.name}</CardTitle>
-                            <CardDescription>{app.jobPosting?.title || 'General Application'}</CardDescription>
-                          </div>
-                          <Badge variant="success" className="text-[10px] uppercase font-mono">{app.sector}</Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0 flex gap-2 justify-end">
-                        <Button variant="ghost" size="sm" onClick={() => setSelectedApp(app)}>
-                          Details
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                  {hiredApps.length === 0 && <div className="text-sm text-[var(--color-ink-2)] text-center py-8 bg-[var(--color-paper)] rounded-lg border border-dashed border-[var(--color-rule)]">No hires yet</div>}
+                
+                <div className="bg-white border border-[var(--color-rule)] rounded-lg overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Applicant Name</TableHead>
+                        <TableHead>Sector</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Location</TableHead>
+                        <TableHead>Date</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {applications.map((app) => (
+                        <TableRow 
+                          key={app.id}
+                          className={`cursor-pointer transition-colors ${selectedApp?.id === app.id ? 'bg-[var(--color-paper)]' : 'hover:bg-[var(--color-paper-2)]'}`}
+                          onClick={() => setSelectedApp(app)}
+                        >
+                          <TableCell className="font-medium">{app.name}</TableCell>
+                          <TableCell>
+                            <Badge variant="secondary" className="uppercase font-mono text-[10px]">{app.sector}</Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={app.status === 'HIRED' ? 'success' : app.status === 'REVIEWING' ? 'warning' : 'secondary'}>
+                              {app.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-[var(--color-ink-2)]">{app.town || 'N/A'}</TableCell>
+                          <TableCell className="text-[var(--color-ink-2)]">
+                            {app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A'}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {applications.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center py-8 text-[var(--color-ink-2)] bg-[var(--color-paper)]">
+                            No applications found
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
                 </div>
               </div>
             </div>
+
+            {/* Side Panel for Application Details */}
+            {selectedApp && (
+              <div className="w-full lg:w-[450px] border-l border-[var(--color-rule)] bg-white flex flex-col shrink-0 h-full overflow-y-auto">
+                <div className="p-6 border-b border-[var(--color-rule)] flex justify-between items-start sticky top-0 bg-white z-10">
+                  <div>
+                    <h2 className="text-xl font-semibold text-[var(--color-ink)]">{selectedApp.name}</h2>
+                    <div className="mt-1 flex items-center gap-2">
+                      <Badge variant="secondary" className="uppercase font-mono text-[10px]">{selectedApp.sector}</Badge>
+                      <span className="text-sm text-[var(--color-ink-2)]">{selectedApp.jobPosting?.title || 'General Application'}</span>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => {
+                    setSelectedApp(null);
+                    setCustomMsgText('');
+                  }} className="text-[var(--color-ink-2)] lg:hidden">
+                    Close
+                  </Button>
+                </div>
+
+                <div className="p-6 space-y-6 flex-1">
+                  {/* Status Actions */}
+                  <div className="bg-[var(--color-paper-2)] p-4 rounded-lg border border-[var(--color-rule)] flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] uppercase font-semibold text-[var(--color-ink-2)] block mb-1">Current Status</span>
+                      <Badge variant={selectedApp.status === 'HIRED' ? 'success' : selectedApp.status === 'REVIEWING' ? 'warning' : 'secondary'}>
+                        {selectedApp.status}
+                      </Badge>
+                    </div>
+                    <div className="flex gap-2">
+                      {selectedApp.status !== 'REVIEWING' && selectedApp.status !== 'HIRED' && (
+                        <Button size="sm" variant="outline" onClick={() => updateApplicationStatus(selectedApp.id, 'REVIEWING')}>
+                          Review
+                        </Button>
+                      )}
+                      {selectedApp.status !== 'HIRED' && (
+                        <Button size="sm" onClick={() => updateApplicationStatus(selectedApp.id, 'HIRED')}>
+                          Hire
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 text-sm bg-[var(--color-paper-2)] p-4 rounded-lg border border-[var(--color-rule)]">
+                    <div>
+                      <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Phone</span>
+                      <a href={`tel:${selectedApp.phone}`} className="font-medium flex items-center gap-1 mt-0.5 hover:underline">
+                        <PhoneCall className="w-3 h-3 text-[var(--color-ink-2)]" />
+                        {selectedApp.phone}
+                      </a>
+                    </div>
+                    {selectedApp.email && (
+                      <div>
+                        <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Email</span>
+                        <a href={`mailto:${selectedApp.email}`} className="font-medium flex items-center gap-1 mt-0.5 hover:underline">
+                          <Mail className="w-3 h-3 text-[var(--color-ink-2)]" />
+                          <span className="truncate max-w-[150px]" title={selectedApp.email}>{selectedApp.email}</span>
+                        </a>
+                      </div>
+                    )}
+                    <div>
+                      <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Town</span>
+                      <span className="font-medium block mt-0.5">{selectedApp.town}</span>
+                    </div>
+                    <div>
+                      <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Right to Work</span>
+                      <span className="font-medium block mt-0.5">{selectedApp.hasRightToWork ? 'Yes' : 'No'}</span>
+                    </div>
+                  </div>
+
+                  {/* Safety Culture Status */}
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-semibold">Safety & Onboarding</h3>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        {selectedApp.contacted ? (
+                          <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200 flex items-center gap-1 font-mono text-[9px] uppercase">
+                            <Check className="w-3 h-3 text-emerald-600" /> Contacted
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200 font-mono text-[9px] uppercase">
+                            Pending Review
+                          </Badge>
+                        )}
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 text-xs"
+                          onClick={() => patchApplicationField(selectedApp.id, 'contacted', !selectedApp.contacted)}
+                        >
+                          {selectedApp.contacted ? 'Mark Pending' : 'Mark Contacted'}
+                        </Button>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        {selectedApp.safetyResourcesSent ? (
+                          selectedApp.safetyTasksCompleted ? (
+                            <Badge variant="outline" className="bg-emerald-100 text-emerald-900 border-emerald-300 flex items-center gap-1 font-mono text-[9px] uppercase">
+                              <CheckCircle className="w-3 h-3 text-emerald-700" /> Tasks Completed
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline" className="bg-sky-50 text-sky-800 border-sky-200 flex items-center gap-1 animate-pulse font-mono text-[9px] uppercase">
+                              <Sparkles className="w-3 h-3 text-sky-600" /> Tasks Sent
+                            </Badge>
+                          )
+                        ) : (
+                          <Badge variant="outline" className="bg-slate-100 text-slate-600 border-slate-200 font-mono text-[9px] uppercase">
+                            Tasks Not Sent
+                          </Badge>
+                        )}
+                        
+                        {!selectedApp.safetyResourcesSent ? (
+                          <Button 
+                            variant="default" 
+                            size="sm" 
+                            className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+                            onClick={() => patchApplicationField(selectedApp.id, 'safetyResourcesSent', true)}
+                          >
+                            Send Tasks
+                          </Button>
+                        ) : !selectedApp.safetyTasksCompleted ? (
+                          <Button 
+                            variant="default" 
+                            size="sm" 
+                            className="h-8 text-xs bg-sky-600 hover:bg-sky-700 text-white"
+                            onClick={() => patchApplicationField(selectedApp.id, 'safetyTasksCompleted', true)}
+                          >
+                            Simulate Completion
+                          </Button>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-[var(--color-rule)]">
+                    <h4 className="text-sm font-semibold mb-3">Quick Message</h4>
+                    <div className="flex gap-2 mb-3">
+                      <Button variant="outline" size="sm" className="text-xs flex-1" onClick={() => applyTemplate('interview', selectedApp)}>Interview</Button>
+                      <Button variant="outline" size="sm" className="text-xs flex-1" onClick={() => applyTemplate('documents', selectedApp)}>Docs</Button>
+                      <Button variant="outline" size="sm" className="text-xs flex-1" onClick={() => applyTemplate('roster', selectedApp)}>Roster</Button>
+                    </div>
+                    <textarea
+                      value={customMsgText}
+                      onChange={(e) => setCustomMsgText(e.target.value)}
+                      placeholder="Type your message or select a template..."
+                      className="w-full h-24 p-3 text-sm border border-[var(--color-rule)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] mb-3 resize-none bg-white"
+                    />
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="default" 
+                        className="flex-1 bg-[#25D366] hover:bg-[#1DA851] text-white"
+                        onClick={() => window.open(getWhatsAppLink(selectedApp.phone, customMsgText), '_blank')}
+                        disabled={!customMsgText}
+                      >
+                        <Smartphone className="w-4 h-4 mr-2" />
+                        WhatsApp
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        className="flex-1"
+                        onClick={() => window.open(getMailLink(selectedApp.name, customMsgText), '_blank')}
+                        disabled={!customMsgText || !selectedApp.email}
+                      >
+                        <Mail className="w-4 h-4 mr-2" />
+                        Email
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         );
       case 'locations':
@@ -355,42 +479,62 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <Card className="lg:col-span-1 h-fit">
                 <CardHeader>
-                  <CardTitle>Add Location</CardTitle>
-                  <CardDescription>Create a new region or town.</CardDescription>
+                  <CardTitle>{isEditingLocation ? 'Edit Location' : 'Add Location'}</CardTitle>
+                  <CardDescription>{isEditingLocation ? 'Update location details.' : 'Create a new region or town.'}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleLocationSubmit} className="space-y-4">
+                  <form key={isEditingLocation ? editingLocationData?.id : 'new'} onSubmit={handleLocationSubmit} className="space-y-4">
                     <div className="space-y-2">
                       <Label>ID (Slug)</Label>
-                      <Input name="id" required placeholder="e.g. norfolk-region" />
+                      <Input name="id" required defaultValue={editingLocationData?.id || ''} placeholder="e.g. norfolk-region" disabled={isEditingLocation} />
                     </div>
                     <div className="space-y-2">
                       <Label>Name</Label>
-                      <Input name="name" required placeholder="e.g. Norfolk" />
+                      <Input name="name" required defaultValue={editingLocationData?.name || ''} placeholder="e.g. Norfolk" />
                     </div>
                     <div className="space-y-2">
                       <Label>Type</Label>
-                      <Select name="type">
+                      <Select name="type" defaultValue={editingLocationData?.type || 'region'} disabled={isEditingLocation}>
                         <option value="region">Region</option>
                         <option value="town">Town</option>
                       </Select>
                     </div>
                     <div className="space-y-2">
+                      <Label>Description</Label>
+                      <textarea
+                        name="description"
+                        defaultValue={editingLocationData?.description || ''}
+                        className="flex min-h-[80px] w-full rounded-md border border-[var(--color-rule)] bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                        placeholder="Optional description"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Phone Number</Label>
+                      <Input name="phoneNumber" defaultValue={editingLocationData?.phoneNumber || ''} placeholder="Optional contact number" />
+                    </div>
+                    <div className="space-y-2">
                       <Label>County (Region only)</Label>
-                      <Input name="county" placeholder="Optional" />
+                      <Input name="county" defaultValue={editingLocationData?.county || ''} placeholder="Optional" />
                     </div>
                     <div className="space-y-2">
                       <Label>Parent Region (Town only)</Label>
-                      <Select name="regionId">
+                      <Select name="regionId" defaultValue={editingLocationData?.regionId || ''}>
                         <option value="">Select Region...</option>
                         {locations.map((r) => (
                           <option key={r.id} value={r.id}>{r.name}</option>
                         ))}
                       </Select>
                     </div>
-                    <Button type="submit" className="w-full mt-4">
-                      <Plus className="w-4 h-4 mr-2" /> Create Location
-                    </Button>
+                    <div className="flex gap-2 mt-4">
+                      {isEditingLocation && (
+                        <Button type="button" variant="outline" onClick={handleCancelEditLocation} className="w-full">
+                          Cancel
+                        </Button>
+                      )}
+                      <Button type="submit" className="w-full">
+                        {isEditingLocation ? 'Save Changes' : <><Plus className="w-4 h-4 mr-2" /> Create Location</>}
+                      </Button>
+                    </div>
                   </form>
                 </CardContent>
               </Card>
@@ -417,7 +561,7 @@ const AdminDashboard = () => {
                                 <div className="text-xs text-[var(--color-ink-2)] mt-1 font-mono">{region.id}</div>
                               </div>
                               <div className="flex space-x-1">
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleEditLocation('region', region.id, region.name)}>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleEditLocation('region', region.id, region)}>
                                   <Edit className="w-4 h-4 text-[var(--color-ink-2)]" />
                                 </Button>
                                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => deleteLocation('region', region.id)}>
@@ -431,7 +575,7 @@ const AdminDashboard = () => {
                               {region.towns?.map((town: any) => (
                                 <Badge key={town.id} variant="secondary" className="flex items-center gap-1 group">
                                   {town.name}
-                                  <button onClick={() => handleEditLocation('town', town.id, town.name)} className="opacity-0 group-hover:opacity-100 transition-opacity ml-1">
+                                  <button onClick={() => handleEditLocation('town', town.id, { ...town, regionId: region.id })} className="opacity-0 group-hover:opacity-100 transition-opacity ml-1">
                                     <Edit className="w-3 h-3 text-[var(--color-ink-2)] hover:text-[var(--color-ink)]" />
                                   </button>
                                   <button onClick={() => deleteLocation('town', town.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
@@ -661,151 +805,7 @@ const AdminDashboard = () => {
 
         <div className="flex-1 overflow-y-auto">{renderContent()}</div>
 
-        <Dialog open={!!selectedApp} onOpenChange={(open) => {
-          if (!open) {
-            setSelectedApp(null);
-            setCustomMsgText('');
-          }
-        }}>
-          {selectedApp && (
-            <>
-              <DialogHeader>
-                <div className="flex justify-between items-start pr-8">
-                  <div>
-                    <DialogTitle className="text-xl">{selectedApp.name}</DialogTitle>
-                    <DialogDescription className="mt-1 flex items-center gap-2">
-                      <Badge variant="secondary" className="uppercase font-mono text-[10px]">{selectedApp.sector}</Badge>
-                      <span>{selectedApp.jobPosting?.title || 'General Application'}</span>
-                    </DialogDescription>
-                  </div>
-                </div>
-              </DialogHeader>
-              <DialogContent>
-                <div className="grid grid-cols-2 gap-4 text-sm bg-[var(--color-paper-2)] p-4 rounded-lg border border-[var(--color-rule)]">
-                  <div>
-                    <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Phone</span>
-                    <a href={`tel:${selectedApp.phone}`} className="font-medium flex items-center gap-1 mt-0.5 hover:underline">
-                      <PhoneCall className="w-3 h-3 text-[var(--color-ink-2)]" />
-                      {selectedApp.phone}
-                    </a>
-                  </div>
-                  {selectedApp.email && (
-                    <div>
-                      <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Email</span>
-                      <a href={`mailto:${selectedApp.email}`} className="font-medium flex items-center gap-1 mt-0.5 hover:underline">
-                        <Mail className="w-3 h-3 text-[var(--color-ink-2)]" />
-                        <span className="truncate max-w-[150px]">{selectedApp.email}</span>
-                      </a>
-                    </div>
-                  )}
-                  <div>
-                    <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Town</span>
-                    <span className="font-medium block mt-0.5">{selectedApp.town}</span>
-                  </div>
-                  <div>
-                    <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Right to Work</span>
-                    <span className="font-medium block mt-0.5">{selectedApp.hasRightToWork ? 'Yes' : 'No'}</span>
-                  </div>
-                </div>
 
-                {/* Safety Culture Status */}
-                <div className="flex flex-wrap items-center gap-2 mt-2">
-                  {selectedApp.contacted ? (
-                    <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200 flex items-center gap-1 font-mono text-[9px] uppercase">
-                      <Check className="w-3 h-3 text-emerald-600" /> Contacted
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200 font-mono text-[9px] uppercase">
-                      Pending Review
-                    </Badge>
-                  )}
-
-                  {selectedApp.safetyResourcesSent ? (
-                    selectedApp.safetyTasksCompleted ? (
-                      <Badge variant="outline" className="bg-emerald-100 text-emerald-900 border-emerald-300 flex items-center gap-1 font-mono text-[9px] uppercase">
-                        <CheckCircle className="w-3 h-3 text-emerald-700" /> Safety Tasks: Completed
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="bg-sky-50 text-sky-800 border-sky-200 flex items-center gap-1 animate-pulse font-mono text-[9px] uppercase">
-                        <Sparkles className="w-3 h-3 text-sky-600" /> Safety Tasks: Sent
-                      </Badge>
-                    )
-                  ) : (
-                    <Badge variant="outline" className="bg-slate-100 text-slate-600 border-slate-200 font-mono text-[9px] uppercase">
-                      Safety Tasks: Not Sent
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex flex-wrap items-center gap-2 mt-2 border-b border-[var(--color-rule)] pb-4">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => patchApplicationField(selectedApp.id, 'contacted', !selectedApp.contacted)}
-                  >
-                    {selectedApp.contacted ? 'Mark Pending' : 'Mark Contacted'}
-                  </Button>
-                  
-                  {!selectedApp.safetyResourcesSent ? (
-                    <Button 
-                      variant="default" 
-                      size="sm" 
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                      onClick={() => patchApplicationField(selectedApp.id, 'safetyResourcesSent', true)}
-                    >
-                      Send Safety Tasks
-                    </Button>
-                  ) : !selectedApp.safetyTasksCompleted ? (
-                    <Button 
-                      variant="default" 
-                      size="sm" 
-                      className="bg-sky-600 hover:bg-sky-700 text-white"
-                      onClick={() => patchApplicationField(selectedApp.id, 'safetyTasksCompleted', true)}
-                    >
-                      Simulate Task Completion
-                    </Button>
-                  ) : null}
-                </div>
-
-                <div className="mt-2">
-                  <h4 className="text-sm font-semibold mb-2">Quick Message</h4>
-                  <div className="flex gap-2 mb-3">
-                    <Button variant="outline" size="sm" className="text-xs" onClick={() => applyTemplate('interview', selectedApp)}>Interview</Button>
-                    <Button variant="outline" size="sm" className="text-xs" onClick={() => applyTemplate('documents', selectedApp)}>Documents</Button>
-                    <Button variant="outline" size="sm" className="text-xs" onClick={() => applyTemplate('roster', selectedApp)}>Roster</Button>
-                  </div>
-                  <textarea
-                    value={customMsgText}
-                    onChange={(e) => setCustomMsgText(e.target.value)}
-                    placeholder="Type your message or select a template..."
-                    className="w-full h-24 p-2 text-sm border border-[var(--color-rule)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] mb-3 resize-none"
-                  />
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="default" 
-                      className="w-full bg-[#25D366] hover:bg-[#1DA851] text-white"
-                      onClick={() => window.open(getWhatsAppLink(selectedApp.phone, customMsgText), '_blank')}
-                      disabled={!customMsgText}
-                    >
-                      <Smartphone className="w-4 h-4 mr-2" />
-                      WhatsApp
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={() => window.open(getMailLink(selectedApp.name, customMsgText), '_blank')}
-                      disabled={!customMsgText || !selectedApp.email}
-                    >
-                      <Mail className="w-4 h-4 mr-2" />
-                      Email
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </>
-          )}
-        </Dialog>
       </main>
     </div>
   );

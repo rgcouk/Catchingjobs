@@ -18,15 +18,15 @@ export default function createAdminRouter(prisma: any) {
 
   router.post('/locations', async (req, res) => {
     try {
-      const { id, name, county, seoCopy, type, regionId, pickupPoint, surrounding, localizedCopy } = req.body;
+      const { id, name, county, seoCopy, description, phoneNumber, type, regionId, pickupPoint, surrounding, localizedCopy } = req.body;
       if (type === 'region') {
         const region = await prisma.region.create({
-          data: { id, name, county: county || '', seoCopy: seoCopy || '' }
+          data: { id, name, county: county || '', seoCopy: seoCopy || '', description: description || null, phoneNumber: phoneNumber || null }
         });
         res.status(201).json(region);
       } else if (type === 'town') {
         const town = await prisma.town.create({
-          data: { id, name, pickupPoint: pickupPoint || '', surrounding: surrounding || '', localizedCopy: localizedCopy || '', regionId }
+          data: { id, name, pickupPoint: pickupPoint || '', surrounding: surrounding || '', localizedCopy: localizedCopy || '', description: description || null, phoneNumber: phoneNumber || null, regionId }
         });
         res.status(201).json(town);
       } else {
@@ -41,17 +41,17 @@ export default function createAdminRouter(prisma: any) {
   router.patch('/locations/:type/:id', async (req, res) => {
     try {
       const { type, id } = req.params;
-      const { name, county, seoCopy, regionId, pickupPoint, surrounding, localizedCopy } = req.body;
+      const { name, county, seoCopy, description, phoneNumber, regionId, pickupPoint, surrounding, localizedCopy } = req.body;
       if (type === 'region') {
         const region = await prisma.region.update({
           where: { id },
-          data: { name, county, seoCopy }
+          data: { name, county, seoCopy, description, phoneNumber }
         });
         res.json(region);
       } else if (type === 'town') {
         const town = await prisma.town.update({
           where: { id },
-          data: { name, pickupPoint, surrounding, localizedCopy, regionId }
+          data: { name, pickupPoint, surrounding, localizedCopy, description, phoneNumber, regionId }
         });
         res.json(town);
       } else {

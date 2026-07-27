@@ -77,6 +77,8 @@ model Region {
   county        String
   activeCrews   Int       @default(0)
   seoCopy       String
+  description   String?
+  phoneNumber   String?
   towns         Town[]
 }
 
@@ -86,6 +88,8 @@ model Town {
   pickupPoint   String
   surrounding   String
   localizedCopy String
+  description   String?
+  phoneNumber   String?
   regionId      String
   region        Region    @relation(fields: [regionId], references: [id], onDelete: Cascade)
 }
