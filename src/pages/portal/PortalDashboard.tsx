@@ -57,6 +57,12 @@ const PortalDashboard = () => {
   };
 
   const [currentStep, setCurrentStep] = useState(1);
+  const [showTraining, setShowTraining] = useState(false);
+  const [trainingData, setTrainingData] = useState({
+    readGuidelines: false,
+    watchedVideo: false,
+    agreedToRules: false
+  });
   const [formData, setFormData] = useState({
     name: '', phone: '', hasRightToWork: false, hasDrivingLicense: false, sector: 'chicken',
     niNumber: '', dateOfBirth: '', addressLine1: '', postcode: '',
@@ -128,6 +134,31 @@ const PortalDashboard = () => {
     }
   };
 
+  const handleTrainingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!trainingData.readGuidelines || !trainingData.watchedVideo || !trainingData.agreedToRules) {
+      alert("Please acknowledge all safety training steps.");
+      return;
+    }
+    
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/portal/onboarding?userId=${USER_ID}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ safetyTasksCompleted: true, declarationSigned: true }),
+      });
+      if (!res.ok) throw new Error('Failed to submit training');
+      setShowTraining(false);
+      fetchData();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
   const renderContent = () => {
     if (loading) return <div className="p-6 max-w-4xl mx-auto flex justify-center text-[var(--color-ink-2)]">Loading portal...</div>;
     if (error) return <div className="p-6 max-w-4xl mx-auto text-[var(--color-accent)] font-medium">Error: {error}</div>;
@@ -136,6 +167,7 @@ const PortalDashboard = () => {
       case 'onboarding':
         const app = profile?.application;
         const isCompleted = app?.profileFormCompleted;
+        const isTrainingCompleted = app?.safetyTasksCompleted;
 
         return (
           <div className="p-6 md:p-8 max-w-4xl mx-auto">
@@ -266,19 +298,77 @@ const PortalDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="opacity-60 bg-[var(--color-paper-2)]">
+              <Card className={`transition-all duration-[var(--dur-short)] ${isCompleted ? isTrainingCompleted ? 'bg-[var(--color-paper-2)]' : 'border-[var(--color-accent)] shadow-md bg-[var(--color-paper)]' : 'opacity-60 bg-[var(--color-paper-2)]'}`}>
                 <CardHeader className="flex flex-row items-start gap-4 space-y-0">
-                  <div className="w-10 h-10 rounded-full bg-[var(--color-rule)] text-[var(--color-ink-2)] flex items-center justify-center font-bold shrink-0">
-                    <Lock className="w-4 h-4" />
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0 transition-colors ${isTrainingCompleted ? 'bg-[var(--color-rule)] text-[var(--color-ink-2)]' : isCompleted ? 'bg-[var(--color-accent)] text-white' : 'bg-[var(--color-rule)] text-[var(--color-ink-2)]'}`}>
+                    {isTrainingCompleted ? <CheckCircle2 className="w-5 h-5" /> : isCompleted ? '2' : <Lock className="w-4 h-4" />}
                   </div>
                   <div className="flex-1">
                     <CardTitle className="text-xl">Safety Training</CardTitle>
                     <CardDescription className="mt-1 mb-4">
                       Review the safety guidelines and complete the brief assessment.
                     </CardDescription>
-                    <Button variant="secondary" disabled className="w-full sm:w-auto">Locked until details saved</Button>
+                    
+                    {isTrainingCompleted ? (
+                      <Badge variant="success" className="px-3 py-1 text-sm rounded-md gap-2 font-medium flex w-fit">
+                        <CheckCircle2 className="w-4 h-4" /> Completed successfully
+                      </Badge>
+                    ) : !showTraining ? (
+                      <Button 
+                        variant={isCompleted ? 'default' : 'secondary'} 
+                        disabled={!isCompleted} 
+                        className="w-full sm:w-auto"
+                        onClick={() => setShowTraining(true)}
+                      >
+                        {isCompleted ? 'Start Safety Training' : 'Locked until details saved'}
+                      </Button>
+                    ) : null}
                   </div>
                 </CardHeader>
+
+                {showTraining && !isTrainingCompleted && (
+                  <CardContent className="ml-14 animate-in fade-in slide-in-from-top-4">
+                    <form onSubmit={handleTrainingSubmit} className="space-y-6 bg-[var(--color-paper-2)] p-6 rounded-xl border border-[var(--color-rule)] mt-2">
+                      <h3 className="font-semibold text-[var(--color-ink)] text-lg">Safety Acknowledgment</h3>
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                          <Input 
+                            type="checkbox" 
+                            id="readGuidelines"
+                            checked={trainingData.readGuidelines} 
+                            onChange={(e) => setTrainingData(prev => ({...prev, readGuidelines: e.target.checked}))} 
+                            className="w-5 h-5 mt-0.5 accent-[var(--color-accent)] shrink-0" 
+                          />
+                          <Label htmlFor="readGuidelines" className="leading-snug">I have read the Animal Welfare and Manual Handling guidelines.</Label>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <Input 
+                            type="checkbox" 
+                            id="watchedVideo"
+                            checked={trainingData.watchedVideo} 
+                            onChange={(e) => setTrainingData(prev => ({...prev, watchedVideo: e.target.checked}))} 
+                            className="w-5 h-5 mt-0.5 accent-[var(--color-accent)] shrink-0" 
+                          />
+                          <Label htmlFor="watchedVideo" className="leading-snug">I have watched the mandatory Health & Safety orientation video.</Label>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <Input 
+                            type="checkbox" 
+                            id="agreedToRules"
+                            checked={trainingData.agreedToRules} 
+                            onChange={(e) => setTrainingData(prev => ({...prev, agreedToRules: e.target.checked}))} 
+                            className="w-5 h-5 mt-0.5 accent-[var(--color-accent)] shrink-0" 
+                          />
+                          <Label htmlFor="agreedToRules" className="leading-snug">I agree to comply with all on-site safety rules and instructions from the crew leader.</Label>
+                        </div>
+                      </div>
+                      <div className="flex gap-3 pt-4 border-t border-[var(--color-rule)]">
+                        <Button type="button" variant="outline" onClick={() => setShowTraining(false)}>Cancel</Button>
+                        <Button type="submit" className="flex-1">Sign & Complete Training</Button>
+                      </div>
+                    </form>
+                  </CardContent>
+                )}
               </Card>
             </div>
           </div>
