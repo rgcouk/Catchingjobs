@@ -20,6 +20,8 @@ const initialOnboardingSchema = z.object({
   postcode: z.string().min(1, 'Required'),
   hasRightToWork: z.boolean(),
   hasDrivingLicense: z.boolean(),
+  hasForkliftLicense: z.boolean(),
+  poultryExperience: z.string().optional(),
 });
 
 const InitialOnboarding = ({ profile, USER_ID, getToken, fetchData }: any) => {
@@ -29,7 +31,8 @@ const InitialOnboarding = ({ profile, USER_ID, getToken, fetchData }: any) => {
     resolver: zodResolver(initialOnboardingSchema),
     defaultValues: {
       name: '', phone: '', dateOfBirth: '', postcode: '',
-      hasRightToWork: false, hasDrivingLicense: false
+      hasRightToWork: false, hasDrivingLicense: false,
+      hasForkliftLicense: false, poultryExperience: ''
     }
   });
 
@@ -45,6 +48,8 @@ const InitialOnboarding = ({ profile, USER_ID, getToken, fetchData }: any) => {
         postcode: app.postcode || '',
         hasRightToWork: app.hasRightToWork || false,
         hasDrivingLicense: app.hasDrivingLicense || false,
+        hasForkliftLicense: app.hasForkliftLicense || false,
+        poultryExperience: app.poultryExperience || '',
       });
     }
   }, [profile, reset]);
@@ -118,6 +123,10 @@ const InitialOnboarding = ({ profile, USER_ID, getToken, fetchData }: any) => {
                 <Input {...register("postcode")} />
                 {errors.postcode && <span className="text-red-500 text-xs">{errors.postcode.message as string}</span>}
               </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label>Poultry Experience (Years/Months or short description)</Label>
+                <Input {...register("poultryExperience")} placeholder="e.g., 2 years turkey catching, or 'None'" />
+              </div>
             </div>
 
             <div className="pt-4 space-y-4 border-t border-[var(--color-rule)] mt-4">
@@ -133,6 +142,13 @@ const InitialOnboarding = ({ profile, USER_ID, getToken, fetchData }: any) => {
                   <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-[var(--color-accent)]" />
                 )} />
                 <Label>I have a valid driving license</Label>
+              </div>
+
+              <div className="flex items-center gap-3 bg-[var(--color-paper-2)] p-4 rounded-md border border-[var(--color-rule)]">
+                <Controller name="hasForkliftLicense" control={control} render={({ field }) => (
+                  <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                )} />
+                <Label>I have a valid forklift license</Label>
               </div>
             </div>
           </div>

@@ -72,13 +72,15 @@ export default function createPortalRouter(prisma: any) {
       if (!user) return res.status(404).json({ error: 'User not found' });
 
       const {
+        name, phone,
         niNumber, dateOfBirth, addressLine1, postcode,
         bankName, bankAccountName, bankAccountNumber, bankSortCode,
         emergencyName, emergencyPhone, emergencyRelation,
         hasAsthmaOrAllergies, hasBackIssues, isFitToLift, declarationSigned,
         // Extensive fields
         employmentHistory, education, references,
-        rightToWorkUK, restrictionsOnWork, restrictionsDetail,
+        hasRightToWork, rightToWorkUK, restrictionsOnWork, restrictionsDetail,
+        hasDrivingLicense, hasForkliftLicense, poultryExperience,
         abusedPosition, abusedPositionDetail, reasonableAdjustments, adjustmentsDetail,
         hasConvictions, criminalConvictions,
         idDocumentUri, proofOfAddressUri, signatureImage,
@@ -86,12 +88,15 @@ export default function createPortalRouter(prisma: any) {
       } = req.body;
 
       const updatedFields = {
+        ...(name && { name }),
+        ...(phone && { phone }),
         niNumber, dateOfBirth, addressLine1, postcode,
         bankName, bankAccountName, bankAccountNumber, bankSortCode,
         emergencyName, emergencyPhone, emergencyRelation,
         hasAsthmaOrAllergies, hasBackIssues, isFitToLift, declarationSigned,
         employmentHistory, education, references,
-        rightToWorkUK, restrictionsOnWork, restrictionsDetail,
+        hasRightToWork, rightToWorkUK, restrictionsOnWork, restrictionsDetail,
+        hasDrivingLicense, hasForkliftLicense, poultryExperience,
         abusedPosition, abusedPositionDetail, reasonableAdjustments, adjustmentsDetail,
         hasConvictions, criminalConvictions,
         idDocumentUri, proofOfAddressUri, signatureImage,
@@ -105,12 +110,14 @@ export default function createPortalRouter(prisma: any) {
         application = await prisma.application.create({
           data: {
             rosterRef: `PL-PRT-${Math.floor(1000 + Math.random() * 9000)}`,
-            name: user.email?.split('@')[0] || 'Unknown',
+            name: name || user.email?.split('@')[0] || 'Unknown',
             email: user.email || '',
-            phone: '',
+            phone: phone || '',
             town: '',
-            hasRightToWork: true,
-            hasDrivingLicense: false,
+            hasRightToWork: hasRightToWork ?? true,
+            hasDrivingLicense: hasDrivingLicense ?? false,
+            hasForkliftLicense: hasForkliftLicense ?? false,
+            poultryExperience: poultryExperience || '',
             shiftAvailability: 'Any',
             sector: 'chicken',
             timestamp: new Date().toISOString(),

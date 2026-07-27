@@ -20,6 +20,8 @@ model Application {
   town                  String
   hasRightToWork        Boolean?
   hasDrivingLicense     Boolean?
+  hasForkliftLicense    Boolean?
+  poultryExperience     String?
   shiftAvailability     String
   authProvider          String?
   avatarUrl             String?
