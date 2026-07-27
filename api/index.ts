@@ -8,6 +8,7 @@ import createAdminRouter from '../server/routes/admin.js';
 import createPortalRouter from '../server/routes/portal.js';
 import { clerkMiddleware } from '@clerk/express';
 import { authenticate } from '../server/middleware/auth.js';
+import uploadRouter from '../server/routes/upload.js';
 import { Webhook } from 'svix';
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use(clerkMiddleware({ secretKey: process.env.CLERK_SECRET_KEY, publishableKe
 // Admin & Portal Routes
 app.use('/api/admin', authenticate, createAdminRouter(prisma));
 app.use('/api/portal', authenticate, createPortalRouter(prisma));
+app.use('/api/upload', authenticate, uploadRouter);
 
 // Public Locations
 app.get('/api/locations', async (req, res) => {

@@ -4,7 +4,7 @@ import { useAuth } from '@clerk/clerk-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Select } from '../../components/ui/select';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 import { Badge } from '../../components/ui/badge';
 import { Label } from '../../components/ui/label';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../../components/ui/table';
@@ -302,7 +302,7 @@ const AdminDashboard = () => {
                             <Badge variant="secondary" className="uppercase font-mono text-[10px]">{app.sector}</Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant={app.status === 'HIRED' ? 'success' : app.status === 'REVIEWING' ? 'warning' : 'secondary'}>
+                            <Badge variant={app.status === 'HIRED' ? 'default' : app.status === 'REVIEWING' ? 'secondary' : 'outline'}>
                               {app.status}
                             </Badge>
                           </TableCell>
@@ -349,7 +349,7 @@ const AdminDashboard = () => {
                   <div className="bg-[var(--color-paper-2)] p-4 rounded-lg border border-[var(--color-rule)] flex items-center justify-between">
                     <div>
                       <span className="text-[10px] uppercase font-semibold text-[var(--color-ink-2)] block mb-1">Current Status</span>
-                      <Badge variant={selectedApp.status === 'HIRED' ? 'success' : selectedApp.status === 'REVIEWING' ? 'warning' : 'secondary'}>
+                      <Badge variant={selectedApp.status === 'HIRED' ? 'default' : selectedApp.status === 'REVIEWING' ? 'secondary' : 'outline'}>
                         {selectedApp.status}
                       </Badge>
                     </div>
@@ -523,9 +523,14 @@ const AdminDashboard = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="type">Type</Label>
-                      <Select id="type" name="type" defaultValue={editingLocationData?.type || 'region'} disabled={isEditingLocation}>
-                        <option value="region">Region</option>
-                        <option value="town">Town</option>
+                      <Select name="type" defaultValue={editingLocationData?.type || 'region'} disabled={isEditingLocation}>
+                        <SelectTrigger id="type">
+                          <SelectValue placeholder="Select Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="region">Region</SelectItem>
+                          <SelectItem value="town">Town</SelectItem>
+                        </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
@@ -547,11 +552,15 @@ const AdminDashboard = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="regionId">Parent Region (Town only)</Label>
-                      <Select id="regionId" name="regionId" defaultValue={editingLocationData?.regionId || ''}>
-                        <option value="">Select Region...</option>
-                        {locations.map((r) => (
-                          <option key={r.id} value={r.id}>{r.name}</option>
-                        ))}
+                      <Select name="regionId" defaultValue={editingLocationData?.regionId || ''}>
+                        <SelectTrigger id="regionId">
+                          <SelectValue placeholder="Select Region..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {locations.map((r) => (
+                            <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
+                          ))}
+                        </SelectContent>
                       </Select>
                     </div>
                     <div className="flex gap-2 mt-4">
@@ -667,19 +676,27 @@ const AdminDashboard = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="sector">Sector</Label>
-                      <Select id="sector" name="sector" required>
-                        <option value="">Select Sector...</option>
-                        <option value="chicken">Chicken</option>
-                        <option value="turkey">Turkey</option>
+                      <Select name="sector" required>
+                        <SelectTrigger id="sector">
+                          <SelectValue placeholder="Select Sector..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="chicken">Chicken</SelectItem>
+                          <SelectItem value="turkey">Turkey</SelectItem>
+                        </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="townId">Town</Label>
-                      <Select id="townId" name="townId" required>
-                        <option value="">Select Town...</option>
-                        {allTowns.map((t) => (
-                          <option key={t.id} value={t.id}>{t.name}</option>
-                        ))}
+                      <Select name="townId" required>
+                        <SelectTrigger id="townId">
+                          <SelectValue placeholder="Select Town..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {allTowns.map((t) => (
+                            <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                          ))}
+                        </SelectContent>
                       </Select>
                     </div>
                     <Button type="submit" className="w-full mt-4">
@@ -710,7 +727,7 @@ const AdminDashboard = () => {
                           <TableCell className="text-[var(--color-ink-2)]">{job.townId}</TableCell>
                           <TableCell className="text-[var(--color-ink-2)]">{job.payRate}</TableCell>
                           <TableCell>
-                            <Badge variant={job.status === 'ACTIVE' ? 'success' : 'default'}>{job.status}</Badge>
+                            <Badge variant={job.status === 'PUBLISHED' ? "default" : "secondary"} className="capitalize">{job.status}</Badge>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -752,7 +769,7 @@ const AdminDashboard = () => {
                       <TableRow key={u.id}>
                         <TableCell className="font-medium">{u.email}</TableCell>
                         <TableCell>
-                          <Badge variant={u.role === 'ADMIN' ? 'accent' : 'secondary'}>{u.role}</Badge>
+                          <Badge variant={u.role === 'ADMIN' ? 'default' : 'secondary'} className="text-xs">{u.role}</Badge>
                         </TableCell>
                         <TableCell className="text-[var(--color-ink-2)]">{new Date(u.createdAt).toLocaleDateString()}</TableCell>
                       </TableRow>

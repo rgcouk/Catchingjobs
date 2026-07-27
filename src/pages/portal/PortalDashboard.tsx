@@ -83,7 +83,7 @@ const InitialOnboarding = ({ profile, USER_ID, getToken, fetchData }: any) => {
     return (
       <Card className="bg-[var(--color-paper-2)]">
         <CardContent className="p-6">
-          <Badge variant="success" className="px-3 py-1 text-sm rounded-md gap-2 font-medium flex w-fit mb-4">
+          <Badge variant="default" className="px-3 py-1 text-sm rounded-md gap-2 font-medium flex w-fit mb-4">
             <CheckCircle2 className="w-4 h-4" /> Application Completed
           </Badge>
           <p className="text-[var(--color-ink-2)]">You have successfully submitted your initial application. Our team will contact you shortly with the next steps.</p>
@@ -255,7 +255,7 @@ const PortalDashboard = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={app.status === 'HIRED' ? 'success' : app.status === 'REVIEWING' ? 'warning' : 'secondary'}>
+                        <Badge variant={app.status === 'HIRED' ? 'default' : app.status === 'REVIEWING' ? 'secondary' : 'outline'}>
                           {app.status}
                         </Badge>
                       </TableCell>

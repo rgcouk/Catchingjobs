@@ -33,7 +33,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import PortalDashboard from './pages/portal/PortalDashboard';
 
 import AppShell, { NavItem } from './components/layout/AppShell';
-import { LayoutDashboard, Users, MapPin, Briefcase, Settings, UserCheck, ClipboardList, BookOpen, HelpCircle } from 'lucide-react';
+import { LayoutDashboard, Users, MapPin, Briefcase, Settings, UserCheck, ClipboardList, BookOpen } from 'lucide-react';
 
 import { ApplicationData } from './types';
 
