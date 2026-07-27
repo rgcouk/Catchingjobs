@@ -12,7 +12,11 @@ export default function createPortalRouter(prisma: any) {
   const getOrCreateUser = async (userId: string) => {
     let user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { application: true }
+      include: { 
+        application: {
+          include: { jobPosting: true }
+        }
+      }
     });
 
     if (!user) {
@@ -24,7 +28,11 @@ export default function createPortalRouter(prisma: any) {
           passwordHash: '',
           role: 'WORKER'
         },
-        include: { application: true }
+        include: { 
+          application: {
+            include: { jobPosting: true }
+          }
+        }
       });
     }
     return user;
@@ -124,6 +132,57 @@ export default function createPortalRouter(prisma: any) {
     } catch (error) {
       console.error('Error fetching portal applications:', error);
       res.status(500).json({ error: 'Failed to fetch applications' });
+    }
+  });
+
+  // Get available resources
+  router.get('/resources', async (req, res) => {
+    try {
+      const resources = await prisma.resource.findMany({
+        orderBy: { createdAt: 'desc' }
+      });
+      res.json(resources);
+    } catch (error) {
+      console.error('Error fetching resources:', error);
+      res.status(500).json({ error: 'Failed to fetch resources' });
+    }
+  });
+
+  // Update personal settings
+  router.patch('/settings', async (req, res) => {
+    try {
+      const userId = getUserId(req);
+      if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+      const user = await getOrCreateUser(userId);
+      if (!user) return res.status(404).json({ error: 'User not found' });
+
+      const { email, phone, name } = req.body;
+
+      if (user.applicationId) {
+        await prisma.application.update({
+          where: { id: user.applicationId },
+          data: { 
+            ...(email && { email }),
+            ...(phone && { phone }),
+            ...(name && { name })
+          }
+        });
+      }
+
+      if (email && email !== user.email) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { email }
+        });
+      }
+
+      const updatedUser = await getOrCreateUser(userId);
+      const { passwordHash, ...userWithoutPassword } = updatedUser;
+      res.json(userWithoutPassword);
+    } catch (error) {
+      console.error('Error updating settings:', error);
+      res.status(500).json({ error: 'Failed to update settings' });
     }
   });
 

@@ -1,4 +1,5 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useEffect } from 'react';
+import { useUser, useAuth } from '@clerk/clerk-react';
 import Sidebar from './Sidebar';
 import TopNav from './TopNav';
 
@@ -44,14 +45,49 @@ export default function AppShell({ children, navItems, defaultTab = 'dashboard',
   // Basic mobile detection for default sidebar state
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-  React.useEffect(() => {
+  const { user } = useUser();
+  const { getToken } = useAuth();
+  const [isFullyOnboarded, setIsFullyOnboarded] = useState(true);
+
+  useEffect(() => {
     if (isMobile) {
       setSidebarOpen(false);
     }
   }, [isMobile]);
 
+  useEffect(() => {
+    if (userType === 'portal' && user) {
+      const checkOnboarding = async () => {
+        try {
+          const token = await getToken();
+          const res = await fetch(`/api/portal/me?userId=${user.id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            const app = data?.application;
+            if (!app?.profileFormCompleted || !app?.safetyTasksCompleted) {
+              setIsFullyOnboarded(false);
+              setActiveTab('onboarding');
+            } else {
+              setIsFullyOnboarded(true);
+              if (activeTab === 'onboarding') {
+                setActiveTab('dashboard');
+              }
+            }
+          }
+        } catch (e) {}
+      };
+      checkOnboarding();
+    }
+  }, [userType, user, getToken]);
+
+  const displayedNavItems = userType === 'portal'
+    ? (!isFullyOnboarded ? navItems.filter(i => i.id === 'onboarding') : navItems.filter(i => i.id !== 'onboarding'))
+    : navItems;
+
   return (
-    <AppShellContext.Provider value={{ isSidebarOpen, setSidebarOpen, isMobile, navItems, activeTab, setActiveTab, userType }}>
+    <AppShellContext.Provider value={{ isSidebarOpen, setSidebarOpen, isMobile, navItems: displayedNavItems, activeTab, setActiveTab, userType }}>
       <div className="relative flex h-[100dvh] w-full overflow-hidden bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-white">
         <Sidebar />
         <main

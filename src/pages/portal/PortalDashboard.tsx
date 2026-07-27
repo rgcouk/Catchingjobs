@@ -134,6 +134,26 @@ const PortalDashboard = () => {
     }
   };
 
+  const handleSettingsSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/portal/onboarding?userId=${USER_ID}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) throw new Error('Failed to update settings');
+      alert('Settings saved successfully');
+      fetchData();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
   const handleTrainingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!trainingData.readGuidelines || !trainingData.watchedVideo || !trainingData.agreedToRules) {
@@ -423,6 +443,163 @@ const PortalDashboard = () => {
                   )}
                 </TableBody>
               </Table>
+            </Card>
+          </div>
+        );
+      case 'dashboard':
+        return (
+          <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
+            <header>
+              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
+                Dashboard
+              </h1>
+              <p className="text-[var(--color-ink-2)] mt-1">Welcome back to your CatchingJobs portal.</p>
+            </header>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Profile Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2 text-[var(--color-ink)]">
+                    <CheckCircle2 className="w-5 h-5 text-[var(--color-success)]" />
+                    <span>Onboarding complete</span>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Active Applications</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-semibold">{applications.length}</div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+      case 'resources':
+        return (
+          <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
+            <header>
+              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
+                Resources
+              </h1>
+              <p className="text-[var(--color-ink-2)] mt-1">Access training materials and guidelines.</p>
+            </header>
+            <Card>
+              <CardHeader>
+                <CardTitle>Safety Documents</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-[var(--color-paper-2)] rounded-lg border border-[var(--color-rule)]">
+                  <div className="font-medium text-[var(--color-ink)]">Animal Welfare Guidelines</div>
+                  <Button variant="outline" size="sm">View PDF</Button>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-[var(--color-paper-2)] rounded-lg border border-[var(--color-rule)]">
+                  <div className="font-medium text-[var(--color-ink)]">Manual Handling Video</div>
+                  <Button variant="outline" size="sm">Watch</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      case 'support':
+        return (
+          <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
+            <header>
+              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
+                Support
+              </h1>
+              <p className="text-[var(--color-ink-2)] mt-1">Get help with your applications or account.</p>
+            </header>
+            <Card>
+              <CardHeader>
+                <CardTitle>Contact Us</CardTitle>
+                <CardDescription>Reach out to the CatchingJobs team</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="p-4 bg-[var(--color-paper-2)] rounded-lg border border-[var(--color-rule)]">
+                  <h3 className="font-semibold text-sm text-[var(--color-ink-2)] uppercase tracking-wider mb-2">Email</h3>
+                  <p className="text-[var(--color-ink)] font-medium">support@catchingjobs.co.uk</p>
+                </div>
+                <div className="p-4 bg-[var(--color-paper-2)] rounded-lg border border-[var(--color-rule)]">
+                  <h3 className="font-semibold text-sm text-[var(--color-ink-2)] uppercase tracking-wider mb-2">Phone</h3>
+                  <p className="text-[var(--color-ink)] font-medium">0800 123 4567</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      case 'settings':
+        return (
+          <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
+            <header>
+              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
+                Settings
+              </h1>
+              <p className="text-[var(--color-ink-2)] mt-1">Manage your personal information and preferences.</p>
+            </header>
+            <Card>
+              <CardHeader>
+                <CardTitle>Profile Details</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form className="space-y-6" onSubmit={handleSettingsSubmit}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Full Name</Label>
+                      <Input name="name" value={formData.name} onChange={handleChange} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Phone Number</Label>
+                      <Input name="phone" value={formData.phone} onChange={handleChange} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>National Insurance Number</Label>
+                      <Input name="niNumber" value={formData.niNumber} onChange={handleChange} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Date of Birth</Label>
+                      <Input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} />
+                    </div>
+                  </div>
+                  
+                  <hr className="border-[var(--color-rule)]" />
+                  <h3 className="font-semibold">Address</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Address Line 1</Label>
+                      <Input name="addressLine1" value={formData.addressLine1} onChange={handleChange} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Postcode</Label>
+                      <Input name="postcode" value={formData.postcode} onChange={handleChange} />
+                    </div>
+                  </div>
+
+                  <hr className="border-[var(--color-rule)]" />
+                  <h3 className="font-semibold">Bank Details</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2"><Label>Bank Name</Label><Input name="bankName" value={formData.bankName} onChange={handleChange} /></div>
+                    <div className="space-y-2"><Label>Account Name</Label><Input name="bankAccountName" value={formData.bankAccountName} onChange={handleChange} /></div>
+                    <div className="space-y-2"><Label>Account Number</Label><Input name="bankAccountNumber" value={formData.bankAccountNumber} onChange={handleChange} /></div>
+                    <div className="space-y-2"><Label>Sort Code</Label><Input name="bankSortCode" value={formData.bankSortCode} onChange={handleChange} /></div>
+                  </div>
+
+                  <hr className="border-[var(--color-rule)]" />
+                  <h3 className="font-semibold">Emergency Contact</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2"><Label>Name</Label><Input name="emergencyName" value={formData.emergencyName} onChange={handleChange} /></div>
+                    <div className="space-y-2"><Label>Phone</Label><Input name="emergencyPhone" value={formData.emergencyPhone} onChange={handleChange} /></div>
+                    <div className="space-y-2"><Label>Relation</Label><Input name="emergencyRelation" value={formData.emergencyRelation} onChange={handleChange} /></div>
+                  </div>
+
+                  <div className="pt-4">
+                    <Button type="submit">Save Changes</Button>
+                  </div>
+                </form>
+              </CardContent>
             </Card>
           </div>
         );

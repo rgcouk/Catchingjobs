@@ -108,3 +108,13 @@ model JobPosting {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
+
+model Resource {
+  id          Int      @id @default(autoincrement())
+  title       String
+  type        String   // e.g., "VIDEO", "PDF", "LINK"
+  url         String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

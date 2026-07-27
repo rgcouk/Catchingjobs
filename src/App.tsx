@@ -33,8 +33,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import PortalDashboard from './pages/portal/PortalDashboard';
 
 import AppShell, { NavItem } from './components/layout/AppShell';
-import { LayoutDashboard, Users, MapPin, Briefcase, Settings, UserCheck, ClipboardList } from 'lucide-react';
-
+import { LayoutDashboard, Users, MapPin, Briefcase, Settings, UserCheck, ClipboardList, BookOpen, HelpCircle } from 'lucide-react';
 
 import { ApplicationData } from './types';
 
@@ -101,8 +100,12 @@ const adminNavItems: NavItem[] = [
 ];
 
 const portalNavItems: NavItem[] = [
-  { id: 'onboarding', label: 'Portal Onboarding', icon: UserCheck },
+  { id: 'onboarding', label: 'Onboarding', icon: UserCheck },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'resources', label: 'Resources', icon: BookOpen },
   { id: 'applications', label: 'My Applications', icon: ClipboardList },
+  { id: 'support', label: 'Support', icon: HelpCircle },
+  { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
 function App() {
