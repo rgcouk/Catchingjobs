@@ -1,5 +1,12 @@
 import { Router } from 'express';
 
+// Theoretical email function for application submission receipts and alerts
+async function sendApplicationEmail(applicationData: any) {
+  console.log(`[Email Service] Mock sending application receipt to applicant: ${applicationData.email}`);
+  console.log(`[Email Service] Mock sending new application alert to admin team for: ${applicationData.rosterRef}`);
+  // TODO: Wire up actual Resend/SendGrid API here later.
+}
+
 export default function createPortalRouter(prisma: any) {
   const router = Router();
 
@@ -68,8 +75,29 @@ export default function createPortalRouter(prisma: any) {
         niNumber, dateOfBirth, addressLine1, postcode,
         bankName, bankAccountName, bankAccountNumber, bankSortCode,
         emergencyName, emergencyPhone, emergencyRelation,
-        hasAsthmaOrAllergies, hasBackIssues, isFitToLift, declarationSigned
+        hasAsthmaOrAllergies, hasBackIssues, isFitToLift, declarationSigned,
+        // Extensive fields
+        employmentHistory, education, references,
+        rightToWorkUK, restrictionsOnWork, restrictionsDetail,
+        abusedPosition, abusedPositionDetail, reasonableAdjustments, adjustmentsDetail,
+        hasConvictions, criminalConvictions,
+        idDocumentUri, proofOfAddressUri, signatureImage,
+        socialMediaConsent, privacyPolicyConsent
       } = req.body;
+
+      const updatedFields = {
+        niNumber, dateOfBirth, addressLine1, postcode,
+        bankName, bankAccountName, bankAccountNumber, bankSortCode,
+        emergencyName, emergencyPhone, emergencyRelation,
+        hasAsthmaOrAllergies, hasBackIssues, isFitToLift, declarationSigned,
+        employmentHistory, education, references,
+        rightToWorkUK, restrictionsOnWork, restrictionsDetail,
+        abusedPosition, abusedPositionDetail, reasonableAdjustments, adjustmentsDetail,
+        hasConvictions, criminalConvictions,
+        idDocumentUri, proofOfAddressUri, signatureImage,
+        socialMediaConsent, privacyPolicyConsent,
+        profileFormCompleted: true
+      };
 
       let application;
       if (!user.applicationId) {
@@ -81,32 +109,29 @@ export default function createPortalRouter(prisma: any) {
             email: user.email || '',
             phone: '',
             town: '',
-            postcode: postcode || '',
             hasRightToWork: true,
             hasDrivingLicense: false,
             shiftAvailability: 'Any',
             sector: 'chicken',
             timestamp: new Date().toISOString(),
-            niNumber, dateOfBirth, addressLine1,
-            bankName, bankAccountName, bankAccountNumber, bankSortCode,
-            emergencyName, emergencyPhone, emergencyRelation,
-            hasAsthmaOrAllergies, hasBackIssues, isFitToLift, declarationSigned,
-            profileFormCompleted: true,
+            ...updatedFields,
             user: { connect: { id: user.id } }
           }
         });
       } else {
         application = await prisma.application.update({
           where: { id: user.applicationId },
-          data: {
-            niNumber, dateOfBirth, addressLine1, postcode,
-            bankName, bankAccountName, bankAccountNumber, bankSortCode,
-            emergencyName, emergencyPhone, emergencyRelation,
-            hasAsthmaOrAllergies, hasBackIssues, isFitToLift, declarationSigned,
-            profileFormCompleted: true
-          }
+          data: updatedFields
         });
       }
+
+      // Theoretical email trigger
+      try {
+        await sendApplicationEmail(application);
+      } catch (err) {
+        console.error('Error sending application emails:', err);
+      }
+
       res.json(application);
     } catch (error) {
       console.error('Error updating onboarding:', error);

@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ClipboardList, UserCheck, LogOut, Menu, User, CheckCircle2, Lock, ArrowRight, Briefcase } from 'lucide-react';
+import { ClipboardList, UserCheck, LogOut, Menu, User, CheckCircle2, Lock, ArrowRight, Briefcase, Plus, Trash2, UploadCloud } from 'lucide-react';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Textarea } from '../../components/ui/textarea';
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
@@ -10,6 +14,357 @@ import { Label } from '../../components/ui/label';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../../components/ui/table';
 
 import { useAppShell } from '../../components/layout/AppShell';
+
+
+const onboardingSchema = z.object({
+  name: z.string().min(1, 'Required'),
+  phone: z.string().min(1, 'Required'),
+  sector: z.string(),
+  niNumber: z.string().min(1, 'Required'),
+  dateOfBirth: z.string().min(1, 'Required'),
+  addressLine1: z.string().min(1, 'Required'),
+  postcode: z.string().min(1, 'Required'),
+  emergencyName: z.string().min(1, 'Required'),
+  emergencyPhone: z.string().min(1, 'Required'),
+  emergencyRelation: z.string().min(1, 'Required'),
+  
+  experience: z.array(z.object({
+    role: z.string().min(1, 'Required'),
+    company: z.string().min(1, 'Required'),
+    duration: z.string().min(1, 'Required'),
+  })),
+
+  education: z.array(z.object({
+    institution: z.string().min(1, 'Required'),
+    qualification: z.string().min(1, 'Required'),
+  })),
+
+  references: z.array(z.object({
+    name: z.string().min(1, 'Required'),
+    contact: z.string().min(1, 'Required'),
+  })),
+  hasRightToWork: z.boolean(),
+
+  criminalConvictions: z.boolean(),
+  criminalDetails: z.string().optional(),
+  reasonableAdjustments: z.boolean(),
+  adjustmentDetails: z.string().optional(),
+
+  signature: z.boolean().refine(val => val === true, 'You must sign the application'),
+});
+
+const OnboardingWizard = ({ profile, USER_ID, getToken, fetchData }: any) => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm({
+    resolver: zodResolver(onboardingSchema),
+    defaultValues: {
+      name: '', phone: '', sector: 'chicken', niNumber: '', dateOfBirth: '', addressLine1: '', postcode: '',
+      emergencyName: '', emergencyPhone: '', emergencyRelation: '',
+      experience: [], education: [], references: [],
+      hasRightToWork: false, criminalConvictions: false, criminalDetails: '',
+      reasonableAdjustments: false, adjustmentDetails: '', signature: false
+    }
+  });
+
+  const { control, handleSubmit, register, watch, reset, formState: { errors } } = form;
+
+  useEffect(() => {
+    if (profile?.application) {
+      const app = profile.application;
+      reset({
+        name: app.name || '',
+        phone: app.phone || '',
+        sector: app.sector || 'chicken',
+        niNumber: app.niNumber || '',
+        dateOfBirth: app.dateOfBirth ? new Date(app.dateOfBirth).toISOString().split('T')[0] : '',
+        addressLine1: app.addressLine1 || '',
+        postcode: app.postcode || '',
+        emergencyName: app.emergencyName || '',
+        emergencyPhone: app.emergencyPhone || '',
+        emergencyRelation: app.emergencyRelation || '',
+        experience: app.experience || [],
+        education: app.education || [],
+        references: app.references || [],
+        hasRightToWork: app.hasRightToWork || false,
+        criminalConvictions: app.criminalConvictions || false,
+        criminalDetails: app.criminalDetails || '',
+        reasonableAdjustments: app.reasonableAdjustments || false,
+        adjustmentDetails: app.adjustmentDetails || '',
+        signature: app.signature || false,
+      });
+    }
+  }, [profile, reset]);
+
+  const { fields: expFields, append: appendExp, remove: removeExp } = useFieldArray({ control, name: "experience" });
+  const { fields: eduFields, append: appendEdu, remove: removeEdu } = useFieldArray({ control, name: "education" });
+  const { fields: refFields, append: appendRef, remove: removeRef } = useFieldArray({ control, name: "references" });
+
+  const nextStep = async () => {
+    let fieldsToValidate: any = [];
+    if (currentStep === 1) fieldsToValidate = ['name', 'phone', 'sector', 'emergencyName', 'emergencyPhone', 'emergencyRelation'];
+    else if (currentStep === 2) fieldsToValidate = []; // experience, education arrays are valid if empty unless min() specified
+    else if (currentStep === 3) fieldsToValidate = ['hasRightToWork'];
+    else if (currentStep === 4) fieldsToValidate = ['criminalConvictions', 'criminalDetails', 'reasonableAdjustments', 'adjustmentDetails'];
+    else if (currentStep === 5) fieldsToValidate = []; 
+
+    const isValid = await form.trigger(fieldsToValidate);
+    if (isValid) setCurrentStep(s => Math.min(6, s + 1));
+  };
+  const prevStep = () => setCurrentStep(s => Math.max(1, s - 1));
+
+  const onSubmit = async (data: any) => {
+    setIsSubmitting(true);
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/portal/onboarding?userId=${USER_ID}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ ...data, profileFormCompleted: true }),
+      });
+      if (!res.ok) throw new Error('Failed to submit application');
+      await fetchData();
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const isCompleted = profile?.application?.profileFormCompleted;
+
+  if (isCompleted) {
+    return (
+      <Card className="bg-[var(--color-paper-2)]">
+        <CardContent className="p-6">
+          <Badge variant="success" className="px-3 py-1 text-sm rounded-md gap-2 font-medium flex w-fit mb-4">
+            <CheckCircle2 className="w-4 h-4" /> Application Completed
+          </Badge>
+          <p className="text-[var(--color-ink-2)]">You have successfully submitted your application.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="border-[var(--color-accent)] shadow-md">
+      <CardHeader>
+        <CardTitle>Application Form - Step {currentStep} of 6</CardTitle>
+        <CardDescription>Please complete all steps to submit your application.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          
+          {currentStep === 1 && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+              <h3 className="text-lg font-semibold text-[var(--color-ink)]">Basics & Contact</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Full Name</Label>
+                  <Input {...register("name")} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Phone Number</Label>
+                  <Input {...register("phone")} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Sector</Label>
+                  <Select {...register("sector")}>
+                    <option value="chicken">Chicken Catching</option>
+                    <option value="turkey">Turkey Catching</option>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>NI Number</Label>
+                  <Input {...register("niNumber")} placeholder="QQ 12 34 56 A" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Date of Birth</Label>
+                  <Input type="date" {...register("dateOfBirth")} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Address Line 1</Label>
+                  <Input {...register("addressLine1")} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Postcode</Label>
+                  <Input {...register("postcode")} />
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-[var(--color-ink)] mt-6">Emergency Contact</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Name</Label>
+                  <Input {...register("emergencyName")} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Phone</Label>
+                  <Input {...register("emergencyPhone")} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Relation</Label>
+                  <Input {...register("emergencyRelation")} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 2 && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+              <h3 className="text-lg font-semibold text-[var(--color-ink)]">Experience</h3>
+              {expFields.map((field, index) => (
+                <div key={field.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border border-[var(--color-rule)] rounded-md bg-[var(--color-paper-2)] items-end">
+                  <div className="space-y-2"><Label>Role</Label><Input {...register(`experience.${index}.role`)} /></div>
+                  <div className="space-y-2"><Label>Company</Label><Input {...register(`experience.${index}.company`)} /></div>
+                  <div className="space-y-2"><Label>Duration</Label><Input {...register(`experience.${index}.duration`)} placeholder="e.g. 2 years" /></div>
+                  <Button type="button" variant="outline" onClick={() => removeExp(index)}><Trash2 className="w-4 h-4 text-red-500" /></Button>
+                </div>
+              ))}
+              <Button type="button" variant="outline" onClick={() => appendExp({ role: '', company: '', duration: '' })} className="w-full"><Plus className="w-4 h-4 mr-2" /> Add Experience</Button>
+
+              <h3 className="text-lg font-semibold text-[var(--color-ink)] mt-6">Education</h3>
+              {eduFields.map((field, index) => (
+                <div key={field.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border border-[var(--color-rule)] rounded-md bg-[var(--color-paper-2)] items-end">
+                  <div className="space-y-2"><Label>Institution</Label><Input {...register(`education.${index}.institution`)} /></div>
+                  <div className="space-y-2"><Label>Qualification</Label><Input {...register(`education.${index}.qualification`)} /></div>
+                  <Button type="button" variant="outline" onClick={() => removeEdu(index)}><Trash2 className="w-4 h-4 text-red-500" /></Button>
+                </div>
+              ))}
+              <Button type="button" variant="outline" onClick={() => appendEdu({ institution: '', qualification: '' })} className="w-full"><Plus className="w-4 h-4 mr-2" /> Add Education</Button>
+            </div>
+          )}
+
+          {currentStep === 3 && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+              <h3 className="text-lg font-semibold text-[var(--color-ink)]">References</h3>
+              {refFields.map((field, index) => (
+                <div key={field.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border border-[var(--color-rule)] rounded-md bg-[var(--color-paper-2)] items-end">
+                  <div className="space-y-2"><Label>Name</Label><Input {...register(`references.${index}.name`)} /></div>
+                  <div className="space-y-2"><Label>Contact Details</Label><Input {...register(`references.${index}.contact`)} /></div>
+                  <Button type="button" variant="outline" onClick={() => removeRef(index)}><Trash2 className="w-4 h-4 text-red-500" /></Button>
+                </div>
+              ))}
+              <Button type="button" variant="outline" onClick={() => appendRef({ name: '', contact: '' })} className="w-full"><Plus className="w-4 h-4 mr-2" /> Add Reference</Button>
+
+              <div className="pt-6 border-t border-[var(--color-rule)]">
+                <h3 className="text-lg font-semibold text-[var(--color-ink)] mb-4">Right to Work</h3>
+                <div className="flex items-center gap-3">
+                  <Controller name="hasRightToWork" control={control} render={({ field }) => (
+                    <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                  )} />
+                  <Label>I have the legal right to work in the UK</Label>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 4 && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+              <h3 className="text-lg font-semibold text-[var(--color-ink)]">Declarations & Security</h3>
+              
+              <div className="space-y-4 bg-[var(--color-paper-2)] p-4 rounded-md border border-[var(--color-rule)]">
+                <div className="flex items-center gap-3">
+                  <Controller name="criminalConvictions" control={control} render={({ field }) => (
+                    <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                  )} />
+                  <Label>Do you have any unspent criminal convictions?</Label>
+                </div>
+                {watch("criminalConvictions") && (
+                  <div className="space-y-2">
+                    <Label>Please provide details</Label>
+                    <Textarea {...register("criminalDetails")} />
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-4 bg-[var(--color-paper-2)] p-4 rounded-md border border-[var(--color-rule)]">
+                <div className="flex items-center gap-3">
+                  <Controller name="reasonableAdjustments" control={control} render={({ field }) => (
+                    <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                  )} />
+                  <Label>Do you require any reasonable adjustments?</Label>
+                </div>
+                {watch("reasonableAdjustments") && (
+                  <div className="space-y-2">
+                    <Label>Please provide details</Label>
+                    <Textarea {...register("adjustmentDetails")} />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {currentStep === 5 && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+              <h3 className="text-lg font-semibold text-[var(--color-ink)]">Secure Document Upload</h3>
+              <p className="text-sm text-[var(--color-ink-2)]">Please upload clear photos or scans of your documents.</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="border-2 border-dashed border-[var(--color-rule)] rounded-lg p-6 flex flex-col items-center justify-center text-center space-y-3 bg-[var(--color-paper-2)]">
+                  <UploadCloud className="w-10 h-10 text-[var(--color-ink-2)]" />
+                  <div>
+                    <p className="font-semibold text-[var(--color-ink)]">ID Document</p>
+                    <p className="text-sm text-[var(--color-ink-2)]">Passport or Driving License</p>
+                  </div>
+                  <Button type="button" variant="outline" size="sm">Select File</Button>
+                </div>
+
+                <div className="border-2 border-dashed border-[var(--color-rule)] rounded-lg p-6 flex flex-col items-center justify-center text-center space-y-3 bg-[var(--color-paper-2)]">
+                  <UploadCloud className="w-10 h-10 text-[var(--color-ink-2)]" />
+                  <div>
+                    <p className="font-semibold text-[var(--color-ink)]">Proof of Address</p>
+                    <p className="text-sm text-[var(--color-ink-2)]">Utility bill or bank statement (last 3 months)</p>
+                  </div>
+                  <Button type="button" variant="outline" size="sm">Select File</Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 6 && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+              <h3 className="text-lg font-semibold text-[var(--color-ink)]">E-Signatures & Submission</h3>
+              <div className="bg-[var(--color-paper-2)] p-6 rounded-md border border-[var(--color-rule)] space-y-4">
+                <p className="text-sm text-[var(--color-ink)] leading-relaxed">
+                  I declare that the information provided in this application is true and complete to the best of my knowledge. I understand that any false statements or omissions may be grounds for rejection or immediate dismissal if employed.
+                </p>
+                <div className="flex items-center gap-3 pt-4 border-t border-[var(--color-rule)]">
+                  <Controller name="signature" control={control} render={({ field }) => (
+                    <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                  )} />
+                  <Label>I agree and sign this application electronically</Label>
+                </div>
+                {errors.signature && <span className="text-red-500 text-sm">{errors.signature.message as string}</span>}
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-3 pt-6 border-t border-[var(--color-rule)] mt-6">
+            {currentStep > 1 && (
+              <Button type="button" variant="outline" onClick={prevStep} className="w-24" disabled={isSubmitting}>
+                Back
+              </Button>
+            )}
+            {currentStep < 6 ? (
+              <Button type="button" className="flex-1" onClick={nextStep}>
+                Next <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            ) : (
+              <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                {isSubmitting ? 'Submitting...' : 'Complete & Submit'} <CheckCircle2 className="w-4 h-4 ml-2" />
+              </Button>
+            )}
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
+};
 
 const PortalDashboard = () => {
   const { activeTab } = useAppShell();
@@ -185,10 +540,6 @@ const PortalDashboard = () => {
 
     switch (activeTab) {
       case 'onboarding':
-        const app = profile?.application;
-        const isCompleted = app?.profileFormCompleted;
-        const isTrainingCompleted = app?.safetyTasksCompleted;
-
         return (
           <div className="p-6 md:p-8 max-w-4xl mx-auto">
             <header className="mb-8">
@@ -197,207 +548,7 @@ const PortalDashboard = () => {
               </h1>
               <p className="text-[var(--color-ink-2)] mt-1">Complete your registration to start accepting shifts.</p>
             </header>
-
-            <div className="space-y-6">
-              <Card className={`transition-all duration-[var(--dur-short)] ${isCompleted ? 'bg-[var(--color-paper-2)]' : 'border-[var(--color-accent)] shadow-md'}`}>
-                <CardHeader className="flex flex-row items-start gap-4 space-y-0">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0 transition-colors ${isCompleted ? 'bg-[var(--color-rule)] text-[var(--color-ink-2)]' : 'bg-[var(--color-accent)] text-white'}`}>
-                    {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : '1'}
-                  </div>
-                  <div className="flex-1">
-                    <CardTitle className="text-xl">Identity & Details</CardTitle>
-                    <CardDescription className="mt-1">
-                      Fill out your NI Number, Address, and Date of Birth to legally work with us.
-                    </CardDescription>
-                  </div>
-                </CardHeader>
-                <CardContent className="ml-14">
-                  {isCompleted ? (
-                    <Badge variant="success" className="px-3 py-1 text-sm rounded-md gap-2 font-medium flex w-fit">
-                      <CheckCircle2 className="w-4 h-4" /> Completed successfully
-                    </Badge>
-                  ) : (
-                    <form onSubmit={handleOnboardingSubmit} className="space-y-6 bg-[var(--color-paper-2)] p-6 rounded-xl border border-[var(--color-rule)]">
-                      {currentStep === 1 && (
-                        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
-                          <div className="space-y-2">
-                            <Label htmlFor="name">Full Name</Label>
-                            <Input id="name" name="name" required value={formData.name} onChange={handleChange} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="phone">Phone Number</Label>
-                            <Input id="phone" name="phone" required value={formData.phone} onChange={handleChange} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="sector">Sector</Label>
-                            <Select id="sector" name="sector" required value={formData.sector} onChange={handleChange}>
-                              <option value="chicken">Chicken Catching</option>
-                              <option value="turkey">Turkey Catching</option>
-                            </Select>
-                          </div>
-                          <div className="flex items-center gap-3 pt-2">
-                            <Input type="checkbox" name="hasRightToWork" id="hasRightToWork" checked={formData.hasRightToWork} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
-                            <Label htmlFor="hasRightToWork">I have the right to work in the UK</Label>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <Input type="checkbox" name="hasDrivingLicense" id="hasDrivingLicense" checked={formData.hasDrivingLicense} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
-                            <Label htmlFor="hasDrivingLicense">I have a valid driving license</Label>
-                          </div>
-                        </div>
-                      )}
-
-                      {currentStep === 2 && (
-                        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
-                          <div className="space-y-2">
-                            <Label htmlFor="niNumber">National Insurance Number</Label>
-                            <Input id="niNumber" name="niNumber" required value={formData.niNumber} onChange={handleChange} placeholder="QQ 12 34 56 A" />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Date of Birth</Label>
-                            <Input type="date" name="dateOfBirth" required value={formData.dateOfBirth} onChange={handleChange} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="addressLine1">Address Line 1</Label>
-                            <Input id="addressLine1" name="addressLine1" required value={formData.addressLine1} onChange={handleChange} placeholder="123 Farm Lane" />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="postcode">Postcode</Label>
-                            <Input id="postcode" name="postcode" required value={formData.postcode} onChange={handleChange} placeholder="NR1 1AA" />
-                          </div>
-                        </div>
-                      )}
-
-                      {currentStep === 3 && (
-                        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2"><Label htmlFor="bankName">Bank Name</Label>
-                            <Input id="bankName" name="bankName" required value={formData.bankName} onChange={handleChange} /></div>
-                            <div className="space-y-2"><Label htmlFor="bankAccountName">Account Name</Label>
-                            <Input id="bankAccountName" name="bankAccountName" required value={formData.bankAccountName} onChange={handleChange} /></div>
-                            <div className="space-y-2"><Label htmlFor="bankAccountNumber">Account Number</Label>
-                            <Input id="bankAccountNumber" name="bankAccountNumber" required value={formData.bankAccountNumber} onChange={handleChange} /></div>
-                            <div className="space-y-2"><Label htmlFor="bankSortCode">Sort Code</Label>
-                            <Input id="bankSortCode" name="bankSortCode" required value={formData.bankSortCode} onChange={handleChange} /></div>
-                          </div>
-                          
-                          <hr className="border-[var(--color-rule)]" />
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="space-y-2"><Label htmlFor="emergencyName">Emergency Contact</Label>
-                            <Input id="emergencyName" name="emergencyName" required value={formData.emergencyName} onChange={handleChange} /></div>
-                            <div className="space-y-2"><Label htmlFor="emergencyPhone">Phone</Label>
-                            <Input id="emergencyPhone" name="emergencyPhone" required value={formData.emergencyPhone} onChange={handleChange} /></div>
-                            <div className="space-y-2"><Label htmlFor="emergencyRelation">Relation</Label>
-                            <Input id="emergencyRelation" name="emergencyRelation" required value={formData.emergencyRelation} onChange={handleChange} /></div>
-                          </div>
-
-                          <hr className="border-[var(--color-rule)]" />
-
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-3">
-                              <Input type="checkbox" name="hasAsthmaOrAllergies" id="hasAsthmaOrAllergies" checked={formData.hasAsthmaOrAllergies} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
-                              <Label htmlFor="hasAsthmaOrAllergies">I have asthma or allergies</Label>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <Input type="checkbox" name="hasBackIssues" id="hasBackIssues" checked={formData.hasBackIssues} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
-                              <Label htmlFor="hasBackIssues">I have back issues or injuries</Label>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <Input type="checkbox" name="isFitToLift" id="isFitToLift" checked={formData.isFitToLift} onChange={handleChange} className="w-5 h-5 accent-[var(--color-accent)]" />
-                              <Label htmlFor="isFitToLift">I am fit to lift heavy objects regularly</Label>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="flex gap-3 pt-2">
-                        {currentStep > 1 && (
-                          <Button type="button" variant="outline" onClick={prevStep} className="w-24">
-                            Back
-                          </Button>
-                        )}
-                        <Button type="submit" className="flex-1">
-                          {currentStep === 3 ? 'Complete Onboarding' : 'Continue'} <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
-                      </div>
-                    </form>
-                  )}
-                </CardContent>
-              </Card>
-
-              <Card className={`transition-all duration-[var(--dur-short)] ${isCompleted ? isTrainingCompleted ? 'bg-[var(--color-paper-2)]' : 'border-[var(--color-accent)] shadow-md bg-[var(--color-paper)]' : 'opacity-60 bg-[var(--color-paper-2)]'}`}>
-                <CardHeader className="flex flex-row items-start gap-4 space-y-0">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0 transition-colors ${isTrainingCompleted ? 'bg-[var(--color-rule)] text-[var(--color-ink-2)]' : isCompleted ? 'bg-[var(--color-accent)] text-white' : 'bg-[var(--color-rule)] text-[var(--color-ink-2)]'}`}>
-                    {isTrainingCompleted ? <CheckCircle2 className="w-5 h-5" /> : isCompleted ? '2' : <Lock className="w-4 h-4" />}
-                  </div>
-                  <div className="flex-1">
-                    <CardTitle className="text-xl">Safety Training</CardTitle>
-                    <CardDescription className="mt-1 mb-4">
-                      Review the safety guidelines and complete the brief assessment.
-                    </CardDescription>
-                    
-                    {isTrainingCompleted ? (
-                      <Badge variant="success" className="px-3 py-1 text-sm rounded-md gap-2 font-medium flex w-fit">
-                        <CheckCircle2 className="w-4 h-4" /> Completed successfully
-                      </Badge>
-                    ) : !showTraining ? (
-                      <Button 
-                        variant={isCompleted ? 'default' : 'secondary'} 
-                        disabled={!isCompleted} 
-                        className="w-full sm:w-auto"
-                        onClick={() => setShowTraining(true)}
-                      >
-                        {isCompleted ? 'Start Safety Training' : 'Locked until details saved'}
-                      </Button>
-                    ) : null}
-                  </div>
-                </CardHeader>
-
-                {showTraining && !isTrainingCompleted && (
-                  <CardContent className="ml-14 animate-in fade-in slide-in-from-top-4">
-                    <form onSubmit={handleTrainingSubmit} className="space-y-6 bg-[var(--color-paper-2)] p-6 rounded-xl border border-[var(--color-rule)] mt-2">
-                      <h3 className="font-semibold text-[var(--color-ink)] text-lg">Safety Acknowledgment</h3>
-                      <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <Input 
-                            type="checkbox" 
-                            id="readGuidelines"
-                            checked={trainingData.readGuidelines} 
-                            onChange={(e) => setTrainingData(prev => ({...prev, readGuidelines: e.target.checked}))} 
-                            className="w-5 h-5 mt-0.5 accent-[var(--color-accent)] shrink-0" 
-                          />
-                          <Label htmlFor="readGuidelines" className="leading-snug">I have read the Animal Welfare and Manual Handling guidelines.</Label>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <Input 
-                            type="checkbox" 
-                            id="watchedVideo"
-                            checked={trainingData.watchedVideo} 
-                            onChange={(e) => setTrainingData(prev => ({...prev, watchedVideo: e.target.checked}))} 
-                            className="w-5 h-5 mt-0.5 accent-[var(--color-accent)] shrink-0" 
-                          />
-                          <Label htmlFor="watchedVideo" className="leading-snug">I have watched the mandatory Health & Safety orientation video.</Label>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <Input 
-                            type="checkbox" 
-                            id="agreedToRules"
-                            checked={trainingData.agreedToRules} 
-                            onChange={(e) => setTrainingData(prev => ({...prev, agreedToRules: e.target.checked}))} 
-                            className="w-5 h-5 mt-0.5 accent-[var(--color-accent)] shrink-0" 
-                          />
-                          <Label htmlFor="agreedToRules" className="leading-snug">I agree to comply with all on-site safety rules and instructions from the crew leader.</Label>
-                        </div>
-                      </div>
-                      <div className="flex gap-3 pt-4 border-t border-[var(--color-rule)]">
-                        <Button type="button" variant="outline" onClick={() => setShowTraining(false)}>Cancel</Button>
-                        <Button type="submit" className="flex-1">Sign & Complete Training</Button>
-                      </div>
-                    </form>
-                  </CardContent>
-                )}
-              </Card>
-            </div>
+            <OnboardingWizard profile={profile} USER_ID={USER_ID} getToken={getToken} fetchData={fetchData} />
           </div>
         );
       case 'applications':
