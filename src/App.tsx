@@ -289,9 +289,12 @@ function App() {
             ? 'turkey'
             : 'root';
 
+  const isAppRoute = path.startsWith('/admin') || path.startsWith('/user-portal') || path.startsWith('/login') || path.startsWith('/register') || path === '/sso-callback';
+
   return (
     <div className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] flex flex-col font-sans selection:bg-[var(--color-accent)] selection:text-white antialiased relative">
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-full border border-[var(--color-rule)] bg-[var(--color-paper)]/90 backdrop-blur-md shadow-sm p-1.5 flex items-center gap-1 transition-all">
+      {!isAppRoute && (
+        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-full border border-[var(--color-rule)] bg-[var(--color-paper)]/90 backdrop-blur-md shadow-sm p-1.5 flex items-center gap-1 transition-all">
         <div
           onClick={() => handleNavigate('root', '')}
           className="flex items-center gap-2 cursor-pointer group no-underline pl-2 pr-4 py-1.5 rounded-full hover:bg-[var(--color-paper-2)] transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]"
@@ -360,6 +363,7 @@ function App() {
           </Link>
         </div>
       </nav>
+      )}
 
       <AnimatePresence>
         {activeNotification && (
@@ -401,7 +405,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      <main className="flex-1 w-full pt-[72px] flex flex-col lg:flex-row relative">
+      <main className={`flex-1 w-full flex flex-col lg:flex-row relative ${!isAppRoute ? 'pt-[72px]' : ''}`}>
         <div className="flex-1 space-y-6">
           <Routes>
             <Route
@@ -504,7 +508,8 @@ function App() {
 
 
 
-      <footer className="border-t border-[var(--color-rule)] bg-[var(--color-paper)] pt-24 pb-32 px-6 lg:px-8 mt-auto shrink-0 relative overflow-hidden">
+      {!isAppRoute && (
+        <footer className="border-t border-[var(--color-rule)] bg-[var(--color-paper)] pt-24 pb-32 px-6 lg:px-8 mt-auto shrink-0 relative overflow-hidden">
         <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-end justify-between gap-12">
           <div className="space-y-6 max-w-md">
             <h2 className="font-display text-4xl tracking-tight text-[var(--color-ink)] leading-none">
@@ -528,6 +533,7 @@ function App() {
           </div>
         </div>
       </footer>
+      )}
     </div>
   );
 }
