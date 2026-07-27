@@ -9,6 +9,7 @@ import { Badge } from '../../components/ui/badge';
 import { Label } from '../../components/ui/label';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../../components/ui/table';
 import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogContent } from '../../components/ui/dialog';
+import { Textarea } from '../../components/ui/textarea';
 import { MessageSquare, PhoneCall, Mail, CheckCircle, Smartphone, Check, Sparkles } from 'lucide-react';
 import { useAppShell } from '../../components/layout/AppShell';
 
@@ -465,7 +466,7 @@ const AdminDashboard = () => {
                       <Button variant="outline" size="sm" className="text-xs flex-1" onClick={() => applyTemplate('documents', selectedApp)}>Docs</Button>
                       <Button variant="outline" size="sm" className="text-xs flex-1" onClick={() => applyTemplate('roster', selectedApp)}>Roster</Button>
                     </div>
-                    <textarea
+                    <Textarea
                       value={customMsgText}
                       onChange={(e) => setCustomMsgText(e.target.value)}
                       placeholder="Type your message or select a template..."
@@ -535,7 +536,7 @@ const AdminDashboard = () => {
                     </div>
                     <div className="space-y-2">
                       <Label>Description</Label>
-                      <textarea
+                      <Textarea
                         name="description"
                         defaultValue={editingLocationData?.description || ''}
                         className="flex min-h-[80px] w-full rounded-md border border-[var(--color-rule)] bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
@@ -613,12 +614,12 @@ const AdminDashboard = () => {
                               {region.towns?.map((town: any) => (
                                 <Badge key={town.id} variant="secondary" className="flex items-center gap-1 group">
                                   {town.name}
-                                  <button onClick={() => handleEditLocation('town', town.id, { ...town, regionId: region.id })} className="opacity-0 group-hover:opacity-100 transition-opacity ml-1">
-                                    <Edit className="w-3 h-3 text-[var(--color-ink-2)] hover:text-[var(--color-ink)]" />
-                                  </button>
-                                  <button onClick={() => deleteLocation('town', town.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Trash2 className="w-3 h-3 text-[var(--color-error)] hover:text-[var(--color-error)]" />
-                                  </button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity ml-1" onClick={() => handleEditLocation('town', town.id, { ...town, regionId: region.id })}>
+                                  <Edit className="w-3 h-3 text-[var(--color-ink-2)] hover:text-[var(--color-ink)]" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteLocation('town', town.id)}>
+                                  <Trash2 className="w-3 h-3 text-[var(--color-error)] hover:text-[var(--color-error)]" />
+                                </Button>
                                 </Badge>
                               ))}
                               {(!region.towns || region.towns.length === 0) && (
@@ -663,7 +664,7 @@ const AdminDashboard = () => {
                     </div>
                     <div className="space-y-2">
                       <Label>Description</Label>
-                      <textarea
+                      <Textarea
                         name="description"
                         required
                         className="flex min-h-[80px] w-full rounded-md border border-[var(--color-rule)] bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"

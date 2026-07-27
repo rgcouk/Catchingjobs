@@ -26,6 +26,9 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { ApplicationData } from '../types';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
 
 interface SubmittedApplication extends ApplicationData {
   rosterRef: string;
@@ -163,14 +166,14 @@ export default function RosterPortal({
         </div>
 
         {applications.length > 0 && (
-          <button
+          <Button
             onClick={onClear}
             className="text-[10px] text-red-600 hover:text-red-700 hover:bg-red-50 border border-red-200 transition-colors flex items-center gap-1 py-1 px-2 rounded font-medium cursor-pointer"
             id="btn-purge-database"
           >
             <Trash2 className="w-3 h-3" />
             Purge Data
-          </button>
+          </Button>
         )}
       </div>
 
@@ -178,7 +181,7 @@ export default function RosterPortal({
       <div className="p-4 bg-slate-50 border-b border-slate-200 grid sm:grid-cols-3 gap-3">
         <div className="relative col-span-1 sm:col-span-1">
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
-          <input
+          <Input
             type="text"
             placeholder="Search candidate or town..."
             value={search}
@@ -274,13 +277,13 @@ export default function RosterPortal({
                         </p>
                       </div>
                     </div>
-                    <button
+                    <Button
                       onClick={() => onRemove(app.rosterRef)}
                       className="text-slate-300 hover:text-red-600 p-1 rounded hover:bg-slate-150 transition-colors cursor-pointer shrink-0"
                       title="Delete Candidate Record"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    </Button>
                   </div>
 
                   <div className="flex items-center gap-1.5 flex-wrap">
@@ -328,41 +331,41 @@ export default function RosterPortal({
 
                   {/* Actions buttons */}
                   <div className="flex items-center gap-1.5 pt-1.5 flex-wrap">
-                    <button
+                    <Button
                       onClick={() => onToggleContacted(app.rosterRef)}
                       className="text-[11px] px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-colors cursor-pointer"
                       id={`btn-toggle-contact-${app.rosterRef}`}
                     >
                       {app.contacted ? 'Mark Pending' : 'Mark Contacted'}
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
                       onClick={() => (isMessaging ? setMessagingRef(null) : startMessaging(app))}
                       className="text-[11px] px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-colors cursor-pointer flex items-center gap-1"
                     >
                       <MessageSquare className="w-3 h-3" />
                       <span>{isMessaging ? 'Close Form' : 'Send Message'}</span>
-                    </button>
+                    </Button>
 
                     {/* New Core Action Clicker: Send Safety Resources */}
                     {!app.safetyResourcesSent ? (
-                      <button
+                      <Button
                         onClick={() => onSendSafetyResources(app.rosterRef)}
                         className="text-[11px] px-2.5 py-1 rounded bg-emerald-650 hover:bg-emerald-600 text-white font-medium transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
                         id={`btn-send-resources-${app.rosterRef}`}
                       >
                         <Send className="w-3 h-3" />
                         <span>Send Safety Tasks</span>
-                      </button>
+                      </Button>
                     ) : !app.safetyTasksCompleted ? (
-                      <button
+                      <Button
                         onClick={() => onCompleteSafetyTasks(app.rosterRef)}
                         className="text-[11px] px-2.5 py-1 rounded bg-sky-650 hover:bg-sky-600 text-white font-medium transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
                         id={`btn-simulate-complete-${app.rosterRef}`}
                       >
                         <Check className="w-3 h-3" />
                         <span>Simulate Candidate Task Completion</span>
-                      </button>
+                      </Button>
                     ) : null}
                   </div>
                 </div>
@@ -452,7 +455,7 @@ export default function RosterPortal({
                         <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                         GLAA Compliance Profile (Jotform)
                       </span>
-                      <button
+                      <Button
                         onClick={() =>
                           setExpandedComplianceRefs((prev) => ({
                             ...prev,
@@ -464,7 +467,7 @@ export default function RosterPortal({
                         {expandedComplianceRefs[app.rosterRef]
                           ? 'Hide Compliance'
                           : 'Review Compliance'}
-                      </button>
+                      </Button>
                     </div>
 
                     {expandedComplianceRefs[app.rosterRef] && (
@@ -606,36 +609,36 @@ export default function RosterPortal({
                         <Send className="w-3 h-3" />
                         PRE-FILL CHAT: {app.name}
                       </span>
-                      <button
+                      <Button
                         onClick={() => setMessagingRef(null)}
                         className="text-slate-500 hover:text-white cursor-pointer"
                       >
                         <X className="w-3.5 h-3.5" />
-                      </button>
+                      </Button>
                     </div>
 
                     <div className="flex flex-wrap gap-1">
-                      <button
+                      <Button
                         onClick={() => applyTemplate('interview', app)}
                         className="bg-slate-900 hover:bg-slate-800 text-slate-300 text-[9px] font-mono py-0.5 px-1.5 rounded border border-slate-800 cursor-pointer"
                       >
                         Interview
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => applyTemplate('documents', app)}
                         className="bg-slate-900 hover:bg-slate-800 text-slate-300 text-[9px] font-mono py-0.5 px-1.5 rounded border border-slate-800 cursor-pointer"
                       >
                         Docs Check
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => applyTemplate('roster', app)}
                         className="bg-slate-900 hover:bg-slate-800 text-slate-300 text-[9px] font-mono py-0.5 px-1.5 rounded border border-slate-800 cursor-pointer"
                       >
                         Roster Fit
-                      </button>
+                      </Button>
                     </div>
 
-                    <textarea
+                    <Textarea
                       value={customMsgText}
                       onChange={(e) => setCustomMsgText(e.target.value)}
                       rows={2.5}

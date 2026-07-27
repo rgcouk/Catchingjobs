@@ -25,6 +25,9 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SubmittedApplication } from '../App';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
 
 interface CatcherPortalProps {
   applications: SubmittedApplication[];
@@ -264,7 +267,7 @@ export default function CatcherPortal({
               >
                 Unique Roster ID / Reference
               </label>
-              <input
+              <Input
                 id="roster-id-input"
                 type="text"
                 placeholder="e.g. PL-CHI-3942"
@@ -284,13 +287,13 @@ export default function CatcherPortal({
               </div>
             )}
 
-            <button
+            <Button
               type="submit"
               className="w-full bg-slate-900 hover:bg-slate-850 text-white font-semibold py-2.5 px-4 rounded-lg text-xs tracking-wide transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Sign In with Roster ID</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </Button>
           </form>
 
           <div className="relative flex py-2 items-center">
@@ -302,20 +305,20 @@ export default function CatcherPortal({
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <button
+            <Button
               onClick={() => handleSocialLogin('google')}
               className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <Chrome className="w-4 h-4 text-red-500" />
               <span>Google SSO</span>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => handleSocialLogin('facebook')}
               className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <Facebook className="w-4 h-4 text-[#1877F2] fill-[#1877F2]" />
               <span>Facebook SSO</span>
-            </button>
+            </Button>
           </div>
 
           <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-left space-y-2">
@@ -328,7 +331,7 @@ export default function CatcherPortal({
             </p>
             <div className="flex flex-col gap-1.5 pt-1">
               {applications.slice(0, 3).map((app) => (
-                <button
+                <Button
                   key={app.rosterRef}
                   onClick={() => handleDemoLogin(app.rosterRef)}
                   className="w-full text-left bg-white hover:bg-slate-100 border border-slate-200/80 p-2 rounded-md text-[10px] flex items-center justify-between transition-colors font-mono font-bold text-slate-700 cursor-pointer"
@@ -339,7 +342,7 @@ export default function CatcherPortal({
                   <span className="text-slate-500 text-[9px] font-normal underline">
                     {app.rosterRef}
                   </span>
-                </button>
+                </Button>
               ))}
               {applications.length === 0 && (
                 <div className="text-[10px] italic text-slate-400">
@@ -385,17 +388,17 @@ export default function CatcherPortal({
               </div>
             </div>
 
-            <button
+            <Button
               onClick={handleSignOut}
               className="text-xs text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 font-semibold py-1.5 px-3 rounded-lg flex items-center gap-1.5 cursor-pointer self-stretch md:self-auto justify-center"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Sign Out</span>
-            </button>
+            </Button>
           </div>
 
           <div className="border-b border-slate-200 flex gap-6">
-            <button
+            <Button
               onClick={() => setActiveTab('profile')}
               className={`py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'profile'
@@ -405,9 +408,9 @@ export default function CatcherPortal({
             >
               <User className="w-4 h-4" />
               <span>Profile</span>
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={() => setActiveTab('resources')}
               className={`py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'resources'
@@ -417,9 +420,9 @@ export default function CatcherPortal({
             >
               <FileText className="w-4 h-4" />
               <span>Resources</span>
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={() => setActiveTab('contact')}
               className={`py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'contact'
@@ -429,7 +432,7 @@ export default function CatcherPortal({
             >
               <Phone className="w-4 h-4" />
               <span>Contact</span>
-            </button>
+            </Button>
           </div>
 
           <div className="pt-2">
@@ -450,13 +453,13 @@ export default function CatcherPortal({
                         You are approved for deployment pending final supervisor sign-off on welfare
                         training modules.
                       </p>
-                      <button
+                      <Button
                         onClick={() => setIsEditingProfile(true)}
                         className="inline-flex items-center gap-1 text-xs text-emerald-700 hover:text-emerald-900 underline font-semibold mt-1 cursor-pointer"
                       >
                         <Edit className="w-3.5 h-3.5" />
                         <span>Update / Edit Registered Details</span>
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -568,7 +571,7 @@ export default function CatcherPortal({
                         <CreditCard className="w-4 h-4 text-slate-500" />
                         <span>3. Weekly Friday Wages Bank Details</span>
                       </h4>
-                      <button
+                      <Button
                         onClick={() => setShowBankDetails(!showBankDetails)}
                         className="text-[10px] font-mono font-bold text-slate-500 hover:text-slate-900 underline flex items-center gap-1 cursor-pointer"
                       >
@@ -578,7 +581,7 @@ export default function CatcherPortal({
                           <Eye className="w-3.5 h-3.5" />
                         )}
                         <span>{showBankDetails ? 'Hide details' : 'Reveal Secure Details'}</span>
-                      </button>
+                      </Button>
                     </div>
 
                     <div className="grid sm:grid-cols-2 gap-4 text-xs">
@@ -814,7 +817,7 @@ export default function CatcherPortal({
                         <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">
                           Date of Birth *
                         </label>
-                        <input
+                        <Input
                           type="date"
                           value={dob}
                           onChange={(e) => setDob(e.target.value)}
@@ -829,7 +832,7 @@ export default function CatcherPortal({
                         <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">
                           National Insurance (NI) Number *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="e.g. QQ123456C"
                           value={niNumber}
@@ -850,7 +853,7 @@ export default function CatcherPortal({
                         <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">
                           Physical Home Address Line 1 *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="e.g. 12 High Street"
                           value={addressLine1}
@@ -868,7 +871,7 @@ export default function CatcherPortal({
                         <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">
                           Postcode *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="e.g. LN1 1XX"
                           value={postcode}
@@ -886,7 +889,7 @@ export default function CatcherPortal({
                         <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">
                           Registered Town / Hub (Disabled)
                         </label>
-                        <input
+                        <Input
                           type="text"
                           disabled
                           value={currentUser.town || 'Not specified'}
@@ -910,7 +913,7 @@ export default function CatcherPortal({
                         <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">
                           Contact Full Name *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="e.g. Mary Vance"
                           value={emergencyName}
@@ -928,7 +931,7 @@ export default function CatcherPortal({
                         <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">
                           Relationship to You *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="e.g. Spouse, Mother, Sister"
                           value={emergencyRelation}
@@ -946,7 +949,7 @@ export default function CatcherPortal({
                         <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">
                           Emergency Contact Phone Number *
                         </label>
-                        <input
+                        <Input
                           type="tel"
                           placeholder="e.g. 07700 900593"
                           value={emergencyPhone}
@@ -980,7 +983,7 @@ export default function CatcherPortal({
                         <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">
                           Bank Name *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="e.g. Lloyds Bank, Barclays"
                           value={bankName}
@@ -998,7 +1001,7 @@ export default function CatcherPortal({
                         <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">
                           Account Holder Full Name *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="e.g. Marcus Vance"
                           value={bankAccountName}
@@ -1016,7 +1019,7 @@ export default function CatcherPortal({
                         <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">
                           Bank Account Number (8 digits) *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="e.g. 12345678"
                           maxLength={8}
@@ -1035,7 +1038,7 @@ export default function CatcherPortal({
                         <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">
                           Bank Sort Code (6 digits) *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="e.g. 20-30-40"
                           maxLength={8}
@@ -1074,20 +1077,20 @@ export default function CatcherPortal({
                           allergies? *
                         </label>
                         <div className="flex gap-2 pt-1.5">
-                          <button
+                          <Button
                             type="button"
                             onClick={() => setHasAsthmaOrAllergies(true)}
                             className={`px-4 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${hasAsthmaOrAllergies === true ? 'bg-red-100 border-red-500 text-red-800' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                           >
                             Yes, I do
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
                             onClick={() => setHasAsthmaOrAllergies(false)}
                             className={`px-4 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${hasAsthmaOrAllergies === false ? 'bg-emerald-100 border-emerald-500 text-emerald-800' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                           >
                             No, I do not
-                          </button>
+                          </Button>
                         </div>
                         {formErrors.hasAsthmaOrAllergies && (
                           <p className="text-[10px] text-red-600 font-semibold">
@@ -1103,20 +1106,20 @@ export default function CatcherPortal({
                           that restrict physical tasks? *
                         </label>
                         <div className="flex gap-2 pt-1.5">
-                          <button
+                          <Button
                             type="button"
                             onClick={() => setHasBackIssues(true)}
                             className={`px-4 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${hasBackIssues === true ? 'bg-red-100 border-red-500 text-red-800' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                           >
                             Yes, I do
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
                             onClick={() => setHasBackIssues(false)}
                             className={`px-4 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${hasBackIssues === false ? 'bg-emerald-100 border-emerald-500 text-emerald-800' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                           >
                             No, I do not
-                          </button>
+                          </Button>
                         </div>
                         {formErrors.hasBackIssues && (
                           <p className="text-[10px] text-red-600 font-semibold">
@@ -1132,20 +1135,20 @@ export default function CatcherPortal({
                           repeatedly on shifts? *
                         </label>
                         <div className="flex gap-2 pt-1.5">
-                          <button
+                          <Button
                             type="button"
                             onClick={() => setIsFitToLift(true)}
                             className={`px-4 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${isFitToLift === true ? 'bg-emerald-100 border-emerald-500 text-emerald-800' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                           >
                             Yes, I am fit
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
                             onClick={() => setIsFitToLift(false)}
                             className={`px-4 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${isFitToLift === false ? 'bg-red-100 border-red-500 text-red-800' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                           >
                             No, I have lifting limits
-                          </button>
+                          </Button>
                         </div>
                         {formErrors.isFitToLift && (
                           <p className="text-[10px] text-red-600 font-semibold">
@@ -1188,7 +1191,7 @@ export default function CatcherPortal({
 
                     <div className="space-y-2 pt-2">
                       <label className="flex items-start gap-2.5 cursor-pointer">
-                        <input
+                        <Input
                           type="checkbox"
                           checked={declarationSigned}
                           onChange={(e) => setDeclarationSigned(e.target.checked)}
@@ -1207,22 +1210,22 @@ export default function CatcherPortal({
                     </div>
 
                     <div className="flex gap-3 pt-3">
-                      <button
+                      <Button
                         type="submit"
                         className="flex-grow bg-slate-900 hover:bg-slate-850 text-white text-xs font-bold py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                       >
                         <FileSignature className="w-4 h-4 text-amber-400" />
                         <span>Submit Secure Compliance Form</span>
-                      </button>
+                      </Button>
 
                       {currentUser.profileFormCompleted && (
-                        <button
+                        <Button
                           type="button"
                           onClick={() => setIsEditingProfile(false)}
                           className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold py-3 px-4 rounded-xl transition-all cursor-pointer"
                         >
                           Cancel
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -1268,12 +1271,12 @@ export default function CatcherPortal({
                           <p className="text-[11px] text-slate-500 mt-0.5">{doc.desc}</p>
                         </div>
                       </div>
-                      <button
+                      <Button
                         className="text-slate-400 hover:text-slate-900 p-2 cursor-pointer transition-colors"
                         title="Download"
                       >
                         <Download className="w-5 h-5" />
-                      </button>
+                      </Button>
                     </div>
                   ))}
                 </div>
@@ -1374,23 +1377,23 @@ export default function CatcherPortal({
                         <label className="block text-[11px] font-mono font-bold uppercase text-slate-500">
                           Message
                         </label>
-                        <textarea
+                        <Textarea
                           rows={4}
                           value={contactMessage}
                           onChange={(e) => setContactMessage(e.target.value)}
                           required
                           placeholder="How can we help?"
                           className="w-full border border-slate-200 bg-slate-50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-slate-900 resize-none"
-                        ></textarea>
+                        ></Textarea>
                       </div>
 
-                      <button
+                      <Button
                         type="submit"
                         className="w-full bg-slate-900 hover:bg-slate-850 text-white font-bold py-2.5 px-4 rounded-lg text-xs cursor-pointer transition-colors flex items-center justify-center gap-2"
                       >
                         <Send className="w-4 h-4" />
                         <span>Send Message</span>
-                      </button>
+                      </Button>
                     </form>
                   )}
                 </div>
