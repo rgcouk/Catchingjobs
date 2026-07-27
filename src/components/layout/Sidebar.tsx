@@ -33,7 +33,7 @@ function NavNode({ item, depth = 0 }: { item: NavItem; depth?: number }) {
           ${hasChildren ? 'text-slate-700 hover:bg-slate-100' : ''}
           ${isSidebarOpen ? 'px-3' : 'px-0 justify-center'}
         `}
-        style={{ paddingLeft: isSidebarOpen ? `${depth * 1rem + 0.75rem}rem` : undefined }}
+        style={{ paddingLeft: isSidebarOpen ? `${depth * 1 + 0.75}rem` : undefined }}
         title={!isSidebarOpen ? item.label : undefined}
       >
         <div className={`flex items-center gap-3 ${!isSidebarOpen ? 'justify-center w-full' : ''}`}>
