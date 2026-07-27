@@ -303,8 +303,8 @@ const AdminDashboard = () => {
                             <Badge variant="secondary" className="uppercase font-mono text-[10px]">{app.sector}</Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant={app.status === 'HIRED' ? 'default' : app.status === 'REVIEWING' ? 'secondary' : 'outline'}>
-                              {app.status}
+                            <Badge variant={app.status === 'HIRED' ? 'default' : app.status === 'REJECTED' ? 'destructive' : app.status === 'REVIEWING' ? 'secondary' : 'outline'}>
+                              {app.status || 'PENDING'}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-[var(--color-ink-2)]">{app.town || 'N/A'}</TableCell>
@@ -346,67 +346,46 @@ const AdminDashboard = () => {
                 </div>
 
                 <div className="p-6 space-y-6 flex-1">
-                  {/* Status Actions */}
-                  <div className="bg-[var(--color-paper-2)] p-4 rounded-lg border border-[var(--color-rule)] flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] uppercase font-semibold text-[var(--color-ink-2)] block mb-1">Current Status</span>
-                      <Badge variant={selectedApp.status === 'HIRED' ? 'default' : selectedApp.status === 'REVIEWING' ? 'secondary' : 'outline'}>
-                        {selectedApp.status}
-                      </Badge>
-                    </div>
-                    <div className="flex gap-2">
-                      {selectedApp.status !== 'REVIEWING' && selectedApp.status !== 'HIRED' && (
-                        <Button size="sm" variant="outline" onClick={() => updateApplicationStatus(selectedApp.id, 'REVIEWING')}>
-                          Review
-                        </Button>
-                      )}
-                      {selectedApp.status !== 'HIRED' && (
-                        <Button size="sm" onClick={() => updateApplicationStatus(selectedApp.id, 'HIRED')}>
-                          Hire
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 text-sm bg-[var(--color-paper-2)] p-4 rounded-lg border border-[var(--color-rule)]">
-                    <div>
-                      <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Phone</span>
-                      <a href={`tel:${selectedApp.phone}`} className="font-medium flex items-center gap-1 mt-0.5 hover:underline">
-                        <PhoneCall className="w-3 h-3 text-[var(--color-ink-2)]" />
-                        {selectedApp.phone}
-                      </a>
-                    </div>
-                    {selectedApp.email && (
+                  {/* Status Actions & Workflow */}
+                  <div className="bg-[var(--color-paper-2)] p-4 rounded-lg border border-[var(--color-rule)] flex flex-col gap-4">
+                    <div className="flex items-center justify-between">
                       <div>
-                        <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Email</span>
-                        <a href={`mailto:${selectedApp.email}`} className="font-medium flex items-center gap-1 mt-0.5 hover:underline">
-                          <Mail className="w-3 h-3 text-[var(--color-ink-2)]" />
-                          <span className="truncate max-w-[150px]" title={selectedApp.email}>{selectedApp.email}</span>
-                        </a>
+                        <span className="text-[10px] uppercase font-semibold text-[var(--color-ink-2)] block mb-1">Current Status</span>
+                        <Badge variant={selectedApp.status === 'HIRED' ? 'default' : selectedApp.status === 'REJECTED' ? 'destructive' : 'secondary'}>
+                          {selectedApp.status || 'PENDING'}
+                        </Badge>
                       </div>
-                    )}
-                    <div>
-                      <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Town</span>
-                      <span className="font-medium block mt-0.5">{selectedApp.town}</span>
+                      
+                      {selectedApp.status !== 'REJECTED' && selectedApp.status !== 'HIRED' && (
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="destructive" onClick={() => updateApplicationStatus(selectedApp.id, 'REJECTED')}>
+                            Reject
+                          </Button>
+                          {selectedApp.safetyResourcesSent ? (
+                             <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => updateApplicationStatus(selectedApp.id, 'HIRED')}>
+                               Hire Applicant
+                             </Button>
+                          ) : (
+                             <Button size="sm" onClick={() => patchApplicationField(selectedApp.id, 'safetyResourcesSent', true)}>
+                               Send Full App
+                             </Button>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <div>
-                      <span className="text-[var(--color-ink-2)] block text-[10px] uppercase font-semibold">Right to Work</span>
-                      <span className="font-medium block mt-0.5">{selectedApp.hasRightToWork ? 'Yes' : 'No'}</span>
-                    </div>
-                  </div>
 
-                  {/* Safety Culture Status */}
-                  <div className="space-y-3">
-                    <h3 className="text-sm font-semibold">Safety & Onboarding</h3>
-                    <div className="flex flex-col gap-2">
+                    <div className="space-y-3 pt-3 border-t border-[var(--color-rule)]">
+                      <h3 className="text-sm font-semibold">Workflow Checklist</h3>
+                      
+                      {/* Step 1: Contact */}
                       <div className="flex items-center justify-between">
                         {selectedApp.contacted ? (
-                          <Badge variant="outline" className="bg-[var(--color-success-muted)] text-[var(--color-success-text)] border-[var(--color-success-border)] flex items-center gap-1 font-mono text-[9px] uppercase">
-                            <Check className="w-3 h-3 text-[var(--color-success)]" /> Contacted
+                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1 font-mono text-[9px] uppercase">
+                            <Check className="w-3 h-3" /> Contacted
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-[var(--color-warning-muted)] text-[var(--color-warning-text)] border-[var(--color-warning-border)] font-mono text-[9px] uppercase">
-                            Pending Review
+                          <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 font-mono text-[9px] uppercase">
+                            Pending Contact
                           </Badge>
                         )}
                         <Button 
@@ -415,46 +394,38 @@ const AdminDashboard = () => {
                           className="h-8 text-xs"
                           onClick={() => patchApplicationField(selectedApp.id, 'contacted', !selectedApp.contacted)}
                         >
-                          {selectedApp.contacted ? 'Mark Pending' : 'Mark Contacted'}
+                          {selectedApp.contacted ? 'Undo' : 'Mark Contacted'}
                         </Button>
                       </div>
 
+                      {/* Step 2: Full Application */}
                       <div className="flex items-center justify-between">
                         {selectedApp.safetyResourcesSent ? (
                           selectedApp.safetyTasksCompleted ? (
-                            <Badge variant="outline" className="bg-[var(--color-success-muted)] text-emerald-900 border-[var(--color-success-border)] flex items-center gap-1 font-mono text-[9px] uppercase">
-                              <CheckCircle className="w-3 h-3 text-[var(--color-success-text)]" /> Tasks Completed
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1 font-mono text-[9px] uppercase">
+                              <CheckCircle className="w-3 h-3" /> Full App Received
                             </Badge>
                           ) : (
-                            <Badge variant="outline" className="bg-[var(--color-info-muted)] text-[var(--color-info-text)] border-[var(--color-info-border)] flex items-center gap-1 animate-pulse font-mono text-[9px] uppercase">
-                              <Sparkles className="w-3 h-3 text-[var(--color-info)]" /> Tasks Sent
+                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 flex items-center gap-1 animate-pulse font-mono text-[9px] uppercase">
+                              <Sparkles className="w-3 h-3" /> Full App Sent (Waiting)
                             </Badge>
                           )
                         ) : (
-                          <Badge variant="outline" className="bg-[var(--color-neutral-muted)] text-[var(--color-neutral-text)] border-[var(--color-neutral-border)] font-mono text-[9px] uppercase">
-                            Tasks Not Sent
+                          <Badge variant="outline" className="bg-gray-50 text-gray-500 border-gray-200 font-mono text-[9px] uppercase">
+                            Full App Not Sent
                           </Badge>
                         )}
                         
-                        {!selectedApp.safetyResourcesSent ? (
+                        {selectedApp.safetyResourcesSent && !selectedApp.safetyTasksCompleted && (
                           <Button 
-                            variant="default" 
+                            variant="ghost" 
                             size="sm" 
-                            className="h-8 text-xs bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-white"
-                            onClick={() => patchApplicationField(selectedApp.id, 'safetyResourcesSent', true)}
-                          >
-                            Send Tasks
-                          </Button>
-                        ) : !selectedApp.safetyTasksCompleted ? (
-                          <Button 
-                            variant="default" 
-                            size="sm" 
-                            className="h-8 text-xs bg-[var(--color-info)] hover:bg-[var(--color-info-hover)] text-white"
+                            className="h-8 text-xs text-blue-600 hover:text-blue-700"
                             onClick={() => patchApplicationField(selectedApp.id, 'safetyTasksCompleted', true)}
                           >
-                            Simulate Completion
+                            Mark Received
                           </Button>
-                        ) : null}
+                        )}
                       </div>
                     </div>
                   </div>
