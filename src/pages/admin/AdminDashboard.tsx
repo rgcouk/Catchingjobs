@@ -31,6 +31,8 @@ const AdminDashboard = () => {
   const [isEditingLocation, setIsEditingLocation] = useState(false);
   const [editingLocationData, setEditingLocationData] = useState<any>(null);
 
+  const [isViewAppOpen, setIsViewAppOpen] = useState(false);
+
 
   useEffect(() => {
     fetchData();
@@ -416,17 +418,34 @@ const AdminDashboard = () => {
                           </Badge>
                         )}
                         
-                        {selectedApp.safetyResourcesSent && !selectedApp.safetyTasksCompleted && (
+                        <div className="flex gap-2">
                           <Button 
                             variant="ghost" 
                             size="sm" 
-                            className="h-8 text-xs text-blue-600 hover:text-blue-700"
-                            onClick={() => patchApplicationField(selectedApp.id, 'safetyTasksCompleted', true)}
+                            className="h-8 text-xs text-[var(--color-ink-2)] hover:text-red-600"
+                            onClick={() => patchApplicationField(selectedApp.id, 'safetyResourcesSent', !selectedApp.safetyResourcesSent)}
                           >
-                            Mark Received
+                            {selectedApp.safetyResourcesSent ? 'Undo Send' : 'Mark Sent'}
                           </Button>
-                        )}
+                          
+                          {selectedApp.safetyResourcesSent && !selectedApp.safetyTasksCompleted && (
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 text-xs text-blue-600 hover:text-blue-700"
+                              onClick={() => patchApplicationField(selectedApp.id, 'safetyTasksCompleted', true)}
+                            >
+                              Mark Received
+                            </Button>
+                          )}
+                        </div>
                       </div>
+
+                      {selectedApp.safetyResourcesSent && (
+                        <Button variant="outline" className="w-full mt-2" onClick={() => setIsViewAppOpen(true)}>
+                          View Full Application Data
+                        </Button>
+                      )}
                     </div>
                   </div>
 
@@ -759,6 +778,76 @@ const AdminDashboard = () => {
   return (
     <div className="h-full flex-1">
       {renderContent()}
+
+      {/* View Full Application Dialog */}
+      <Dialog open={isViewAppOpen} onOpenChange={setIsViewAppOpen}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Full Application Details</DialogTitle>
+            <DialogDescription>
+              Review all submitted compliance and employment data for {selectedApp?.name}.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedApp && (
+            <div className="space-y-6 mt-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h4 className="text-sm font-semibold mb-2">Personal Details</h4>
+                  <div className="text-sm space-y-1">
+                    <p><span className="text-gray-500">Name:</span> {selectedApp.name}</p>
+                    <p><span className="text-gray-500">DOB:</span> {selectedApp.dateOfBirth || 'N/A'}</p>
+                    <p><span className="text-gray-500">NI Number:</span> {selectedApp.niNumber || 'N/A'}</p>
+                    <p><span className="text-gray-500">Address:</span> {selectedApp.addressLine1 || 'N/A'}, {selectedApp.postcode || 'N/A'}</p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold mb-2">Emergency Contact</h4>
+                  <div className="text-sm space-y-1">
+                    <p><span className="text-gray-500">Name:</span> {selectedApp.emergencyName || 'N/A'}</p>
+                    <p><span className="text-gray-500">Phone:</span> {selectedApp.emergencyPhone || 'N/A'}</p>
+                    <p><span className="text-gray-500">Relation:</span> {selectedApp.emergencyRelation || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-[var(--color-rule)] pt-4">
+                <h4 className="text-sm font-semibold mb-2">Bank Details</h4>
+                <div className="text-sm space-y-1">
+                  <p><span className="text-gray-500">Bank Name:</span> {selectedApp.bankName || 'N/A'}</p>
+                  <p><span className="text-gray-500">Account Name:</span> {selectedApp.bankAccountName || 'N/A'}</p>
+                  <p><span className="text-gray-500">Sort Code:</span> {selectedApp.bankSortCode || 'N/A'}</p>
+                  <p><span className="text-gray-500">Account Number:</span> {selectedApp.bankAccountNumber || 'N/A'}</p>
+                </div>
+              </div>
+
+              <div className="border-t border-[var(--color-rule)] pt-4">
+                <h4 className="text-sm font-semibold mb-2">Health & Safety</h4>
+                <div className="text-sm space-y-1">
+                  <p><span className="text-gray-500">Fit to Lift:</span> {selectedApp.isFitToLift ? 'Yes' : 'No'}</p>
+                  <p><span className="text-gray-500">Back Issues:</span> {selectedApp.hasBackIssues ? 'Yes' : 'No'}</p>
+                  <p><span className="text-gray-500">Asthma/Allergies:</span> {selectedApp.hasAsthmaOrAllergies ? 'Yes' : 'No'}</p>
+                  <p><span className="text-gray-500">Driving License:</span> {selectedApp.hasDrivingLicense ? 'Yes' : 'No'}</p>
+                  <p><span className="text-gray-500">Forklift License:</span> {selectedApp.hasForkliftLicense ? 'Yes' : 'No'}</p>
+                </div>
+              </div>
+              
+              <div className="border-t border-[var(--color-rule)] pt-4">
+                <h4 className="text-sm font-semibold mb-2">Background & Work Rights</h4>
+                <div className="text-sm space-y-1">
+                  <p><span className="text-gray-500">UK Right to Work:</span> {selectedApp.rightToWorkUK ? 'Yes' : 'No'}</p>
+                  <p><span className="text-gray-500">Convictions:</span> {selectedApp.hasConvictions ? 'Yes' : 'No'}</p>
+                  {selectedApp.criminalConvictions && <p><span className="text-gray-500">Details:</span> {selectedApp.criminalConvictions}</p>}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter className="mt-6 border-t border-[var(--color-rule)] pt-4">
+            <Button variant="outline" onClick={() => setIsViewAppOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
