@@ -32,6 +32,10 @@ import CatcherPortal from './components/CatcherPortal';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PortalDashboard from './pages/portal/PortalDashboard';
 
+import AppShell, { NavItem } from './components/layout/AppShell';
+import { LayoutDashboard, Users, MapPin, Briefcase, Settings, UserCheck, ClipboardList } from 'lucide-react';
+
+
 import { ApplicationData } from './types';
 
 export interface SubmittedApplication extends ApplicationData {
@@ -61,7 +65,6 @@ export interface SubmittedApplication extends ApplicationData {
   profileFormCompleted?: boolean;
 }
 
-// Wrapper to extract Region parameters
 function RegionRoute({
   sectorId,
   onNavigate,
@@ -79,6 +82,28 @@ function RegionRoute({
     />
   );
 }
+
+const adminNavItems: NavItem[] = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { 
+    id: 'applicants', 
+    label: 'Applicants', 
+    icon: Users,
+    children: [
+      { id: 'all', label: 'All Applicants' },
+      { id: 'hired', label: 'Hired' },
+      { id: 'rejected', label: 'Rejected' },
+    ]
+  },
+  { id: 'locations', label: 'Locations', icon: MapPin },
+  { id: 'jobs', label: 'Job Postings', icon: Briefcase },
+  { id: 'settings', label: 'Settings', icon: Settings },
+];
+
+const portalNavItems: NavItem[] = [
+  { id: 'onboarding', label: 'Portal Onboarding', icon: UserCheck },
+  { id: 'applications', label: 'My Applications', icon: ClipboardList },
+];
 
 function App() {
   const navigate = useNavigate();
@@ -398,7 +423,9 @@ function App() {
               path="/admin"
               element={
                 <ProtectedRoute role="ADMIN">
-                  <AdminDashboard />
+                  <AppShell navItems={adminNavItems} defaultTab="dashboard" userType="admin">
+                    <AdminDashboard />
+                  </AppShell>
                 </ProtectedRoute>
               }
             />
@@ -406,7 +433,9 @@ function App() {
               path="/user-portal"
               element={
                 <ProtectedRoute>
-                  <PortalDashboard />
+                  <AppShell navItems={portalNavItems} defaultTab="onboarding" userType="portal">
+                    <PortalDashboard />
+                  </AppShell>
                 </ProtectedRoute>
               }
             />

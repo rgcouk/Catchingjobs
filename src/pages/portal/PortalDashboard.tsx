@@ -9,9 +9,11 @@ import { Badge } from '../../components/ui/badge';
 import { Label } from '../../components/ui/label';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../../components/ui/table';
 
+import { useAppShell } from '../../components/layout/AppShell';
+
 const PortalDashboard = () => {
-  const [activeTab, setActiveTab] = useState('onboarding');
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const { activeTab } = useAppShell();
+
 
   const [profile, setProfile] = useState<any>(null);
   const [applications, setApplications] = useState<any[]>([]);
@@ -24,10 +26,6 @@ const PortalDashboard = () => {
 
   const USER_ID = user?.id || '';
 
-  const navItems = [
-    { id: 'onboarding', label: 'Portal Onboarding', icon: UserCheck },
-    { id: 'applications', label: 'My Applications', icon: ClipboardList },
-  ];
 
   useEffect(() => {
     fetchData();
@@ -344,81 +342,8 @@ const PortalDashboard = () => {
   };
 
   return (
-    <div className="flex h-[100dvh] bg-[var(--color-paper)] w-full overflow-hidden text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-white">
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-[var(--color-ink)]/20 backdrop-blur-sm z-40 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      <aside
-        className={`fixed md:static inset-y-0 left-0 z-50 w-72 bg-white border-r border-[var(--color-rule)] flex flex-col transform transition-transform duration-[var(--dur-short)] ease-[var(--ease-out)] ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
-      >
-        <div className="h-16 flex items-center px-6 border-b border-[var(--color-rule)] shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[var(--color-ink)] flex items-center justify-center text-white shrink-0">
-              <User className="w-4 h-4" />
-            </div>
-            <span className="font-display font-bold text-xl text-[var(--color-ink)] tracking-tight">
-              User<span className="text-[var(--color-accent)]">Portal</span>
-            </span>
-          </div>
-        </div>
-        <nav className="flex-1 overflow-y-auto py-6 px-4">
-          <ul className="space-y-1.5">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <li key={item.id}>
-                  <button
-                    onClick={() => {
-                      setActiveTab(item.id);
-                      setSidebarOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-[var(--dur-short)] ease-[var(--ease-out)] min-h-[48px] ${
-                      isActive
-                        ? 'bg-[var(--color-ink)] text-white shadow-md'
-                        : 'text-[var(--color-ink-2)] hover:bg-[var(--color-paper-2)] hover:text-[var(--color-ink)]'
-                    }`}
-                  >
-                    <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-[var(--color-ink-2)]'}`} />
-                    {item.label}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-        <div className="p-4 border-t border-[var(--color-rule)] shrink-0">
-          <button onClick={() => signOut()} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-[var(--color-ink-2)] hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] min-h-[48px] cursor-pointer">
-            <LogOut className="w-5 h-5" />
-            Sign Out
-          </button>
-        </div>
-      </aside>
-
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-[var(--color-paper-2)]">
-        <header className="h-16 bg-white border-b border-[var(--color-rule)] flex items-center justify-between px-4 md:hidden shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-[var(--color-ink)] flex items-center justify-center text-white shrink-0">
-              <User className="w-4 h-4" />
-            </div>
-            <span className="font-display font-bold text-lg text-[var(--color-ink)] tracking-tight">
-              User<span className="text-[var(--color-accent)]">Portal</span>
-            </span>
-          </div>
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-md text-[var(--color-ink-2)] hover:bg-slate-100 min-w-[48px] min-h-[48px] flex items-center justify-center"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-        </header>
-
-        <div className="flex-1 overflow-y-auto">{renderContent()}</div>
-      </main>
+    <div className="h-full flex-1">
+      {renderContent()}
     </div>
   );
 };

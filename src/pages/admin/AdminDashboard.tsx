@@ -10,9 +10,10 @@ import { Label } from '../../components/ui/label';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../../components/ui/table';
 import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogContent } from '../../components/ui/dialog';
 import { MessageSquare, PhoneCall, Mail, CheckCircle, Smartphone, Check, Sparkles } from 'lucide-react';
+import { useAppShell } from '../../components/layout/AppShell';
+
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('kanban');
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const { activeTab } = useAppShell();
   const { getToken } = useAuth();
 
   const [applications, setApplications] = useState<any[]>([]);
@@ -29,12 +30,6 @@ const AdminDashboard = () => {
   const [isEditingLocation, setIsEditingLocation] = useState(false);
   const [editingLocationData, setEditingLocationData] = useState<any>(null);
 
-  const navItems = [
-    { id: 'kanban', label: 'Applications', icon: LayoutDashboard },
-    { id: 'locations', label: 'Locations', icon: MapPin },
-    { id: 'jobs', label: 'Job Postings', icon: Briefcase },
-    { id: 'settings', label: 'Settings', icon: Settings },
-  ];
 
   useEffect(() => {
     fetchData();
@@ -47,7 +42,7 @@ const AdminDashboard = () => {
       const token = await getToken();
       const headers = { Authorization: `Bearer ${token}` };
       
-      if (activeTab === 'kanban') {
+      if (['dashboard', 'all', 'hired', 'rejected', 'kanban', 'applicants'].includes(activeTab)) {
         const res = await fetch('/api/admin/applications', { headers });
         if (!res.ok) throw new Error('Failed to fetch applications');
         setApplications(await res.json());
@@ -239,7 +234,32 @@ const AdminDashboard = () => {
     if (error) return <div className="p-8 text-red-500 font-medium">Error: {error}</div>;
 
     switch (activeTab) {
+      case 'dashboard':
+        return (
+          <div className="p-8">
+            <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Dashboard</h1>
+            <p className="text-[var(--color-ink-2)] mt-1">Welcome back to the Admin Panel.</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Total Applications</CardTitle>
+                </CardHeader>
+                <CardContent className="text-4xl font-bold">{applications.length}</CardContent>
+              </Card>
+            </div>
+          </div>
+        );
       case 'kanban':
+      case 'all':
+      case 'hired':
+      case 'rejected':
+      case 'applicants':
+        const filteredApps = applications.filter((app) => {
+          if (activeTab === 'hired') return app.status === 'HIRED';
+          if (activeTab === 'rejected') return app.status === 'REJECTED';
+          return true; // for 'all', 'kanban', 'applicants'
+        });
+
         return (
           <div className="flex h-full w-full">
             {/* Main Table Area */}
@@ -262,7 +282,7 @@ const AdminDashboard = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {applications.map((app) => (
+                      {filteredApps.map((app) => (
                         <TableRow 
                           key={app.id}
                           className={`cursor-pointer transition-colors ${selectedApp?.id === app.id ? 'bg-[var(--color-paper)]' : 'hover:bg-[var(--color-paper-2)]'}`}
@@ -283,7 +303,7 @@ const AdminDashboard = () => {
                           </TableCell>
                         </TableRow>
                       ))}
-                      {applications.length === 0 && (
+                      {filteredApps.length === 0 && (
                         <TableRow>
                           <TableCell colSpan={5} className="text-center py-8 text-[var(--color-ink-2)] bg-[var(--color-paper)]">
                             No applications found
@@ -738,77 +758,11 @@ const AdminDashboard = () => {
         return null;
     }
   };
-
   return (
-    <div className="flex h-[100dvh] bg-[var(--color-paper-2)] w-full overflow-hidden text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-white">
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-[var(--color-ink)]/20 backdrop-blur-sm z-40 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      <aside
-        className={`fixed md:static inset-y-0 left-0 z-50 w-72 bg-white border-r border-[var(--color-rule)] flex flex-col transform transition-transform duration-[var(--dur-short)] ease-[var(--ease-out)] ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
-      >
-        <div className="h-16 flex items-center px-6 border-b border-[var(--color-rule)] shrink-0">
-          <span className="font-display font-bold text-xl tracking-tight text-[var(--color-ink)]">
-            Admin<span className="text-[var(--color-accent)]">Panel</span>
-          </span>
-        </div>
-        <nav className="flex-1 overflow-y-auto py-6 px-4">
-          <ul className="space-y-1.5">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <li key={item.id}>
-                  <button
-                    onClick={() => {
-                      setActiveTab(item.id);
-                      setSidebarOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-[var(--dur-short)] ease-[var(--ease-out)] min-h-[48px] ${
-                      isActive
-                        ? 'bg-[var(--color-ink)] text-white shadow-md'
-                        : 'text-[var(--color-ink-2)] hover:bg-[var(--color-paper-2)] hover:text-[var(--color-ink)]'
-                    }`}
-                  >
-                    <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-[var(--color-ink-2)]'}`} />
-                    {item.label}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-        <div className="p-4 border-t border-[var(--color-rule)] shrink-0">
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-[var(--color-ink-2)] hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] min-h-[48px] cursor-pointer">
-            <LogOut className="w-5 h-5" />
-            Sign Out
-          </button>
-        </div>
-      </aside>
-
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-[var(--color-paper-2)]">
-        <header className="h-16 bg-white border-b border-[var(--color-rule)] flex items-center justify-between px-4 md:hidden shrink-0">
-          <span className="font-display font-bold text-lg text-[var(--color-ink)]">
-            Admin<span className="text-[var(--color-accent)]">Panel</span>
-          </span>
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-md text-[var(--color-ink-2)] hover:bg-slate-100 min-w-[48px] min-h-[48px] flex items-center justify-center"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-        </header>
-
-        <div className="flex-1 overflow-y-auto">{renderContent()}</div>
-
-
-      </main>
+    <div className="h-full flex-1">
+      {renderContent()}
     </div>
   );
 };
 
-export default AdminDashboard;
+export default AdminDashboard;;
