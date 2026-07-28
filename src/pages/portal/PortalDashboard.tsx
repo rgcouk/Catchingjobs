@@ -427,12 +427,22 @@ const PortalDashboard = () => {
                 </Card>
               </div>
 
-              <div className="flex justify-center lg:justify-end">
+              <div className="flex justify-center lg:justify-end w-full">
                 <UserProfile 
                   appearance={{
+                    variables: {
+                      colorPrimary: 'black',
+                      colorBackground: 'white',
+                      borderRadius: '0.75rem',
+                      colorText: '#0f172a',
+                    },
                     elements: {
-                      card: "shadow-none border border-[var(--color-rule)] bg-[var(--color-paper)] w-full max-w-full",
+                      rootBox: "w-full",
+                      cardBox: "w-full max-w-full shadow-sm border border-slate-200 rounded-xl",
+                      card: "w-full max-w-full shadow-none",
                       navbar: "hidden", // We can hide the navbar if it's too clunky or leave it
+                      scrollBox: "bg-white",
+                      pageScrollBox: "p-6",
                     }
                   }}
                 />
