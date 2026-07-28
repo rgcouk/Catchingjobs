@@ -360,7 +360,7 @@ const PortalDashboard = () => {
         );
       case 'settings':
         return (
-          <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
+          <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
             <header>
               <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
                 Settings
