@@ -1,18 +1,10 @@
 import React from 'react';
-import { Menu, LogOut } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useAppShell } from './AppShell';
-import { useClerk } from '@clerk/clerk-react';
-import { useNavigate } from 'react-router-dom';
+import { UserButton } from '@clerk/clerk-react';
 
 export default function TopNav() {
   const { isSidebarOpen, setSidebarOpen } = useAppShell();
-  const { signOut } = useClerk();
-  const navigate = useNavigate();
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
 
   return (
     <header className="h-16 bg-[var(--color-paper)] border-b border-[var(--color-rule)] flex items-center justify-between px-4 shrink-0 sticky top-0 z-30">
@@ -26,13 +18,15 @@ export default function TopNav() {
       </div>
       
       <div className="flex items-center gap-2">
-        <button 
-          onClick={handleSignOut}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-accent)] hover:bg-[var(--color-paper-2)] rounded-md transition-colors duration-[var(--dur-short)]"
-        >
-          <LogOut className="w-4 h-4" />
-          <span className="hidden sm:inline">Sign Out</span>
-        </button>
+        <UserButton 
+          afterSignOutUrl="/"
+          appearance={{
+            elements: {
+              avatarBox: "w-8 h-8 rounded-md border border-[var(--color-rule)]",
+              userButtonPopoverCard: "bg-[var(--color-paper)] border border-[var(--color-rule)] shadow-md",
+            }
+          }}
+        />
       </div>
     </header>
   );

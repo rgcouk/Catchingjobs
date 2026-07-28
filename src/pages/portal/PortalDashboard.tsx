@@ -3,7 +3,7 @@ import { ClipboardList, UserCheck, LogOut, Menu, User, CheckCircle2, Lock, Arrow
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
+import { useUser, useClerk, useAuth, UserProfile } from '@clerk/clerk-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -367,14 +367,16 @@ const PortalDashboard = () => {
               </h1>
               <p className="text-[var(--color-ink-2)] mt-1">Manage your personal information.</p>
             </header>
-            <Card>
-              <CardHeader>
-                <CardTitle>Profile Details</CardTitle>
-              </CardHeader>
-              <CardContent>
-                 <p className="text-sm text-[var(--color-ink-2)]">To update your details, please contact support.</p>
-              </CardContent>
-            </Card>
+            <div className="flex justify-center">
+              <UserProfile 
+                appearance={{
+                  elements: {
+                    card: "shadow-none border border-[var(--color-rule)] bg-[var(--color-paper)]",
+                    navbar: "hidden", // We can hide the navbar if it's too clunky or leave it
+                  }
+                }}
+              />
+            </div>
           </div>
         );
       default:
