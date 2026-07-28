@@ -233,13 +233,13 @@ const AdminDashboard = () => {
   };
 
   const renderContent = () => {
-    if (loading) return <div className="p-8 flex justify-center text-[var(--color-ink-2)]">Loading dashboard data...</div>;
-    if (error) return <div className="p-8 text-[var(--color-error)] font-medium">Error: {error}</div>;
+    if (loading) return <div className="p-4 md:p-8 flex justify-center text-[var(--color-ink-2)]">Loading dashboard data...</div>;
+    if (error) return <div className="p-4 md:p-8 text-[var(--color-error)] font-medium">Error: {error}</div>;
 
     switch (activeTab) {
       case 'dashboard':
         return (
-          <div className="p-8">
+          <div className="p-4 md:p-8">
             <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Dashboard</h1>
             <p className="text-[var(--color-ink-2)] mt-1">Welcome back to the Admin Panel.</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
@@ -267,7 +267,7 @@ const AdminDashboard = () => {
           <div className="flex h-full w-full">
             {/* Main Table Area */}
             <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto ${selectedApp ? 'hidden lg:flex' : 'flex'}`}>
-              <div className="p-8">
+              <div className="p-4 md:p-8">
                 <div className="mb-8">
                   <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Applications</h1>
                   <p className="text-[var(--color-ink-2)] mt-1">Manage and track applicant progression.</p>
@@ -490,13 +490,13 @@ const AdminDashboard = () => {
         );
       case 'locations':
         return (
-          <div className="p-8">
+          <div className="p-4 md:p-8">
             <div className="mb-8">
               <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Location Manager</h1>
               <p className="text-[var(--color-ink-2)] mt-1">Add and organise regions and operational towns.</p>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
               <Card className="lg:col-span-1 h-fit">
                 <CardHeader>
                   <CardTitle>{isEditingLocation ? 'Edit Location' : 'Add Location'}</CardTitle>
@@ -635,13 +635,13 @@ const AdminDashboard = () => {
         const allTowns = locations.flatMap((r) => r.towns || []);
 
         return (
-          <div className="p-8">
+          <div className="p-4 md:p-8">
             <div className="mb-8">
               <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Job Manager</h1>
               <p className="text-[var(--color-ink-2)] mt-1">Publish new catching roles.</p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
               <Card className="lg:col-span-1 h-fit">
                 <CardHeader>
                   <CardTitle>Post a Job</CardTitle>
@@ -736,7 +736,7 @@ const AdminDashboard = () => {
         );
       case 'settings':
         return (
-          <div className="p-8 max-w-5xl">
+          <div className="p-4 md:p-8 max-w-5xl">
             <div className="mb-8">
               <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Admin Settings</h1>
               <p className="text-[var(--color-ink-2)] mt-1">Manage system configurations and users.</p>
@@ -791,7 +791,7 @@ const AdminDashboard = () => {
           
           {selectedApp && (
             <div className="space-y-6 mt-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 className="text-sm font-semibold mb-2">Personal Details</h4>
                   <div className="text-sm space-y-1">

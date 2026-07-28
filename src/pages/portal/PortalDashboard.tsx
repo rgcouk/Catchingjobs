@@ -214,7 +214,7 @@ const PortalDashboard = () => {
     switch (activeTab) {
       case 'onboarding':
         return (
-          <div className="p-6 md:p-8 max-w-4xl mx-auto">
+          <div className="p-4 md:p-8 max-w-4xl mx-auto">
             <header className="mb-8">
               <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
                 Welcome to CatchingJobs
@@ -226,7 +226,7 @@ const PortalDashboard = () => {
         );
       case 'applications':
         return (
-          <div className="p-6 md:p-8 max-w-4xl mx-auto">
+          <div className="p-4 md:p-8 max-w-4xl mx-auto">
             <header className="mb-8">
               <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
                 My Applications
@@ -279,7 +279,7 @@ const PortalDashboard = () => {
         );
       case 'dashboard':
         return (
-          <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
+          <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
             <header>
               <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
                 Dashboard
@@ -311,7 +311,7 @@ const PortalDashboard = () => {
         );
       case 'resources':
         return (
-          <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
+          <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
             <header>
               <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
                 Resources
@@ -333,7 +333,7 @@ const PortalDashboard = () => {
         );
       case 'support':
         return (
-          <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
+          <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
             <header>
               <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
                 Support
@@ -360,7 +360,7 @@ const PortalDashboard = () => {
         );
       case 'settings':
         return (
-          <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
+          <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
             <header>
               <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
                 Settings
@@ -376,7 +376,7 @@ const PortalDashboard = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {profile?.application ? (
-                      <div className="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 text-sm">
                         <div className="space-y-1">
                           <span className="text-[var(--color-ink-2)] block">Full Name</span>
                           <span className="font-medium text-[var(--color-ink)]">{profile.application.name || '-'}</span>
