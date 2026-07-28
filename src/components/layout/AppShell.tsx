@@ -1,6 +1,7 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
-import Sidebar from './Sidebar';
+import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/app-sidebar';
 import TopNav from './TopNav';
 
 export interface NavItem {
@@ -88,22 +89,22 @@ export default function AppShell({ children, navItems, defaultTab = 'dashboard',
 
   return (
     <AppShellContext.Provider value={{ isSidebarOpen, setSidebarOpen, isMobile, navItems: displayedNavItems, activeTab, setActiveTab, userType }}>
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-white focus:text-black">Skip to main content</a>
-      <div className="relative flex h-[100dvh] w-full overflow-hidden bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-white">
-        <Sidebar />
-        <main id="main-content"
-          className={`flex flex-col flex-1 min-w-0 transition-all duration-[var(--dur-short)] ease-[var(--ease-out)] ${
-            isSidebarOpen ? 'md:ml-64' : 'md:ml-[72px]'
-          }`}
-        >
-          <TopNav />
-          <div className="flex-1 overflow-auto relative">
-            <div className="mx-auto w-full max-w-[1600px] h-full">
+      <SidebarProvider defaultOpen={true}>
+        <AppSidebar navItems={displayedNavItems.map(item => ({ title: item.label, url: '#', icon: item.icon, isActive: activeTab === item.id, onClick: () => setActiveTab(item.id) }))} />
+        <SidebarInset className="flex-1 overflow-hidden bg-[var(--color-paper)]">
+          <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b border-[var(--color-rule)] bg-[var(--color-paper)] sticky top-0 z-30">
+            <SidebarTrigger className="-ml-1" />
+            <div className="flex-1">
+              <TopNav />
+            </div>
+          </header>
+          <main id="main-content" className="flex-1 min-w-0 overflow-auto">
+            <div className="mx-auto w-full max-w-[1600px] h-full relative">
               {children}
             </div>
-          </div>
-        </main>
-      </div>
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
     </AppShellContext.Provider>
   );
 }
