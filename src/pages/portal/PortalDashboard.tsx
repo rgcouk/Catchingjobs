@@ -367,15 +367,76 @@ const PortalDashboard = () => {
               </h1>
               <p className="text-[var(--color-ink-2)] mt-1">Manage your personal information.</p>
             </header>
-            <div className="flex justify-center">
-              <UserProfile 
-                appearance={{
-                  elements: {
-                    card: "shadow-none border border-[var(--color-rule)] bg-[var(--color-paper)]",
-                    navbar: "hidden", // We can hide the navbar if it's too clunky or leave it
-                  }
-                }}
-              />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Application Details</CardTitle>
+                    <CardDescription>The information you submitted in your application.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {profile?.application ? (
+                      <div className="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
+                        <div className="space-y-1">
+                          <span className="text-[var(--color-ink-2)] block">Full Name</span>
+                          <span className="font-medium text-[var(--color-ink)]">{profile.application.name || '-'}</span>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[var(--color-ink-2)] block">Phone</span>
+                          <span className="font-medium text-[var(--color-ink)]">{profile.application.phone || '-'}</span>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[var(--color-ink-2)] block">Date of Birth</span>
+                          <span className="font-medium text-[var(--color-ink)]">{profile.application.dateOfBirth ? new Date(profile.application.dateOfBirth).toLocaleDateString() : '-'}</span>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[var(--color-ink-2)] block">NI Number</span>
+                          <span className="font-medium text-[var(--color-ink)]">{profile.application.niNumber || '-'}</span>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[var(--color-ink-2)] block">Address</span>
+                          <span className="font-medium text-[var(--color-ink)]">
+                            {profile.application.addressLine1 || profile.application.town ? `${profile.application.addressLine1 || ''} ${profile.application.town || ''}` : '-'}
+                          </span>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[var(--color-ink-2)] block">Postcode</span>
+                          <span className="font-medium text-[var(--color-ink)]">{profile.application.postcode || '-'}</span>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[var(--color-ink-2)] block">Right to Work UK</span>
+                          <span className="font-medium text-[var(--color-ink)]">{profile.application.hasRightToWork ? 'Yes' : 'No'}</span>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[var(--color-ink-2)] block">Driving License</span>
+                          <span className="font-medium text-[var(--color-ink)]">{profile.application.hasDrivingLicense ? 'Yes' : 'No'}</span>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[var(--color-ink-2)] block">Forklift License</span>
+                          <span className="font-medium text-[var(--color-ink)]">{profile.application.hasForkliftLicense ? 'Yes' : 'No'}</span>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[var(--color-ink-2)] block">Sector</span>
+                          <span className="font-medium text-[var(--color-ink)] capitalize">{profile.application.sector || '-'}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-[var(--color-ink-2)]">No application data found.</p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="flex justify-center lg:justify-end">
+                <UserProfile 
+                  appearance={{
+                    elements: {
+                      card: "shadow-none border border-[var(--color-rule)] bg-[var(--color-paper)] w-full max-w-full",
+                      navbar: "hidden", // We can hide the navbar if it's too clunky or leave it
+                    }
+                  }}
+                />
+              </div>
             </div>
           </div>
         );
