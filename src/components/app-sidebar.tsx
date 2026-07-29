@@ -161,8 +161,8 @@ export function AppSidebar({ navItems, ...props }: React.ComponentProps<typeof S
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <ArrowUpCircleIcon className="h-5 w-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <ArrowUpCircleIcon className="h-5 w-5 text-[var(--color-accent)]" />
+                <span className="text-base font-semibold">Catchingjobs</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -174,7 +174,7 @@ export function AppSidebar({ navItems, ...props }: React.ComponentProps<typeof S
         <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {/* <NavUser user={data.user} /> */}
       </SidebarFooter>
     </Sidebar>
   )

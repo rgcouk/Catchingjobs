@@ -239,15 +239,97 @@ const AdminDashboard = () => {
     switch (activeTab) {
       case 'dashboard':
         return (
-          <div className="p-4 md:p-8">
-            <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Dashboard</h1>
-            <p className="text-[var(--color-ink-2)] mt-1">Welcome back to the Admin Panel.</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+            <div className="flex items-center justify-between space-y-2">
+              <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+            </div>
+            
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
-                <CardHeader>
-                  <CardTitle>Total Applications</CardTitle>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
+                  <Briefcase className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
-                <CardContent className="text-4xl font-bold">{applications.length}</CardContent>
+                <CardContent>
+                  <div className="text-2xl font-bold">{applications.length}</div>
+                  <p className="text-xs text-muted-foreground">
+                    All-time submissions
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
+                  <Briefcase className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{jobs.filter((j: any) => j.status === 'ACTIVE').length}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Currently open roles
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Locations</CardTitle>
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{locations.length}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Managed regions & farms
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">System Users</CardTitle>
+                  <UsersIcon className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{users.length}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Registered accounts
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4">
+              <Card className="col-span-4">
+                <CardHeader>
+                  <CardTitle>Overview</CardTitle>
+                </CardHeader>
+                <CardContent className="pl-2">
+                  <div className="h-[300px] flex items-center justify-center text-muted-foreground border rounded-lg bg-muted/20">
+                    <BarChartIcon className="w-12 h-12 text-muted-foreground/50 mb-2 opacity-50" />
+                    <span className="ml-2">Analytics Chart Area</span>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="col-span-3">
+                <CardHeader>
+                  <CardTitle>Recent Applications</CardTitle>
+                  <CardDescription>Latest candidates in the system.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-8">
+                    {applications.slice(0, 5).map((app: any) => (
+                      <div key={app.id} className="flex items-center">
+                        <div className="ml-4 space-y-1">
+                          <p className="text-sm font-medium leading-none">{app.name}</p>
+                          <p className="text-sm text-muted-foreground">{app.email}</p>
+                        </div>
+                        <div className="ml-auto font-medium">
+                          <Badge variant="outline">{app.status}</Badge>
+                        </div>
+                      </div>
+                    ))}
+                    {applications.length === 0 && (
+                      <p className="text-sm text-muted-foreground">No recent applications.</p>
+                    )}
+                  </div>
+                </CardContent>
               </Card>
             </div>
           </div>

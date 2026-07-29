@@ -89,20 +89,18 @@ export default function AppShell({ children, navItems, defaultTab = 'dashboard',
 
   return (
     <AppShellContext.Provider value={{ isSidebarOpen, setSidebarOpen, isMobile, navItems: displayedNavItems, activeTab, setActiveTab, userType }}>
-      <SidebarProvider defaultOpen={true}>
+      <SidebarProvider defaultOpen={true} className="h-[100dvh] overflow-hidden w-full">
         <AppSidebar navItems={displayedNavItems.map(item => ({ title: item.label, url: '#', icon: item.icon, isActive: activeTab === item.id, onClick: () => setActiveTab(item.id) }))} />
-        <SidebarInset className="flex-1 overflow-hidden bg-[var(--color-paper)]">
-          <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b border-[var(--color-rule)] bg-[var(--color-paper)] sticky top-0 z-30">
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b border-[var(--color-rule)] bg-background z-30">
             <SidebarTrigger className="-ml-1" />
             <div className="flex-1">
               <TopNav />
             </div>
           </header>
-          <main id="main-content" className="flex-1 min-w-0 overflow-auto">
-            <div className="mx-auto w-full max-w-[1600px] h-full relative">
-              {children}
-            </div>
-          </main>
+          <div className="flex-1 flex flex-col">
+            {children}
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </AppShellContext.Provider>

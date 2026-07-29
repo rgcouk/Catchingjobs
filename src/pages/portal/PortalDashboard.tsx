@@ -214,27 +214,29 @@ const PortalDashboard = () => {
     switch (activeTab) {
       case 'onboarding':
         return (
-          <div className="p-4 md:p-8 max-w-4xl mx-auto">
-            <header className="mb-8">
-              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
-                Welcome to CatchingJobs
-              </h1>
-              <p className="text-[var(--color-ink-2)] mt-1">Complete this short form to register your interest.</p>
-            </header>
-            <InitialOnboarding profile={profile} USER_ID={USER_ID} getToken={getToken} fetchData={fetchData} />
+          <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+            <div className="flex items-center justify-between space-y-2 mb-4">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight">Welcome to CatchingJobs</h2>
+                <p className="text-muted-foreground mt-1">Complete this short form to register your interest.</p>
+              </div>
+            </div>
+            <div className="max-w-4xl">
+              <InitialOnboarding profile={profile} USER_ID={USER_ID} getToken={getToken} fetchData={fetchData} />
+            </div>
           </div>
         );
       case 'applications':
         return (
-          <div className="p-4 md:p-8 max-w-4xl mx-auto">
-            <header className="mb-8">
-              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
-                My Applications
-              </h1>
-              <p className="text-[var(--color-ink-2)] mt-1">Track the status of your recent applications.</p>
-            </header>
+          <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+            <div className="flex items-center justify-between space-y-2 mb-4">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight">My Applications</h2>
+                <p className="text-muted-foreground mt-1">Track the status of your recent applications.</p>
+              </div>
+            </div>
             
-            <Card>
+            <Card className="max-w-4xl">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -248,7 +250,7 @@ const PortalDashboard = () => {
                     <TableRow key={app.id}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-[var(--color-paper-2)] border border-[var(--color-rule)] text-[var(--color-ink)] flex items-center justify-center shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-muted border text-foreground flex items-center justify-center shrink-0">
                             <Briefcase className="w-4 h-4" />
                           </div>
                           {app.jobPosting?.title || 'General Application'}
@@ -259,15 +261,15 @@ const PortalDashboard = () => {
                           {app.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-[var(--color-ink-2)]">
+                      <TableCell className="text-muted-foreground">
                         {new Date(app.createdAt).toLocaleDateString()}
                       </TableCell>
                     </TableRow>
                   ))}
                   {applications.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={3} className="text-center py-12 text-[var(--color-ink-2)]">
-                        <ClipboardList className="w-12 h-12 text-[var(--color-rule)] mb-3 mx-auto" />
+                      <TableCell colSpan={3} className="text-center py-12 text-muted-foreground">
+                        <ClipboardList className="w-12 h-12 text-muted mb-3 mx-auto" />
                         No applications found.
                       </TableCell>
                     </TableRow>
@@ -279,23 +281,22 @@ const PortalDashboard = () => {
         );
       case 'dashboard':
         return (
-          <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
-            <header>
-              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
-                Dashboard
-              </h1>
-              <p className="text-[var(--color-ink-2)] mt-1">Welcome back to your CatchingJobs portal.</p>
-            </header>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+            <div className="flex items-center justify-between space-y-2 mb-4">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+                <p className="text-muted-foreground mt-1">Welcome back to your CatchingJobs portal.</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Card>
-                <CardHeader>
-                  <CardTitle>Profile Status</CardTitle>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Profile Status</CardTitle>
+                  <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-2 text-[var(--color-ink)]">
-                    <CheckCircle2 className="w-5 h-5 text-[var(--color-success)]" />
-                    <span>Initial application received</span>
-                  </div>
+                  <div className="text-2xl font-bold">Received</div>
+                  <p className="text-xs text-muted-foreground mt-1">Initial application on file</p>
                 </CardContent>
               </Card>
               <Card>
