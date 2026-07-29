@@ -178,10 +178,6 @@ const PortalDashboard = () => {
 
   const USER_ID = user?.id || '';
 
-  useEffect(() => {
-    fetchData();
-  }, [activeTab]);
-
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -206,6 +202,10 @@ const PortalDashboard = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, [activeTab]);
 
   const renderContent = () => {
     if (loading) return <div className="p-6 max-w-4xl mx-auto flex justify-center text-[var(--color-ink-2)]">Loading portal...</div>;
