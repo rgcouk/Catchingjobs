@@ -34,10 +34,6 @@ const AdminDashboard = () => {
   const [isViewAppOpen, setIsViewAppOpen] = useState(false);
 
 
-  useEffect(() => {
-    fetchData();
-  }, [activeTab]);
-
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -68,6 +64,10 @@ const AdminDashboard = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, [activeTab]);
 
   const updateApplicationStatus = async (id: number, status: string) => {
     try {
