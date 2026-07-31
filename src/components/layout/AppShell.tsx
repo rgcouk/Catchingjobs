@@ -77,11 +77,13 @@ export default function AppShell({ children, navItems, defaultTab = 'dashboard',
               }
             }
           }
-        } catch (e) {}
+        } catch (e) {
+          console.error("Error checking onboarding:", e);
+        }
       };
       checkOnboarding();
     }
-  }, [userType, user, getToken]);
+  }, [userType, user, getToken, activeTab]);
 
   const displayedNavItems = userType === 'portal'
     ? (!isFullyOnboarded ? navItems.filter(i => i.id === 'onboarding') : navItems.filter(i => i.id !== 'onboarding'))

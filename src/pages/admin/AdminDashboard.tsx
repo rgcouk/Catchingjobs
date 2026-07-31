@@ -338,7 +338,7 @@ const AdminDashboard = () => {
       case 'all':
       case 'hired':
       case 'rejected':
-      case 'applicants':
+      case 'applicants': {
         const filteredApps = applications.filter((app) => {
           if (activeTab === 'hired') return app.status === 'HIRED';
           if (activeTab === 'rejected') return app.status === 'REJECTED';
@@ -570,6 +570,7 @@ const AdminDashboard = () => {
             )}
           </div>
         );
+      }
       case 'locations':
         return (
           <div className="p-4 md:p-8">
@@ -713,7 +714,7 @@ const AdminDashboard = () => {
             </div>
           </div>
         );
-      case 'jobs':
+      case 'jobs': {
         const allTowns = locations.flatMap((r) => r.towns || []);
 
         return (
@@ -816,6 +817,7 @@ const AdminDashboard = () => {
             </div>
           </div>
         );
+      }
       case 'settings':
         return (
           <div className="p-4 md:p-8 max-w-5xl">
