@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ClipboardList, UserCheck, LogOut, Menu, User, CheckCircle2, Lock, ArrowRight, Briefcase, Plus, Trash2, UploadCloud } from 'lucide-react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useUser, useClerk, useAuth, UserProfile } from '@clerk/clerk-react';
+import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -178,7 +178,7 @@ const PortalDashboard = () => {
 
   const USER_ID = user?.id || '';
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -201,11 +201,11 @@ const PortalDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [USER_ID, activeTab, getToken]);
 
   useEffect(() => {
     fetchData();
-  }, [activeTab]);
+  }, [fetchData]);
 
   const renderContent = () => {
     if (loading) return <div className="p-6 max-w-4xl mx-auto flex justify-center text-[var(--color-ink-2)]">Loading portal...</div>;
@@ -428,25 +428,48 @@ const PortalDashboard = () => {
                 </Card>
               </div>
 
-              <div className="flex justify-center lg:justify-end w-full">
-                <UserProfile 
-                  appearance={{
-                    variables: {
-                      colorPrimary: 'black',
-                      colorBackground: 'white',
-                      borderRadius: '0.75rem',
-                      colorText: '#0f172a',
-                    },
-                    elements: {
-                      rootBox: "w-full",
-                      cardBox: "w-full max-w-full shadow-sm border border-slate-200 rounded-xl",
-                      card: "w-full max-w-full shadow-none",
-                      navbar: "hidden", // We can hide the navbar if it's too clunky or leave it
-                      scrollBox: "bg-white",
-                      pageScrollBox: "p-6",
-                    }
-                  }}
-                />
+              <div className="flex flex-col gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Account Settings</CardTitle>
+                    <CardDescription>Update your personal information.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form 
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        if (!user) return;
+                        const formData = new FormData(e.currentTarget);
+                        const firstName = formData.get('firstName') as string;
+                        const lastName = formData.get('lastName') as string;
+                        try {
+                          await user.update({ firstName, lastName });
+                          alert('Profile updated successfully.');
+                        } catch (err: any) {
+                          alert(err.errors?.[0]?.longMessage || 'Failed to update profile.');
+                        }
+                      }}
+                      className="space-y-4"
+                    >
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>First Name</Label>
+                          <Input name="firstName" defaultValue={user?.firstName || ''} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Last Name</Label>
+                          <Input name="lastName" defaultValue={user?.lastName || ''} />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Email Address</Label>
+                        <Input value={user?.primaryEmailAddress?.emailAddress || ''} disabled />
+                        <p className="text-xs text-muted-foreground">Email addresses cannot be changed here currently.</p>
+                      </div>
+                      <Button type="submit">Save Changes</Button>
+                    </form>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </div>

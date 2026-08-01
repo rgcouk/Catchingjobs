@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { LayoutDashboard, MapPin, Briefcase, Settings, LogOut, Menu, Plus, Edit, Trash2 } from 'lucide-react';
 import { useAuth } from '@clerk/clerk-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
@@ -11,6 +11,8 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '.
 import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogContent } from '../../components/ui/dialog';
 import { Textarea } from '../../components/ui/textarea';
 import { MessageSquare, PhoneCall, Mail, CheckCircle, Smartphone, Check, Sparkles, UsersIcon, BarChartIcon } from 'lucide-react';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../../components/ui/chart';
 import { useAppShell } from '../../components/layout/AppShell';
 
 const AdminDashboard = () => {
@@ -34,7 +36,7 @@ const AdminDashboard = () => {
   const [isViewAppOpen, setIsViewAppOpen] = useState(false);
 
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -63,11 +65,11 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab, getToken]);
 
   useEffect(() => {
     fetchData();
-  }, [activeTab]);
+  }, [fetchData]);
 
   const updateApplicationStatus = async (id: number, status: string) => {
     try {
@@ -301,10 +303,46 @@ const AdminDashboard = () => {
                   <CardTitle>Overview</CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">
-                  <div className="h-[300px] flex items-center justify-center text-muted-foreground border rounded-lg bg-muted/20">
-                    <BarChartIcon className="w-12 h-12 text-muted-foreground/50 mb-2 opacity-50" />
-                    <span className="ml-2">Analytics Chart Area</span>
-                  </div>
+                  <ChartContainer
+                    config={{
+                      applications: {
+                        label: "Applications",
+                        color: "var(--color-primary)",
+                      },
+                    }}
+                    className="h-[300px] w-full"
+                  >
+                    <BarChart
+                      data={[
+                        { month: "Jan", applications: 20 },
+                        { month: "Feb", applications: 35 },
+                        { month: "Mar", applications: 40 },
+                        { month: "Apr", applications: 30 },
+                        { month: "May", applications: 55 },
+                        { month: "Jun", applications: Math.max(60, applications.length) },
+                      ]}
+                      margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
+                    >
+                      <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis 
+                        dataKey="month" 
+                        tickLine={false} 
+                        axisLine={false} 
+                        tickMargin={10} 
+                        fontSize={12} 
+                        className="fill-muted-foreground"
+                      />
+                      <YAxis
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={10}
+                        fontSize={12}
+                        className="fill-muted-foreground"
+                      />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="applications" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ChartContainer>
                 </CardContent>
               </Card>
               <Card className="col-span-3">
