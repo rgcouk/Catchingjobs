@@ -10,7 +10,7 @@ import { Label } from '../../components/ui/label';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../../components/ui/table';
 import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogContent } from '../../components/ui/dialog';
 import { Textarea } from '../../components/ui/textarea';
-import { MessageSquare, PhoneCall, Mail, CheckCircle, Smartphone, Check, Sparkles, UsersIcon } from 'lucide-react';
+import { MessageSquare, PhoneCall, Mail, CheckCircle, Smartphone, Check, Sparkles, UsersIcon, BarChartIcon } from 'lucide-react';
 import { useAppShell } from '../../components/layout/AppShell';
 
 const AdminDashboard = () => {
