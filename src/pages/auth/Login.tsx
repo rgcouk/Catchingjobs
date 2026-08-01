@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSignIn } from '@clerk/clerk-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { FcGoogle } from 'react-icons/fc';
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -58,6 +59,15 @@ export default function Login() {
       setError(err.errors?.[0]?.longMessage || "Failed to sign in. Please check your credentials.");
     }
   }
+
+  const handleGoogleSignIn = () => {
+    if (!isLoaded) return;
+    signIn.authenticateWithRedirect({
+      strategy: "oauth_google",
+      redirectUrl: "/sso-callback",
+      redirectUrlComplete: "/user-portal",
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-background">
@@ -143,6 +153,28 @@ export default function Login() {
               </Button>
             </form>
           </Form>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
+          </div>
+
+          <Button 
+            variant="outline" 
+            type="button" 
+            className="w-full"
+            onClick={handleGoogleSignIn}
+            disabled={!isLoaded}
+          >
+            {FcGoogle ? <FcGoogle className="mr-2 h-4 w-4" /> : null}
+            Google
+          </Button>
 
           <div className="text-center text-sm">
             Don't have an account?{" "}
