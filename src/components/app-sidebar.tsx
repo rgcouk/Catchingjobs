@@ -17,6 +17,13 @@ import {
   SearchIcon,
   SettingsIcon,
   UsersIcon,
+  Settings2,
+  LifeBuoy,
+  Search,
+  Database,
+  Frame,
+  PieChart,
+  Command,
 } from "lucide-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -32,151 +39,72 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: LayoutDashboardIcon,
-    },
-    {
-      title: "Lifecycle",
-      url: "#",
-      icon: ListIcon,
-    },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: BarChartIcon,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: FolderIcon,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: UsersIcon,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: CameraIcon,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: FileTextIcon,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: FileCodeIcon,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: SettingsIcon,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: HelpCircleIcon,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: SearchIcon,
-    },
-  ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: DatabaseIcon,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: ClipboardListIcon,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: FileIcon,
-    },
-  ],
-}
-
 export function AppSidebar({ navItems, ...props }: React.ComponentProps<typeof Sidebar> & { navItems?: any[] }) {
+  // Catchingjobs specific content for the other areas
+  const defaultData = {
+    navSecondary: [
+      {
+        title: "Settings",
+        url: "#",
+        icon: Settings2,
+      },
+      {
+        title: "Get Help",
+        url: "#",
+        icon: LifeBuoy,
+      },
+      {
+        title: "Search",
+        url: "#",
+        icon: Search,
+      },
+    ],
+    documents: [
+      {
+        name: "Safety Protocols",
+        url: "#",
+        icon: Database,
+      },
+      {
+        name: "Compliance Docs",
+        url: "#",
+        icon: Frame,
+      },
+      {
+        name: "Timesheets",
+        url: "#",
+        icon: PieChart,
+      },
+    ],
+  }
+
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar variant="inset" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
+            <SidebarMenuButton size="lg" asChild>
               <a href="#">
-                <ArrowUpCircleIcon className="h-5 w-5 text-[var(--color-accent)]" />
-                <span className="text-base font-semibold">Catchingjobs</span>
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-[var(--color-accent)] text-sidebar-primary-foreground">
+                  <Command className="size-4 text-white" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">CatchingJobs</span>
+                  <span className="truncate text-xs">Admin Portal</span>
+                </div>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navItems || data.navMain} />
-        {/* <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+        {navItems && <NavMain items={navItems} />}
+        <NavDocuments items={defaultData.documents} />
+        <NavSecondary items={defaultData.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        {/* <NavUser user={data.user} /> */}
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )
 }
-

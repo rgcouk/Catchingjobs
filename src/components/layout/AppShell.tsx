@@ -1,8 +1,8 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
-import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
-import TopNav from './TopNav';
+import { SiteHeader } from '@/components/site-header';
 
 export interface NavItem {
   id: string;
@@ -89,17 +89,14 @@ export default function AppShell({ children, navItems, defaultTab = 'dashboard',
     ? (!isFullyOnboarded ? navItems.filter(i => i.id === 'onboarding') : navItems.filter(i => i.id !== 'onboarding'))
     : navItems;
 
+  const currentTab = displayedNavItems.find(item => item.id === activeTab);
+
   return (
     <AppShellContext.Provider value={{ isSidebarOpen, setSidebarOpen, isMobile, navItems: displayedNavItems, activeTab, setActiveTab, userType }}>
       <SidebarProvider defaultOpen={true} className="h-[100dvh] overflow-hidden w-full">
         <AppSidebar navItems={displayedNavItems.map(item => ({ title: item.label, url: '#', icon: item.icon, isActive: activeTab === item.id, onClick: () => setActiveTab(item.id) }))} />
         <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b border-[var(--color-rule)] bg-background z-30">
-            <SidebarTrigger className="-ml-1" />
-            <div className="flex-1">
-              <TopNav />
-            </div>
-          </header>
+          <SiteHeader title={currentTab?.label || 'Dashboard'} />
           <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
             {children}
           </div>
