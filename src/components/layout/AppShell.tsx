@@ -94,7 +94,19 @@ export default function AppShell({ children, navItems, defaultTab = 'dashboard',
   return (
     <AppShellContext.Provider value={{ isSidebarOpen, setSidebarOpen, isMobile, navItems: displayedNavItems, activeTab, setActiveTab, userType }}>
       <SidebarProvider defaultOpen={true} className="h-[100dvh] overflow-hidden w-full">
-        <AppSidebar navItems={displayedNavItems.map(item => ({ title: item.label, url: '#', icon: item.icon, isActive: activeTab === item.id, onClick: () => setActiveTab(item.id) }))} />
+        <AppSidebar navItems={displayedNavItems.map(item => ({ 
+          title: item.label, 
+          url: '#', 
+          icon: item.icon as React.ElementType, 
+          isActive: activeTab === item.id || !!(item.children && item.children.some(c => c.id === activeTab)), 
+          onClick: () => setActiveTab(item.id),
+          items: item.children ? item.children.map(child => ({
+            title: child.label,
+            url: '#',
+            isActive: activeTab === child.id,
+            onClick: () => setActiveTab(child.id)
+          })) : undefined
+        }))} />
         <SidebarInset>
           <SiteHeader title={currentTab?.label || 'Dashboard'} />
           <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
