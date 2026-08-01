@@ -65,7 +65,7 @@ export default function Login() {
     signIn.authenticateWithRedirect({
       strategy: "oauth_google",
       redirectUrl: "/sso-callback",
-      fallbackRedirectUrl: "/user-portal",
+      redirectUrlComplete: "/user-portal",
     });
   };
 

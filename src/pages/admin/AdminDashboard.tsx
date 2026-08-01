@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { LayoutDashboard, MapPin, Briefcase, Settings, LogOut, Menu, Plus, Edit, Trash2 } from 'lucide-react';
+import { LayoutDashboard, MapPin, Briefcase, Settings, LogOut, Menu, Plus, Edit, Trash2, TrendingUp, TrendingDown, Users } from 'lucide-react';
 import { useAuth } from '@clerk/clerk-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
@@ -12,7 +12,7 @@ import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, Dia
 import { Textarea } from '../../components/ui/textarea';
 import { MessageSquare, PhoneCall, Mail, CheckCircle, Smartphone, Check, Sparkles, UsersIcon, BarChartIcon } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../../components/ui/chart';
+import { ChartAreaInteractive } from '../../components/chart-area-interactive';
 import { useAppShell } from '../../components/layout/AppShell';
 
 const AdminDashboard = () => {
@@ -241,134 +241,123 @@ const AdminDashboard = () => {
     switch (activeTab) {
       case 'dashboard':
         return (
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-            <div className="flex items-center justify-between space-y-2">
-              <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-            </div>
-            
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
-                  <Briefcase className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{applications.length}</div>
-                  <p className="text-xs text-muted-foreground">
-                    All-time submissions
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
-                  <Briefcase className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{jobs.filter((j: any) => j.status === 'ACTIVE').length}</div>
-                  <p className="text-xs text-muted-foreground">
-                    Currently open roles
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Locations</CardTitle>
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{locations.length}</div>
-                  <p className="text-xs text-muted-foreground">
-                    Managed regions & farms
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">System Users</CardTitle>
-                  <UsersIcon className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{users.length}</div>
-                  <p className="text-xs text-muted-foreground">
-                    Registered accounts
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4">
-              <Card className="col-span-4">
-                <CardHeader>
-                  <CardTitle>Overview</CardTitle>
-                </CardHeader>
-                <CardContent className="pl-2">
-                  <ChartContainer
-                    config={{
-                      applications: {
-                        label: "Applications",
-                        color: "var(--color-primary)",
-                      },
-                    }}
-                    className="h-[300px] w-full"
-                  >
-                    <BarChart
-                      data={[
-                        { month: "Jan", applications: 20 },
-                        { month: "Feb", applications: 35 },
-                        { month: "Mar", applications: 40 },
-                        { month: "Apr", applications: 30 },
-                        { month: "May", applications: 55 },
-                        { month: "Jun", applications: Math.max(60, applications.length) },
-                      ]}
-                      margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
-                    >
-                      <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted" />
-                      <XAxis 
-                        dataKey="month" 
-                        tickLine={false} 
-                        axisLine={false} 
-                        tickMargin={10} 
-                        fontSize={12} 
-                        className="fill-muted-foreground"
-                      />
-                      <YAxis
-                        tickLine={false}
-                        axisLine={false}
-                        tickMargin={10}
-                        fontSize={12}
-                        className="fill-muted-foreground"
-                      />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Bar dataKey="applications" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ChartContainer>
-                </CardContent>
-              </Card>
-              <Card className="col-span-3">
-                <CardHeader>
-                  <CardTitle>Recent Applications</CardTitle>
-                  <CardDescription>Latest candidates in the system.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-8">
-                    {applications.slice(0, 5).map((app: any) => (
-                      <div key={app.id} className="flex items-center">
-                        <div className="ml-4 space-y-1">
-                          <p className="text-sm font-medium leading-none">{app.name}</p>
-                          <p className="text-sm text-muted-foreground">{app.email}</p>
-                        </div>
-                        <div className="ml-auto font-medium">
-                          <Badge variant="outline">{app.status}</Badge>
-                        </div>
+          <div className="flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col gap-2">
+              <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card lg:px-6">
+                  <Card className="@container/card" data-slot="card">
+                    <CardHeader className="relative">
+                      <CardDescription>Total Applications</CardDescription>
+                      <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+                        {applications.length}
+                      </CardTitle>
+                      <div className="absolute right-4 top-4">
+                        <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
+                          <TrendingUp className="size-3" />
+                          +12%
+                        </Badge>
                       </div>
-                    ))}
-                    {applications.length === 0 && (
-                      <p className="text-sm text-muted-foreground">No recent applications.</p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                    </CardHeader>
+                    <CardFooter className="flex-col items-start gap-1 text-sm">
+                      <div className="line-clamp-1 flex gap-2 font-medium">
+                        Trending up this month <TrendingUp className="size-4" />
+                      </div>
+                      <div className="text-muted-foreground">All-time submissions</div>
+                    </CardFooter>
+                  </Card>
+                  
+                  <Card className="@container/card" data-slot="card">
+                    <CardHeader className="relative">
+                      <CardDescription>Active Jobs</CardDescription>
+                      <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+                        {jobs.filter((j: any) => j.status === 'ACTIVE').length}
+                      </CardTitle>
+                      <div className="absolute right-4 top-4">
+                        <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
+                          <Briefcase className="size-3" />
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardFooter className="flex-col items-start gap-1 text-sm">
+                      <div className="line-clamp-1 flex gap-2 font-medium">
+                        Currently open roles
+                      </div>
+                      <div className="text-muted-foreground">Requires attention</div>
+                    </CardFooter>
+                  </Card>
+
+                  <Card className="@container/card" data-slot="card">
+                    <CardHeader className="relative">
+                      <CardDescription>Locations</CardDescription>
+                      <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+                        {locations.length}
+                      </CardTitle>
+                      <div className="absolute right-4 top-4">
+                        <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
+                          <MapPin className="size-3" />
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardFooter className="flex-col items-start gap-1 text-sm">
+                      <div className="line-clamp-1 flex gap-2 font-medium">
+                        Managed regions & farms
+                      </div>
+                      <div className="text-muted-foreground">Across UK</div>
+                    </CardFooter>
+                  </Card>
+
+                  <Card className="@container/card" data-slot="card">
+                    <CardHeader className="relative">
+                      <CardDescription>System Users</CardDescription>
+                      <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+                        {users.length}
+                      </CardTitle>
+                      <div className="absolute right-4 top-4">
+                        <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
+                          <Users className="size-3" />
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardFooter className="flex-col items-start gap-1 text-sm">
+                      <div className="line-clamp-1 flex gap-2 font-medium">
+                        Registered accounts
+                      </div>
+                      <div className="text-muted-foreground">Internal & External</div>
+                    </CardFooter>
+                  </Card>
+                </div>
+                
+                <div className="px-4 lg:px-6">
+                  <ChartAreaInteractive />
+                </div>
+                
+                <div className="px-4 lg:px-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Recent Applications</CardTitle>
+                      <CardDescription>Latest candidates in the system.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-8">
+                        {applications.slice(0, 5).map((app: any) => (
+                          <div key={app.id} className="flex items-center">
+                            <div className="ml-4 space-y-1">
+                              <p className="text-sm font-medium leading-none">{app.name}</p>
+                              <p className="text-sm text-muted-foreground">{app.email}</p>
+                            </div>
+                            <div className="ml-auto font-medium">
+                              <Badge variant="outline">{app.status}</Badge>
+                            </div>
+                          </div>
+                        ))}
+                        {applications.length === 0 && (
+                          <p className="text-sm text-muted-foreground">No recent applications.</p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             </div>
           </div>
         );
