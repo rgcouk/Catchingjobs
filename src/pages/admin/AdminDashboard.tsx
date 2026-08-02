@@ -235,8 +235,8 @@ const AdminDashboard = () => {
   };
 
   const renderContent = () => {
-    if (loading) return <div className="p-4 md:p-8 flex justify-center text-[var(--color-ink-2)]">Loading dashboard data...</div>;
-    if (error) return <div className="p-4 md:p-8 text-[var(--color-error)] font-medium">Error: {error}</div>;
+    if (loading) return <div className="p-4 md:p-8 flex justify-center text-muted-foreground">Loading dashboard data...</div>;
+    if (error) return <div className="p-4 md:p-8 text-destructive font-medium">Error: {error}</div>;
 
     switch (activeTab) {
       case 'dashboard':
@@ -378,11 +378,11 @@ const AdminDashboard = () => {
             <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto ${selectedApp ? 'hidden lg:flex' : 'flex'}`}>
               <div className="p-4 md:p-8">
                 <div className="mb-8">
-                  <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Applications</h1>
-                  <p className="text-[var(--color-ink-2)] mt-1">Manage and track applicant progression.</p>
+                  <h1 className="text-3xl font-bold text-foreground tracking-tight">Applications</h1>
+                  <p className="text-muted-foreground mt-1">Manage and track applicant progression.</p>
                 </div>
                 
-                <div className="bg-white border border-[var(--color-rule)] rounded-lg overflow-hidden">
+                <div className="bg-card border border-border rounded-lg overflow-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -397,7 +397,7 @@ const AdminDashboard = () => {
                       {filteredApps.map((app) => (
                         <TableRow 
                           key={app.id}
-                          className={`cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] ${selectedApp?.id === app.id ? 'bg-[var(--color-paper)]' : 'hover:bg-[var(--color-paper-2)]'}`}
+                          className={`cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selectedApp?.id === app.id ? 'bg-accent/50' : 'hover:bg-muted/50'}`}
                           onClick={() => setSelectedApp(app)}
                           tabIndex={0}
                           role="button"
@@ -418,15 +418,15 @@ const AdminDashboard = () => {
                               {app.status || 'PENDING'}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-[var(--color-ink-2)]">{app.town || 'N/A'}</TableCell>
-                          <TableCell className="text-[var(--color-ink-2)]">
+                          <TableCell className="text-muted-foreground">{app.town || 'N/A'}</TableCell>
+                          <TableCell className="text-muted-foreground">
                             {app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A'}
                           </TableCell>
                         </TableRow>
                       ))}
                       {filteredApps.length === 0 && (
                         <TableRow>
-                          <TableCell colSpan={5} className="text-center py-8 text-[var(--color-ink-2)] bg-[var(--color-paper)]">
+                          <TableCell colSpan={5} className="text-center py-8 text-muted-foreground bg-card">
                             No applications found
                           </TableCell>
                         </TableRow>
@@ -439,29 +439,29 @@ const AdminDashboard = () => {
 
             {/* Side Panel for Application Details */}
             {selectedApp && (
-              <div className="w-full lg:w-[450px] border-l border-[var(--color-rule)] bg-white flex flex-col shrink-0 h-full overflow-y-auto">
-                <div className="p-6 border-b border-[var(--color-rule)] flex justify-between items-start sticky top-0 bg-white z-10">
+              <div className="w-full lg:w-[450px] border-l border-border bg-card flex flex-col shrink-0 h-full overflow-y-auto">
+                <div className="p-6 border-b border-border flex justify-between items-start sticky top-0 bg-card z-10">
                   <div>
-                    <h2 className="text-xl font-semibold text-[var(--color-ink)]">{selectedApp.name}</h2>
+                    <h2 className="text-xl font-semibold text-foreground">{selectedApp.name}</h2>
                     <div className="mt-1 flex items-center gap-2">
                       <Badge variant="secondary" className="uppercase font-mono text-[10px]">{selectedApp.sector}</Badge>
-                      <span className="text-sm text-[var(--color-ink-2)]">{selectedApp.jobPosting?.title || 'General Application'}</span>
+                      <span className="text-sm text-muted-foreground">{selectedApp.jobPosting?.title || 'General Application'}</span>
                     </div>
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => {
                     setSelectedApp(null);
                     setCustomMsgText('');
-                  }} className="text-[var(--color-ink-2)] lg:hidden">
-                    Close
+                  }} className="text-muted-foreground lg:hidden">
+                    <X className="w-5 h-5" />
                   </Button>
                 </div>
 
                 <div className="p-6 space-y-6 flex-1">
                   {/* Status Actions & Workflow */}
-                  <div className="bg-[var(--color-paper-2)] p-4 rounded-lg border border-[var(--color-rule)] flex flex-col gap-4">
+                  <div className="bg-muted/40 p-4 rounded-lg border border-border flex flex-col gap-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="text-[10px] uppercase font-semibold text-[var(--color-ink-2)] block mb-1">Current Status</span>
+                        <span className="text-[10px] uppercase font-semibold text-muted-foreground block mb-1">Current Status</span>
                         <Badge variant={selectedApp.status === 'HIRED' ? 'default' : selectedApp.status === 'REJECTED' ? 'destructive' : 'secondary'}>
                           {selectedApp.status || 'PENDING'}
                         </Badge>
@@ -485,7 +485,7 @@ const AdminDashboard = () => {
                       )}
                     </div>
 
-                    <div className="space-y-3 pt-3 border-t border-[var(--color-rule)]">
+                    <div className="space-y-3 pt-3 border-t border-border">
                       <h3 className="text-sm font-semibold">Workflow Checklist</h3>
                       
                       {/* Step 1: Contact */}
@@ -531,7 +531,7 @@ const AdminDashboard = () => {
                           <Button 
                             variant="ghost" 
                             size="sm" 
-                            className="h-8 text-xs text-[var(--color-ink-2)] hover:text-red-600"
+                            className="h-8 text-xs text-muted-foreground hover:text-red-600"
                             onClick={() => patchApplicationField(selectedApp.id, 'safetyResourcesSent', !selectedApp.safetyResourcesSent)}
                           >
                             {selectedApp.safetyResourcesSent ? 'Undo Send' : 'Mark Sent'}
@@ -558,7 +558,7 @@ const AdminDashboard = () => {
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-[var(--color-rule)]">
+                  <div className="pt-4 border-t border-border">
                     <h4 className="text-sm font-semibold mb-3">Quick Message</h4>
                     <div className="flex gap-2 mb-3">
                       <Button variant="outline" size="sm" className="text-xs flex-1" onClick={() => applyTemplate('interview', selectedApp)}>Interview</Button>
@@ -569,12 +569,12 @@ const AdminDashboard = () => {
                       value={customMsgText}
                       onChange={(e) => setCustomMsgText(e.target.value)}
                       placeholder="Type your message or select a template..."
-                      className="w-full h-24 p-3 text-sm border border-[var(--color-rule)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] mb-3 resize-none bg-white"
+                      className="w-full h-24 p-3 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring mb-3 resize-none bg-background"
                     />
                     <div className="flex gap-2">
                       <Button 
                         variant="default" 
-                        className="flex-1 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-white"
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
                         onClick={() => window.open(getWhatsAppLink(selectedApp.phone, customMsgText), '_blank')}
                         disabled={!customMsgText}
                       >
@@ -602,8 +602,8 @@ const AdminDashboard = () => {
         return (
           <div className="p-4 md:p-8">
             <div className="mb-8">
-              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Location Manager</h1>
-              <p className="text-[var(--color-ink-2)] mt-1">Add and organise regions and operational towns.</p>
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">Location Manager</h1>
+              <p className="text-muted-foreground mt-1">Add and organise regions and operational towns.</p>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -639,7 +639,7 @@ const AdminDashboard = () => {
                       <Textarea
                         name="description"
                         defaultValue={editingLocationData?.description || ''}
-                        className="flex min-h-[80px] w-full rounded-md border border-[var(--color-rule)] bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                        className="flex min-h-[80px] w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         placeholder="Optional description"
                       />
                     </div>
@@ -697,14 +697,14 @@ const AdminDashboard = () => {
                             <div className="flex items-center justify-between">
                               <div>
                                 {region.name}
-                                <div className="text-xs text-[var(--color-ink-2)] mt-1 font-mono">{region.id}</div>
+                                <div className="text-xs text-muted-foreground mt-1 font-mono">{region.id}</div>
                               </div>
                               <div className="flex space-x-1">
                                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleEditLocation('region', region.id, region)}>
-                                  <Edit className="w-4 h-4 text-[var(--color-ink-2)]" />
+                                  <Edit className="w-4 h-4 text-muted-foreground" />
                                 </Button>
                                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => deleteLocation('region', region.id)}>
-                                  <Trash2 className="w-4 h-4 text-[var(--color-error)]" />
+                                  <Trash2 className="w-4 h-4 text-destructive" />
                                 </Button>
                               </div>
                             </div>
@@ -715,15 +715,15 @@ const AdminDashboard = () => {
                                 <Badge key={town.id} variant="secondary" className="flex items-center gap-1 group">
                                   {town.name}
                                 <Button variant="ghost" size="icon" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity ml-1" onClick={() => handleEditLocation('town', town.id, { ...town, regionId: region.id })}>
-                                  <Edit className="w-3 h-3 text-[var(--color-ink-2)] hover:text-[var(--color-ink)]" />
+                                  <Edit className="w-3 h-3 text-muted-foreground hover:text-foreground" />
                                 </Button>
                                 <Button variant="ghost" size="icon" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteLocation('town', town.id)}>
-                                  <Trash2 className="w-3 h-3 text-[var(--color-error)] hover:text-[var(--color-error)]" />
+                                  <Trash2 className="w-3 h-3 text-destructive hover:text-destructive" />
                                 </Button>
                                 </Badge>
                               ))}
                               {(!region.towns || region.towns.length === 0) && (
-                                <span className="text-sm text-[var(--color-ink-2)] italic">No towns added</span>
+                                <span className="text-sm text-muted-foreground italic">No towns added</span>
                               )}
                             </div>
                           </TableCell>
@@ -731,7 +731,7 @@ const AdminDashboard = () => {
                       ))}
                       {locations.length === 0 && (
                         <TableRow>
-                          <TableCell colSpan={2} className="text-center py-8 text-[var(--color-ink-2)]">No locations found.</TableCell>
+                          <TableCell colSpan={2} className="text-center py-8 text-muted-foreground">No locations found.</TableCell>
                         </TableRow>
                       )}
                     </TableBody>
@@ -747,8 +747,8 @@ const AdminDashboard = () => {
         return (
           <div className="p-4 md:p-8">
             <div className="mb-8">
-              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Job Manager</h1>
-              <p className="text-[var(--color-ink-2)] mt-1">Publish new catching roles.</p>
+              <h1 className="text-3xl font-display font-semibold text-foreground tracking-tight">Job Manager</h1>
+              <p className="text-muted-foreground mt-1">Publish new catching roles.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -767,7 +767,7 @@ const AdminDashboard = () => {
                       <Textarea
                         name="description"
                         required
-                        className="flex min-h-[80px] w-full rounded-md border border-[var(--color-rule)] bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                        className="flex min-h-[80px] w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         rows={3}
                       />
                     </div>
@@ -825,8 +825,8 @@ const AdminDashboard = () => {
                       {jobs.map((job) => (
                         <TableRow key={job.id}>
                           <TableCell className="font-medium">{job.title}</TableCell>
-                          <TableCell className="text-[var(--color-ink-2)]">{job.townId}</TableCell>
-                          <TableCell className="text-[var(--color-ink-2)]">{job.payRate}</TableCell>
+                          <TableCell className="text-muted-foreground">{job.townId}</TableCell>
+                          <TableCell className="text-muted-foreground">{job.payRate}</TableCell>
                           <TableCell>
                             <Badge variant={job.status === 'PUBLISHED' ? "default" : "secondary"} className="capitalize">{job.status}</Badge>
                           </TableCell>
@@ -834,7 +834,7 @@ const AdminDashboard = () => {
                       ))}
                       {jobs.length === 0 && (
                         <TableRow>
-                          <TableCell colSpan={4} className="text-center py-8 text-[var(--color-ink-2)]">No active jobs.</TableCell>
+                          <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">No active jobs.</TableCell>
                         </TableRow>
                       )}
                     </TableBody>
@@ -849,8 +849,8 @@ const AdminDashboard = () => {
         return (
           <div className="p-4 md:p-8 max-w-5xl">
             <div className="mb-8">
-              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">Admin Settings</h1>
-              <p className="text-[var(--color-ink-2)] mt-1">Manage system configurations and users.</p>
+              <h1 className="text-3xl font-display font-semibold text-foreground tracking-tight">Admin Settings</h1>
+              <p className="text-muted-foreground mt-1">Manage system configurations and users.</p>
             </div>
             <Card>
               <CardHeader>
@@ -873,7 +873,7 @@ const AdminDashboard = () => {
                         <TableCell>
                           <Badge variant={u.role === 'ADMIN' ? 'default' : 'secondary'} className="text-xs">{u.role}</Badge>
                         </TableCell>
-                        <TableCell className="text-[var(--color-ink-2)]">{new Date(u.createdAt).toLocaleDateString()}</TableCell>
+                        <TableCell className="text-muted-foreground">{new Date(u.createdAt).toLocaleDateString()}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -922,7 +922,7 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
-              <div className="border-t border-[var(--color-rule)] pt-4">
+              <div className="border-t border-border pt-4">
                 <h4 className="text-sm font-semibold mb-2">Bank Details</h4>
                 <div className="text-sm space-y-1">
                   <p><span className="text-gray-500">Bank Name:</span> {selectedApp.bankName || 'N/A'}</p>
@@ -932,7 +932,7 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
-              <div className="border-t border-[var(--color-rule)] pt-4">
+              <div className="border-t border-border pt-4">
                 <h4 className="text-sm font-semibold mb-2">Health & Safety</h4>
                 <div className="text-sm space-y-1">
                   <p><span className="text-gray-500">Fit to Lift:</span> {selectedApp.isFitToLift ? 'Yes' : 'No'}</p>
@@ -943,7 +943,7 @@ const AdminDashboard = () => {
                 </div>
               </div>
               
-              <div className="border-t border-[var(--color-rule)] pt-4">
+              <div className="border-t border-border pt-4">
                 <h4 className="text-sm font-semibold mb-2">Background & Work Rights</h4>
                 <div className="text-sm space-y-1">
                   <p><span className="text-gray-500">UK Right to Work:</span> {selectedApp.rightToWorkUK ? 'Yes' : 'No'}</p>
@@ -954,7 +954,7 @@ const AdminDashboard = () => {
             </div>
           )}
           
-          <DialogFooter className="mt-6 border-t border-[var(--color-rule)] pt-4">
+          <DialogFooter className="mt-6 border-t border-border pt-4">
             <Button variant="outline" onClick={() => setIsViewAppOpen(false)}>Close</Button>
           </DialogFooter>
         </DialogContent>

@@ -81,19 +81,19 @@ const InitialOnboarding = ({ profile, USER_ID, getToken, fetchData }: any) => {
 
   if (isCompleted) {
     return (
-      <Card className="bg-[var(--color-paper-2)]">
+      <Card className="bg-muted/50 border-border">
         <CardContent className="p-6">
           <Badge variant="default" className="px-3 py-1 text-sm rounded-md gap-2 font-medium flex w-fit mb-4">
             <CheckCircle2 className="w-4 h-4" /> Application Completed
           </Badge>
-          <p className="text-[var(--color-ink-2)]">You have successfully submitted your initial application. Our team will contact you shortly with the next steps.</p>
+          <p className="text-muted-foreground">You have successfully submitted your initial application. Our team will contact you shortly with the next steps.</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="border-[var(--color-accent)] shadow-md max-w-2xl mx-auto">
+    <Card className="border-primary/50 shadow-md max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>Initial Application</CardTitle>
         <CardDescription>Please provide some basic information to get started.</CardDescription>
@@ -106,22 +106,22 @@ const InitialOnboarding = ({ profile, USER_ID, getToken, fetchData }: any) => {
               <div className="space-y-2">
                 <Label>Full Name</Label>
                 <Input {...register("name")} />
-                {errors.name && <span className="text-red-500 text-xs">{errors.name.message as string}</span>}
+                {errors.name && <span className="text-destructive text-xs">{errors.name.message as string}</span>}
               </div>
               <div className="space-y-2">
                 <Label>Phone Number</Label>
                 <Input {...register("phone")} />
-                {errors.phone && <span className="text-red-500 text-xs">{errors.phone.message as string}</span>}
+                {errors.phone && <span className="text-destructive text-xs">{errors.phone.message as string}</span>}
               </div>
               <div className="space-y-2">
                 <Label>Date of Birth</Label>
                 <Input type="date" {...register("dateOfBirth")} />
-                {errors.dateOfBirth && <span className="text-red-500 text-xs">{errors.dateOfBirth.message as string}</span>}
+                {errors.dateOfBirth && <span className="text-destructive text-xs">{errors.dateOfBirth.message as string}</span>}
               </div>
               <div className="space-y-2">
                 <Label>Postcode</Label>
                 <Input {...register("postcode")} />
-                {errors.postcode && <span className="text-red-500 text-xs">{errors.postcode.message as string}</span>}
+                {errors.postcode && <span className="text-destructive text-xs">{errors.postcode.message as string}</span>}
               </div>
               <div className="space-y-2 md:col-span-2">
                 <Label>Poultry Experience (Years/Months or short description)</Label>
@@ -129,31 +129,31 @@ const InitialOnboarding = ({ profile, USER_ID, getToken, fetchData }: any) => {
               </div>
             </div>
 
-            <div className="pt-4 space-y-4 border-t border-[var(--color-rule)] mt-4">
-              <div className="flex items-center gap-3 bg-[var(--color-paper-2)] p-4 rounded-md border border-[var(--color-rule)]">
+            <div className="pt-4 space-y-4 border-t border-border mt-4">
+              <div className="flex items-center gap-3 bg-muted/40 p-4 rounded-md border border-border">
                 <Controller name="hasRightToWork" control={control} render={({ field }) => (
-                  <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                  <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-primary" />
                 )} />
                 <Label>I have the legal right to work in the UK</Label>
               </div>
 
-              <div className="flex items-center gap-3 bg-[var(--color-paper-2)] p-4 rounded-md border border-[var(--color-rule)]">
+              <div className="flex items-center gap-3 bg-muted/40 p-4 rounded-md border border-border">
                 <Controller name="hasDrivingLicense" control={control} render={({ field }) => (
-                  <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                  <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-primary" />
                 )} />
                 <Label>I have a valid driving license</Label>
               </div>
 
-              <div className="flex items-center gap-3 bg-[var(--color-paper-2)] p-4 rounded-md border border-[var(--color-rule)]">
+              <div className="flex items-center gap-3 bg-muted/40 p-4 rounded-md border border-border">
                 <Controller name="hasForkliftLicense" control={control} render={({ field }) => (
-                  <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-[var(--color-accent)]" />
+                  <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-primary" />
                 )} />
                 <Label>I have a valid forklift license</Label>
               </div>
             </div>
           </div>
 
-          <div className="pt-6 border-t border-[var(--color-rule)] mt-6">
+          <div className="pt-6 border-t border-border mt-6">
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? 'Submitting...' : 'Submit Initial Application'} <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
@@ -208,8 +208,8 @@ const PortalDashboard = () => {
   }, [fetchData]);
 
   const renderContent = () => {
-    if (loading) return <div className="p-6 max-w-4xl mx-auto flex justify-center text-[var(--color-ink-2)]">Loading portal...</div>;
-    if (error) return <div className="p-6 max-w-4xl mx-auto text-[var(--color-accent)] font-medium">Error: {error}</div>;
+    if (loading) return <div className="p-6 max-w-4xl mx-auto flex justify-center text-muted-foreground">Loading portal...</div>;
+    if (error) return <div className="p-6 max-w-4xl mx-auto text-destructive font-medium">Error: {error}</div>;
 
     switch (activeTab) {
       case 'onboarding':
@@ -314,18 +314,18 @@ const PortalDashboard = () => {
         return (
           <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
             <header>
-              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">
                 Resources
               </h1>
-              <p className="text-[var(--color-ink-2)] mt-1">Access training materials and guidelines.</p>
+              <p className="text-muted-foreground mt-1">Access training materials and guidelines.</p>
             </header>
             <Card>
               <CardHeader>
                 <CardTitle>Safety Documents</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-[var(--color-paper-2)] rounded-lg border border-[var(--color-rule)]">
-                  <div className="font-medium text-[var(--color-ink)]">Animal Welfare Guidelines</div>
+                <div className="flex items-center justify-between p-4 bg-muted/40 rounded-lg border border-border">
+                  <div className="font-medium text-foreground">Animal Welfare Guidelines</div>
                   <Button variant="outline" size="sm">View PDF</Button>
                 </div>
               </CardContent>
@@ -336,10 +336,10 @@ const PortalDashboard = () => {
         return (
           <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
             <header>
-              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">
                 Support
               </h1>
-              <p className="text-[var(--color-ink-2)] mt-1">Get help with your applications or account.</p>
+              <p className="text-muted-foreground mt-1">Get help with your applications or account.</p>
             </header>
             <Card>
               <CardHeader>
@@ -347,13 +347,13 @@ const PortalDashboard = () => {
                 <CardDescription>Reach out to the CatchingJobs team</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="p-4 bg-[var(--color-paper-2)] rounded-lg border border-[var(--color-rule)]">
-                  <h3 className="font-semibold text-sm text-[var(--color-ink-2)] uppercase tracking-wider mb-2">Email</h3>
-                  <p className="text-[var(--color-ink)] font-medium">support@catchingjobs.co.uk</p>
+                <div className="p-4 bg-muted/40 rounded-lg border border-border">
+                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-2">Email</h3>
+                  <p className="text-foreground font-medium">support@catchingjobs.co.uk</p>
                 </div>
-                <div className="p-4 bg-[var(--color-paper-2)] rounded-lg border border-[var(--color-rule)]">
-                  <h3 className="font-semibold text-sm text-[var(--color-ink-2)] uppercase tracking-wider mb-2">Phone</h3>
-                  <p className="text-[var(--color-ink)] font-medium">0800 123 4567</p>
+                <div className="p-4 bg-muted/40 rounded-lg border border-border">
+                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-2">Phone</h3>
+                  <p className="text-foreground font-medium">0800 123 4567</p>
                 </div>
               </CardContent>
             </Card>
@@ -363,10 +363,10 @@ const PortalDashboard = () => {
         return (
           <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
             <header>
-              <h1 className="text-3xl font-display font-semibold text-[var(--color-ink)] tracking-tight">
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">
                 Settings
               </h1>
-              <p className="text-[var(--color-ink-2)] mt-1">Manage your personal information.</p>
+              <p className="text-muted-foreground mt-1">Manage your personal information.</p>
             </header>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="flex flex-col gap-6">
@@ -379,50 +379,50 @@ const PortalDashboard = () => {
                     {profile?.application ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 text-sm">
                         <div className="space-y-1">
-                          <span className="text-[var(--color-ink-2)] block">Full Name</span>
-                          <span className="font-medium text-[var(--color-ink)]">{profile.application.name || '-'}</span>
+                          <span className="text-muted-foreground block">Full Name</span>
+                          <span className="font-medium text-foreground">{profile.application.name || '-'}</span>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-[var(--color-ink-2)] block">Phone</span>
-                          <span className="font-medium text-[var(--color-ink)]">{profile.application.phone || '-'}</span>
+                          <span className="text-muted-foreground block">Phone</span>
+                          <span className="font-medium text-foreground">{profile.application.phone || '-'}</span>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-[var(--color-ink-2)] block">Date of Birth</span>
-                          <span className="font-medium text-[var(--color-ink)]">{profile.application.dateOfBirth ? new Date(profile.application.dateOfBirth).toLocaleDateString() : '-'}</span>
+                          <span className="text-muted-foreground block">Date of Birth</span>
+                          <span className="font-medium text-foreground">{profile.application.dateOfBirth ? new Date(profile.application.dateOfBirth).toLocaleDateString() : '-'}</span>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-[var(--color-ink-2)] block">NI Number</span>
-                          <span className="font-medium text-[var(--color-ink)]">{profile.application.niNumber || '-'}</span>
+                          <span className="text-muted-foreground block">NI Number</span>
+                          <span className="font-medium text-foreground">{profile.application.niNumber || '-'}</span>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-[var(--color-ink-2)] block">Address</span>
-                          <span className="font-medium text-[var(--color-ink)]">
+                          <span className="text-muted-foreground block">Address</span>
+                          <span className="font-medium text-foreground">
                             {profile.application.addressLine1 || profile.application.town ? `${profile.application.addressLine1 || ''} ${profile.application.town || ''}` : '-'}
                           </span>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-[var(--color-ink-2)] block">Postcode</span>
-                          <span className="font-medium text-[var(--color-ink)]">{profile.application.postcode || '-'}</span>
+                          <span className="text-muted-foreground block">Postcode</span>
+                          <span className="font-medium text-foreground">{profile.application.postcode || '-'}</span>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-[var(--color-ink-2)] block">Right to Work UK</span>
-                          <span className="font-medium text-[var(--color-ink)]">{profile.application.hasRightToWork ? 'Yes' : 'No'}</span>
+                          <span className="text-muted-foreground block">Right to Work UK</span>
+                          <span className="font-medium text-foreground">{profile.application.hasRightToWork ? 'Yes' : 'No'}</span>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-[var(--color-ink-2)] block">Driving License</span>
-                          <span className="font-medium text-[var(--color-ink)]">{profile.application.hasDrivingLicense ? 'Yes' : 'No'}</span>
+                          <span className="text-muted-foreground block">Driving License</span>
+                          <span className="font-medium text-foreground">{profile.application.hasDrivingLicense ? 'Yes' : 'No'}</span>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-[var(--color-ink-2)] block">Forklift License</span>
-                          <span className="font-medium text-[var(--color-ink)]">{profile.application.hasForkliftLicense ? 'Yes' : 'No'}</span>
+                          <span className="text-muted-foreground block">Forklift License</span>
+                          <span className="font-medium text-foreground">{profile.application.hasForkliftLicense ? 'Yes' : 'No'}</span>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-[var(--color-ink-2)] block">Sector</span>
-                          <span className="font-medium text-[var(--color-ink)] capitalize">{profile.application.sector || '-'}</span>
+                          <span className="text-muted-foreground block">Sector</span>
+                          <span className="font-medium text-foreground capitalize">{profile.application.sector || '-'}</span>
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm text-[var(--color-ink-2)]">No application data found.</p>
+                      <p className="text-sm text-muted-foreground">No application data found.</p>
                     )}
                   </CardContent>
                 </Card>
