@@ -23,11 +23,15 @@
 - **Database**: When changing Prisma schema, run `npx prisma db push` (or migrate) to update the SQLite/Postgres database, and restart any running development server.
 - **Helper Scripts**: Database seeding and utility scripts are located under `prisma/scripts/`.
 
-## UI & Design System (Hallmark + Clerk Integration)
-- **Design Tokens**: Enforce OKLCH tokens (`var(--color-paper)`, `var(--color-ink)`, `var(--color-rule)`, `var(--color-accent)`).
-- **Clerk Styling**: Override default Clerk appearance using custom tokens:
-  `appearance={{ variables: { colorPrimary: '#10B981' }, elements: { card: 'bg-[var(--color-paper)] border border-[var(--color-rule)]' } }}`
-- **Layout Integrity**: For auth pages, use split-screen layouts without wrapping in `AppShell`. In `PortalDashboard`, consume `useAppShell` context and ensure paper/ink contrast (avoiding generic `bg-blue-50` or `text-red-500`).
+## UI & Design Systems
+
+### 1. Dashboards & Logins / Auth (shadcn/ui)
+- **Primary Framework**: All Dashboards (Portals, Switchboard, Admin) and Logins / Auth pages **MUST** use **shadcn/ui** components (`@/components/ui/`). Do **NOT** use Hallmark rules for Dashboards or Logins.
+- **Sidebar Standard**: Dashboards use the official shadcn sidebar system (`SidebarProvider`, `AppSidebar`, `SidebarInset`, `SidebarTrigger`) configured with CSS variables (`var(--sidebar)`, `var(--sidebar-foreground)`, `var(--sidebar-border)`, `var(--sidebar-accent)`).
+- **Logins & Auth Styling**: Auth pages use shadcn UI containers (`Card`, `Input`, `Button`, `Label`) with Clerk integrated cleanly into shadcn tokens (`bg-card`, `border-border`, `text-card-foreground`).
+
+### 2. Marketing & Landing Pages (Hallmark)
+- **Scope**: Public landers and marketing sections enforce Hallmark anti-AI-slop design system using OKLCH tokens (`var(--color-paper)`, `var(--color-ink)`, `var(--color-rule)`, `var(--color-accent)`).
 
 ## Commands
 - `npm run dev` - Starts the development server.
