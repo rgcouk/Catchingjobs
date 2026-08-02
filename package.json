@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "eslint .",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
+    "seed": "tsx prisma/scripts/auto-seed.ts",
+    "quality-check": "npm run format && npm run lint && npm run build"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

@@ -38,3 +38,5 @@
 - `npm run build` - Builds the application for production.
 - `npm run lint` - Runs ESLint.
 - `npm run format` - Formats the code using Prettier.
+- `npm run seed` - Runs automated database seeding (`prisma/scripts/auto-seed.ts`).
+- `npm run quality-check` - Runs 1-command pre-flight quality verification (format, lint, build).
