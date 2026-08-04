@@ -84,11 +84,20 @@ export default function createAdminRouter(prisma: any) {
   // Applications
   router.get('/applications', async (req, res) => {
     try {
-      const applications = await prisma.application.findMany({
-        include: { user: true, jobPosting: true },
-        orderBy: { createdAt: 'desc' }
-      });
-      res.json(applications);
+      const skip = parseInt(req.query.skip as string, 10) || 0;
+      const take = parseInt(req.query.take as string, 10) || 50;
+
+      const [applications, total] = await Promise.all([
+        prisma.application.findMany({
+          skip,
+          take,
+          include: { user: true, jobPosting: true },
+          orderBy: { createdAt: 'desc' }
+        }),
+        prisma.application.count()
+      ]);
+
+      res.json({ data: applications, total, skip, take });
     } catch (error) {
       console.error('Error fetching applications:', error);
       res.status(500).json({ error: 'Failed to fetch applications' });
@@ -124,6 +133,16 @@ export default function createAdminRouter(prisma: any) {
 
   router.post('/job-postings', async (req, res) => {
     try {
+      const userId = (req as any).auth?.userId;
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (!user || user.role !== 'ADMIN') {
+        return res.status(403).json({ error: 'Forbidden: Admin role required' });
+      }
+
       const job = await prisma.jobPosting.create({
         data: req.body
       });

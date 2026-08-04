@@ -26,9 +26,7 @@ import {
   Command,
 } from 'lucide-react';
 
-import { NavDocuments } from '@/components/nav-documents';
 import { NavMain } from '@/components/nav-main';
-import { NavSecondary } from '@/components/nav-secondary';
 import { NavUser } from '@/components/nav-user';
 import {
   Sidebar,
@@ -44,43 +42,6 @@ export function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar> & { navItems?: any[] }) {
   // Catchingjobs specific content for the other areas
-  const defaultData = {
-    navSecondary: [
-      {
-        title: 'Settings',
-        url: '#',
-        icon: Settings2,
-      },
-      {
-        title: 'Get Help',
-        url: '#',
-        icon: LifeBuoy,
-      },
-      {
-        title: 'Search',
-        url: '#',
-        icon: Search,
-      },
-    ],
-    documents: [
-      {
-        name: 'Safety Protocols',
-        url: '#',
-        icon: Database,
-      },
-      {
-        name: 'Compliance Docs',
-        url: '#',
-        icon: Frame,
-      },
-      {
-        name: 'Timesheets',
-        url: '#',
-        icon: PieChart,
-      },
-    ],
-  };
-
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -100,11 +61,7 @@ export function AppSidebar({
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        {navItems && <NavMain items={navItems} />}
-        <NavDocuments items={defaultData.documents} />
-        <NavSecondary items={defaultData.navSecondary} className="mt-auto" />
-      </SidebarContent>
+      <SidebarContent>{navItems && <NavMain items={navItems} />}</SidebarContent>
       <SidebarFooter>
         <NavUser />
       </SidebarFooter>

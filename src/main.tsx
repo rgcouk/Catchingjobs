@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { ClerkProvider } from '@clerk/clerk-react';
 import App from './App';
+import { Toaster } from 'sonner';
 import './index.css';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
@@ -29,6 +30,7 @@ if (!PUBLISHABLE_KEY) {
         <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
           <BrowserRouter>
             <App />
+            <Toaster position="top-center" richColors />
           </BrowserRouter>
         </ClerkProvider>
       </HelmetProvider>

@@ -63,6 +63,22 @@ import {
 } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { ChartAreaInteractive } from '../../components/chart-area-interactive';
+
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { toast } from 'sonner';
+import { ErrorBoundary } from '../../components/ErrorBoundary';
+
+const jobSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().min(1, 'Description is required'),
+  payRate: z.string().min(1, 'Pay rate is required'),
+  sector: z.string().min(1, 'Sector is required'),
+  townId: z.string().min(1, 'Town is required'),
+});
+type JobFormValues = z.infer<typeof jobSchema>;
+
 import { useAppShell } from '../../components/layout/AppShell';
 
 const AdminDashboard = () => {
@@ -70,6 +86,8 @@ const AdminDashboard = () => {
   const { getToken } = useAuth();
 
   const [applications, setApplications] = useState<any[]>([]);
+  const [totalApps, setTotalApps] = useState(0);
+  const [appSkip, setAppSkip] = useState(0);
   const [locations, setLocations] = useState<any[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
@@ -85,6 +103,29 @@ const AdminDashboard = () => {
 
   const [isViewAppOpen, setIsViewAppOpen] = useState(false);
 
+  const loadApplications = useCallback(
+    async (skip = 0, isLoadMore = false) => {
+      try {
+        const token = await getToken();
+        const res = await fetch(`/api/admin/applications?skip=${skip}&take=50`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error('Failed to fetch applications');
+        const data = await res.json();
+        if (isLoadMore) {
+          setApplications((prev) => [...prev, ...data.data]);
+        } else {
+          setApplications(data.data);
+        }
+        setTotalApps(data.total);
+        setAppSkip(data.skip + data.data.length);
+      } catch (err: any) {
+        toast.error(err.message || 'Failed to fetch applications');
+      }
+    },
+    [getToken],
+  );
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -93,9 +134,7 @@ const AdminDashboard = () => {
       const headers = { Authorization: `Bearer ${token}` };
 
       if (['dashboard', 'all', 'hired', 'rejected', 'kanban', 'applicants'].includes(activeTab)) {
-        const res = await fetch('/api/admin/applications', { headers });
-        if (!res.ok) throw new Error('Failed to fetch applications');
-        setApplications(await res.json());
+        await loadApplications(0, false);
       } else if (activeTab === 'locations') {
         const res = await fetch('/api/admin/locations', { headers });
         if (!res.ok) throw new Error('Failed to fetch locations');
@@ -221,33 +260,28 @@ const AdminDashboard = () => {
     setEditingLocationData(null);
   };
 
-  const handleJobSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+  const jobForm = useForm<JobFormValues>({
+    resolver: zodResolver(jobSchema),
+    defaultValues: { title: '', description: '', payRate: '', sector: '', townId: '' },
+  });
 
+  const onJobSubmit = async (data: JobFormValues) => {
     try {
       const token = await getToken();
       const res = await fetch('/api/admin/job-postings', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          title: data.title,
-          description: data.description,
-          payRate: data.payRate,
-          sector: data.sector,
-          townId: data.townId ? data.townId.toString() : undefined,
-          status: 'ACTIVE',
-        }),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ ...data, status: 'ACTIVE' }),
       });
-      if (!res.ok) throw new Error('Failed to create job');
-      e.currentTarget.reset();
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to create job');
+      }
+      jobForm.reset();
       await fetchData();
+      toast.success('Job posted successfully');
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || 'An error occurred');
     }
   };
 
@@ -394,7 +428,9 @@ const AdminDashboard = () => {
                         {applications.slice(0, 5).map((app: any) => (
                           <div key={app.id} className="flex items-center">
                             <div className="ml-4 space-y-1">
-                              <p className="text-sm font-medium leading-none">{app.name}</p>
+                              <p className="text-sm font-medium leading-none">
+                                {app.name || 'N/A'}
+                              </p>
                               <p className="text-sm text-muted-foreground">{app.email}</p>
                             </div>
                             <div className="ml-auto font-medium">
@@ -440,75 +476,87 @@ const AdminDashboard = () => {
                   </p>
                 </div>
 
-                <div className="bg-card border border-border rounded-lg overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Applicant Name</TableHead>
-                        <TableHead>Sector</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Location</TableHead>
-                        <TableHead>Date</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredApps.map((app) => (
-                        <TableRow
-                          key={app.id}
-                          className={`cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selectedApp?.id === app.id ? 'bg-accent/50' : 'hover:bg-muted/50'}`}
-                          onClick={() => setSelectedApp(app)}
-                          tabIndex={0}
-                          role="button"
-                          aria-selected={selectedApp?.id === app.id}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              setSelectedApp(app);
-                            }
-                          }}
-                        >
-                          <TableCell className="font-medium">{app.name}</TableCell>
-                          <TableCell>
-                            <Badge variant="secondary" className="uppercase font-mono text-[10px]">
-                              {app.sector}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={
-                                app.status === 'HIRED'
-                                  ? 'default'
-                                  : app.status === 'REJECTED'
-                                    ? 'destructive'
-                                    : app.status === 'REVIEWING'
-                                      ? 'secondary'
-                                      : 'outline'
-                              }
-                            >
-                              {app.status || 'PENDING'}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-muted-foreground">
-                            {app.town || 'N/A'}
-                          </TableCell>
-                          <TableCell className="text-muted-foreground">
-                            {app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A'}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {filteredApps.length === 0 && (
+                <ErrorBoundary>
+                  <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col">
+                    <Table>
+                      <TableHeader>
                         <TableRow>
-                          <TableCell
-                            colSpan={5}
-                            className="text-center py-8 text-muted-foreground bg-card"
-                          >
-                            No applications found
-                          </TableCell>
+                          <TableHead>Applicant Name</TableHead>
+                          <TableHead>Sector</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Location</TableHead>
+                          <TableHead>Date</TableHead>
                         </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredApps.map((app) => (
+                          <TableRow
+                            key={app.id}
+                            className={`cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selectedApp?.id === app.id ? 'bg-accent/50' : 'hover:bg-muted/50'}`}
+                            onClick={() => setSelectedApp(app)}
+                            tabIndex={0}
+                            role="button"
+                            aria-selected={selectedApp?.id === app.id}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                setSelectedApp(app);
+                              }
+                            }}
+                          >
+                            <TableCell className="font-medium">{app.name || 'N/A'}</TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="secondary"
+                                className="uppercase font-mono text-[10px]"
+                              >
+                                {app.sector || 'N/A'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  app.status === 'HIRED'
+                                    ? 'default'
+                                    : app.status === 'REJECTED'
+                                      ? 'destructive'
+                                      : app.status === 'REVIEWING'
+                                        ? 'secondary'
+                                        : 'outline'
+                                }
+                              >
+                                {app.status || 'PENDING'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-muted-foreground">
+                              {app.town || 'N/A'}
+                            </TableCell>
+                            <TableCell className="text-muted-foreground">
+                              {app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A'}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {filteredApps.length === 0 && (
+                          <TableRow>
+                            <TableCell
+                              colSpan={5}
+                              className="text-center py-8 text-muted-foreground bg-card"
+                            >
+                              No applications found
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                    {appSkip < totalApps && (
+                      <div className="p-4 flex justify-center bg-card border-t border-border">
+                        <Button variant="outline" onClick={() => loadApplications(appSkip, true)}>
+                          Load More
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </ErrorBoundary>
               </div>
             </div>
 
@@ -1011,50 +1059,94 @@ const AdminDashboard = () => {
                   <CardTitle>Post a Job</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleJobSubmit} className="space-y-4">
+                  <form onSubmit={jobForm.handleSubmit(onJobSubmit)} className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="title">Title</Label>
-                      <Input id="title" name="title" required placeholder="e.g. Chicken Catcher" />
+                      <Input
+                        id="title"
+                        {...jobForm.register('title')}
+                        placeholder="e.g. Chicken Catcher"
+                      />
+                      {jobForm.formState.errors.title && (
+                        <span className="text-red-500 text-xs">
+                          {jobForm.formState.errors.title.message}
+                        </span>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label>Description</Label>
                       <Textarea
-                        name="description"
-                        required
+                        {...jobForm.register('description')}
                         className="flex min-h-[80px] w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         rows={3}
                       />
+                      {jobForm.formState.errors.description && (
+                        <span className="text-red-500 text-xs">
+                          {jobForm.formState.errors.description.message}
+                        </span>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="payRate">Pay Rate</Label>
-                      <Input id="payRate" name="payRate" required placeholder="e.g. £15/hr" />
+                      <Input
+                        id="payRate"
+                        {...jobForm.register('payRate')}
+                        placeholder="e.g. £15/hr"
+                      />
+                      {jobForm.formState.errors.payRate && (
+                        <span className="text-red-500 text-xs">
+                          {jobForm.formState.errors.payRate.message}
+                        </span>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="sector">Sector</Label>
-                      <Select name="sector" required>
-                        <SelectTrigger id="sector">
-                          <SelectValue placeholder="Select Sector..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="chicken">Chicken</SelectItem>
-                          <SelectItem value="turkey">Turkey</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Controller
+                        name="sector"
+                        control={jobForm.control}
+                        render={({ field }) => (
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger id="sector">
+                              <SelectValue placeholder="Select Sector..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="chicken">Chicken</SelectItem>
+                              <SelectItem value="turkey">Turkey</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                      {jobForm.formState.errors.sector && (
+                        <span className="text-red-500 text-xs">
+                          {jobForm.formState.errors.sector.message}
+                        </span>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="townId">Town</Label>
-                      <Select name="townId" required>
-                        <SelectTrigger id="townId">
-                          <SelectValue placeholder="Select Town..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {allTowns.map((t) => (
-                            <SelectItem key={t.id} value={t.id}>
-                              {t.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Controller
+                        name="townId"
+                        control={jobForm.control}
+                        render={({ field }) => (
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger id="townId">
+                              <SelectValue placeholder="Select Town..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {allTowns.map((t) => (
+                                <SelectItem key={t.id} value={t.id}>
+                                  {t.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                      {jobForm.formState.errors.townId && (
+                        <span className="text-red-500 text-xs">
+                          {jobForm.formState.errors.townId.message}
+                        </span>
+                      )}
                     </div>
                     <Button type="submit" className="w-full mt-4">
                       <Plus className="w-4 h-4 mr-2" /> Publish Job

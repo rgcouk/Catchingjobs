@@ -25,10 +25,12 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { useUser, useClerk } from '@clerk/clerk-react';
+import { useAppShell } from '@/components/layout/AppShell';
 
 export function NavUser() {
   const { isMobile } = useSidebar();
   const { user } = useUser();
+  const { setActiveTab } = useAppShell();
   const { signOut } = useClerk();
 
   if (!user) return null;
@@ -83,9 +85,9 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setActiveTab('settings')}>
                 <UserCircleIcon />
-                Account
+                Settings
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCardIcon />
