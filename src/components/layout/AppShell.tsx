@@ -39,10 +39,15 @@ interface AppShellProps {
   userType?: 'admin' | 'portal';
 }
 
-export default function AppShell({ children, navItems, defaultTab = 'dashboard', userType = 'admin' }: AppShellProps) {
+export default function AppShell({
+  children,
+  navItems,
+  defaultTab = 'dashboard',
+  userType = 'admin',
+}: AppShellProps) {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState(defaultTab);
-  
+
   // Basic mobile detection for default sidebar state
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
@@ -62,7 +67,7 @@ export default function AppShell({ children, navItems, defaultTab = 'dashboard',
         try {
           const token = await getToken();
           const res = await fetch(`/api/portal/me?userId=${user.id}`, {
-            headers: { Authorization: `Bearer ${token}` }
+            headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) {
             const data = await res.json();
@@ -78,40 +83,57 @@ export default function AppShell({ children, navItems, defaultTab = 'dashboard',
             }
           }
         } catch (e) {
-          console.error("Error checking onboarding:", e);
+          console.error('Error checking onboarding:', e);
         }
       };
       checkOnboarding();
     }
   }, [userType, user, getToken, activeTab]);
 
-  const displayedNavItems = userType === 'portal'
-    ? (!isFullyOnboarded ? navItems.filter(i => i.id === 'onboarding') : navItems.filter(i => i.id !== 'onboarding'))
-    : navItems;
+  const displayedNavItems =
+    userType === 'portal'
+      ? !isFullyOnboarded
+        ? navItems.filter((i) => i.id === 'onboarding')
+        : navItems.filter((i) => i.id !== 'onboarding')
+      : navItems;
 
-  const currentTab = displayedNavItems.find(item => item.id === activeTab);
+  const currentTab = displayedNavItems.find((item) => item.id === activeTab);
 
   return (
-    <AppShellContext.Provider value={{ isSidebarOpen, setSidebarOpen, isMobile, navItems: displayedNavItems, activeTab, setActiveTab, userType }}>
+    <AppShellContext.Provider
+      value={{
+        isSidebarOpen,
+        setSidebarOpen,
+        isMobile,
+        navItems: displayedNavItems,
+        activeTab,
+        setActiveTab,
+        userType,
+      }}
+    >
       <SidebarProvider defaultOpen={true} className="h-[100dvh] overflow-hidden w-full">
-        <AppSidebar navItems={displayedNavItems.map(item => ({ 
-          title: item.label, 
-          url: '#', 
-          icon: item.icon as React.ElementType, 
-          isActive: activeTab === item.id || !!(item.children && item.children.some(c => c.id === activeTab)), 
-          onClick: () => setActiveTab(item.id),
-          items: item.children ? item.children.map(child => ({
-            title: child.label,
+        <AppSidebar
+          navItems={displayedNavItems.map((item) => ({
+            title: item.label,
             url: '#',
-            isActive: activeTab === child.id,
-            onClick: () => setActiveTab(child.id)
-          })) : undefined
-        }))} />
+            icon: item.icon as React.ElementType,
+            isActive:
+              activeTab === item.id ||
+              !!(item.children && item.children.some((c) => c.id === activeTab)),
+            onClick: () => setActiveTab(item.id),
+            items: item.children
+              ? item.children.map((child) => ({
+                  title: child.label,
+                  url: '#',
+                  isActive: activeTab === child.id,
+                  onClick: () => setActiveTab(child.id),
+                }))
+              : undefined,
+          }))}
+        />
         <SidebarInset>
           <SiteHeader title={currentTab?.label || 'Dashboard'} />
-          <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-            {children}
-          </div>
+          <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </AppShellContext.Provider>

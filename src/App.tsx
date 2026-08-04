@@ -4,8 +4,23 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation, Navigate, useParams, Link } from 'react-router-dom';
-import { useAuth, useUser, SignedIn, SignedOut, UserButton, AuthenticateWithRedirectCallback } from '@clerk/clerk-react';
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  Navigate,
+  useParams,
+  Link,
+} from 'react-router-dom';
+import {
+  useAuth,
+  useUser,
+  SignedIn,
+  SignedOut,
+  UserButton,
+  AuthenticateWithRedirectCallback,
+} from '@clerk/clerk-react';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import { motion, AnimatePresence } from 'motion/react';
@@ -33,7 +48,16 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import PortalDashboard from './pages/portal/PortalDashboard';
 
 import AppShell, { NavItem } from './components/layout/AppShell';
-import { LayoutDashboard, Users, MapPin, Briefcase, Settings, UserCheck, ClipboardList, BookOpen } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Users,
+  MapPin,
+  Briefcase,
+  Settings,
+  UserCheck,
+  ClipboardList,
+  BookOpen,
+} from 'lucide-react';
 
 import { ApplicationData } from './types';
 
@@ -84,15 +108,15 @@ function RegionRoute({
 
 const adminNavItems: NavItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { 
-    id: 'applicants', 
-    label: 'Applicants', 
+  {
+    id: 'applicants',
+    label: 'Applicants',
     icon: Users,
     children: [
       { id: 'all', label: 'All Applicants' },
       { id: 'hired', label: 'Hired' },
       { id: 'rejected', label: 'Rejected' },
-    ]
+    ],
   },
   { id: 'locations', label: 'Locations', icon: MapPin },
   { id: 'jobs', label: 'Job Postings', icon: Briefcase },
@@ -292,80 +316,85 @@ function App() {
             ? 'turkey'
             : 'root';
 
-  const isAppRoute = path.startsWith('/admin') || path.startsWith('/user-portal') || path.startsWith('/login') || path.startsWith('/register') || path === '/sso-callback';
+  const isAppRoute =
+    path.startsWith('/admin') ||
+    path.startsWith('/user-portal') ||
+    path.startsWith('/login') ||
+    path.startsWith('/register') ||
+    path === '/sso-callback';
 
   return (
     <div className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] flex flex-col font-sans selection:bg-[var(--color-accent)] selection:text-white antialiased relative">
       {!isAppRoute && (
         <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-full border border-[var(--color-rule)] bg-[var(--color-paper)]/90 backdrop-blur-md shadow-sm p-1.5 flex items-center gap-1 transition-all">
-        <div
-          onClick={() => handleNavigate('root', '')}
-          className="flex items-center gap-2 cursor-pointer group no-underline pl-2 pr-4 py-1.5 rounded-full hover:bg-[var(--color-paper-2)] transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]"
-          title="CatchingJobs Directory"
-        >
-          <div className="bg-[var(--color-ink)] w-6 h-6 rounded-full flex items-center justify-center text-[var(--color-paper)] group-hover:bg-[var(--color-accent)] transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]">
-            <Building2 className="w-3 h-3" />
-          </div>
-          <span className="font-display font-semibold text-sm tracking-tight text-[var(--color-ink)]">
-            CatchingJobs
-          </span>
-        </div>
-
-        <div className="w-[1px] h-4 bg-[var(--color-rule)] mx-1" />
-
-        <ul className="hidden md:flex items-center gap-1 list-none m-0 p-0">
-          <li>
-            <button
-              onClick={() => handleNavigate('chicken', '')}
-              className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer ${
-                activeTab === 'chicken' && !regionIdFromPath
-                  ? 'bg-[var(--color-ink)] text-[var(--color-paper)]'
-                  : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-paper-2)]'
-              }`}
-            >
-              Chickens
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => handleNavigate('turkey', '')}
-              className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer ${
-                activeTab === 'turkey' && !regionIdFromPath
-                  ? 'bg-[var(--color-ink)] text-[var(--color-paper)]'
-                  : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-paper-2)]'
-              }`}
-            >
-              Turkeys
-            </button>
-          </li>
-        </ul>
-
-        <div className="w-[1px] h-4 bg-[var(--color-rule)] mx-1 hidden md:block" />
-
-        <div className="flex items-center gap-1">
-          <SignedOut>
-            <button
-              onClick={() => navigate('/login')}
-              className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer text-[var(--color-ink)] hover:bg-[var(--color-paper-2)] flex items-center gap-1"
-            >
-              <Lock className="w-3 h-3" />
-              <span className="hidden sm:inline">Log In</span>
-            </button>
-          </SignedOut>
-          <SignedIn>
-            <div className="px-2">
-              <UserButton afterSignOutUrl="/" />
-            </div>
-          </SignedIn>
-
-          <Link
-            to="/register"
-            className="bg-[var(--color-accent)] hover:opacity-90 text-[var(--color-paper)] px-4 py-1.5 rounded-full font-semibold text-xs transition-opacity duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer shadow-sm"
+          <div
+            onClick={() => handleNavigate('root', '')}
+            className="flex items-center gap-2 cursor-pointer group no-underline pl-2 pr-4 py-1.5 rounded-full hover:bg-[var(--color-paper-2)] transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]"
+            title="CatchingJobs Directory"
           >
-            Apply Now
-          </Link>
-        </div>
-      </nav>
+            <div className="bg-[var(--color-ink)] w-6 h-6 rounded-full flex items-center justify-center text-[var(--color-paper)] group-hover:bg-[var(--color-accent)] transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]">
+              <Building2 className="w-3 h-3" />
+            </div>
+            <span className="font-display font-semibold text-sm tracking-tight text-[var(--color-ink)]">
+              CatchingJobs
+            </span>
+          </div>
+
+          <div className="w-[1px] h-4 bg-[var(--color-rule)] mx-1" />
+
+          <ul className="hidden md:flex items-center gap-1 list-none m-0 p-0">
+            <li>
+              <button
+                onClick={() => handleNavigate('chicken', '')}
+                className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer ${
+                  activeTab === 'chicken' && !regionIdFromPath
+                    ? 'bg-[var(--color-ink)] text-[var(--color-paper)]'
+                    : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-paper-2)]'
+                }`}
+              >
+                Chickens
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleNavigate('turkey', '')}
+                className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer ${
+                  activeTab === 'turkey' && !regionIdFromPath
+                    ? 'bg-[var(--color-ink)] text-[var(--color-paper)]'
+                    : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-paper-2)]'
+                }`}
+              >
+                Turkeys
+              </button>
+            </li>
+          </ul>
+
+          <div className="w-[1px] h-4 bg-[var(--color-rule)] mx-1 hidden md:block" />
+
+          <div className="flex items-center gap-1">
+            <SignedOut>
+              <button
+                onClick={() => navigate('/login')}
+                className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer text-[var(--color-ink)] hover:bg-[var(--color-paper-2)] flex items-center gap-1"
+              >
+                <Lock className="w-3 h-3" />
+                <span className="hidden sm:inline">Log In</span>
+              </button>
+            </SignedOut>
+            <SignedIn>
+              <div className="px-2">
+                <UserButton afterSignOutUrl="/" />
+              </div>
+            </SignedIn>
+
+            <Link
+              to="/register"
+              className="bg-[var(--color-accent)] hover:opacity-90 text-[var(--color-paper)] px-4 py-1.5 rounded-full font-semibold text-xs transition-opacity duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer shadow-sm"
+            >
+              Apply Now
+            </Link>
+          </div>
+        </nav>
       )}
 
       <AnimatePresence>
@@ -408,24 +437,24 @@ function App() {
         )}
       </AnimatePresence>
 
-      <main className={`flex-1 w-full flex flex-col lg:flex-row relative ${!isAppRoute ? 'pt-[72px]' : ''}`}>
+      <main
+        className={`flex-1 w-full flex flex-col lg:flex-row relative ${!isAppRoute ? 'pt-[72px]' : ''}`}
+      >
         <div className="flex-1 space-y-6">
           <Routes>
-            <Route
-              path="/"
-              element={
-                <Switchboard onNavigate={handleNavigate} />
-              }
-            />
-            <Route
-              path="/corporate"
-              element={
-                <CorporateLander onNavigate={handleNavigate} />
-              }
-            />
+            <Route path="/" element={<Switchboard onNavigate={handleNavigate} />} />
+            <Route path="/corporate" element={<CorporateLander onNavigate={handleNavigate} />} />
             <Route path="/login/*" element={<Login />} />
             <Route path="/register/*" element={<Register />} />
-            <Route path="/sso-callback" element={<AuthenticateWithRedirectCallback signInForceRedirectUrl="/user-portal" signUpForceRedirectUrl="/user-portal" />} />
+            <Route
+              path="/sso-callback"
+              element={
+                <AuthenticateWithRedirectCallback
+                  signInForceRedirectUrl="/user-portal"
+                  signUpForceRedirectUrl="/user-portal"
+                />
+              }
+            />
             <Route
               path="/admin"
               element={
@@ -449,10 +478,7 @@ function App() {
             <Route
               path="/portal"
               element={
-                <CatcherPortal
-                  applications={applications}
-                  onUpdateProfile={handleUpdateProfile}
-                />
+                <CatcherPortal applications={applications} onUpdateProfile={handleUpdateProfile} />
               }
             />
             <Route
@@ -475,21 +501,11 @@ function App() {
             />
             <Route
               path="/chickens/:regionId"
-              element={
-                <RegionRoute
-                  sectorId="chicken"
-                  onNavigate={handleNavigate}
-                />
-              }
+              element={<RegionRoute sectorId="chicken" onNavigate={handleNavigate} />}
             />
             <Route
               path="/turkeys/:regionId"
-              element={
-                <RegionRoute
-                  sectorId="turkey"
-                  onNavigate={handleNavigate}
-                />
-              }
+              element={<RegionRoute sectorId="turkey" onNavigate={handleNavigate} />}
             />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
@@ -509,33 +525,31 @@ function App() {
         )}
       </main>
 
-
-
       {!isAppRoute && (
         <footer className="border-t border-[var(--color-rule)] bg-[var(--color-paper)] pt-24 pb-32 px-6 lg:px-8 mt-auto shrink-0 relative overflow-hidden">
-        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-end justify-between gap-12">
-          <div className="space-y-6 max-w-md">
-            <h2 className="font-display text-4xl tracking-tight text-[var(--color-ink)] leading-none">
-              Honest work. <br /> Weekly pay.
-            </h2>
-            <p className="text-base text-[var(--color-ink-2)] leading-relaxed">
-              CatchingJobs is the dedicated agricultural recruitment platform managed by Pullum Ltd.
-              We supply certified catchers to the UK's leading poultry producers.
-            </p>
-          </div>
-          <div className="flex flex-col items-start md:items-end gap-3 text-sm text-[var(--color-ink-2)] font-mono uppercase tracking-wider">
-            <span className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4" /> AHVLA Licensed
-            </span>
-            <span className="flex items-center gap-2">
-              <HelpCircle className="w-4 h-4" /> Lantra Quality Approved
-            </span>
-            <div className="mt-8 text-xs text-[var(--color-ink-2)]/60">
-              © {new Date().getFullYear()} Pullum Ltd. (048293)
+          <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-end justify-between gap-12">
+            <div className="space-y-6 max-w-md">
+              <h2 className="font-display text-4xl tracking-tight text-[var(--color-ink)] leading-none">
+                Honest work. <br /> Weekly pay.
+              </h2>
+              <p className="text-base text-[var(--color-ink-2)] leading-relaxed">
+                CatchingJobs is the dedicated agricultural recruitment platform managed by Pullum
+                Ltd. We supply certified catchers to the UK's leading poultry producers.
+              </p>
+            </div>
+            <div className="flex flex-col items-start md:items-end gap-3 text-sm text-[var(--color-ink-2)] font-mono uppercase tracking-wider">
+              <span className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4" /> AHVLA Licensed
+              </span>
+              <span className="flex items-center gap-2">
+                <HelpCircle className="w-4 h-4" /> Lantra Quality Approved
+              </span>
+              <div className="mt-8 text-xs text-[var(--color-ink-2)]/60">
+                © {new Date().getFullYear()} Pullum Ltd. (048293)
+              </div>
             </div>
           </div>
-        </div>
-      </footer>
+        </footer>
       )}
     </div>
   );

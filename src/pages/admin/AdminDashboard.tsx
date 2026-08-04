@@ -1,16 +1,66 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { LayoutDashboard, MapPin, Briefcase, Settings, LogOut, Menu, Plus, Edit, Trash2, TrendingUp, TrendingDown, Users } from 'lucide-react';
+import {
+  LayoutDashboard,
+  MapPin,
+  Briefcase,
+  Settings,
+  LogOut,
+  Menu,
+  Plus,
+  Edit,
+  Trash2,
+  TrendingUp,
+  TrendingDown,
+  Users,
+} from 'lucide-react';
 import { useAuth } from '@clerk/clerk-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '../../components/ui/select';
 import { Badge } from '../../components/ui/badge';
 import { Label } from '../../components/ui/label';
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../../components/ui/table';
-import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogContent } from '../../components/ui/dialog';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from '../../components/ui/table';
+import {
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogContent,
+} from '../../components/ui/dialog';
 import { Textarea } from '../../components/ui/textarea';
-import { MessageSquare, PhoneCall, Mail, CheckCircle, Smartphone, Check, Sparkles, UsersIcon, BarChartIcon } from 'lucide-react';
+import {
+  MessageSquare,
+  PhoneCall,
+  Mail,
+  CheckCircle,
+  Smartphone,
+  Check,
+  Sparkles,
+  UsersIcon,
+  BarChartIcon,
+} from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { ChartAreaInteractive } from '../../components/chart-area-interactive';
 import { useAppShell } from '../../components/layout/AppShell';
@@ -35,14 +85,13 @@ const AdminDashboard = () => {
 
   const [isViewAppOpen, setIsViewAppOpen] = useState(false);
 
-
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const token = await getToken();
       const headers = { Authorization: `Bearer ${token}` };
-      
+
       if (['dashboard', 'all', 'hired', 'rejected', 'kanban', 'applicants'].includes(activeTab)) {
         const res = await fetch('/api/admin/applications', { headers });
         if (!res.ok) throw new Error('Failed to fetch applications');
@@ -76,9 +125,9 @@ const AdminDashboard = () => {
       const token = await getToken();
       const res = await fetch(`/api/admin/applications/${id}`, {
         method: 'PATCH',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ status }),
       });
@@ -97,9 +146,9 @@ const AdminDashboard = () => {
       const token = await getToken();
       const res = await fetch(`/api/admin/applications/${id}`, {
         method: 'PATCH',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ [field]: value }),
       });
@@ -121,15 +170,15 @@ const AdminDashboard = () => {
     try {
       const token = await getToken();
       const method = isEditingLocation ? 'PATCH' : 'POST';
-      const url = isEditingLocation 
+      const url = isEditingLocation
         ? `/api/admin/locations/${editingLocationData.type}/${editingLocationData.id}`
         : '/api/admin/locations';
-        
+
       const res = await fetch(url, {
         method,
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           ...data,
@@ -137,7 +186,7 @@ const AdminDashboard = () => {
         }),
       });
       if (!res.ok) throw new Error(`Failed to ${isEditingLocation ? 'update' : 'create'} location`);
-      
+
       setIsEditingLocation(false);
       setEditingLocationData(null);
       await fetchData();
@@ -152,7 +201,7 @@ const AdminDashboard = () => {
       const token = await getToken();
       const res = await fetch(`/api/admin/locations/${type}/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error('Failed to delete location');
       await fetchData();
@@ -166,7 +215,7 @@ const AdminDashboard = () => {
     setEditingLocationData({ type, id, ...locationData });
     // This will populate the form on the left side
   };
-  
+
   const handleCancelEditLocation = () => {
     setIsEditingLocation(false);
     setEditingLocationData(null);
@@ -181,9 +230,9 @@ const AdminDashboard = () => {
       const token = await getToken();
       const res = await fetch('/api/admin/job-postings', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           title: data.title,
@@ -235,7 +284,12 @@ const AdminDashboard = () => {
   };
 
   const renderContent = () => {
-    if (loading) return <div className="p-4 md:p-8 flex justify-center text-muted-foreground">Loading dashboard data...</div>;
+    if (loading)
+      return (
+        <div className="p-4 md:p-8 flex justify-center text-muted-foreground">
+          Loading dashboard data...
+        </div>
+      );
     if (error) return <div className="p-4 md:p-8 text-destructive font-medium">Error: {error}</div>;
 
     switch (activeTab) {
@@ -265,7 +319,7 @@ const AdminDashboard = () => {
                       <div className="text-muted-foreground">All-time submissions</div>
                     </CardFooter>
                   </Card>
-                  
+
                   <Card className="@container/card" data-slot="card">
                     <CardHeader className="relative">
                       <CardDescription>Active Jobs</CardDescription>
@@ -319,18 +373,16 @@ const AdminDashboard = () => {
                       </div>
                     </CardHeader>
                     <CardFooter className="flex-col items-start gap-1 text-sm">
-                      <div className="line-clamp-1 flex gap-2 font-medium">
-                        Registered accounts
-                      </div>
+                      <div className="line-clamp-1 flex gap-2 font-medium">Registered accounts</div>
                       <div className="text-muted-foreground">Internal & External</div>
                     </CardFooter>
                   </Card>
                 </div>
-                
+
                 <div className="px-4 lg:px-6">
                   <ChartAreaInteractive />
                 </div>
-                
+
                 <div className="px-4 lg:px-6">
                   <Card>
                     <CardHeader>
@@ -375,13 +427,19 @@ const AdminDashboard = () => {
         return (
           <div className="flex h-full w-full">
             {/* Main Table Area */}
-            <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto ${selectedApp ? 'hidden lg:flex' : 'flex'}`}>
+            <div
+              className={`flex-1 flex flex-col min-w-0 overflow-y-auto ${selectedApp ? 'hidden lg:flex' : 'flex'}`}
+            >
               <div className="p-4 md:p-8">
                 <div className="mb-8">
-                  <h1 className="text-3xl font-bold text-foreground tracking-tight">Applications</h1>
-                  <p className="text-muted-foreground mt-1">Manage and track applicant progression.</p>
+                  <h1 className="text-3xl font-bold text-foreground tracking-tight">
+                    Applications
+                  </h1>
+                  <p className="text-muted-foreground mt-1">
+                    Manage and track applicant progression.
+                  </p>
                 </div>
-                
+
                 <div className="bg-card border border-border rounded-lg overflow-hidden">
                   <Table>
                     <TableHeader>
@@ -395,7 +453,7 @@ const AdminDashboard = () => {
                     </TableHeader>
                     <TableBody>
                       {filteredApps.map((app) => (
-                        <TableRow 
+                        <TableRow
                           key={app.id}
                           className={`cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selectedApp?.id === app.id ? 'bg-accent/50' : 'hover:bg-muted/50'}`}
                           onClick={() => setSelectedApp(app)}
@@ -411,14 +469,28 @@ const AdminDashboard = () => {
                         >
                           <TableCell className="font-medium">{app.name}</TableCell>
                           <TableCell>
-                            <Badge variant="secondary" className="uppercase font-mono text-[10px]">{app.sector}</Badge>
+                            <Badge variant="secondary" className="uppercase font-mono text-[10px]">
+                              {app.sector}
+                            </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant={app.status === 'HIRED' ? 'default' : app.status === 'REJECTED' ? 'destructive' : app.status === 'REVIEWING' ? 'secondary' : 'outline'}>
+                            <Badge
+                              variant={
+                                app.status === 'HIRED'
+                                  ? 'default'
+                                  : app.status === 'REJECTED'
+                                    ? 'destructive'
+                                    : app.status === 'REVIEWING'
+                                      ? 'secondary'
+                                      : 'outline'
+                              }
+                            >
                               {app.status || 'PENDING'}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-muted-foreground">{app.town || 'N/A'}</TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {app.town || 'N/A'}
+                          </TableCell>
                           <TableCell className="text-muted-foreground">
                             {app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A'}
                           </TableCell>
@@ -426,7 +498,10 @@ const AdminDashboard = () => {
                       ))}
                       {filteredApps.length === 0 && (
                         <TableRow>
-                          <TableCell colSpan={5} className="text-center py-8 text-muted-foreground bg-card">
+                          <TableCell
+                            colSpan={5}
+                            className="text-center py-8 text-muted-foreground bg-card"
+                          >
                             No applications found
                           </TableCell>
                         </TableRow>
@@ -444,14 +519,23 @@ const AdminDashboard = () => {
                   <div>
                     <h2 className="text-xl font-semibold text-foreground">{selectedApp.name}</h2>
                     <div className="mt-1 flex items-center gap-2">
-                      <Badge variant="secondary" className="uppercase font-mono text-[10px]">{selectedApp.sector}</Badge>
-                      <span className="text-sm text-muted-foreground">{selectedApp.jobPosting?.title || 'General Application'}</span>
+                      <Badge variant="secondary" className="uppercase font-mono text-[10px]">
+                        {selectedApp.sector}
+                      </Badge>
+                      <span className="text-sm text-muted-foreground">
+                        {selectedApp.jobPosting?.title || 'General Application'}
+                      </span>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => {
-                    setSelectedApp(null);
-                    setCustomMsgText('');
-                  }} className="text-muted-foreground lg:hidden">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedApp(null);
+                      setCustomMsgText('');
+                    }}
+                    className="text-muted-foreground lg:hidden"
+                  >
                     <X className="w-5 h-5" />
                   </Button>
                 </div>
@@ -461,25 +545,48 @@ const AdminDashboard = () => {
                   <div className="bg-muted/40 p-4 rounded-lg border border-border flex flex-col gap-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="text-[10px] uppercase font-semibold text-muted-foreground block mb-1">Current Status</span>
-                        <Badge variant={selectedApp.status === 'HIRED' ? 'default' : selectedApp.status === 'REJECTED' ? 'destructive' : 'secondary'}>
+                        <span className="text-[10px] uppercase font-semibold text-muted-foreground block mb-1">
+                          Current Status
+                        </span>
+                        <Badge
+                          variant={
+                            selectedApp.status === 'HIRED'
+                              ? 'default'
+                              : selectedApp.status === 'REJECTED'
+                                ? 'destructive'
+                                : 'secondary'
+                          }
+                        >
                           {selectedApp.status || 'PENDING'}
                         </Badge>
                       </div>
-                      
+
                       {selectedApp.status !== 'REJECTED' && selectedApp.status !== 'HIRED' && (
                         <div className="flex gap-2">
-                          <Button size="sm" variant="destructive" onClick={() => updateApplicationStatus(selectedApp.id, 'REJECTED')}>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => updateApplicationStatus(selectedApp.id, 'REJECTED')}
+                          >
                             Reject
                           </Button>
                           {selectedApp.safetyResourcesSent ? (
-                             <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => updateApplicationStatus(selectedApp.id, 'HIRED')}>
-                               Hire Applicant
-                             </Button>
+                            <Button
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                              onClick={() => updateApplicationStatus(selectedApp.id, 'HIRED')}
+                            >
+                              Hire Applicant
+                            </Button>
                           ) : (
-                             <Button size="sm" onClick={() => patchApplicationField(selectedApp.id, 'safetyResourcesSent', true)}>
-                               Send Full App
-                             </Button>
+                            <Button
+                              size="sm"
+                              onClick={() =>
+                                patchApplicationField(selectedApp.id, 'safetyResourcesSent', true)
+                              }
+                            >
+                              Send Full App
+                            </Button>
                           )}
                         </div>
                       )}
@@ -487,23 +594,35 @@ const AdminDashboard = () => {
 
                     <div className="space-y-3 pt-3 border-t border-border">
                       <h3 className="text-sm font-semibold">Workflow Checklist</h3>
-                      
+
                       {/* Step 1: Contact */}
                       <div className="flex items-center justify-between">
                         {selectedApp.contacted ? (
-                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1 font-mono text-[9px] uppercase">
+                          <Badge
+                            variant="outline"
+                            className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1 font-mono text-[9px] uppercase"
+                          >
                             <Check className="w-3 h-3" /> Contacted
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 font-mono text-[9px] uppercase">
+                          <Badge
+                            variant="outline"
+                            className="bg-yellow-50 text-yellow-700 border-yellow-200 font-mono text-[9px] uppercase"
+                          >
                             Pending Contact
                           </Badge>
                         )}
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className="h-8 text-xs"
-                          onClick={() => patchApplicationField(selectedApp.id, 'contacted', !selectedApp.contacted)}
+                          onClick={() =>
+                            patchApplicationField(
+                              selectedApp.id,
+                              'contacted',
+                              !selectedApp.contacted,
+                            )
+                          }
                         >
                           {selectedApp.contacted ? 'Undo' : 'Mark Contacted'}
                         </Button>
@@ -513,36 +632,53 @@ const AdminDashboard = () => {
                       <div className="flex items-center justify-between">
                         {selectedApp.safetyResourcesSent ? (
                           selectedApp.safetyTasksCompleted ? (
-                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1 font-mono text-[9px] uppercase">
+                            <Badge
+                              variant="outline"
+                              className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1 font-mono text-[9px] uppercase"
+                            >
                               <CheckCircle className="w-3 h-3" /> Full App Received
                             </Badge>
                           ) : (
-                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 flex items-center gap-1 animate-pulse font-mono text-[9px] uppercase">
+                            <Badge
+                              variant="outline"
+                              className="bg-blue-50 text-blue-700 border-blue-200 flex items-center gap-1 animate-pulse font-mono text-[9px] uppercase"
+                            >
                               <Sparkles className="w-3 h-3" /> Full App Sent (Waiting)
                             </Badge>
                           )
                         ) : (
-                          <Badge variant="outline" className="bg-gray-50 text-gray-500 border-gray-200 font-mono text-[9px] uppercase">
+                          <Badge
+                            variant="outline"
+                            className="bg-gray-50 text-gray-500 border-gray-200 font-mono text-[9px] uppercase"
+                          >
                             Full App Not Sent
                           </Badge>
                         )}
-                        
+
                         <div className="flex gap-2">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             className="h-8 text-xs text-muted-foreground hover:text-red-600"
-                            onClick={() => patchApplicationField(selectedApp.id, 'safetyResourcesSent', !selectedApp.safetyResourcesSent)}
+                            onClick={() =>
+                              patchApplicationField(
+                                selectedApp.id,
+                                'safetyResourcesSent',
+                                !selectedApp.safetyResourcesSent,
+                              )
+                            }
                           >
                             {selectedApp.safetyResourcesSent ? 'Undo Send' : 'Mark Sent'}
                           </Button>
-                          
+
                           {selectedApp.safetyResourcesSent && !selectedApp.safetyTasksCompleted && (
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               className="h-8 text-xs text-blue-600 hover:text-blue-700"
-                              onClick={() => patchApplicationField(selectedApp.id, 'safetyTasksCompleted', true)}
+                              onClick={() =>
+                                patchApplicationField(selectedApp.id, 'safetyTasksCompleted', true)
+                              }
                             >
                               Mark Received
                             </Button>
@@ -551,7 +687,11 @@ const AdminDashboard = () => {
                       </div>
 
                       {selectedApp.safetyResourcesSent && (
-                        <Button variant="outline" className="w-full mt-2" onClick={() => setIsViewAppOpen(true)}>
+                        <Button
+                          variant="outline"
+                          className="w-full mt-2"
+                          onClick={() => setIsViewAppOpen(true)}
+                        >
                           View Full Application Data
                         </Button>
                       )}
@@ -561,9 +701,30 @@ const AdminDashboard = () => {
                   <div className="pt-4 border-t border-border">
                     <h4 className="text-sm font-semibold mb-3">Quick Message</h4>
                     <div className="flex gap-2 mb-3">
-                      <Button variant="outline" size="sm" className="text-xs flex-1" onClick={() => applyTemplate('interview', selectedApp)}>Interview</Button>
-                      <Button variant="outline" size="sm" className="text-xs flex-1" onClick={() => applyTemplate('documents', selectedApp)}>Docs</Button>
-                      <Button variant="outline" size="sm" className="text-xs flex-1" onClick={() => applyTemplate('roster', selectedApp)}>Roster</Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs flex-1"
+                        onClick={() => applyTemplate('interview', selectedApp)}
+                      >
+                        Interview
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs flex-1"
+                        onClick={() => applyTemplate('documents', selectedApp)}
+                      >
+                        Docs
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs flex-1"
+                        onClick={() => applyTemplate('roster', selectedApp)}
+                      >
+                        Roster
+                      </Button>
                     </div>
                     <Textarea
                       value={customMsgText}
@@ -572,19 +733,23 @@ const AdminDashboard = () => {
                       className="w-full h-24 p-3 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring mb-3 resize-none bg-background"
                     />
                     <div className="flex gap-2">
-                      <Button 
-                        variant="default" 
+                      <Button
+                        variant="default"
                         className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
-                        onClick={() => window.open(getWhatsAppLink(selectedApp.phone, customMsgText), '_blank')}
+                        onClick={() =>
+                          window.open(getWhatsAppLink(selectedApp.phone, customMsgText), '_blank')
+                        }
                         disabled={!customMsgText}
                       >
                         <Smartphone className="w-4 h-4 mr-2" />
                         WhatsApp
                       </Button>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         className="flex-1"
-                        onClick={() => window.open(getMailLink(selectedApp.name, customMsgText), '_blank')}
+                        onClick={() =>
+                          window.open(getMailLink(selectedApp.name, customMsgText), '_blank')
+                        }
                         disabled={!customMsgText || !selectedApp.email}
                       >
                         <Mail className="w-4 h-4 mr-2" />
@@ -602,29 +767,58 @@ const AdminDashboard = () => {
         return (
           <div className="p-4 md:p-8">
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">Location Manager</h1>
-              <p className="text-muted-foreground mt-1">Add and organise regions and operational towns.</p>
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">
+                Location Manager
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                Add and organise regions and operational towns.
+              </p>
             </div>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
               <Card className="lg:col-span-1 h-fit">
                 <CardHeader>
                   <CardTitle>{isEditingLocation ? 'Edit Location' : 'Add Location'}</CardTitle>
-                  <CardDescription>{isEditingLocation ? 'Update location details.' : 'Create a new region or town.'}</CardDescription>
+                  <CardDescription>
+                    {isEditingLocation
+                      ? 'Update location details.'
+                      : 'Create a new region or town.'}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form key={isEditingLocation ? editingLocationData?.id : 'new'} onSubmit={handleLocationSubmit} className="space-y-4">
+                  <form
+                    key={isEditingLocation ? editingLocationData?.id : 'new'}
+                    onSubmit={handleLocationSubmit}
+                    className="space-y-4"
+                  >
                     <div className="space-y-2">
                       <Label htmlFor="id">ID (Slug)</Label>
-                      <Input id="id" name="id" required defaultValue={editingLocationData?.id || ''} placeholder="e.g. norfolk-region" disabled={isEditingLocation} />
+                      <Input
+                        id="id"
+                        name="id"
+                        required
+                        defaultValue={editingLocationData?.id || ''}
+                        placeholder="e.g. norfolk-region"
+                        disabled={isEditingLocation}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="name">Name</Label>
-                      <Input id="name" name="name" required defaultValue={editingLocationData?.name || ''} placeholder="e.g. Norfolk" />
+                      <Input
+                        id="name"
+                        name="name"
+                        required
+                        defaultValue={editingLocationData?.name || ''}
+                        placeholder="e.g. Norfolk"
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="type">Type</Label>
-                      <Select name="type" defaultValue={editingLocationData?.type || 'region'} disabled={isEditingLocation}>
+                      <Select
+                        name="type"
+                        defaultValue={editingLocationData?.type || 'region'}
+                        disabled={isEditingLocation}
+                      >
                         <SelectTrigger id="type">
                           <SelectValue placeholder="Select Type" />
                         </SelectTrigger>
@@ -645,11 +839,21 @@ const AdminDashboard = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phoneNumber">Phone Number</Label>
-                      <Input id="phoneNumber" name="phoneNumber" defaultValue={editingLocationData?.phoneNumber || ''} placeholder="Optional contact number" />
+                      <Input
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        defaultValue={editingLocationData?.phoneNumber || ''}
+                        placeholder="Optional contact number"
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="county">County (Region only)</Label>
-                      <Input id="county" name="county" defaultValue={editingLocationData?.county || ''} placeholder="Optional" />
+                      <Input
+                        id="county"
+                        name="county"
+                        defaultValue={editingLocationData?.county || ''}
+                        placeholder="Optional"
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="regionId">Parent Region (Town only)</Label>
@@ -659,19 +863,32 @@ const AdminDashboard = () => {
                         </SelectTrigger>
                         <SelectContent>
                           {locations.map((r) => (
-                            <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
+                            <SelectItem key={r.id} value={r.id}>
+                              {r.name}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="flex gap-2 mt-4">
                       {isEditingLocation && (
-                        <Button type="button" variant="outline" onClick={handleCancelEditLocation} className="w-full">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={handleCancelEditLocation}
+                          className="w-full"
+                        >
                           Cancel
                         </Button>
                       )}
                       <Button type="submit" className="w-full">
-                        {isEditingLocation ? 'Save Changes' : <><Plus className="w-4 h-4 mr-2" /> Create Location</>}
+                        {isEditingLocation ? (
+                          'Save Changes'
+                        ) : (
+                          <>
+                            <Plus className="w-4 h-4 mr-2" /> Create Location
+                          </>
+                        )}
                       </Button>
                     </div>
                   </form>
@@ -697,13 +914,25 @@ const AdminDashboard = () => {
                             <div className="flex items-center justify-between">
                               <div>
                                 {region.name}
-                                <div className="text-xs text-muted-foreground mt-1 font-mono">{region.id}</div>
+                                <div className="text-xs text-muted-foreground mt-1 font-mono">
+                                  {region.id}
+                                </div>
                               </div>
                               <div className="flex space-x-1">
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleEditLocation('region', region.id, region)}>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => handleEditLocation('region', region.id, region)}
+                                >
                                   <Edit className="w-4 h-4 text-muted-foreground" />
                                 </Button>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => deleteLocation('region', region.id)}>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => deleteLocation('region', region.id)}
+                                >
                                   <Trash2 className="w-4 h-4 text-destructive" />
                                 </Button>
                               </div>
@@ -712,18 +941,39 @@ const AdminDashboard = () => {
                           <TableCell className="py-4">
                             <div className="flex flex-wrap gap-2">
                               {region.towns?.map((town: any) => (
-                                <Badge key={town.id} variant="secondary" className="flex items-center gap-1 group">
+                                <Badge
+                                  key={town.id}
+                                  variant="secondary"
+                                  className="flex items-center gap-1 group"
+                                >
                                   {town.name}
-                                <Button variant="ghost" size="icon" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity ml-1" onClick={() => handleEditLocation('town', town.id, { ...town, regionId: region.id })}>
-                                  <Edit className="w-3 h-3 text-muted-foreground hover:text-foreground" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteLocation('town', town.id)}>
-                                  <Trash2 className="w-3 h-3 text-destructive hover:text-destructive" />
-                                </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+                                    onClick={() =>
+                                      handleEditLocation('town', town.id, {
+                                        ...town,
+                                        regionId: region.id,
+                                      })
+                                    }
+                                  >
+                                    <Edit className="w-3 h-3 text-muted-foreground hover:text-foreground" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() => deleteLocation('town', town.id)}
+                                  >
+                                    <Trash2 className="w-3 h-3 text-destructive hover:text-destructive" />
+                                  </Button>
                                 </Badge>
                               ))}
                               {(!region.towns || region.towns.length === 0) && (
-                                <span className="text-sm text-muted-foreground italic">No towns added</span>
+                                <span className="text-sm text-muted-foreground italic">
+                                  No towns added
+                                </span>
                               )}
                             </div>
                           </TableCell>
@@ -731,7 +981,9 @@ const AdminDashboard = () => {
                       ))}
                       {locations.length === 0 && (
                         <TableRow>
-                          <TableCell colSpan={2} className="text-center py-8 text-muted-foreground">No locations found.</TableCell>
+                          <TableCell colSpan={2} className="text-center py-8 text-muted-foreground">
+                            No locations found.
+                          </TableCell>
                         </TableRow>
                       )}
                     </TableBody>
@@ -747,7 +999,9 @@ const AdminDashboard = () => {
         return (
           <div className="p-4 md:p-8">
             <div className="mb-8">
-              <h1 className="text-3xl font-display font-semibold text-foreground tracking-tight">Job Manager</h1>
+              <h1 className="text-3xl font-display font-semibold text-foreground tracking-tight">
+                Job Manager
+              </h1>
               <p className="text-muted-foreground mt-1">Publish new catching roles.</p>
             </div>
 
@@ -795,7 +1049,9 @@ const AdminDashboard = () => {
                         </SelectTrigger>
                         <SelectContent>
                           {allTowns.map((t) => (
-                            <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                            <SelectItem key={t.id} value={t.id}>
+                              {t.name}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -828,13 +1084,20 @@ const AdminDashboard = () => {
                           <TableCell className="text-muted-foreground">{job.townId}</TableCell>
                           <TableCell className="text-muted-foreground">{job.payRate}</TableCell>
                           <TableCell>
-                            <Badge variant={job.status === 'PUBLISHED' ? "default" : "secondary"} className="capitalize">{job.status}</Badge>
+                            <Badge
+                              variant={job.status === 'PUBLISHED' ? 'default' : 'secondary'}
+                              className="capitalize"
+                            >
+                              {job.status}
+                            </Badge>
                           </TableCell>
                         </TableRow>
                       ))}
                       {jobs.length === 0 && (
                         <TableRow>
-                          <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">No active jobs.</TableCell>
+                          <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                            No active jobs.
+                          </TableCell>
                         </TableRow>
                       )}
                     </TableBody>
@@ -849,7 +1112,9 @@ const AdminDashboard = () => {
         return (
           <div className="p-4 md:p-8 max-w-5xl">
             <div className="mb-8">
-              <h1 className="text-3xl font-display font-semibold text-foreground tracking-tight">Admin Settings</h1>
+              <h1 className="text-3xl font-display font-semibold text-foreground tracking-tight">
+                Admin Settings
+              </h1>
               <p className="text-muted-foreground mt-1">Manage system configurations and users.</p>
             </div>
             <Card>
@@ -871,9 +1136,16 @@ const AdminDashboard = () => {
                       <TableRow key={u.id}>
                         <TableCell className="font-medium">{u.email}</TableCell>
                         <TableCell>
-                          <Badge variant={u.role === 'ADMIN' ? 'default' : 'secondary'} className="text-xs">{u.role}</Badge>
+                          <Badge
+                            variant={u.role === 'ADMIN' ? 'default' : 'secondary'}
+                            className="text-xs"
+                          >
+                            {u.role}
+                          </Badge>
                         </TableCell>
-                        <TableCell className="text-muted-foreground">{new Date(u.createdAt).toLocaleDateString()}</TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {new Date(u.createdAt).toLocaleDateString()}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -899,25 +1171,44 @@ const AdminDashboard = () => {
               Review all submitted compliance and employment data for {selectedApp?.name}.
             </DialogDescription>
           </DialogHeader>
-          
+
           {selectedApp && (
             <div className="space-y-6 mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 className="text-sm font-semibold mb-2">Personal Details</h4>
                   <div className="text-sm space-y-1">
-                    <p><span className="text-gray-500">Name:</span> {selectedApp.name}</p>
-                    <p><span className="text-gray-500">DOB:</span> {selectedApp.dateOfBirth || 'N/A'}</p>
-                    <p><span className="text-gray-500">NI Number:</span> {selectedApp.niNumber || 'N/A'}</p>
-                    <p><span className="text-gray-500">Address:</span> {selectedApp.addressLine1 || 'N/A'}, {selectedApp.postcode || 'N/A'}</p>
+                    <p>
+                      <span className="text-gray-500">Name:</span> {selectedApp.name}
+                    </p>
+                    <p>
+                      <span className="text-gray-500">DOB:</span> {selectedApp.dateOfBirth || 'N/A'}
+                    </p>
+                    <p>
+                      <span className="text-gray-500">NI Number:</span>{' '}
+                      {selectedApp.niNumber || 'N/A'}
+                    </p>
+                    <p>
+                      <span className="text-gray-500">Address:</span>{' '}
+                      {selectedApp.addressLine1 || 'N/A'}, {selectedApp.postcode || 'N/A'}
+                    </p>
                   </div>
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold mb-2">Emergency Contact</h4>
                   <div className="text-sm space-y-1">
-                    <p><span className="text-gray-500">Name:</span> {selectedApp.emergencyName || 'N/A'}</p>
-                    <p><span className="text-gray-500">Phone:</span> {selectedApp.emergencyPhone || 'N/A'}</p>
-                    <p><span className="text-gray-500">Relation:</span> {selectedApp.emergencyRelation || 'N/A'}</p>
+                    <p>
+                      <span className="text-gray-500">Name:</span>{' '}
+                      {selectedApp.emergencyName || 'N/A'}
+                    </p>
+                    <p>
+                      <span className="text-gray-500">Phone:</span>{' '}
+                      {selectedApp.emergencyPhone || 'N/A'}
+                    </p>
+                    <p>
+                      <span className="text-gray-500">Relation:</span>{' '}
+                      {selectedApp.emergencyRelation || 'N/A'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -925,37 +1216,77 @@ const AdminDashboard = () => {
               <div className="border-t border-border pt-4">
                 <h4 className="text-sm font-semibold mb-2">Bank Details</h4>
                 <div className="text-sm space-y-1">
-                  <p><span className="text-gray-500">Bank Name:</span> {selectedApp.bankName || 'N/A'}</p>
-                  <p><span className="text-gray-500">Account Name:</span> {selectedApp.bankAccountName || 'N/A'}</p>
-                  <p><span className="text-gray-500">Sort Code:</span> {selectedApp.bankSortCode || 'N/A'}</p>
-                  <p><span className="text-gray-500">Account Number:</span> {selectedApp.bankAccountNumber || 'N/A'}</p>
+                  <p>
+                    <span className="text-gray-500">Bank Name:</span>{' '}
+                    {selectedApp.bankName || 'N/A'}
+                  </p>
+                  <p>
+                    <span className="text-gray-500">Account Name:</span>{' '}
+                    {selectedApp.bankAccountName || 'N/A'}
+                  </p>
+                  <p>
+                    <span className="text-gray-500">Sort Code:</span>{' '}
+                    {selectedApp.bankSortCode || 'N/A'}
+                  </p>
+                  <p>
+                    <span className="text-gray-500">Account Number:</span>{' '}
+                    {selectedApp.bankAccountNumber || 'N/A'}
+                  </p>
                 </div>
               </div>
 
               <div className="border-t border-border pt-4">
                 <h4 className="text-sm font-semibold mb-2">Health & Safety</h4>
                 <div className="text-sm space-y-1">
-                  <p><span className="text-gray-500">Fit to Lift:</span> {selectedApp.isFitToLift ? 'Yes' : 'No'}</p>
-                  <p><span className="text-gray-500">Back Issues:</span> {selectedApp.hasBackIssues ? 'Yes' : 'No'}</p>
-                  <p><span className="text-gray-500">Asthma/Allergies:</span> {selectedApp.hasAsthmaOrAllergies ? 'Yes' : 'No'}</p>
-                  <p><span className="text-gray-500">Driving License:</span> {selectedApp.hasDrivingLicense ? 'Yes' : 'No'}</p>
-                  <p><span className="text-gray-500">Forklift License:</span> {selectedApp.hasForkliftLicense ? 'Yes' : 'No'}</p>
+                  <p>
+                    <span className="text-gray-500">Fit to Lift:</span>{' '}
+                    {selectedApp.isFitToLift ? 'Yes' : 'No'}
+                  </p>
+                  <p>
+                    <span className="text-gray-500">Back Issues:</span>{' '}
+                    {selectedApp.hasBackIssues ? 'Yes' : 'No'}
+                  </p>
+                  <p>
+                    <span className="text-gray-500">Asthma/Allergies:</span>{' '}
+                    {selectedApp.hasAsthmaOrAllergies ? 'Yes' : 'No'}
+                  </p>
+                  <p>
+                    <span className="text-gray-500">Driving License:</span>{' '}
+                    {selectedApp.hasDrivingLicense ? 'Yes' : 'No'}
+                  </p>
+                  <p>
+                    <span className="text-gray-500">Forklift License:</span>{' '}
+                    {selectedApp.hasForkliftLicense ? 'Yes' : 'No'}
+                  </p>
                 </div>
               </div>
-              
+
               <div className="border-t border-border pt-4">
                 <h4 className="text-sm font-semibold mb-2">Background & Work Rights</h4>
                 <div className="text-sm space-y-1">
-                  <p><span className="text-gray-500">UK Right to Work:</span> {selectedApp.rightToWorkUK ? 'Yes' : 'No'}</p>
-                  <p><span className="text-gray-500">Convictions:</span> {selectedApp.hasConvictions ? 'Yes' : 'No'}</p>
-                  {selectedApp.criminalConvictions && <p><span className="text-gray-500">Details:</span> {selectedApp.criminalConvictions}</p>}
+                  <p>
+                    <span className="text-gray-500">UK Right to Work:</span>{' '}
+                    {selectedApp.rightToWorkUK ? 'Yes' : 'No'}
+                  </p>
+                  <p>
+                    <span className="text-gray-500">Convictions:</span>{' '}
+                    {selectedApp.hasConvictions ? 'Yes' : 'No'}
+                  </p>
+                  {selectedApp.criminalConvictions && (
+                    <p>
+                      <span className="text-gray-500">Details:</span>{' '}
+                      {selectedApp.criminalConvictions}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
           )}
-          
+
           <DialogFooter className="mt-6 border-t border-border pt-4">
-            <Button variant="outline" onClick={() => setIsViewAppOpen(false)}>Close</Button>
+            <Button variant="outline" onClick={() => setIsViewAppOpen(false)}>
+              Close
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -963,4 +1294,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;;
+export default AdminDashboard;

@@ -1,6 +1,6 @@
-"use client"
+'use client';
 
-import * as React from "react"
+import * as React from 'react';
 import {
   ArrowUpCircleIcon,
   BarChartIcon,
@@ -24,12 +24,12 @@ import {
   Frame,
   PieChart,
   Command,
-} from "lucide-react"
+} from 'lucide-react';
 
-import { NavDocuments } from "@/components/nav-documents"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavDocuments } from '@/components/nav-documents';
+import { NavMain } from '@/components/nav-main';
+import { NavSecondary } from '@/components/nav-secondary';
+import { NavUser } from '@/components/nav-user';
 import {
   Sidebar,
   SidebarContent,
@@ -38,45 +38,48 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-export function AppSidebar({ navItems, ...props }: React.ComponentProps<typeof Sidebar> & { navItems?: any[] }) {
+} from '@/components/ui/sidebar';
+export function AppSidebar({
+  navItems,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & { navItems?: any[] }) {
   // Catchingjobs specific content for the other areas
   const defaultData = {
     navSecondary: [
       {
-        title: "Settings",
-        url: "#",
+        title: 'Settings',
+        url: '#',
         icon: Settings2,
       },
       {
-        title: "Get Help",
-        url: "#",
+        title: 'Get Help',
+        url: '#',
         icon: LifeBuoy,
       },
       {
-        title: "Search",
-        url: "#",
+        title: 'Search',
+        url: '#',
         icon: Search,
       },
     ],
     documents: [
       {
-        name: "Safety Protocols",
-        url: "#",
+        name: 'Safety Protocols',
+        url: '#',
         icon: Database,
       },
       {
-        name: "Compliance Docs",
-        url: "#",
+        name: 'Compliance Docs',
+        url: '#',
         icon: Frame,
       },
       {
-        name: "Timesheets",
-        url: "#",
+        name: 'Timesheets',
+        url: '#',
         icon: PieChart,
       },
     ],
-  }
+  };
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -106,5 +109,5 @@ export function AppSidebar({ navItems, ...props }: React.ComponentProps<typeof S
         <NavUser />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

@@ -1,12 +1,8 @@
-"use client"
+'use client';
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { ChevronRight, type LucideIcon } from 'lucide-react';
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -16,24 +12,24 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
 
 export function NavMain({
   items,
 }: {
   items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
-    onClick?: () => void
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
+    onClick?: () => void;
     items?: {
-      title: string
-      url: string
-      isActive?: boolean
-      onClick?: () => void
-    }[]
-  }[]
+      title: string;
+      url: string;
+      isActive?: boolean;
+      onClick?: () => void;
+    }[];
+  }[];
 }) {
   return (
     <SidebarGroup>
@@ -48,7 +44,7 @@ export function NavMain({
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton 
+                <SidebarMenuButton
                   tooltip={item.title}
                   onClick={(e) => {
                     if (item.onClick) {
@@ -70,8 +66,8 @@ export function NavMain({
                   <SidebarMenuSub>
                     {item.items.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton 
-                          asChild 
+                        <SidebarMenuSubButton
+                          asChild
                           isActive={subItem.isActive}
                           onClick={(e) => {
                             if (subItem.onClick) {
@@ -94,5 +90,5 @@ export function NavMain({
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

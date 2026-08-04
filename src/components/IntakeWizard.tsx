@@ -15,7 +15,7 @@ import {
   PhoneCall,
   AlertTriangle,
   Sparkles,
-  UserCheck
+  UserCheck,
 } from 'lucide-react';
 import { ApplicationData } from '../types';
 import { useUser } from '@clerk/clerk-react';
@@ -188,8 +188,8 @@ export default function IntakeWizard({
                     Registration Successful!
                   </span>
                   <p className="mt-0.5">
-                    Welcome, <strong>{user.firstName || user.fullName}</strong>. Let's
-                    configure your physical roster profile in seconds.
+                    Welcome, <strong>{user.firstName || user.fullName}</strong>. Let's configure
+                    your physical roster profile in seconds.
                   </p>
                 </div>
               </div>
@@ -214,7 +214,9 @@ export default function IntakeWizard({
                     }`}
                   />
                 </div>
-                {errors.phone && <p className="text-[10px] text-red-500 font-mono">{errors.phone}</p>}
+                {errors.phone && (
+                  <p className="text-[10px] text-red-500 font-mono">{errors.phone}</p>
+                )}
               </div>
 
               <div className="space-y-1">
@@ -286,7 +288,9 @@ export default function IntakeWizard({
                     NO
                   </button>
                 </div>
-                {errors.hasRightToWork && <p className="text-[10px] text-red-500">{errors.hasRightToWork}</p>}
+                {errors.hasRightToWork && (
+                  <p className="text-[10px] text-red-500">{errors.hasRightToWork}</p>
+                )}
               </div>
 
               <div className="space-y-1.5">
@@ -317,7 +321,9 @@ export default function IntakeWizard({
                     NO
                   </button>
                 </div>
-                {errors.hasDrivingLicense && <p className="text-[10px] text-red-500">{errors.hasDrivingLicense}</p>}
+                {errors.hasDrivingLicense && (
+                  <p className="text-[10px] text-red-500">{errors.hasDrivingLicense}</p>
+                )}
               </div>
 
               <div className="space-y-1.5">

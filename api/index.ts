@@ -48,64 +48,21 @@ app.get('/api/locations', async (req, res) => {
 });
 
 // Get all applications
-app.get('/api/applications', async (req, res) => {
+app.get('/api/applications', authenticate, async (req, res) => {
   try {
     const applications = await prisma.application.findMany({
       orderBy: { createdAt: 'desc' }
     });
     
-    // Seed with initial data if empty
-    if (applications.length === 0) {
-      const seedData = [
-        {
-          rosterRef: 'PL-CHI-3942',
-          name: 'Marcus Vance',
-          phone: '07700 900142',
-          town: 'Sleaford',
-          hasRightToWork: true,
-          hasDrivingLicense: true,
-          shiftAvailability: 'Night Shifts',
-          sector: 'chicken',
-          timestamp: '18/07/2026, 14:32',
-          contacted: false,
-          safetyResourcesSent: false,
-          safetyTasksCompleted: true,
-          dateOfBirth: '1992-05-14',
-          niNumber: 'JH123456C',
-          addressLine1: '14 Mill Road',
-          postcode: 'NG34 7DP',
-        },
-        {
-          rosterRef: 'PL-TUR-1055',
-          name: 'Elena Rostova',
-          phone: '07700 900821',
-          town: 'Boston',
-          hasRightToWork: true,
-          hasDrivingLicense: false,
-          shiftAvailability: 'Flexible / Any',
-          sector: 'turkey',
-          timestamp: '19/07/2026, 08:15',
-          contacted: true,
-          safetyResourcesSent: true,
-          safetyTasksCompleted: false,
-        },
-      ];
-      
-      const seeded = await Promise.all(
-        seedData.map(data => prisma.application.create({ data }))
-      );
-      return res.json(seeded);
-    }
-    
     res.json(applications);
   } catch (error) {
     console.error('Error fetching applications:', error);
-    res.status(500).json({ error: 'Failed to fetch applications' });
+    res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to fetch applications' });
   }
 });
 
 // Create a new application
-app.post('/api/applications', async (req, res) => {
+app.post('/api/applications', authenticate, async (req, res) => {
   try {
     const application = await prisma.application.create({
       data: req.body,
@@ -113,7 +70,7 @@ app.post('/api/applications', async (req, res) => {
     res.status(201).json(application);
   } catch (error) {
     console.error('Error creating application:', error);
-    res.status(500).json({ error: 'Failed to create application' });
+    res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to create application' });
   }
 });
 
@@ -165,12 +122,16 @@ app.post('/api/webhook/clerk', async (req, res) => {
           role: 'WORKER'
         }
       });
+    } else if (evt?.type === 'user.deleted') {
+      await prisma.user.delete({
+        where: { id: id as string }
+      }).catch(e => console.error('User not found for deletion:', e));
     }
 
     res.status(200).json({ success: true });
   } catch (error) {
     console.error('Error processing clerk webhook data:', error);
-    res.status(500).json({ error: 'Failed to process clerk webhook data' });
+    res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to process clerk webhook data' });
   }
 });
 
@@ -239,7 +200,7 @@ app.post('/api/webhook/intake', async (req, res) => {
 });
 
 // Update an existing application
-app.put('/api/applications/:rosterRef', async (req, res) => {
+app.put('/api/applications/:rosterRef', authenticate, async (req, res) => {
   try {
     const { rosterRef } = req.params;
     const application = await prisma.application.update({
@@ -249,12 +210,12 @@ app.put('/api/applications/:rosterRef', async (req, res) => {
     res.json(application);
   } catch (error) {
     console.error('Error updating application:', error);
-    res.status(500).json({ error: 'Failed to update application' });
+    res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to update application' });
   }
 });
 
 // Delete an application
-app.delete('/api/applications/:rosterRef', async (req, res) => {
+app.delete('/api/applications/:rosterRef', authenticate, async (req, res) => {
   try {
     const { rosterRef } = req.params;
     await prisma.application.delete({
@@ -263,18 +224,7 @@ app.delete('/api/applications/:rosterRef', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('Error deleting application:', error);
-    res.status(500).json({ error: 'Failed to delete application' });
-  }
-});
-
-// Purge all applications
-app.delete('/api/applications', async (req, res) => {
-  try {
-    await prisma.application.deleteMany();
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error purging applications:', error);
-    res.status(500).json({ error: 'Failed to purge applications' });
+    res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to delete application' });
   }
 });
 

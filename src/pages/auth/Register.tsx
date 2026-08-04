@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useSignUp } from '@clerk/clerk-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -13,19 +13,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Loader2 } from 'lucide-react';
 
 const registerSchema = z.object({
-  firstName: z.string().min(2, { message: "First name is required." }),
-  lastName: z.string().min(2, { message: "Last name is required." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+  firstName: z.string().min(2, { message: 'First name is required.' }),
+  lastName: z.string().min(2, { message: 'Last name is required.' }),
+  email: z.string().email({ message: 'Please enter a valid email address.' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
 });
 
 const verifySchema = z.object({
-  code: z.string().min(6, { message: "Verification code must be 6 digits." }),
+  code: z.string().min(6, { message: 'Verification code must be 6 digits.' }),
 });
 
 export default function Register() {
@@ -37,17 +37,17 @@ export default function Register() {
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
     },
   });
 
   const verifyForm = useForm<z.infer<typeof verifySchema>>({
     resolver: zodResolver(verifySchema),
     defaultValues: {
-      code: "",
+      code: '',
     },
   });
 
@@ -63,11 +63,11 @@ export default function Register() {
         password: values.password,
       });
 
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
       setPendingVerification(true);
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));
-      setError(err.errors?.[0]?.longMessage || "Failed to create account.");
+      setError(err.errors?.[0]?.longMessage || 'Failed to create account.');
     }
   }
 
@@ -82,23 +82,23 @@ export default function Register() {
 
       if (completeSignUp.status !== 'complete') {
         console.log(JSON.stringify(completeSignUp, null, 2));
-        setError("Unable to complete registration. Please try again.");
+        setError('Unable to complete registration. Please try again.');
       } else {
         await setActive({ session: completeSignUp.createdSessionId });
         navigate('/user-portal');
       }
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));
-      setError(err.errors?.[0]?.longMessage || "Failed to verify email.");
+      setError(err.errors?.[0]?.longMessage || 'Failed to verify email.');
     }
   }
 
   const handleGoogleSignUp = () => {
     if (!isLoaded) return;
     signUp.authenticateWithRedirect({
-      strategy: "oauth_google",
-      redirectUrl: "/sso-callback",
-      redirectUrlComplete: "/user-portal",
+      strategy: 'oauth_google',
+      fallbackRedirectUrl: '/sso-callback',
+      forceRedirectUrl: '/user-portal',
     });
   };
 
@@ -112,7 +112,8 @@ export default function Register() {
               Join CatchingJobs
             </h1>
             <p className="text-lg text-muted-foreground">
-              Create an account to apply for positions, manage your details, and join our professional teams.
+              Create an account to apply for positions, manage your details, and join our
+              professional teams.
             </p>
           </div>
           <div className="space-y-4 pt-8 border-t border-border">
@@ -120,13 +121,17 @@ export default function Register() {
               <div className="w-8 h-8 rounded-full bg-background border border-border flex items-center justify-center shrink-0">
                 <span className="text-sm font-semibold text-foreground">1</span>
               </div>
-              <p className="text-muted-foreground leading-relaxed text-sm">Quick and straightforward onboarding process.</p>
+              <p className="text-muted-foreground leading-relaxed text-sm">
+                Quick and straightforward onboarding process.
+              </p>
             </div>
             <div className="flex items-start gap-4">
               <div className="w-8 h-8 rounded-full bg-background border border-border flex items-center justify-center shrink-0">
                 <span className="text-sm font-semibold text-foreground">2</span>
               </div>
-              <p className="text-muted-foreground leading-relaxed text-sm">Immediate access to job opportunities near you.</p>
+              <p className="text-muted-foreground leading-relaxed text-sm">
+                Immediate access to job opportunities near you.
+              </p>
             </div>
           </div>
         </div>
@@ -138,9 +143,9 @@ export default function Register() {
           <div className="space-y-2 text-center">
             <h2 className="text-2xl font-semibold tracking-tight">Create your account</h2>
             <p className="text-sm text-muted-foreground">
-              {pendingVerification 
-                ? "Enter the verification code sent to your email." 
-                : "Fill in your details below to get started."}
+              {pendingVerification
+                ? 'Enter the verification code sent to your email.'
+                : 'Fill in your details below to get started.'}
             </p>
           </div>
 
@@ -207,14 +212,18 @@ export default function Register() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full" disabled={!isLoaded || form.formState.isSubmitting}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={!isLoaded || form.formState.isSubmitting}
+                >
                   {form.formState.isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Creating account...
                     </>
                   ) : (
-                    "Create Account"
+                    'Create Account'
                   )}
                 </Button>
               </form>
@@ -235,14 +244,18 @@ export default function Register() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full" disabled={!isLoaded || verifyForm.formState.isSubmitting}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={!isLoaded || verifyForm.formState.isSubmitting}
+                >
                   {verifyForm.formState.isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Verifying...
                     </>
                   ) : (
-                    "Verify Email"
+                    'Verify Email'
                   )}
                 </Button>
               </form>
@@ -256,15 +269,13 @@ export default function Register() {
                   <span className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
-                    Or continue with
-                  </span>
+                  <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
                 </div>
               </div>
 
-              <Button 
-                variant="outline" 
-                type="button" 
+              <Button
+                variant="outline"
+                type="button"
                 className="w-full"
                 onClick={handleGoogleSignUp}
                 disabled={!isLoaded}
@@ -274,7 +285,7 @@ export default function Register() {
               </Button>
 
               <div className="text-center text-sm">
-                Already have an account?{" "}
+                Already have an account?{' '}
                 <Link to="/login" className="font-medium text-primary hover:underline">
                   Sign in
                 </Link>

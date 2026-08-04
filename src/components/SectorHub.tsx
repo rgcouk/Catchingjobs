@@ -34,8 +34,8 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
 
   useEffect(() => {
     fetch('/api/locations')
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (Array.isArray(data)) setRegions(data);
       })
       .catch(console.error);
@@ -113,59 +113,61 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
           </div>
 
           <div className="grid md:grid-cols-2 gap-3">
-            {regions.flatMap((region) => {
-              if (region.towns && region.towns.length > 0) {
-                return region.towns.map((town: any) => ({
-                  id: town.id,
-                  name: town.name,
-                  copy: town.localizedCopy,
-                  activeCrews: region.activeCrews,
-                  type: 'Town',
-                }));
-              }
-              return [
-                {
-                  id: region.id,
-                  name: region.name,
-                  copy: region.seoCopy,
-                  activeCrews: region.activeCrews,
-                  type: 'Region',
-                },
-              ];
-            }).map((item) => (
-              <div
-                key={item.id}
-                className="group bg-white border border-slate-200 hover:border-[var(--color-ink)] rounded-xl p-4 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
-                onClick={() => onSelectRegion(item.id)}
-                id={`dir-region-seo-${item.id}`}
-              >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center group-hover:bg-[var(--color-ink)] transition-colors shrink-0">
-                      <MapPin className="w-5 h-5 text-slate-400 group-hover:text-white" />
+            {regions
+              .flatMap((region) => {
+                if (region.towns && region.towns.length > 0) {
+                  return region.towns.map((town: any) => ({
+                    id: town.id,
+                    name: town.name,
+                    copy: town.localizedCopy,
+                    activeCrews: region.activeCrews,
+                    type: 'Town',
+                  }));
+                }
+                return [
+                  {
+                    id: region.id,
+                    name: region.name,
+                    copy: region.seoCopy,
+                    activeCrews: region.activeCrews,
+                    type: 'Region',
+                  },
+                ];
+              })
+              .map((item) => (
+                <div
+                  key={item.id}
+                  className="group bg-white border border-slate-200 hover:border-[var(--color-ink)] rounded-xl p-4 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
+                  onClick={() => onSelectRegion(item.id)}
+                  id={`dir-region-seo-${item.id}`}
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center group-hover:bg-[var(--color-ink)] transition-colors shrink-0">
+                        <MapPin className="w-5 h-5 text-slate-400 group-hover:text-white" />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="font-bold text-[var(--color-ink)] text-base transition-colors">
+                          {item.name} Catching Area
+                        </h3>
+                        <p className="text-[11px] text-[var(--color-ink-2)] font-medium leading-snug max-w-2xl line-clamp-2">
+                          {item.copy}
+                        </p>
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <h3 className="font-bold text-[var(--color-ink)] text-base transition-colors">
-                        {item.name} Catching Area
-                      </h3>
-                      <p className="text-[11px] text-[var(--color-ink-2)] font-medium leading-snug max-w-2xl line-clamp-2">
-                        {item.copy}
-                      </p>
-                    </div>
-                  </div>
 
-                  <div className="flex flex-col items-start md:items-end gap-2 shrink-0 pl-14 md:pl-0">
-                    <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold text-[var(--color-ink)] bg-slate-100 px-2 py-0.5 rounded group-hover:bg-[var(--color-accent)] group-hover:text-white transition-colors">
-                      {item.activeCrews} Active Catching Crews
-                    </span>
-                    <div className="flex items-center gap-1 text-sm font-bold text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors mt-1">
-                      <span>View {item.type}</span>
-                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <div className="flex flex-col items-start md:items-end gap-2 shrink-0 pl-14 md:pl-0">
+                      <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold text-[var(--color-ink)] bg-slate-100 px-2 py-0.5 rounded group-hover:bg-[var(--color-accent)] group-hover:text-white transition-colors">
+                        {item.activeCrews} Active Catching Crews
+                      </span>
+                      <div className="flex items-center gap-1 text-sm font-bold text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors mt-1">
+                        <span>View {item.type}</span>
+                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
 

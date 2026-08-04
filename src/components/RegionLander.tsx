@@ -24,21 +24,17 @@ interface RegionLanderProps {
   onBackToSector: () => void;
 }
 
-export default function RegionLander({
-  regionId,
-  sectorId,
-  onBackToSector,
-}: RegionLanderProps) {
+export default function RegionLander({ regionId, sectorId, onBackToSector }: RegionLanderProps) {
   const [region, setRegion] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const tenant = TENANTS[sectorId];
 
   useEffect(() => {
     fetch('/api/locations')
-      .then(res => res.json())
+      .then((res) => res.json())
       .then((data: any[]) => {
         let foundRegion = data.find((r) => r.id === regionId);
-        
+
         if (!foundRegion) {
           for (const r of data) {
             if (r.towns) {
@@ -54,7 +50,7 @@ export default function RegionLander({
             }
           }
         }
-        
+
         setRegion(foundRegion || null);
         setLoading(false);
       })
@@ -67,9 +63,7 @@ export default function RegionLander({
   if (loading) {
     return (
       <div className="text-center py-8 bg-white border border-slate-200 rounded-lg max-w-sm mx-auto mt-10">
-        <p className="text-slate-600 font-mono font-bold text-xs">
-          Loading regional context...
-        </p>
+        <p className="text-slate-600 font-mono font-bold text-xs">Loading regional context...</p>
       </div>
     );
   }

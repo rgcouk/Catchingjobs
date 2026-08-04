@@ -1,174 +1,51 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ClipboardList, UserCheck, LogOut, Menu, User, CheckCircle2, Lock, ArrowRight, Briefcase, Plus, Trash2, UploadCloud } from 'lucide-react';
+import {
+  ClipboardList,
+  UserCheck,
+  LogOut,
+  Menu,
+  User,
+  CheckCircle2,
+  Lock,
+  ArrowRight,
+  Briefcase,
+  Plus,
+  Trash2,
+  UploadCloud,
+} from 'lucide-react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 import { Label } from '../../components/ui/label';
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../../components/ui/table';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from '../../components/ui/table';
 
 import { useAppShell } from '../../components/layout/AppShell';
-
-const initialOnboardingSchema = z.object({
-  name: z.string().min(1, 'Required'),
-  phone: z.string().min(1, 'Required'),
-  dateOfBirth: z.string().min(1, 'Required'),
-  postcode: z.string().min(1, 'Required'),
-  hasRightToWork: z.boolean(),
-  hasDrivingLicense: z.boolean(),
-  hasForkliftLicense: z.boolean(),
-  poultryExperience: z.string().optional(),
-});
-
-const InitialOnboarding = ({ profile, USER_ID, getToken, fetchData }: any) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const form = useForm({
-    resolver: zodResolver(initialOnboardingSchema),
-    defaultValues: {
-      name: '', phone: '', dateOfBirth: '', postcode: '',
-      hasRightToWork: false, hasDrivingLicense: false,
-      hasForkliftLicense: false, poultryExperience: ''
-    }
-  });
-
-  const { control, handleSubmit, register, reset, formState: { errors } } = form;
-
-  useEffect(() => {
-    if (profile?.application) {
-      const app = profile.application;
-      reset({
-        name: app.name || '',
-        phone: app.phone || '',
-        dateOfBirth: app.dateOfBirth ? new Date(app.dateOfBirth).toISOString().split('T')[0] : '',
-        postcode: app.postcode || '',
-        hasRightToWork: app.hasRightToWork || false,
-        hasDrivingLicense: app.hasDrivingLicense || false,
-        hasForkliftLicense: app.hasForkliftLicense || false,
-        poultryExperience: app.poultryExperience || '',
-      });
-    }
-  }, [profile, reset]);
-
-  const onSubmit = async (data: any) => {
-    setIsSubmitting(true);
-    try {
-      const token = await getToken();
-      const res = await fetch(`/api/portal/onboarding?userId=${USER_ID}`, {
-        method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        // We set profileFormCompleted to true so they pass the gate.
-        // The admin can later set a flag if they need the full form.
-        body: JSON.stringify({ ...data, profileFormCompleted: true }),
-      });
-      if (!res.ok) throw new Error('Failed to submit application');
-      await fetchData();
-    } catch (err: any) {
-      alert(err.message);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const isCompleted = profile?.application?.profileFormCompleted;
-
-  if (isCompleted) {
-    return (
-      <Card className="bg-muted/50 border-border">
-        <CardContent className="p-6">
-          <Badge variant="default" className="px-3 py-1 text-sm rounded-md gap-2 font-medium flex w-fit mb-4">
-            <CheckCircle2 className="w-4 h-4" /> Application Completed
-          </Badge>
-          <p className="text-muted-foreground">You have successfully submitted your initial application. Our team will contact you shortly with the next steps.</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return (
-    <Card className="border-primary/50 shadow-md max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>Initial Application</CardTitle>
-        <CardDescription>Please provide some basic information to get started.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Full Name</Label>
-                <Input {...register("name")} />
-                {errors.name && <span className="text-destructive text-xs">{errors.name.message as string}</span>}
-              </div>
-              <div className="space-y-2">
-                <Label>Phone Number</Label>
-                <Input {...register("phone")} />
-                {errors.phone && <span className="text-destructive text-xs">{errors.phone.message as string}</span>}
-              </div>
-              <div className="space-y-2">
-                <Label>Date of Birth</Label>
-                <Input type="date" {...register("dateOfBirth")} />
-                {errors.dateOfBirth && <span className="text-destructive text-xs">{errors.dateOfBirth.message as string}</span>}
-              </div>
-              <div className="space-y-2">
-                <Label>Postcode</Label>
-                <Input {...register("postcode")} />
-                {errors.postcode && <span className="text-destructive text-xs">{errors.postcode.message as string}</span>}
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label>Poultry Experience (Years/Months or short description)</Label>
-                <Input {...register("poultryExperience")} placeholder="e.g., 2 years turkey catching, or 'None'" />
-              </div>
-            </div>
-
-            <div className="pt-4 space-y-4 border-t border-border mt-4">
-              <div className="flex items-center gap-3 bg-muted/40 p-4 rounded-md border border-border">
-                <Controller name="hasRightToWork" control={control} render={({ field }) => (
-                  <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-primary" />
-                )} />
-                <Label>I have the legal right to work in the UK</Label>
-              </div>
-
-              <div className="flex items-center gap-3 bg-muted/40 p-4 rounded-md border border-border">
-                <Controller name="hasDrivingLicense" control={control} render={({ field }) => (
-                  <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-primary" />
-                )} />
-                <Label>I have a valid driving license</Label>
-              </div>
-
-              <div className="flex items-center gap-3 bg-muted/40 p-4 rounded-md border border-border">
-                <Controller name="hasForkliftLicense" control={control} render={({ field }) => (
-                  <Input type="checkbox" checked={field.value} onChange={field.onChange} className="w-5 h-5 accent-primary" />
-                )} />
-                <Label>I have a valid forklift license</Label>
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-6 border-t border-border mt-6">
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Submit Initial Application'} <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
-  );
-};
+import IntakeWizard from '../../components/IntakeWizard';
+import { SubmittedApplication } from '../../App';
 
 const PortalDashboard = () => {
   const { activeTab } = useAppShell();
 
-  const [profile, setProfile] = useState<any>(null);
-  const [applications, setApplications] = useState<any[]>([]);
+  const [profile, setProfile] = useState<{ application?: SubmittedApplication } | null>(null);
+  const [applications, setApplications] = useState<SubmittedApplication[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -208,8 +85,16 @@ const PortalDashboard = () => {
   }, [fetchData]);
 
   const renderContent = () => {
-    if (loading) return <div className="p-6 max-w-4xl mx-auto flex justify-center text-muted-foreground">Loading portal...</div>;
-    if (error) return <div className="p-6 max-w-4xl mx-auto text-destructive font-medium">Error: {error}</div>;
+    if (loading)
+      return (
+        <div className="p-6 max-w-4xl mx-auto flex justify-center text-muted-foreground">
+          Loading portal...
+        </div>
+      );
+    if (error)
+      return (
+        <div className="p-6 max-w-4xl mx-auto text-destructive font-medium">Error: {error}</div>
+      );
 
     switch (activeTab) {
       case 'onboarding':
@@ -218,11 +103,52 @@ const PortalDashboard = () => {
             <div className="flex items-center justify-between space-y-2 mb-4">
               <div>
                 <h2 className="text-3xl font-bold tracking-tight">Welcome to CatchingJobs</h2>
-                <p className="text-muted-foreground mt-1">Complete this short form to register your interest.</p>
+                <p className="text-muted-foreground mt-1">
+                  Complete this short form to register your interest.
+                </p>
               </div>
             </div>
+
             <div className="max-w-4xl">
-              <InitialOnboarding profile={profile} USER_ID={USER_ID} getToken={getToken} fetchData={fetchData} />
+              {profile?.application?.profileFormCompleted ? (
+                <Card className="bg-muted/50 border-border">
+                  <CardContent className="p-6">
+                    <Badge
+                      variant="default"
+                      className="px-3 py-1 text-sm rounded-md gap-2 font-medium flex w-fit mb-4"
+                    >
+                      <CheckCircle2 className="w-4 h-4" /> Application Completed
+                    </Badge>
+                    <p className="text-muted-foreground">
+                      You have successfully submitted your initial application. Our team will
+                      contact you shortly with the next steps.
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <IntakeWizard
+                  sectorId="chicken"
+                  regionName="all"
+                  onSuccess={async (data) => {
+                    try {
+                      const token = await getToken();
+                      const res = await fetch(`/api/portal/onboarding?userId=${USER_ID}`, {
+                        method: 'PATCH',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({ ...data, profileFormCompleted: true }),
+                      });
+                      if (!res.ok) throw new Error('Failed to submit application');
+                      await fetchData();
+                    } catch (err: any) {
+                      alert(err.message);
+                    }
+                  }}
+                  onClose={() => {}}
+                />
+              )}
             </div>
           </div>
         );
@@ -232,10 +158,12 @@ const PortalDashboard = () => {
             <div className="flex items-center justify-between space-y-2 mb-4">
               <div>
                 <h2 className="text-3xl font-bold tracking-tight">My Applications</h2>
-                <p className="text-muted-foreground mt-1">Track the status of your recent applications.</p>
+                <p className="text-muted-foreground mt-1">
+                  Track the status of your recent applications.
+                </p>
               </div>
             </div>
-            
+
             <Card className="max-w-4xl">
               <Table>
                 <TableHeader>
@@ -257,7 +185,15 @@ const PortalDashboard = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={app.status === 'HIRED' ? 'default' : app.status === 'REVIEWING' ? 'secondary' : 'outline'}>
+                        <Badge
+                          variant={
+                            app.status === 'HIRED'
+                              ? 'default'
+                              : app.status === 'REVIEWING'
+                                ? 'secondary'
+                                : 'outline'
+                          }
+                        >
                           {app.status}
                         </Badge>
                       </TableCell>
@@ -285,7 +221,9 @@ const PortalDashboard = () => {
             <div className="flex items-center justify-between space-y-2 mb-4">
               <div>
                 <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-                <p className="text-muted-foreground mt-1">Welcome back to your CatchingJobs portal.</p>
+                <p className="text-muted-foreground mt-1">
+                  Welcome back to your CatchingJobs portal.
+                </p>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -314,10 +252,10 @@ const PortalDashboard = () => {
         return (
           <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
             <header>
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">
-                Resources
-              </h1>
-              <p className="text-muted-foreground mt-1">Access training materials and guidelines.</p>
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">Resources</h1>
+              <p className="text-muted-foreground mt-1">
+                Access training materials and guidelines.
+              </p>
             </header>
             <Card>
               <CardHeader>
@@ -326,7 +264,9 @@ const PortalDashboard = () => {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-muted/40 rounded-lg border border-border">
                   <div className="font-medium text-foreground">Animal Welfare Guidelines</div>
-                  <Button variant="outline" size="sm">View PDF</Button>
+                  <Button variant="outline" size="sm">
+                    View PDF
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -336,10 +276,10 @@ const PortalDashboard = () => {
         return (
           <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
             <header>
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">
-                Support
-              </h1>
-              <p className="text-muted-foreground mt-1">Get help with your applications or account.</p>
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">Support</h1>
+              <p className="text-muted-foreground mt-1">
+                Get help with your applications or account.
+              </p>
             </header>
             <Card>
               <CardHeader>
@@ -348,11 +288,15 @@ const PortalDashboard = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="p-4 bg-muted/40 rounded-lg border border-border">
-                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-2">Email</h3>
+                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-2">
+                    Email
+                  </h3>
                   <p className="text-foreground font-medium">support@catchingjobs.co.uk</p>
                 </div>
                 <div className="p-4 bg-muted/40 rounded-lg border border-border">
-                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-2">Phone</h3>
+                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-2">
+                    Phone
+                  </h3>
                   <p className="text-foreground font-medium">0800 123 4567</p>
                 </div>
               </CardContent>
@@ -363,9 +307,7 @@ const PortalDashboard = () => {
         return (
           <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
             <header>
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">
-                Settings
-              </h1>
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">Settings</h1>
               <p className="text-muted-foreground mt-1">Manage your personal information.</p>
             </header>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -373,52 +315,76 @@ const PortalDashboard = () => {
                 <Card>
                   <CardHeader>
                     <CardTitle>Application Details</CardTitle>
-                    <CardDescription>The information you submitted in your application.</CardDescription>
+                    <CardDescription>
+                      The information you submitted in your application.
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {profile?.application ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 text-sm">
                         <div className="space-y-1">
                           <span className="text-muted-foreground block">Full Name</span>
-                          <span className="font-medium text-foreground">{profile.application.name || '-'}</span>
+                          <span className="font-medium text-foreground">
+                            {profile.application.name || '-'}
+                          </span>
                         </div>
                         <div className="space-y-1">
                           <span className="text-muted-foreground block">Phone</span>
-                          <span className="font-medium text-foreground">{profile.application.phone || '-'}</span>
+                          <span className="font-medium text-foreground">
+                            {profile.application.phone || '-'}
+                          </span>
                         </div>
                         <div className="space-y-1">
                           <span className="text-muted-foreground block">Date of Birth</span>
-                          <span className="font-medium text-foreground">{profile.application.dateOfBirth ? new Date(profile.application.dateOfBirth).toLocaleDateString() : '-'}</span>
+                          <span className="font-medium text-foreground">
+                            {profile.application.dateOfBirth
+                              ? new Date(profile.application.dateOfBirth).toLocaleDateString()
+                              : '-'}
+                          </span>
                         </div>
                         <div className="space-y-1">
                           <span className="text-muted-foreground block">NI Number</span>
-                          <span className="font-medium text-foreground">{profile.application.niNumber || '-'}</span>
+                          <span className="font-medium text-foreground">
+                            {profile.application.niNumber || '-'}
+                          </span>
                         </div>
                         <div className="space-y-1">
                           <span className="text-muted-foreground block">Address</span>
                           <span className="font-medium text-foreground">
-                            {profile.application.addressLine1 || profile.application.town ? `${profile.application.addressLine1 || ''} ${profile.application.town || ''}` : '-'}
+                            {profile.application.addressLine1 || profile.application.town
+                              ? `${profile.application.addressLine1 || ''} ${profile.application.town || ''}`
+                              : '-'}
                           </span>
                         </div>
                         <div className="space-y-1">
                           <span className="text-muted-foreground block">Postcode</span>
-                          <span className="font-medium text-foreground">{profile.application.postcode || '-'}</span>
+                          <span className="font-medium text-foreground">
+                            {profile.application.postcode || '-'}
+                          </span>
                         </div>
                         <div className="space-y-1">
                           <span className="text-muted-foreground block">Right to Work UK</span>
-                          <span className="font-medium text-foreground">{profile.application.hasRightToWork ? 'Yes' : 'No'}</span>
+                          <span className="font-medium text-foreground">
+                            {profile.application.hasRightToWork ? 'Yes' : 'No'}
+                          </span>
                         </div>
                         <div className="space-y-1">
                           <span className="text-muted-foreground block">Driving License</span>
-                          <span className="font-medium text-foreground">{profile.application.hasDrivingLicense ? 'Yes' : 'No'}</span>
+                          <span className="font-medium text-foreground">
+                            {profile.application.hasDrivingLicense ? 'Yes' : 'No'}
+                          </span>
                         </div>
                         <div className="space-y-1">
                           <span className="text-muted-foreground block">Forklift License</span>
-                          <span className="font-medium text-foreground">{profile.application.hasForkliftLicense ? 'Yes' : 'No'}</span>
+                          <span className="font-medium text-foreground">
+                            {profile.application.hasForkliftLicense ? 'Yes' : 'No'}
+                          </span>
                         </div>
                         <div className="space-y-1">
                           <span className="text-muted-foreground block">Sector</span>
-                          <span className="font-medium text-foreground capitalize">{profile.application.sector || '-'}</span>
+                          <span className="font-medium text-foreground capitalize">
+                            {profile.application.sector || '-'}
+                          </span>
                         </div>
                       </div>
                     ) : (
@@ -435,7 +401,7 @@ const PortalDashboard = () => {
                     <CardDescription>Update your personal information.</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <form 
+                    <form
                       onSubmit={async (e) => {
                         e.preventDefault();
                         if (!user) return;
@@ -464,7 +430,9 @@ const PortalDashboard = () => {
                       <div className="space-y-2">
                         <Label>Email Address</Label>
                         <Input value={user?.primaryEmailAddress?.emailAddress || ''} disabled />
-                        <p className="text-xs text-muted-foreground">Email addresses cannot be changed here currently.</p>
+                        <p className="text-xs text-muted-foreground">
+                          Email addresses cannot be changed here currently.
+                        </p>
                       </div>
                       <Button type="submit">Save Changes</Button>
                     </form>
@@ -479,11 +447,7 @@ const PortalDashboard = () => {
     }
   };
 
-  return (
-    <div className="h-full flex-1">
-      {renderContent()}
-    </div>
-  );
+  return <div className="h-full flex-1">{renderContent()}</div>;
 };
 
 export default PortalDashboard;

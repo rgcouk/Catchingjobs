@@ -9,13 +9,14 @@ export default function TopNav() {
   return (
     <div className="flex w-full items-center justify-end px-4">
       <div className="flex items-center gap-2">
-        <UserButton 
+        <UserButton
           afterSignOutUrl="/"
           appearance={{
             elements: {
-              avatarBox: "w-8 h-8 rounded-md border border-[var(--color-rule)]",
-              userButtonPopoverCard: "bg-[var(--color-paper)] border border-[var(--color-rule)] shadow-md",
-            }
+              avatarBox: 'w-8 h-8 rounded-md border border-[var(--color-rule)]',
+              userButtonPopoverCard:
+                'bg-[var(--color-paper)] border border-[var(--color-rule)] shadow-md',
+            },
           }}
         />
       </div>
