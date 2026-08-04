@@ -144,20 +144,14 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       <div className="flex items-center justify-center">
         <Checkbox
           checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
+            table.getIsAllPageRowsSelected()
+              ? true
+              : table.getIsSomePageRowsSelected()
+                ? 'indeterminate'
+                : false
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
         />
       </div>
     ),
@@ -176,10 +170,12 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: 'type',
     header: 'Section Type',
     cell: ({ row }) => (
-      <div className="w-32">
-        <Badge variant="outline" className="px-1.5 text-muted-foreground">
-          {row.original.type}
-        </Badge>
+      <div className="flex items-center justify-center">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
       </div>
     ),
   },
@@ -187,64 +183,39 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => (
-      <Badge variant="outline" className="flex gap-1 px-1.5 text-muted-foreground [&_svg]:size-3">
-        {row.original.status === 'Done' ? (
-          <CheckCircle2Icon className="text-green-500 dark:text-green-400" />
-        ) : (
-          <LoaderIcon />
-        )}
-        {row.original.status}
-      </Badge>
+      <div className="flex items-center justify-center">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      </div>
     ),
   },
   {
     accessorKey: 'target',
     header: () => <div className="w-full text-right">Target</div>,
     cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.header}`,
-            success: 'Done',
-            error: 'Error',
-          });
-        }}
-      >
-        <Label htmlFor={`${row.original.id}-target`} className="sr-only">
-          Target
-        </Label>
-        <Input
-          className="h-8 w-16 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:border focus-visible:bg-background"
-          defaultValue={row.original.target}
-          id={`${row.original.id}-target`}
+      <div className="flex items-center justify-center">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
         />
-      </form>
+      </div>
     ),
   },
   {
     accessorKey: 'limit',
     header: () => <div className="w-full text-right">Limit</div>,
     cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.header}`,
-            success: 'Done',
-            error: 'Error',
-          });
-        }}
-      >
-        <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
-          Limit
-        </Label>
-        <Input
-          className="h-8 w-16 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:border focus-visible:bg-background"
-          defaultValue={row.original.limit}
-          id={`${row.original.id}-limit`}
+      <div className="flex items-center justify-center">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
         />
-      </form>
+      </div>
     ),
   },
   {
@@ -439,7 +410,13 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                     <DropdownMenuCheckboxItem
                       key={column.id}
                       className="capitalize"
-                      checked={column.getIsVisible()}
+                      checked={
+                        table.getIsAllPageRowsSelected()
+                          ? true
+                          : table.getIsSomePageRowsSelected()
+                            ? 'indeterminate'
+                            : false
+                      }
                       onCheckedChange={(value) => column.toggleVisibility(!!value)}
                     >
                       {column.id}

@@ -104,17 +104,45 @@ export default function createAdminRouter(prisma: any) {
     }
   });
 
+  router.get('/applications/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const application = await prisma.application.findUnique({
+        where: { id: parseInt(id, 10) },
+        include: { user: true, jobPosting: true }
+      });
+      if (!application) {
+        return res.status(404).json({ error: 'Application not found' });
+      }
+      res.json(application);
+    } catch (error) {
+      console.error('Error fetching application:', error);
+      res.status(500).json({ error: 'Failed to fetch application' });
+    }
+  });
+
   router.patch('/applications/:id', async (req, res) => {
     try {
       const { id } = req.params;
+      
+      // Strip fields that shouldn't be updated directly via this endpoint
+      const { 
+        id: _id, 
+        createdAt, 
+        updatedAt, 
+        user, 
+        jobPosting, 
+        ...updateData 
+      } = req.body;
+
       const application = await prisma.application.update({
         where: { id: parseInt(id, 10) },
-        data: req.body
+        data: updateData
       });
       res.json(application);
     } catch (error) {
       console.error('Error updating application:', error);
-      res.status(500).json({ error: 'Failed to update application' });
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to update application' });
     }
   });
 

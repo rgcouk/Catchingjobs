@@ -59,6 +59,7 @@ import {
   Check,
   Sparkles,
   UsersIcon,
+  X,
   BarChartIcon,
 } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
@@ -69,6 +70,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import { ErrorBoundary } from '../../components/ErrorBoundary';
+import { KanbanBoard } from '../../components/KanbanBoard';
 
 const jobSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -476,87 +478,97 @@ const AdminDashboard = () => {
                   </p>
                 </div>
 
-                <ErrorBoundary>
-                  <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Applicant Name</TableHead>
-                          <TableHead>Sector</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Location</TableHead>
-                          <TableHead>Date</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredApps.map((app) => (
-                          <TableRow
-                            key={app.id}
-                            className={`cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selectedApp?.id === app.id ? 'bg-accent/50' : 'hover:bg-muted/50'}`}
-                            onClick={() => setSelectedApp(app)}
-                            tabIndex={0}
-                            role="button"
-                            aria-selected={selectedApp?.id === app.id}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                setSelectedApp(app);
-                              }
-                            }}
-                          >
-                            <TableCell className="font-medium">{app.name || 'N/A'}</TableCell>
-                            <TableCell>
-                              <Badge
-                                variant="secondary"
-                                className="uppercase font-mono text-[10px]"
-                              >
-                                {app.sector || 'N/A'}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <Badge
-                                variant={
-                                  app.status === 'HIRED'
-                                    ? 'default'
-                                    : app.status === 'REJECTED'
-                                      ? 'destructive'
-                                      : app.status === 'REVIEWING'
-                                        ? 'secondary'
-                                        : 'outline'
-                                }
-                              >
-                                {app.status || 'PENDING'}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-muted-foreground">
-                              {app.town || 'N/A'}
-                            </TableCell>
-                            <TableCell className="text-muted-foreground">
-                              {app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A'}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                        {filteredApps.length === 0 && (
+                {activeTab === 'kanban' ? (
+                  <KanbanBoard
+                    applications={filteredApps}
+                    onUpdateStatus={updateApplicationStatus}
+                    onSelectApp={setSelectedApp}
+                  />
+                ) : (
+                  <ErrorBoundary>
+                    <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col">
+                      <Table>
+                        <TableHeader>
                           <TableRow>
-                            <TableCell
-                              colSpan={5}
-                              className="text-center py-8 text-muted-foreground bg-card"
-                            >
-                              No applications found
-                            </TableCell>
+                            <TableHead>Applicant Name</TableHead>
+                            <TableHead>Sector</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Location</TableHead>
+                            <TableHead>Date</TableHead>
                           </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                    {appSkip < totalApps && (
-                      <div className="p-4 flex justify-center bg-card border-t border-border">
-                        <Button variant="outline" onClick={() => loadApplications(appSkip, true)}>
-                          Load More
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </ErrorBoundary>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredApps.map((app) => (
+                            <TableRow
+                              key={app.id}
+                              className={`cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selectedApp?.id === app.id ? 'bg-accent/50' : 'hover:bg-muted/50'}`}
+                              onClick={() => setSelectedApp(app)}
+                              tabIndex={0}
+                              role="button"
+                              aria-selected={selectedApp?.id === app.id}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  setSelectedApp(app);
+                                }
+                              }}
+                            >
+                              <TableCell className="font-medium">{app.name || 'N/A'}</TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant="secondary"
+                                  className="uppercase font-mono text-[10px]"
+                                >
+                                  {app.sector || 'N/A'}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant={
+                                    app.status === 'HIRED'
+                                      ? 'default'
+                                      : app.status === 'REJECTED'
+                                        ? 'destructive'
+                                        : app.status === 'REVIEWING'
+                                          ? 'secondary'
+                                          : 'outline'
+                                  }
+                                >
+                                  {app.status || 'PENDING'}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-muted-foreground">
+                                {app.town || 'N/A'}
+                              </TableCell>
+                              <TableCell className="text-muted-foreground">
+                                {app.createdAt
+                                  ? new Date(app.createdAt).toLocaleDateString()
+                                  : 'N/A'}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                          {filteredApps.length === 0 && (
+                            <TableRow>
+                              <TableCell
+                                colSpan={5}
+                                className="text-center py-8 text-muted-foreground bg-card"
+                              >
+                                No applications found
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                      {appSkip < totalApps && (
+                        <div className="p-4 flex justify-center bg-card border-t border-border">
+                          <Button variant="outline" onClick={() => loadApplications(appSkip, true)}>
+                            Load More
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </ErrorBoundary>
+                )}
               </div>
             </div>
 
@@ -638,6 +650,61 @@ const AdminDashboard = () => {
                           )}
                         </div>
                       )}
+                    </div>
+
+                    {/* Detailed CRM Information */}
+                    <div className="space-y-3 pt-3 border-t border-border">
+                      <h3 className="text-sm font-semibold">Applicant Details</h3>
+                      <div className="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                          <span className="text-muted-foreground block">Email</span>
+                          <span className="font-medium">{selectedApp.email || 'N/A'}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Phone</span>
+                          <span className="font-medium">{selectedApp.phone || 'N/A'}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">NI Number</span>
+                          <span className="font-medium">{selectedApp.niNumber || 'N/A'}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Date of Birth</span>
+                          <span className="font-medium">{selectedApp.dateOfBirth || 'N/A'}</span>
+                        </div>
+                        <div className="col-span-2">
+                          <span className="text-muted-foreground block">Address</span>
+                          <span className="font-medium">
+                            {selectedApp.addressLine1
+                              ? `${selectedApp.addressLine1}, ${selectedApp.postcode}`
+                              : 'N/A'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Right to Work</span>
+                          <span className="font-medium">
+                            {selectedApp.hasRightToWork ? 'Yes' : 'No'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Driving License</span>
+                          <span className="font-medium">
+                            {selectedApp.hasDrivingLicense ? 'Yes' : 'No'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Forklift License</span>
+                          <span className="font-medium">
+                            {selectedApp.hasForkliftLicense ? 'Yes' : 'No'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Poultry Experience</span>
+                          <span className="font-medium">
+                            {selectedApp.poultryExperience || 'None'}
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="space-y-3 pt-3 border-t border-border">

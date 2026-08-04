@@ -97,6 +97,7 @@ export default function Register() {
     if (!isLoaded) return;
     signUp.authenticateWithRedirect({
       strategy: 'oauth_google',
+      // @ts-expect-error Clerk types outdated
       fallbackRedirectUrl: '/sso-callback',
       forceRedirectUrl: '/user-portal',
     });

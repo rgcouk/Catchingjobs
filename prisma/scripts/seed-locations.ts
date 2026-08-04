@@ -3,7 +3,7 @@ const { PrismaClient } = pkg;
 import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
 import dotenv from 'dotenv';
-import { REGIONS } from './src/data.js';
+import { REGIONS } from '../../src/data.js';
 
 dotenv.config();
 

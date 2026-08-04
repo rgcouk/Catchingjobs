@@ -64,6 +64,7 @@ export default function Login() {
     if (!isLoaded) return;
     signIn.authenticateWithRedirect({
       strategy: 'oauth_google',
+      // @ts-expect-error Clerk types outdated
       fallbackRedirectUrl: '/sso-callback',
       forceRedirectUrl: '/user-portal',
     });
