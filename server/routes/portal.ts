@@ -16,6 +16,11 @@ export default function createPortalRouter(prisma: any) {
     return userId ? (userId as string) : null;
   };
 
+  const toBool = (val: any) => {
+    if (val === undefined || val === null) return undefined;
+    return val === 'true' || val === true;
+  };
+
   const getOrCreateUser = async (userId: string) => {
     let user = await prisma.user.findUnique({
       where: { id: userId },
@@ -72,7 +77,7 @@ export default function createPortalRouter(prisma: any) {
       if (!user) return res.status(404).json({ error: 'User not found' });
 
       const {
-        name, phone,
+        name, phone, town,
         niNumber, dateOfBirth, addressLine1, postcode,
         bankName, bankAccountName, bankAccountNumber, bankSortCode,
         emergencyName, emergencyPhone, emergencyRelation,
@@ -90,17 +95,31 @@ export default function createPortalRouter(prisma: any) {
       const updatedFields = {
         ...(name && { name }),
         ...(phone && { phone }),
+        ...(town && { town }),
         niNumber, dateOfBirth, addressLine1, postcode,
         bankName, bankAccountName, bankAccountNumber, bankSortCode,
         emergencyName, emergencyPhone, emergencyRelation,
-        hasAsthmaOrAllergies, hasBackIssues, isFitToLift, declarationSigned,
+        hasAsthmaOrAllergies: toBool(hasAsthmaOrAllergies),
+        hasBackIssues: toBool(hasBackIssues),
+        isFitToLift: toBool(isFitToLift),
+        declarationSigned: toBool(declarationSigned) ?? false,
         employmentHistory, education, references,
-        hasRightToWork, rightToWorkUK, restrictionsOnWork, restrictionsDetail,
-        hasDrivingLicense, hasForkliftLicense, poultryExperience,
-        abusedPosition, abusedPositionDetail, reasonableAdjustments, adjustmentsDetail,
-        hasConvictions, criminalConvictions,
+        hasRightToWork: toBool(hasRightToWork),
+        rightToWorkUK: toBool(rightToWorkUK),
+        restrictionsOnWork: toBool(restrictionsOnWork),
+        restrictionsDetail,
+        hasDrivingLicense: toBool(hasDrivingLicense),
+        hasForkliftLicense: toBool(hasForkliftLicense),
+        poultryExperience,
+        abusedPosition: toBool(abusedPosition),
+        abusedPositionDetail,
+        reasonableAdjustments: toBool(reasonableAdjustments),
+        adjustmentsDetail,
+        hasConvictions: toBool(hasConvictions),
+        criminalConvictions,
         idDocumentUri, proofOfAddressUri, signatureImage,
-        socialMediaConsent, privacyPolicyConsent,
+        socialMediaConsent: toBool(socialMediaConsent),
+        privacyPolicyConsent: toBool(privacyPolicyConsent),
         profileFormCompleted: true
       };
 
@@ -113,10 +132,10 @@ export default function createPortalRouter(prisma: any) {
             name: name || user.email?.split('@')[0] || 'Unknown',
             email: user.email || '',
             phone: phone || '',
-            town: '',
-            hasRightToWork: hasRightToWork ?? true,
-            hasDrivingLicense: hasDrivingLicense ?? false,
-            hasForkliftLicense: hasForkliftLicense ?? false,
+            town: town || '',
+            hasRightToWork: toBool(hasRightToWork) ?? true,
+            hasDrivingLicense: toBool(hasDrivingLicense) ?? false,
+            hasForkliftLicense: toBool(hasForkliftLicense) ?? false,
             poultryExperience: poultryExperience || '',
             shiftAvailability: 'Any',
             sector: 'chicken',
