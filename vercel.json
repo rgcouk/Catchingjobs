@@ -6,8 +6,32 @@
       "destination": "/api/ping.ts"
     },
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.ts"
+      "source": "/api/admin/(.*)",
+      "destination": "/api/admin.ts"
+    },
+    {
+      "source": "/api/portal/(.*)",
+      "destination": "/api/portal.ts"
+    },
+    {
+      "source": "/api/upload/?",
+      "destination": "/api/upload.ts"
+    },
+    {
+      "source": "/api/locations/?",
+      "destination": "/api/locations.ts"
+    },
+    {
+      "source": "/api/applications/?(.*)?",
+      "destination": "/api/applications.ts"
+    },
+    {
+      "source": "/api/webhook/clerk/?",
+      "destination": "/api/webhook-clerk.ts"
+    },
+    {
+      "source": "/api/webhook/intake/?",
+      "destination": "/api/webhook-intake.ts"
     },
     {
       "source": "/(.*)",
