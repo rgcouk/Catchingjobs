@@ -4,7 +4,7 @@
 - **Primary IDE**: Antigravity IDE
 - **Primary ADE**: Orca ADE (Agentic Development Environment)
 - **Source Control & CI**: GitHub & GitHub Actions (`.github/workflows/ci.yml`)
-- **Deployment & Hosting**: Vercel (`vercel.json` rewrites for SPA & `/api/index.ts` serverless functions)
+- **Deployment & Hosting**: Vercel (`vercel.json` rewrites for SPA & `/api/` serverless functions)
 - **Workspace Customizations Root**: `.agents/`
 
 ## Tech Stack
@@ -12,7 +12,7 @@
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v4
 - **Database**: Prisma with SQLite & PostgreSQL drivers
-- **Backend**: Express (via `api/index.ts` serverless backend or Vite middleware)
+- **Backend**: Hono (via independent `/api/*` serverless functions, migrating from Express)
 - **Authentication**: Clerk
 - **Version Control & CI/CD**: GitHub & GitHub Actions
 - **Deployment**: Vercel

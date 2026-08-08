@@ -2,7 +2,7 @@
   "name": "catchingjobs",
   "rewrites": [
     {
-      "source": "/api/ping",
+      "source": "/api/ping/?",
       "destination": "/api/ping.ts"
     },
     {
