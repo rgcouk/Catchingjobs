@@ -47,6 +47,7 @@ const PortalDashboard = () => {
   const [profile, setProfile] = useState<SubmittedApplication | null>(null);
   const [applications, setApplications] = useState<SubmittedApplication[]>([]);
   const [loading, setLoading] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { user } = useUser();
@@ -56,36 +57,71 @@ const PortalDashboard = () => {
   const USER_ID = user?.id || '';
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      if (!USER_ID) return;
-      const token = await getToken();
-      const headers = { Authorization: `Bearer ${token}` };
+    let retryCount = 0;
 
-      if (activeTab === 'onboarding') {
-        const res = await fetch(`/api/portal/me?userId=${USER_ID}`, { headers });
-        if (!res.ok) throw new Error('Failed to fetch profile');
-        const data = await res.json();
-        setProfile(data);
-      } else if (activeTab === 'applications') {
-        const res = await fetch(`/api/portal/applications?userId=${USER_ID}`, { headers });
-        if (!res.ok) throw new Error('Failed to fetch applications');
-        setApplications(await res.json());
+    const executeFetch = async () => {
+      if (retryCount === 0) {
+        setLoading(true);
+        setSyncing(false);
       }
-    } catch (error) {
-      const err = error as Error;
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [USER_ID, activeTab, getToken]);
+      setError(null);
+      try {
+        if (!USER_ID) return;
+        const token = await getToken();
+        const headers = { Authorization: `Bearer ${token}` };
+
+        if (activeTab === 'onboarding') {
+          const res = await fetch(`/api/portal/me?userId=${USER_ID}`, { headers });
+          if (res.status === 404) {
+            if (retryCount < 15) {
+              setSyncing(true);
+              retryCount++;
+              setTimeout(executeFetch, 2000);
+              return;
+            } else {
+              throw new Error('Account setup timed out. Please refresh the page.');
+            }
+          }
+          setSyncing(false);
+          if (!res.ok) throw new Error('Failed to fetch profile');
+          const data = await res.json();
+          setProfile(data);
+        } else if (activeTab === 'applications') {
+          const res = await fetch(`/api/portal/applications?userId=${USER_ID}`, { headers });
+          if (!res.ok) throw new Error('Failed to fetch applications');
+          setApplications(await res.json());
+        }
+      } catch (error) {
+        const err = error as Error;
+        setError(err.message);
+      } finally {
+        if (!syncing && retryCount === 0) {
+          setLoading(false);
+        } else if (!syncing) {
+          setLoading(false);
+        }
+      }
+    };
+
+    executeFetch();
+  }, [USER_ID, activeTab, getToken, syncing]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   const renderContent = () => {
+    if (syncing) {
+      return (
+        <div className="p-6 h-full flex flex-col items-center justify-center text-center space-y-4 max-w-sm mx-auto">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <h2 className="text-xl font-semibold">Setting up your account...</h2>
+          <p className="text-muted-foreground text-sm">
+            We're just linking everything together. This should only take a moment.
+          </p>
+        </div>
+      );
+    }
     if (loading)
       return (
         <div className="p-6 max-w-4xl mx-auto flex justify-center text-muted-foreground">

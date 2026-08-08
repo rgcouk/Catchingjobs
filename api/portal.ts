@@ -31,8 +31,8 @@ const toBool = (val: any) => {
   return val === 'true' || val === true;
 };
 
-const getOrCreateUser = async (userId: string, prisma: any) => {
-  let user = await prisma.user.findUnique({
+const getUser = async (userId: string, prisma: any) => {
+  return await prisma.user.findUnique({
     where: { id: userId },
     include: { 
       application: {
@@ -40,31 +40,17 @@ const getOrCreateUser = async (userId: string, prisma: any) => {
       }
     }
   });
-
-  if (!user) {
-    // Self-heal missed Clerk webhooks
-    user = await prisma.user.create({
-      data: {
-        id: userId,
-        email: `${userId}@placeholder.clerk.com`,
-        passwordHash: '',
-        role: 'WORKER'
-      },
-      include: { 
-        application: {
-          include: { jobPosting: true }
-        }
-      }
-    });
-  }
-  return user;
 };
 
 app.get('/api/portal/me', async (c) => {
   const prisma = getPrisma();
   try {
     const userId = c.get('userId');
-    const user = await getOrCreateUser(userId, prisma);
+    const user = await getUser(userId, prisma);
+
+    if (!user) {
+      return c.json({ error: 'User sync in progress' }, 404);
+    }
 
     // Remove password hash from response
     const { passwordHash, ...userWithoutPassword } = user;
@@ -79,7 +65,7 @@ app.patch('/api/portal/onboarding', async (c) => {
   const prisma = getPrisma();
   try {
     const userId = c.get('userId');
-    const user = await getOrCreateUser(userId, prisma);
+    const user = await getUser(userId, prisma);
     if (!user) return c.json({ error: 'User not found' }, 404);
 
     const body = await c.req.json();
@@ -176,7 +162,7 @@ app.get('/api/portal/applications', async (c) => {
   const prisma = getPrisma();
   try {
     const userId = c.get('userId');
-    const user = await getOrCreateUser(userId, prisma);
+    const user = await getUser(userId, prisma);
     if (!user || !user.applicationId) return c.json([]);
 
     const application = await prisma.application.findUnique({
@@ -208,7 +194,7 @@ app.patch('/api/portal/settings', async (c) => {
   const prisma = getPrisma();
   try {
     const userId = c.get('userId');
-    const user = await getOrCreateUser(userId, prisma);
+    const user = await getUser(userId, prisma);
     if (!user) return c.json({ error: 'User not found' }, 404);
 
     const body = await c.req.json();
@@ -232,7 +218,8 @@ app.patch('/api/portal/settings', async (c) => {
       });
     }
 
-    const updatedUser = await getOrCreateUser(userId, prisma);
+    const updatedUser = await getUser(userId, prisma);
+    if (!updatedUser) return c.json({ error: 'User not found' }, 404);
     const { passwordHash, ...userWithoutPassword } = updatedUser;
     return c.json(userWithoutPassword);
   } catch (error) {

@@ -63,22 +63,33 @@ export default function AppShell({
 
   useEffect(() => {
     if (userType === 'portal' && user) {
-      const checkOnboarding = async () => {
+      let isSubscribed = true;
+      const checkOnboarding = async (retryCount = 0) => {
         try {
           const token = await getToken();
           const res = await fetch(`/api/portal/me?userId=${user.id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
+          if (res.status === 404 && retryCount < 15) {
+            setTimeout(() => {
+              if (isSubscribed) checkOnboarding(retryCount + 1);
+            }, 2000);
+            return;
+          }
           if (res.ok) {
             const data = await res.json();
             const app = data?.application;
             if (!app?.profileFormCompleted || !app?.safetyTasksCompleted) {
-              setIsFullyOnboarded(false);
-              setActiveTab('onboarding');
+              if (isSubscribed) {
+                setIsFullyOnboarded(false);
+                setActiveTab('onboarding');
+              }
             } else {
-              setIsFullyOnboarded(true);
-              if (activeTab === 'onboarding') {
-                setActiveTab('dashboard');
+              if (isSubscribed) {
+                setIsFullyOnboarded(true);
+                if (activeTab === 'onboarding') {
+                  setActiveTab('dashboard');
+                }
               }
             }
           }
@@ -87,6 +98,9 @@ export default function AppShell({
         }
       };
       checkOnboarding();
+      return () => {
+        isSubscribed = false;
+      };
     }
   }, [userType, user, getToken, activeTab]);
 
