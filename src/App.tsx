@@ -326,58 +326,58 @@ function App() {
   return (
     <div className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] flex flex-col font-sans selection:bg-[var(--color-accent)] selection:text-white antialiased relative">
       {!isAppRoute && (
-        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-full border border-[var(--color-rule)] bg-[var(--color-paper)]/90 backdrop-blur-md shadow-sm p-1.5 flex items-center gap-1 transition-all">
-          <div
-            onClick={() => handleNavigate('root', '')}
-            className="flex items-center gap-2 cursor-pointer group no-underline pl-2 pr-4 py-1.5 rounded-full hover:bg-[var(--color-paper-2)] transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]"
-            title="CatchingJobs Directory"
-          >
-            <div className="bg-[var(--color-ink)] w-6 h-6 rounded-full flex items-center justify-center text-[var(--color-paper)] group-hover:bg-[var(--color-accent)] transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]">
-              <Building2 className="w-3 h-3" />
+        <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--color-rule)] bg-[var(--color-paper)]/90 backdrop-blur-md shadow-sm px-6 h-16 flex items-center justify-between transition-all">
+          <div className="flex items-center gap-6">
+            <div
+              onClick={() => handleNavigate('root', '')}
+              className="flex items-center gap-2 cursor-pointer group no-underline transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]"
+              title="CatchingJobs Directory"
+            >
+              <div className="bg-[var(--color-ink)] w-6 h-6 rounded-full flex items-center justify-center text-[var(--color-paper)] group-hover:bg-[var(--color-accent)] transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]">
+                <Building2 className="w-3 h-3" />
+              </div>
+              <span className="font-display font-semibold text-sm tracking-tight text-[var(--color-ink)]">
+                CatchingJobs
+              </span>
             </div>
-            <span className="font-display font-semibold text-sm tracking-tight text-[var(--color-ink)]">
-              CatchingJobs
-            </span>
+
+            <div className="w-[1px] h-4 bg-[var(--color-rule)] mx-1" />
+
+            <ul className="hidden md:flex items-center gap-4 list-none m-0 p-0">
+              <li>
+                <button
+                  onClick={() => handleNavigate('chicken', '')}
+                  className={`text-sm font-medium transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer ${
+                    activeTab === 'chicken' && !regionIdFromPath
+                      ? 'text-[var(--color-ink)]'
+                      : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)]'
+                  }`}
+                >
+                  Chickens
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleNavigate('turkey', '')}
+                  className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer ${
+                    activeTab === 'turkey' && !regionIdFromPath
+                      ? 'bg-[var(--color-ink)] text-[var(--color-paper)]'
+                      : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-paper-2)]'
+                  }`}
+                >
+                  Turkeys
+                </button>
+              </li>
+            </ul>
           </div>
 
-          <div className="w-[1px] h-4 bg-[var(--color-rule)] mx-1" />
-
-          <ul className="hidden md:flex items-center gap-1 list-none m-0 p-0">
-            <li>
-              <button
-                onClick={() => handleNavigate('chicken', '')}
-                className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer ${
-                  activeTab === 'chicken' && !regionIdFromPath
-                    ? 'bg-[var(--color-ink)] text-[var(--color-paper)]'
-                    : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-paper-2)]'
-                }`}
-              >
-                Chickens
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleNavigate('turkey', '')}
-                className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer ${
-                  activeTab === 'turkey' && !regionIdFromPath
-                    ? 'bg-[var(--color-ink)] text-[var(--color-paper)]'
-                    : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-paper-2)]'
-                }`}
-              >
-                Turkeys
-              </button>
-            </li>
-          </ul>
-
-          <div className="w-[1px] h-4 bg-[var(--color-rule)] mx-1 hidden md:block" />
-
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-4">
             <SignedOut>
               <button
                 onClick={() => navigate('/login')}
-                className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer text-[var(--color-ink)] hover:bg-[var(--color-paper-2)] flex items-center gap-1"
+                className="text-sm font-semibold transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer text-[var(--color-ink)] hover:text-[var(--color-accent)] flex items-center gap-1"
               >
-                <Lock className="w-3 h-3" />
+                <Lock className="w-4 h-4" />
                 <span className="hidden sm:inline">Log In</span>
               </button>
             </SignedOut>
@@ -438,7 +438,7 @@ function App() {
       </AnimatePresence>
 
       <main
-        className={`flex-1 w-full flex flex-col lg:flex-row relative ${!isAppRoute ? 'pt-[72px]' : ''}`}
+        className={`flex-1 w-full flex flex-col lg:flex-row relative ${!isAppRoute ? 'pt-24' : ''}`}
       >
         <div className="flex-1 space-y-6">
           <Routes>

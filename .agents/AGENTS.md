@@ -40,3 +40,17 @@
 - `npm run format` - Formats the code using Prettier.
 - `npm run seed` - Runs automated database seeding (`prisma/scripts/auto-seed.ts`).
 - `npm run quality-check` - Runs 1-command pre-flight quality verification (format, lint, build).
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues, using the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The default 5 canonical triage roles map directly to identical label strings. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context documentation layout using `CONTEXT.md` at the repo root. See `docs/agents/domain.md`.

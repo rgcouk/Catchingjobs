@@ -271,7 +271,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                   setRosterId(e.target.value);
                   setLoginError(null);
                 }}
-                className="w-full px-3.5 py-2 rounded-lg border border-border text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 bg-muted/50 font-mono"
+                className="w-full px-3.5 py-2 rounded-lg border border-border text-xs focus:outline-none focus:ring-1 focus:ring-ring bg-muted/50 font-mono"
               />
             </div>
 
@@ -397,7 +397,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
               onClick={() => setActiveTab('profile')}
               className={`py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'profile'
-                  ? 'border-slate-900 text-foreground font-bold'
+                  ? 'border-foreground text-foreground font-bold'
                   : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -409,7 +409,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
               onClick={() => setActiveTab('resources')}
               className={`py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'resources'
-                  ? 'border-slate-900 text-foreground font-bold'
+                  ? 'border-foreground text-foreground font-bold'
                   : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -421,7 +421,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
               onClick={() => setActiveTab('contact')}
               className={`py-2 text-sm font-semibold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'contact'
-                  ? 'border-slate-900 text-foreground font-bold'
+                  ? 'border-foreground text-foreground font-bold'
                   : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -459,7 +459,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                   </div>
 
                   <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 shadow-sm space-y-6">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div className="flex items-center justify-between border-b border-border pb-3">
                       <h4 className="text-sm font-black text-foreground uppercase tracking-wide flex items-center gap-2">
                         <User className="w-4 h-4 text-muted-foreground" />
                         <span>1. Personal & Payroll Identity</span>
@@ -522,7 +522,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                   </div>
 
                   <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 shadow-sm space-y-6">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div className="flex items-center justify-between border-b border-border pb-3">
                       <h4 className="text-sm font-black text-foreground uppercase tracking-wide flex items-center gap-2">
                         <User className="w-4 h-4 text-muted-foreground" />
                         <span>2. Next of Kin (Emergency Contact)</span>
@@ -561,7 +561,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                   </div>
 
                   <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 shadow-sm space-y-6">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div className="flex items-center justify-between border-b border-border pb-3">
                       <h4 className="text-sm font-black text-foreground uppercase tracking-wide flex items-center gap-2">
                         <CreditCard className="w-4 h-4 text-muted-foreground" />
                         <span>3. Weekly Friday Wages Bank Details</span>
@@ -620,7 +620,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                   </div>
 
                   <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 shadow-sm space-y-6">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div className="flex items-center justify-between border-b border-border pb-3">
                       <h4 className="text-sm font-black text-foreground uppercase tracking-wide flex items-center gap-2">
                         <HeartPulse className="w-4 h-4 text-muted-foreground" />
                         <span>4. Medical Declarations & Health Safety</span>
@@ -667,7 +667,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                     </h4>
                     <div className="relative">
                       {/* Progress Bar Background Line */}
-                      <div className="absolute left-[15px] top-4 bottom-4 w-0.5 bg-slate-150"></div>
+                      <div className="absolute left-[15px] top-4 bottom-4 w-0.5 bg-border"></div>
 
                       {/* Progress Steps */}
                       <div className="space-y-6 relative">
@@ -710,7 +710,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                             {currentUser.contacted ? (
                               <Check className="w-4 h-4 text-emerald-600" />
                             ) : (
-                              <div className="w-2 h-2 rounded-full bg-slate-300" />
+                              <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />
                             )}
                           </div>
                           <div>
@@ -733,7 +733,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                             {currentUser.safetyTasksCompleted ? (
                               <Check className="w-4 h-4 text-emerald-600" />
                             ) : (
-                              <div className="w-2 h-2 rounded-full bg-slate-300" />
+                              <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />
                             )}
                           </div>
                           <div>
@@ -758,7 +758,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                             currentUser.profileFormCompleted ? (
                               <Check className="w-4 h-4 text-emerald-600" />
                             ) : (
-                              <div className="w-2 h-2 rounded-full bg-slate-300" />
+                              <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />
                             )}
                           </div>
                           <div>
@@ -780,7 +780,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                 /* ==================== JOTFORM-STYLE COMPLIANCE FORM ==================== */
                 <form
                   onSubmit={handleProfileSubmit}
-                  className="max-w-2xl bg-card border-2 border-slate-900/10 rounded-2xl shadow-md overflow-hidden text-left"
+                  className="max-w-2xl bg-card border-2 border-foreground/10 rounded-2xl shadow-md overflow-hidden text-left"
                 >
                   {/* Form Header Banner */}
                   <div className="bg-primary text-white p-5 sm:p-6 space-y-1.5">
@@ -791,7 +791,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                     <h3 className="text-lg sm:text-xl font-black tracking-tight">
                       Poultry Harvester Registration Form
                     </h3>
-                    <p className="text-xs text-slate-300 leading-normal">
+                    <p className="text-xs text-primary-foreground/80 leading-normal">
                       Complete this official GLAA-audited compliance form. Provide accurate tax,
                       emergency contact, wages bank routing, and physical fitness declarations to
                       clear your profile for crew deployments.
@@ -799,7 +799,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                   </div>
 
                   {/* Section 1: Personal & Payroll Identity */}
-                  <div className="p-5 sm:p-6 space-y-4 border-b border-slate-100">
+                  <div className="p-5 sm:p-6 space-y-4 border-b border-border">
                     <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                       <span className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-sans font-bold">
                         1
@@ -816,7 +816,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           type="date"
                           value={dob}
                           onChange={(e) => setDob(e.target.value)}
-                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900"
+                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
                         />
                         {formErrors.dob && (
                           <p className="text-[10px] text-red-600 font-semibold">{formErrors.dob}</p>
@@ -832,7 +832,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           placeholder="e.g. QQ123456C"
                           value={niNumber}
                           onChange={(e) => setNiNumber(e.target.value)}
-                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono tracking-wider"
+                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring font-mono tracking-wider"
                         />
                         <span className="text-[9px] text-muted-foreground/80 block font-normal">
                           Required for payroll tax processing.
@@ -853,7 +853,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           placeholder="e.g. 12 High Street"
                           value={addressLine1}
                           onChange={(e) => setAddressLine1(e.target.value)}
-                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900"
+                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
                         />
                         {formErrors.addressLine1 && (
                           <p className="text-[10px] text-red-600 font-semibold">
@@ -871,7 +871,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           placeholder="e.g. LN1 1XX"
                           value={postcode}
                           onChange={(e) => setPostcode(e.target.value)}
-                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono"
+                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring font-mono"
                         />
                         {formErrors.postcode && (
                           <p className="text-[10px] text-red-600 font-semibold">
@@ -895,7 +895,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                   </div>
 
                   {/* Section 2: Next of Kin / Emergency Contact */}
-                  <div className="p-5 sm:p-6 space-y-4 border-b border-slate-100">
+                  <div className="p-5 sm:p-6 space-y-4 border-b border-border">
                     <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                       <span className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-sans font-bold">
                         2
@@ -913,7 +913,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           placeholder="e.g. Mary Vance"
                           value={emergencyName}
                           onChange={(e) => setEmergencyName(e.target.value)}
-                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900"
+                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
                         />
                         {formErrors.emergencyName && (
                           <p className="text-[10px] text-red-600 font-semibold">
@@ -931,7 +931,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           placeholder="e.g. Spouse, Mother, Sister"
                           value={emergencyRelation}
                           onChange={(e) => setEmergencyRelation(e.target.value)}
-                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900"
+                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
                         />
                         {formErrors.emergencyRelation && (
                           <p className="text-[10px] text-red-600 font-semibold">
@@ -949,7 +949,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           placeholder="e.g. 07700 900593"
                           value={emergencyPhone}
                           onChange={(e) => setEmergencyPhone(e.target.value)}
-                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono"
+                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring font-mono"
                         />
                         {formErrors.emergencyPhone && (
                           <p className="text-[10px] text-red-600 font-semibold">
@@ -961,7 +961,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                   </div>
 
                   {/* Section 3: Wages Bank Details */}
-                  <div className="p-5 sm:p-6 space-y-4 border-b border-slate-100">
+                  <div className="p-5 sm:p-6 space-y-4 border-b border-border">
                     <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                       <span className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-sans font-bold">
                         3
@@ -983,7 +983,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           placeholder="e.g. Lloyds Bank, Barclays"
                           value={bankName}
                           onChange={(e) => setBankName(e.target.value)}
-                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900"
+                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
                         />
                         {formErrors.bankName && (
                           <p className="text-[10px] text-red-600 font-semibold">
@@ -1001,7 +1001,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           placeholder="e.g. Marcus Vance"
                           value={bankAccountName}
                           onChange={(e) => setBankAccountName(e.target.value)}
-                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900"
+                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
                         />
                         {formErrors.bankAccountName && (
                           <p className="text-[10px] text-red-600 font-semibold">
@@ -1020,7 +1020,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           maxLength={8}
                           value={bankAccountNumber}
                           onChange={(e) => setBankAccountNumber(e.target.value.replace(/\D/g, ''))}
-                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono tracking-wider"
+                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring font-mono tracking-wider"
                         />
                         {formErrors.bankAccountNumber && (
                           <p className="text-[10px] text-red-600 font-semibold">
@@ -1039,7 +1039,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           maxLength={8}
                           value={bankSortCode}
                           onChange={(e) => setBankSortCode(e.target.value)}
-                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono tracking-widest"
+                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring font-mono tracking-widest"
                         />
                         {formErrors.bankSortCode && (
                           <p className="text-[10px] text-red-600 font-semibold">
@@ -1051,7 +1051,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                   </div>
 
                   {/* Section 4: Medical & Fitness Declarations */}
-                  <div className="p-5 sm:p-6 space-y-4 border-b border-slate-100">
+                  <div className="p-5 sm:p-6 space-y-4 border-b border-border">
                     <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                       <span className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-sans font-bold">
                         4
@@ -1190,7 +1190,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           type="checkbox"
                           checked={declarationSigned}
                           onChange={(e) => setDeclarationSigned(e.target.checked)}
-                          className="mt-1 shrink-0 rounded border-slate-300 text-foreground focus:ring-slate-900"
+                          className="mt-1 shrink-0 rounded border-border text-foreground focus:ring-ring"
                         />
                         <span className="text-[11px] text-muted-foreground leading-snug font-medium">
                           I declare that the information provided is correct and complete, and I
@@ -1255,7 +1255,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                   ].map((doc, idx) => (
                     <div
                       key={idx}
-                      className="bg-card border border-border p-4 rounded-xl flex items-center justify-between shadow-sm hover:border-slate-300 transition-colors group"
+                      className="bg-card border border-border p-4 rounded-xl flex items-center justify-between shadow-sm hover:border-border transition-colors group"
                     >
                       <div className="flex items-start gap-3">
                         <div className="p-2 bg-muted/50 text-muted-foreground rounded-lg border border-border/50">
@@ -1362,7 +1362,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                         <label className="block text-[11px] font-mono font-bold uppercase text-muted-foreground">
                           Subject
                         </label>
-                        <select className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-slate-900">
+                        <select className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring">
                           <option>Payroll Inquiry</option>
                           <option>Shift Scheduling</option>
                           <option>Compliance & Training</option>
@@ -1380,7 +1380,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
                           onChange={(e) => setContactMessage(e.target.value)}
                           required
                           placeholder="How can we help?"
-                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-slate-900 resize-none"
+                          className="w-full border border-border bg-muted/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring resize-none"
                         ></Textarea>
                       </div>
 

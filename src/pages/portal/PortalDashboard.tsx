@@ -44,8 +44,8 @@ import { SubmittedApplication } from '../../App';
 const PortalDashboard = () => {
   const { activeTab } = useAppShell();
 
-  const [profile, setProfile] = useState<any>(null);
-  const [applications, setApplications] = useState<any[]>([]);
+  const [profile, setProfile] = useState<SubmittedApplication | null>(null);
+  const [applications, setApplications] = useState<SubmittedApplication[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -73,7 +73,8 @@ const PortalDashboard = () => {
         if (!res.ok) throw new Error('Failed to fetch applications');
         setApplications(await res.json());
       }
-    } catch (err: any) {
+    } catch (error) {
+      const err = error as Error;
       setError(err.message);
     } finally {
       setLoading(false);
@@ -142,7 +143,8 @@ const PortalDashboard = () => {
                       });
                       if (!res.ok) throw new Error('Failed to submit application');
                       await fetchData();
-                    } catch (err: any) {
+                    } catch (error) {
+                      const err = error as Error;
                       alert(err.message);
                     }
                   }}
@@ -411,7 +413,8 @@ const PortalDashboard = () => {
                         try {
                           await user.update({ firstName, lastName });
                           alert('Profile updated successfully.');
-                        } catch (err: any) {
+                        } catch (error) {
+                          const err = error as { errors?: { longMessage?: string }[] };
                           alert(err.errors?.[0]?.longMessage || 'Failed to update profile.');
                         }
                       }}
