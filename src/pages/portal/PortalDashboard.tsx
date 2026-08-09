@@ -38,7 +38,7 @@ import {
 } from '../../components/ui/table';
 
 import { useAppShell } from '../../components/layout/AppShell';
-import IntakeWizard from '../../components/IntakeWizard';
+import IntakeWizard from '../wizard/IntakeWizard';
 import { SubmittedApplication } from '../../App';
 
 const PortalDashboard = () => {

@@ -33,14 +33,16 @@ export default function Index({ onNavigate }: IndexProps) {
       date: '15 July 2026',
       title: 'Pullum Ltd Secures Landmark East Midlands Catching Contract',
       category: 'Business',
-      summary: 'Our poultry catching division has finalized an exclusive multi-year contract covering major broiler growers in Lincolnshire and Yorkshire.',
+      summary:
+        'Our poultry catching division has finalized an exclusive multi-year contract covering major broiler growers in Lincolnshire and Yorkshire.',
     },
     {
       id: 'news-2',
       date: '02 July 2026',
       title: 'Expanded Catching Crew Operations & Transport Networks',
       category: 'Operations',
-      summary: 'Pullum Ltd has added direct minibus pickup points across our regional catching hubs, ensuring seamless worker transit and punctual arrival times.',
+      summary:
+        'Pullum Ltd has added direct minibus pickup points across our regional catching hubs, ensuring seamless worker transit and punctual arrival times.',
     },
   ];
 
@@ -94,9 +96,10 @@ export default function Index({ onNavigate }: IndexProps) {
                 <span className="text-[var(--color-accent)]">Weekly pay.</span>
               </h1>
               <p className="text-lg sm:text-xl text-[var(--color-ink-2)] max-w-xl font-normal leading-relaxed">
-                Join the elite ranks of professional poultry catchers. Fast-tracked onto live regional schedules. High pay, guaranteed weekly rosters, and supportive squads.
+                Join the elite ranks of professional poultry catchers. Fast-tracked onto live
+                regional schedules. High pay, guaranteed weekly rosters, and supportive squads.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Link
                   to="/register"
@@ -114,10 +117,10 @@ export default function Index({ onNavigate }: IndexProps) {
                 </a>
               </div>
             </div>
-            
+
             <div className="relative aspect-square lg:aspect-[4/5] bg-[var(--color-paper-2)] overflow-hidden mix-blend-multiply border border-[var(--color-rule)]">
-              <img 
-                src="https://images.unsplash.com/photo-1592982537447-6f2e2ee67d8f?auto=format&fit=crop&q=80&w=2500" 
+              <img
+                src="https://images.unsplash.com/photo-1592982537447-6f2e2ee67d8f?auto=format&fit=crop&q=80&w=2500"
                 alt="Poultry catching operations"
                 className="absolute inset-0 w-full h-full object-cover grayscale opacity-90"
               />
@@ -135,7 +138,8 @@ export default function Index({ onNavigate }: IndexProps) {
               Select Your Catching Division
             </h2>
             <p className="text-lg text-[var(--color-ink-2)] font-normal leading-relaxed">
-              Choose between our specialized poultry catching paths to view current open schedules and catching operative roles.
+              Choose between our specialized poultry catching paths to view current open schedules
+              and catching operative roles.
             </p>
           </div>
 
@@ -145,8 +149,8 @@ export default function Index({ onNavigate }: IndexProps) {
               className="group cursor-pointer flex flex-col h-full border border-[var(--color-rule)] hover:border-[var(--color-accent)] transition-colors duration-300 bg-[var(--color-paper)]"
             >
               <div className="relative h-64 overflow-hidden border-b border-[var(--color-rule)]">
-                <img 
-                  src="https://images.unsplash.com/photo-1548817294-4361e1b4020a?auto=format&fit=crop&q=80&w=800" 
+                <img
+                  src="https://images.unsplash.com/photo-1548817294-4361e1b4020a?auto=format&fit=crop&q=80&w=800"
                   alt="Chicken Catching"
                   className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                 />
@@ -156,9 +160,12 @@ export default function Index({ onNavigate }: IndexProps) {
               </div>
               <div className="p-8 flex flex-col flex-1 justify-between bg-[var(--color-paper)]">
                 <div className="space-y-4">
-                  <h3 className="text-2xl font-display text-[var(--color-ink)]">Chicken Catching</h3>
+                  <h3 className="text-2xl font-display text-[var(--color-ink)]">
+                    Chicken Catching
+                  </h3>
                   <p className="text-[var(--color-ink-2)] leading-relaxed text-base">
-                    Operating in highly disciplined, welfare-compliant chicken catching teams. We recruit for both entry-level roles and experienced team leaders.
+                    Operating in highly disciplined, welfare-compliant chicken catching teams. We
+                    recruit for both entry-level roles and experienced team leaders.
                   </p>
                 </div>
                 <div className="pt-8 mt-8 flex items-center justify-between border-t border-[var(--color-rule)] font-medium text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
@@ -173,8 +180,8 @@ export default function Index({ onNavigate }: IndexProps) {
               className="group cursor-pointer flex flex-col h-full border border-[var(--color-rule)] hover:border-[var(--color-accent)] transition-colors duration-300 bg-[var(--color-paper)]"
             >
               <div className="relative h-64 overflow-hidden border-b border-[var(--color-rule)]">
-                <img 
-                  src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=800" 
+                <img
+                  src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=800"
                   alt="Turkey Catching"
                   className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                 />
@@ -186,7 +193,8 @@ export default function Index({ onNavigate }: IndexProps) {
                 <div className="space-y-4">
                   <h3 className="text-2xl font-display text-[var(--color-ink)]">Turkey Catching</h3>
                   <p className="text-[var(--color-ink-2)] leading-relaxed text-base">
-                    Specialized squads handling commercial turkey catching operations. Earn leading weekly wages with structured heavy-catching shift patterns.
+                    Specialized squads handling commercial turkey catching operations. Earn leading
+                    weekly wages with structured heavy-catching shift patterns.
                   </p>
                 </div>
                 <div className="pt-8 mt-8 flex items-center justify-between border-t border-[var(--color-rule)] font-medium text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
@@ -252,7 +260,9 @@ export default function Index({ onNavigate }: IndexProps) {
                 <article key={item.id} className="space-y-2 group cursor-pointer">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-mono text-[var(--color-ink-2)]">{item.date}</span>
-                    <span className="text-xs font-mono text-[var(--color-accent)]">{item.category}</span>
+                    <span className="text-xs font-mono text-[var(--color-accent)]">
+                      {item.category}
+                    </span>
                   </div>
                   <h4 className="font-medium text-base text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors leading-snug">
                     {item.title}
@@ -273,12 +283,17 @@ export default function Index({ onNavigate }: IndexProps) {
             </div>
             <div className="p-6 space-y-6">
               {events.map((evt) => (
-                <div key={evt.id} className="p-4 border border-[var(--color-rule)] hover:border-[var(--color-ink)] transition-colors space-y-3">
+                <div
+                  key={evt.id}
+                  className="p-4 border border-[var(--color-rule)] hover:border-[var(--color-ink)] transition-colors space-y-3"
+                >
                   <div className="flex items-center justify-between text-xs font-mono text-[var(--color-ink-2)]">
                     <span>{evt.date}</span>
                     <span>{evt.time}</span>
                   </div>
-                  <h4 className="font-medium text-base text-[var(--color-ink)] leading-snug">{evt.title}</h4>
+                  <h4 className="font-medium text-base text-[var(--color-ink)] leading-snug">
+                    {evt.title}
+                  </h4>
                   <div className="text-xs font-mono text-[var(--color-ink-2)] flex items-center gap-2 pt-2 border-t border-[var(--color-rule)]">
                     <MapPin className="w-4 h-4" />
                     <span>{evt.location}</span>
@@ -296,7 +311,10 @@ export default function Index({ onNavigate }: IndexProps) {
             </div>
             <div className="p-6 space-y-6">
               {resources.map((res, idx) => (
-                <div key={idx} className="group p-4 border border-[var(--color-rule)] hover:border-[var(--color-ink)] cursor-pointer transition-colors space-y-3">
+                <div
+                  key={idx}
+                  className="group p-4 border border-[var(--color-rule)] hover:border-[var(--color-ink)] cursor-pointer transition-colors space-y-3"
+                >
                   <div className="flex items-center justify-between text-xs font-mono">
                     <span className="text-[var(--color-ink-2)]">{res.type}</span>
                     <span className="text-[var(--color-accent)]">{res.size}</span>

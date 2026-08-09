@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { TENANTS } from '../data';
+import { TENANTS } from '../../data';
 
 interface RegionLanderProps {
   regionId: string;

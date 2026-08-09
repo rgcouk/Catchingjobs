@@ -63,14 +63,14 @@ import {
   BarChartIcon,
 } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
-import { ChartAreaInteractive } from '../../components/chart-area-interactive';
+import { ChartAreaInteractive } from '../../features/analytics/chart-area-interactive';
 
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
-import { ErrorBoundary } from '../../components/ErrorBoundary';
-import { KanbanBoard } from '../../components/KanbanBoard';
+import { ErrorBoundary } from '../../components/shared/ErrorBoundary';
+import { KanbanBoard } from '../../features/KanbanBoard';
 
 const jobSchema = z.object({
   title: z.string().min(1, 'Title is required'),

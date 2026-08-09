@@ -26,9 +26,9 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { ApplicationData } from '../types';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 interface SubmittedApplication extends ApplicationData {
   rosterRef: string;

@@ -26,8 +26,8 @@ import {
   Command,
 } from 'lucide-react';
 
-import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
+import { NavMain } from '@/components/layout/nav-main';
+import { NavUser } from '@/components/layout/nav-user';
 import {
   Sidebar,
   SidebarContent,

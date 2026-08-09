@@ -37,12 +37,12 @@ function ProtectedRoute({ children, role }: { children: React.ReactNode; role?: 
 import { ShieldCheck, Lock, Database, Building2, HelpCircle, X, Send } from 'lucide-react';
 
 import Index from './pages/Index';
-import SectorHub from './components/SectorHub';
-import RegionLander from './components/RegionLander';
-import IntakeWizard from './components/IntakeWizard';
-import RosterPortal from './components/RosterPortal';
-import CorporateLander from './components/CorporateLander';
-import CatcherPortal from './components/CatcherPortal';
+import SectorHub from './pages/landers/SectorHub';
+import RegionLander from './pages/landers/RegionLander';
+import IntakeWizard from './pages/wizard/IntakeWizard';
+import RosterPortal from './pages/portals/RosterPortal';
+import CorporateLander from './pages/landers/CorporateLander';
+import CatcherPortal from './pages/portals/CatcherPortal';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PortalDashboard from './pages/portal/PortalDashboard';

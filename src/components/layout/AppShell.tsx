@@ -1,8 +1,8 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/app-sidebar';
-import { SiteHeader } from '@/components/site-header';
+import { AppSidebar } from '@/components/layout/app-sidebar';
+import { SiteHeader } from '@/components/layout/site-header';
 
 export interface NavItem {
   id: string;

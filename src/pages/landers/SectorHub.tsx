@@ -21,7 +21,7 @@ import {
   GraduationCap,
   GitBranch,
 } from 'lucide-react';
-import { TENANTS } from '../data';
+import { TENANTS } from '../../data';
 
 interface SectorHubProps {
   sectorId: 'chicken' | 'turkey';
