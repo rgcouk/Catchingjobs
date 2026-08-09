@@ -2,6 +2,8 @@ import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
 import { getPrisma } from '../server/db';
+import { ManageApplications } from '../src/services/ManageApplications';
+import { DomainError } from '../src/services/exceptions';
 
 const app = new Hono();
 
@@ -15,61 +17,55 @@ app.use('*', async (c, next) => {
   await next();
 });
 
+const handleError = (error: unknown, defaultMessage: string, c: any) => {
+  if (error instanceof DomainError) {
+    return c.json({ error: error.message }, error.statusCode);
+  }
+  console.error(defaultMessage, error);
+  return c.json({ error: defaultMessage }, 500);
+};
+
 app.get('/api/applications', async (c) => {
-  const prisma = getPrisma();
+  const service = new ManageApplications(getPrisma());
   try {
-    const applications = await prisma.application.findMany({
-      orderBy: { createdAt: 'desc' }
-    });
-    
+    const applications = await service.getAllApplicationsDesc();
     return c.json(applications);
   } catch (error) {
-    console.error('Error fetching applications:', error);
-    return c.json({ error: error instanceof Error ? error.message : 'Failed to fetch applications' }, 500);
+    return handleError(error, 'Failed to fetch applications', c);
   }
 });
 
 app.post('/api/applications', async (c) => {
-  const prisma = getPrisma();
+  const service = new ManageApplications(getPrisma());
   try {
     const body = await c.req.json();
-    const application = await prisma.application.create({
-      data: body,
-    });
+    const application = await service.createApplication(body);
     return c.json(application, 201);
   } catch (error) {
-    console.error('Error creating application:', error);
-    return c.json({ error: error instanceof Error ? error.message : 'Failed to create application' }, 500);
+    return handleError(error, 'Failed to create application', c);
   }
 });
 
 app.put('/api/applications/:rosterRef', async (c) => {
-  const prisma = getPrisma();
+  const service = new ManageApplications(getPrisma());
   try {
     const { rosterRef } = c.req.param();
     const body = await c.req.json();
-    const application = await prisma.application.update({
-      where: { rosterRef },
-      data: body,
-    });
+    const application = await service.updateApplicationByRosterRef(rosterRef, body);
     return c.json(application);
   } catch (error) {
-    console.error('Error updating application:', error);
-    return c.json({ error: error instanceof Error ? error.message : 'Failed to update application' }, 500);
+    return handleError(error, 'Failed to update application', c);
   }
 });
 
 app.delete('/api/applications/:rosterRef', async (c) => {
-  const prisma = getPrisma();
+  const service = new ManageApplications(getPrisma());
   try {
     const { rosterRef } = c.req.param();
-    await prisma.application.delete({
-      where: { rosterRef },
-    });
+    await service.deleteApplicationByRosterRef(rosterRef);
     return c.json({ success: true });
   } catch (error) {
-    console.error('Error deleting application:', error);
-    return c.json({ error: error instanceof Error ? error.message : 'Failed to delete application' }, 500);
+    return handleError(error, 'Failed to delete application', c);
   }
 });
 
