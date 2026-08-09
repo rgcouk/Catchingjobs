@@ -5,7 +5,7 @@ export class ManageUsers {
 
   async getUsers() {
     return this.prisma.user.findMany({
-      select: { id: true, email: true, role: true, createdAt: true, application: true }
+      select: { id: true, email: true, role: true, createdAt: true, application: true },
     });
   }
 
@@ -15,7 +15,7 @@ export class ManageUsers {
         email,
         role: role || 'WORKER',
         passwordHash: 'TODO_INVITE_MOCK_HASH',
-      }
+      },
     });
   }
 }

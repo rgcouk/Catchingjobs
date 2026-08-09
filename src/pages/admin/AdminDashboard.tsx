@@ -484,7 +484,7 @@ const AdminDashboard = () => {
                       { id: 'NEW', title: 'NEW' },
                       { id: 'REVIEWING', title: 'REVIEWING' },
                       { id: 'HIRED', title: 'HIRED' },
-                      { id: 'REJECTED', title: 'REJECTED' }
+                      { id: 'REJECTED', title: 'REJECTED' },
                     ]}
                     tasks={filteredApps.map((app: any) => ({
                       id: app.id,

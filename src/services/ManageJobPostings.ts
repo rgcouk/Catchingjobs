@@ -6,7 +6,7 @@ export class ManageJobPostings {
 
   async getJobPostings() {
     return this.prisma.jobPosting.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -17,7 +17,7 @@ export class ManageJobPostings {
     }
 
     return this.prisma.jobPosting.create({
-      data: body
+      data: body,
     });
   }
 }

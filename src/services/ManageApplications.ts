@@ -10,9 +10,9 @@ export class ManageApplications {
         skip,
         take,
         include: { user: true, jobPosting: true },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
       }),
-      this.prisma.application.count()
+      this.prisma.application.count(),
     ]);
     return { data: applications, total, skip, take };
   }
@@ -20,7 +20,7 @@ export class ManageApplications {
   async getApplication(id: number) {
     const application = await this.prisma.application.findUnique({
       where: { id },
-      include: { user: true, jobPosting: true }
+      include: { user: true, jobPosting: true },
     });
     if (!application) {
       throw new ApplicationNotFoundError();
@@ -29,24 +29,17 @@ export class ManageApplications {
   }
 
   async updateApplication(id: number, body: any) {
-    const { 
-      id: _id, 
-      createdAt, 
-      updatedAt, 
-      user, 
-      jobPosting, 
-      ...updateData 
-    } = body;
+    const { id: _id, createdAt, updatedAt, user, jobPosting, ...updateData } = body;
 
     return this.prisma.application.update({
       where: { id },
-      data: updateData
+      data: updateData,
     });
   }
 
   async getAllApplicationsDesc() {
     return this.prisma.application.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 

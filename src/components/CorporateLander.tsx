@@ -75,29 +75,38 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
               You're in the right place.
             </h2>
             <p className="text-lg mt-6 text-[var(--color-paper-2)] opacity-80 leading-relaxed">
-              Join one of the UK’s most trusted Poultry Companies, (probably). We accommodate intact local crews with clean transport, industry-leading rates, and premium schedules.
+              Join one of the UK’s most trusted Poultry Companies, (probably). We accommodate intact
+              local crews with clean transport, industry-leading rates, and premium schedules.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-x-8 gap-y-12">
             <div>
               <Sun className="w-6 h-6 text-[var(--color-accent)] mb-4" />
               <h4 className="font-medium font-display text-lg mb-2">New & Eager</h4>
-              <p className="text-sm opacity-70 leading-relaxed">Full support, welfare training, and fast licensing.</p>
+              <p className="text-sm opacity-70 leading-relaxed">
+                Full support, welfare training, and fast licensing.
+              </p>
             </div>
             <div>
               <Brain className="w-6 h-6 text-[var(--color-accent)] mb-4" />
               <h4 className="font-medium font-display text-lg mb-2">Experienced</h4>
-              <p className="text-sm opacity-70 leading-relaxed">Industry-leading rates and premium schedules.</p>
+              <p className="text-sm opacity-70 leading-relaxed">
+                Industry-leading rates and premium schedules.
+              </p>
             </div>
             <div>
               <Users className="w-6 h-6 text-[var(--color-accent)] mb-4" />
               <h4 className="font-medium font-display text-lg mb-2">Full Crews</h4>
-              <p className="text-sm opacity-70 leading-relaxed">We accommodate intact local crews with clean transport.</p>
+              <p className="text-sm opacity-70 leading-relaxed">
+                We accommodate intact local crews with clean transport.
+              </p>
             </div>
             <div>
               <Rocket className="w-6 h-6 text-[var(--color-accent)] mb-4" />
               <h4 className="font-medium font-display text-lg mb-2">Growing Fast</h4>
-              <p className="text-sm opacity-70 leading-relaxed">Career progression into team lead or supervisory roles.</p>
+              <p className="text-sm opacity-70 leading-relaxed">
+                Career progression into team lead or supervisory roles.
+              </p>
             </div>
           </div>
         </div>
@@ -109,19 +118,44 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
           <div className="mb-16">
             <h2 className="text-3xl sm:text-4xl font-display mb-4">We Offer</h2>
             <p className="text-lg text-[var(--color-ink-2)] max-w-xl">
-              A professional approach to agricultural trade work, built on security, respect, and growth.
+              A professional approach to agricultural trade work, built on security, respect, and
+              growth.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-px bg-[var(--color-rule)] border border-[var(--color-rule)]">
             {[
-              { icon: Coins, title: "Competitive Pay", desc: "We pay highly competitive, industry-leading rates. On time, every week, with transparent pay structures." },
-              { icon: Clock, title: "Flexible Shifts", desc: "Choose shift schedules that align with your lifestyle. Multiple shift patterns available for local crews." },
-              { icon: Handshake, title: "Supportive Teams", desc: "Work alongside professionals who respect your contribution. Clean transport, safety gear, and supportive team members." },
-              { icon: GraduationCap, title: "Ongoing Training", desc: "We support your growth with full certification, industry welfare training, and safety-focused guidance." },
-              { icon: GitBranch, title: "Career Progression", desc: "Clear pathways from catcher to driver or manager. We actively invest in your progression and support licensing goals.", span: 2 }
+              {
+                icon: Coins,
+                title: 'Competitive Pay',
+                desc: 'We pay highly competitive, industry-leading rates. On time, every week, with transparent pay structures.',
+              },
+              {
+                icon: Clock,
+                title: 'Flexible Shifts',
+                desc: 'Choose shift schedules that align with your lifestyle. Multiple shift patterns available for local crews.',
+              },
+              {
+                icon: Handshake,
+                title: 'Supportive Teams',
+                desc: 'Work alongside professionals who respect your contribution. Clean transport, safety gear, and supportive team members.',
+              },
+              {
+                icon: GraduationCap,
+                title: 'Ongoing Training',
+                desc: 'We support your growth with full certification, industry welfare training, and safety-focused guidance.',
+              },
+              {
+                icon: GitBranch,
+                title: 'Career Progression',
+                desc: 'Clear pathways from catcher to driver or manager. We actively invest in your progression and support licensing goals.',
+                span: 2,
+              },
             ].map((item, i) => (
-              <div key={i} className={`bg-[var(--color-paper)] p-8 sm:p-12 hover:bg-[var(--color-paper-2)] transition-colors ${item.span ? 'md:col-span-2' : ''}`}>
+              <div
+                key={i}
+                className={`bg-[var(--color-paper)] p-8 sm:p-12 hover:bg-[var(--color-paper-2)] transition-colors ${item.span ? 'md:col-span-2' : ''}`}
+              >
                 <item.icon className="w-6 h-6 text-[var(--color-accent)] mb-6" />
                 <h3 className="font-display text-xl mb-3">{item.title}</h3>
                 <p className="text-sm text-[var(--color-ink-2)] leading-relaxed">{item.desc}</p>
@@ -136,7 +170,9 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
         <div className="max-w-5xl mx-auto">
           <div className="mb-12">
             <h2 className="text-2xl font-display mb-2">Corporate Portal Hub</h2>
-            <p className="text-sm text-[var(--color-ink-2)]">Access regional recruitment divisions, training, and live location hubs.</p>
+            <p className="text-sm text-[var(--color-ink-2)]">
+              Access regional recruitment divisions, training, and live location hubs.
+            </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -151,7 +187,8 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
                 </div>
                 <h3 className="font-display font-medium text-lg mb-3">Recruitment Switchboard</h3>
                 <p className="text-sm text-[var(--color-ink-2)] leading-relaxed mb-8">
-                  Check regional operational networks, county active numbers, compliance guides, and current alerts.
+                  Check regional operational networks, county active numbers, compliance guides, and
+                  current alerts.
                 </p>
               </div>
               <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-[var(--color-accent)]">
@@ -171,7 +208,8 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
                 </div>
                 <h3 className="font-display font-medium text-lg mb-3">Chicken Broiler Division</h3>
                 <p className="text-sm text-[var(--color-ink-2)] leading-relaxed mb-8">
-                  Access specialized crew rosters, night shift rates, and Safety Culture integration.
+                  Access specialized crew rosters, night shift rates, and Safety Culture
+                  integration.
                 </p>
               </div>
               <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-[var(--color-accent)]">
@@ -191,7 +229,8 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
                 </div>
                 <h3 className="font-display font-medium text-lg mb-3">Turkey Loading Division</h3>
                 <p className="text-sm text-[var(--color-ink-2)] leading-relaxed mb-8">
-                  Access heavy agricultural operational parameters and weight handling compliance lists.
+                  Access heavy agricultural operational parameters and weight handling compliance
+                  lists.
                 </p>
               </div>
               <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-[var(--color-accent)]">
