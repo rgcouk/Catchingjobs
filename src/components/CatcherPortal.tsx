@@ -23,7 +23,7 @@ import {
   EyeOff,
   ShieldCheck,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@tanstack/react-router';
 import { SubmittedApplication } from '../App';
 import { Button } from './ui/button';
 import { Input } from './ui/input';

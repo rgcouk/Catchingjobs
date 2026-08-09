@@ -12,7 +12,7 @@ import {
   Navigate,
   useParams,
   Link,
-} from 'react-router-dom';
+} from '@tanstack/react-router';
 import {
   useAuth,
   useUser,
@@ -374,7 +374,7 @@ function App() {
           <div className="flex items-center gap-4">
             <SignedOut>
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate({ to: '/login' })}
                 className="text-sm font-semibold transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer text-[var(--color-ink)] hover:text-[var(--color-accent)] flex items-center gap-1"
               >
                 <Lock className="w-4 h-4" />

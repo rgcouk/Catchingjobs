@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSignUp } from '@clerk/clerk-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from '@tanstack/react-router';
 import { FcGoogle } from 'react-icons/fc';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -85,7 +85,7 @@ export default function Register() {
         setError('Unable to complete registration. Please try again.');
       } else {
         await setActive({ session: completeSignUp.createdSessionId });
-        navigate('/user-portal');
+        navigate({ to: '/user-portal' });
       }
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));

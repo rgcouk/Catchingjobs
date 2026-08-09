@@ -82,6 +82,7 @@ const jobSchema = z.object({
 type JobFormValues = z.infer<typeof jobSchema>;
 
 import { useAppShell } from '../../components/layout/AppShell';
+import { Outlet } from '@tanstack/react-router';
 
 const AdminDashboard = () => {
   const { activeTab } = useAppShell();
@@ -1319,7 +1320,7 @@ const AdminDashboard = () => {
   };
   return (
     <div className="h-full flex-1">
-      {renderContent()}
+      <Outlet />
 
       {/* View Full Application Dialog */}
       <Dialog open={isViewAppOpen} onOpenChange={setIsViewAppOpen}>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSignIn } from '@clerk/clerk-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from '@tanstack/react-router';
 import { FcGoogle } from 'react-icons/fc';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -48,7 +48,7 @@ export default function Login() {
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
-        navigate('/user-portal');
+        navigate({ to: '/user-portal' });
       } else {
         // More steps needed (like MFA). For simplicity, we just log it here.
         console.log(result);
