@@ -480,9 +480,24 @@ const AdminDashboard = () => {
 
                 {activeTab === 'kanban' ? (
                   <KanbanBoard
-                    applications={filteredApps}
-                    onUpdateStatus={updateApplicationStatus}
-                    onSelectApp={setSelectedApp}
+                    columns={[
+                      { id: 'NEW', title: 'NEW' },
+                      { id: 'REVIEWING', title: 'REVIEWING' },
+                      { id: 'HIRED', title: 'HIRED' },
+                      { id: 'REJECTED', title: 'REJECTED' }
+                    ]}
+                    tasks={filteredApps.map((app: any) => ({
+                      id: app.id,
+                      title: app.name,
+                      subtitle: `${app.sector} - ${app.town}`,
+                      date: new Date(app.createdAt).toLocaleDateString(),
+                      statusId: app.status || 'NEW',
+                    }))}
+                    onTaskStatusChange={updateApplicationStatus}
+                    onTaskSelect={(task) => {
+                      const app = filteredApps.find((a: any) => a.id === task.id);
+                      if (app) setSelectedApp(app);
+                    }}
                   />
                 ) : (
                   <ErrorBoundary>
