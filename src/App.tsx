@@ -36,7 +36,7 @@ function ProtectedRoute({ children, role }: { children: React.ReactNode; role?: 
 }
 import { ShieldCheck, Lock, Database, Building2, HelpCircle, X, Send } from 'lucide-react';
 
-import Switchboard from './components/Switchboard';
+import Index from './pages/Index';
 import SectorHub from './components/SectorHub';
 import RegionLander from './components/RegionLander';
 import IntakeWizard from './components/IntakeWizard';
@@ -442,7 +442,7 @@ function App() {
       >
         <div className="flex-1 space-y-6">
           <Routes>
-            <Route path="/" element={<Switchboard onNavigate={handleNavigate} />} />
+            <Route path="/" element={<Index onNavigate={handleNavigate} />} />
             <Route path="/corporate" element={<CorporateLander onNavigate={handleNavigate} />} />
             <Route path="/login/*" element={<Login />} />
             <Route path="/register/*" element={<Register />} />

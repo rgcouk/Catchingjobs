@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@600&family=JetBrains+Mono:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
@@ -8,15 +8,15 @@
 
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Lora', Georgia, serif;
+  --font-display: "Instrument Serif", serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
-  --color-paper: oklch(99% 0.01 260);
-  --color-paper-2: oklch(96% 0.01 260);
-  --color-ink: oklch(25% 0.06 260);
-  --color-ink-2: oklch(45% 0.05 260);
-  --color-rule: oklch(92% 0.01 260);
-  --color-accent: oklch(65% 0.2 45);
+  --color-paper: oklch(98% 0.01 90);
+  --color-paper-2: oklch(95% 0.015 90);
+  --color-ink: oklch(15% 0.02 240);
+  --color-ink-2: oklch(45% 0.01 240);
+  --color-rule: oklch(85% 0.01 240);
+  --color-accent: oklch(50% 0.15 40);
   --color-focus: oklch(65% 0.2 45);
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -78,7 +78,7 @@ h6,
   --color-border: var(--border);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
+  --color-accent: oklch(50% 0.15 40);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
