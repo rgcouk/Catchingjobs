@@ -1,8 +1,7 @@
 {
-  "name": "catchingjobs",
   "rewrites": [
     {
-      "source": "/api/ping/?",
+      "source": "/api/ping",
       "destination": "/api/ping.ts"
     },
     {
@@ -14,23 +13,27 @@
       "destination": "/api/portal.ts"
     },
     {
-      "source": "/api/upload/?",
+      "source": "/api/upload",
       "destination": "/api/upload.ts"
     },
     {
-      "source": "/api/locations/?",
+      "source": "/api/locations",
       "destination": "/api/locations.ts"
     },
     {
-      "source": "/api/applications/?(.*)?",
+      "source": "/api/applications",
       "destination": "/api/applications.ts"
     },
     {
-      "source": "/api/webhook/clerk/?",
+      "source": "/api/applications/(.*)",
+      "destination": "/api/applications.ts"
+    },
+    {
+      "source": "/api/webhook/clerk",
       "destination": "/api/webhook-clerk.ts"
     },
     {
-      "source": "/api/webhook/intake/?",
+      "source": "/api/webhook/intake",
       "destination": "/api/webhook-intake.ts"
     },
     {

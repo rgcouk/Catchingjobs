@@ -67,11 +67,14 @@ The platform employs a hybrid architecture, combining public SEO-optimized landi
 
 ### 4.1 Public Sector Hubs & Local Landers
 - **Dynamic Content:** Pages inject local pick-up coordinates and community-specific text to prevent duplicate content flags and boost local SEO.
-- **Public Intake Wizard (Lead Capture):** A lightweight form embedded on public pages that collects only Name, Phone, Sector, and Right to Work status. Submitting this creates a preliminary application and directs the user to register/login to complete their profile.
+- **Public Intake & Automated Triage:** A lightweight form on public pages collecting basic info (Name, Phone, Sector, Right to Work status). Submitting this triggers **Automated Instant Triage**:
+  - **Fail:** If lacking Right to Work, the applicant receives a polite instant rejection.
+  - **Pass:** The applicant enters a verification code (SMS OTP) which seamlessly creates their Clerk account passwordlessly in the background, immediately dropping them into the Full Application.
 
 ### 4.2 User Portal (`/user-portal`)
-- **Secure Authentication:** Users log in via Clerk (Email, Phone, Google SSO).
-- **Unified 3-Step Onboarding Wizard:**
+- **Frictionless Authentication:** Users log in passwordlessly via Clerk (SMS OTP, Magic Link, Google SSO). Applicants retain this account permanently to track statuses or apply for other positions.
+- **Seamless Fast-Track:** Upon passing automated triage, users immediately begin the "Full Application" in the same sitting to maximize conversion momentum.
+- **Unified 3-Step Onboarding Wizard (The Full Application):**
   - **Step 1: Basic Info** (Name, Phone, Sector, Right to Work, Driving License).
   - **Step 2: Identity & Address** (NI Number, Date of Birth, Address).
   - **Step 3: Medical & Bank Details** (Account Info, Emergency Contacts, Medical declarations).
@@ -79,7 +82,8 @@ The platform employs a hybrid architecture, combining public SEO-optimized landi
 
 ### 4.3 Admin Dashboard (`/admin`)
 - **Role-Based Access:** Protected route. Only users with the `ADMIN` role (via Clerk Public Metadata) can access it.
-- **Applications Kanban:** Visual drag-and-drop board to track applicants through stages (New, Contacted, Onboarded, Rejected).
+- **Applications Kanban:** Visual drag-and-drop board to track applicants through stages (Application Submitted, Reviewing, Onboarded, Rejected).
+- **Efficiency Focus:** Admins no longer manually review half-finished leads. The Kanban board surfaces fully completed, pre-qualified applicant profiles ready for final review and scheduling.
 - **Location Manager:** Add/Edit/Delete local recruitment hubs (e.g., Boston, Lincoln).
 - **Job Manager:** Manage active job postings linked to specific locations.
 
