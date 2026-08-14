@@ -66,7 +66,7 @@ export interface SubmittedApplication extends ApplicationData {
   rosterRef: string;
   sector: 'chicken' | 'turkey';
   timestamp: string;
-  createdAt?: string | Date;
+  createdAt?: string;
   status?: string;
   jobPosting?: { title: string };
   contacted?: boolean;
@@ -90,6 +90,10 @@ export interface SubmittedApplication extends ApplicationData {
   isFitToLift?: boolean | null;
   declarationSigned?: boolean;
   profileFormCompleted?: boolean;
+  hasRightToWork: boolean | string | null;
+  hasDrivingLicense: boolean | string | null;
+  hasForkliftLicense?: boolean | string | null;
+  poultryExperience?: string;
 }
 
 function RegionRoute({

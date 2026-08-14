@@ -44,13 +44,13 @@ import { SubmittedApplication } from '../../App';
 const PortalDashboard = () => {
   const { activeTab } = useAppShell();
 
-  const [profile, setProfile] = useState<any>(null);
-  const [applications, setApplications] = useState<any[]>([]);
+  const [profile, setProfile] = useState<{ application?: SubmittedApplication } | null>(null);
+  const [applications, setApplications] = useState<SubmittedApplication[]>([]);
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
   const { getToken } = useAuth();
 
@@ -66,6 +66,7 @@ const PortalDashboard = () => {
       }
       setError(null);
       try {
+        if (!isLoaded) return;
         if (!USER_ID) return;
         const token = await getToken();
         const headers = { Authorization: `Bearer ${token}` };
@@ -104,7 +105,7 @@ const PortalDashboard = () => {
     };
 
     executeFetch();
-  }, [USER_ID, activeTab, getToken, syncing]);
+  }, [USER_ID, activeTab, getToken, syncing, isLoaded]);
 
   useEffect(() => {
     fetchData();

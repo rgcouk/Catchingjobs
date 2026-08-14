@@ -49,9 +49,10 @@ export interface ApplicationData {
   email?: string;
   phone: string;
   town: string;
-  hasRightToWork: boolean | null;
-  hasDrivingLicense: boolean | null;
-  shiftAvailability: string;
+  hasRightToWork: boolean | string | null;
+  hasDrivingLicense: boolean | string | null;
+  hasForkliftLicense?: boolean | string | null;
+  shiftAvailability?: string;
   authProvider?: 'google' | 'facebook' | 'clerk';
   avatarUrl?: string;
 }

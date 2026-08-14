@@ -161,7 +161,7 @@ const AdminDashboard = () => {
     fetchData();
   }, [fetchData]);
 
-  const updateApplicationStatus = async (id: string | number, status: string) => {
+  const updateApplicationStatus = async (id: string, status: string) => {
     try {
       const token = await getToken();
       const res = await fetch(`/api/admin/applications/${id}`, {
@@ -718,6 +718,60 @@ const AdminDashboard = () => {
                           <span className="font-medium">
                             {selectedApp.poultryExperience || 'None'}
                           </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 pt-3 border-t border-border">
+                      <h3 className="text-sm font-semibold">Bank Details</h3>
+                      <div className="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                          <span className="text-muted-foreground block">Bank Name</span>
+                          <span className="font-medium">{selectedApp.bankName || 'N/A'}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Account Name</span>
+                          <span className="font-medium">{selectedApp.bankAccountName || 'N/A'}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Account Number</span>
+                          <span className="font-medium">{selectedApp.bankAccountNumber || 'N/A'}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Sort Code</span>
+                          <span className="font-medium">{selectedApp.bankSortCode || 'N/A'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 pt-3 border-t border-border">
+                      <h3 className="text-sm font-semibold">Medical & Emergency</h3>
+                      <div className="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                          <span className="text-muted-foreground block">Emergency Contact</span>
+                          <span className="font-medium">
+                            {selectedApp.emergencyName ? `${selectedApp.emergencyName} (${selectedApp.emergencyRelation})` : 'N/A'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Emergency Phone</span>
+                          <span className="font-medium">{selectedApp.emergencyPhone || 'N/A'}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Asthma/Allergies</span>
+                          <span className="font-medium">{selectedApp.hasAsthmaOrAllergies ? 'Yes' : 'No'}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Back Issues</span>
+                          <span className="font-medium">{selectedApp.hasBackIssues ? 'Yes' : 'No'}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Fit to Lift</span>
+                          <span className="font-medium">{selectedApp.isFitToLift ? 'Yes' : 'No'}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block">Declaration Signed</span>
+                          <span className="font-medium">{selectedApp.declarationSigned ? 'Yes' : 'No'}</span>
                         </div>
                       </div>
                     </div>

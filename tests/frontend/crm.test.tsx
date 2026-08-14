@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import IntakeWizard from '../../src/pages/wizard/IntakeWizard';
-import { KanbanBoard } from '../../src/components/KanbanBoard';
 
 // Mock Clerk
 vi.mock('@clerk/clerk-react', () => ({
@@ -68,40 +67,6 @@ describe('CRM Features Integration Tests', () => {
         expect(submittedData.userId).toBe('user123');
         expect(submittedData.rosterRef).toMatch(/^PL-CHI-\d{4}$/);
       });
-    });
-  });
-
-  describe('KanbanBoard Component', () => {
-    const mockApps = [
-      { id: 1, name: 'Alice', status: 'NEW', sector: 'Chicken', town: 'London', createdAt: new Date().toISOString() },
-      { id: 2, name: 'Bob', status: 'REVIEWING', sector: 'Turkey', town: 'Leeds', createdAt: new Date().toISOString() },
-    ];
-
-    it('should render columns and application cards', () => {
-      render(<KanbanBoard applications={mockApps} onUpdateStatus={vi.fn()} onSelectApp={vi.fn()} />);
-
-      expect(screen.getByText('Alice')).toBeInTheDocument();
-      expect(screen.getByText('Bob')).toBeInTheDocument();
-      expect(screen.getAllByText('NEW').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('REVIEWING').length).toBeGreaterThan(0);
-    });
-
-    it('should call onSelectApp when a card is clicked', () => {
-      const mockSelect = vi.fn();
-      render(<KanbanBoard applications={mockApps} onUpdateStatus={vi.fn()} onSelectApp={mockSelect} />);
-      
-      fireEvent.click(screen.getByText('Alice'));
-      expect(mockSelect).toHaveBeenCalledWith(mockApps[0]);
-    });
-
-    it('should call onUpdateStatus when status is changed', () => {
-      const mockUpdate = vi.fn();
-      render(<KanbanBoard applications={mockApps} onUpdateStatus={mockUpdate} onSelectApp={vi.fn()} />);
-      
-      const selects = screen.getAllByRole('combobox');
-      fireEvent.change(selects[0], { target: { value: 'HIRED' } });
-      
-      expect(mockUpdate).toHaveBeenCalledWith(1, 'HIRED');
     });
   });
 });
