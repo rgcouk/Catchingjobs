@@ -134,7 +134,15 @@ export const REGIONS: Region[] = [
         pickupPoint: 'Boston Marketplace / Main Depot',
         surroundingAreas: ['Kirton', 'Sutterton', 'Spalding'],
         localizedCopy:
-          'Serving Boston, Kirton, Sutterton, and Spalding. Vans leave nightly from Boston Marketplace. We offer fair labor recruitment under strict GLAA compliance. Please note: Pullum Ltd does not provide visa sponsorships for these roles.',
+          'Serving Boston, Kirton, Sutterton, and Spalding. Vans leave nightly from Boston Marketplace. We offer fair labor recruitment under strict GLAA compliance. Professional catching crews in Boston with guaranteed weekly pay. Please note: Pullum Ltd does not provide visa sponsorships for these roles.',
+      },
+      {
+        id: 'sleaford',
+        name: 'Sleaford',
+        pickupPoint: 'Train Station Car Park / Sleaford Depot',
+        surroundingAreas: ['Ruskington', 'Heckington', 'Ancaster'],
+        localizedCopy:
+          'Serving Sleaford, Ruskington, Heckington, and Ancaster. Vans leave nightly from Train Station Car Park. Sleaford night shift pickup point with dedicated crew minibuses. Professional turkey and broiler catching squads across Lincolnshire under GLAA compliance.',
       },
       {
         id: 'lincoln',
@@ -171,6 +179,22 @@ export const REGIONS: Region[] = [
         localizedCopy:
           'Serving Attleborough, Wymondham, Besthorpe, and Snetterton. Vans leave nightly from Attleborough Town Center. Fully GLAA compliant recruitment with no hidden fees. No visa sponsorship available.',
       },
+      {
+        id: 'thetford',
+        name: 'Thetford',
+        pickupPoint: 'Thetford Bus Station Outpost',
+        surroundingAreas: ['Brandon', 'Watton', 'East Harling'],
+        localizedCopy:
+          'Serving Thetford, Brandon, Watton, and East Harling. Vans leave nightly from Thetford Bus Station. Fully GLAA compliant recruitment and guaranteed payroll.',
+      },
+      {
+        id: 'norwich',
+        name: 'Norwich',
+        pickupPoint: 'Norwich Central Depot',
+        surroundingAreas: ['Costessey', 'Hethersett', 'Drayton'],
+        localizedCopy:
+          'Serving Norwich and broader Norfolk agricultural catching corridors. Reliable nightly transit with licensed crew leaders.',
+      },
     ],
   },
   {
@@ -181,6 +205,24 @@ export const REGIONS: Region[] = [
     featuredRoles: ['turkey-operative', 'crew-leader'],
     seoCopy:
       "Serving both primary broiler and high-volume seasonal turkey sectors across Yorkshire's agricultural corridors. We maintain peak crew efficiency operating from Hull, York, Malton, and Driffield. Our professional team members benefit from the region's largest commercial harvesting contracts, ensuring guaranteed long-term earnings.",
+    towns: [
+      {
+        id: 'hull',
+        name: 'Hull',
+        pickupPoint: 'Hull Interchange Station',
+        surroundingAreas: ['Beverley', 'Cottingham', 'Hedon'],
+        localizedCopy:
+          'Serving Hull, Beverley, Cottingham, and Hedon. Dedicated catching transport leaving nightly from Hull Interchange. High-density commercial poultry operations with guaranteed weekly pay.',
+      },
+      {
+        id: 'york',
+        name: 'York',
+        pickupPoint: 'York Station Outpost',
+        surroundingAreas: ['Selby', 'Malton', 'Pocklington'],
+        localizedCopy:
+          'Serving York, Selby, Malton, and Pocklington agricultural zones. Professional harvesting squads with Lantra welfare certification.',
+      },
+    ],
   },
   {
     id: 'shropshire',
@@ -190,6 +232,16 @@ export const REGIONS: Region[] = [
     featuredRoles: ['poultry-operative', 'turkey-operative'],
     seoCopy:
       "Encompassing poultry and general livestock commercial lines in Shrewsbury, Oswestry, and Telford. Pullum Ltd's Shropshire teams are highly regarded for welfare excellence and absolute safety compliance. Our local farm contracts guarantee stable weekly rosters and secure Friday pay deposits.",
+    towns: [
+      {
+        id: 'shrewsbury',
+        name: 'Shrewsbury',
+        pickupPoint: 'Shrewsbury Town Outpost',
+        surroundingAreas: ['Oswestry', 'Telford', 'Wem'],
+        localizedCopy:
+          'Serving Shrewsbury, Oswestry, and Telford agricultural corridors. Night shift operations with dedicated crew transport and Friday weekly pay.',
+      },
+    ],
   },
   {
     id: 'suffolk',
@@ -199,5 +251,15 @@ export const REGIONS: Region[] = [
     featuredRoles: ['poultry-operative', 'safety-supervisor'],
     seoCopy:
       "Suffolk's agricultural operations demand high-integrity, well-trained crew members. Pullum Ltd provides premium support for facilities in Ipswich, Bury St Edmunds, and Eye. Our roles are perfect for local professionals seeking dependable, highly compensated physical careers.",
+    towns: [
+      {
+        id: 'bury-st-edmunds',
+        name: 'Bury St Edmunds',
+        pickupPoint: 'Bury St Edmunds Station',
+        surroundingAreas: ['Stowmarket', 'Haverhill', 'Thetford Borders'],
+        localizedCopy:
+          'Serving Bury St Edmunds, Stowmarket, and Haverhill. Professional catching crews operating under Pullum Ltd safety standards.',
+      },
+    ],
   },
 ];

@@ -21,6 +21,8 @@ export interface TownHub {
   pickupPoint: string;
   surroundingAreas: string[];
   localizedCopy: string;
+  description?: string | null;
+  phoneNumber?: string | null;
 }
 
 export interface Region {
@@ -30,7 +32,43 @@ export interface Region {
   activeCrews: number;
   featuredRoles: string[];
   seoCopy: string;
+  description?: string | null;
+  phoneNumber?: string | null;
   towns?: TownHub[];
+}
+
+export interface TownData {
+  id: string;
+  name: string;
+  pickupPoint: string;
+  surrounding: string;
+  localizedCopy: string;
+  description?: string | null;
+  phoneNumber?: string | null;
+  region: {
+    id: string;
+    name: string;
+    county: string;
+    activeCrews: number;
+    seoCopy?: string;
+  };
+}
+
+export interface RegionData {
+  id: string;
+  name: string;
+  county: string;
+  activeCrews: number;
+  seoCopy: string;
+  description?: string | null;
+  phoneNumber?: string | null;
+  towns: TownData[];
+}
+
+export interface TownLoaderData {
+  town: TownData | null;
+  sector: 'chicken' | 'turkey' | 'chickens' | 'turkeys';
+  notFound?: boolean;
 }
 
 export interface TenantConfig {

@@ -95,13 +95,16 @@ function RegionRoute({
   onNavigate,
 }: {
   sectorId: 'chicken' | 'turkey';
-  onNavigate: (sub: 'chicken' | 'turkey', reg: string) => void;
+  onNavigate: (sub: 'root' | 'chicken' | 'turkey' | 'corporate' | 'portal', reg: string) => void;
 }) {
-  const { regionId } = useParams<{ regionId: string }>();
-  if (!regionId) return null;
+  const { regionId, town } = useParams<{ regionId?: string; town?: string }>();
+  const activeSlug = town || regionId;
+  if (!activeSlug)
+    return <Navigate to={sectorId === 'chicken' ? '/chickens' : '/turkeys'} replace />;
+
   return (
     <RegionLander
-      regionId={regionId}
+      regionId={activeSlug}
       sectorId={sectorId}
       onBackToSector={() => onNavigate(sectorId, '')}
     />

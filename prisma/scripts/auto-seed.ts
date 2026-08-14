@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
 import dotenv from 'dotenv';
+import { REGIONS } from '../../src/data';
 
 dotenv.config();
 
@@ -12,47 +13,50 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log('🌱 Automated Database Seeding started...');
 
-  // 1. Seed Region
-  const region = await prisma.region.upsert({
-    where: { id: 'lincolnshire' },
-    update: {},
-    create: {
-      id: 'lincolnshire',
-      name: 'Lincolnshire',
-      county: 'Lincolnshire',
-      activeCrews: 5,
-      seoCopy: 'Primary catching operations hub for Lincolnshire broilers and turkeys.'
-    }
-  });
-  console.log('✅ Region seeded:', region.name);
+  // 1. Seed all Regions and Towns from REGIONS dataset
+  for (const r of REGIONS) {
+    const reg = await prisma.region.upsert({
+      where: { id: r.id },
+      update: {
+        name: r.name,
+        county: r.county,
+        activeCrews: r.activeCrews,
+        seoCopy: r.seoCopy,
+      },
+      create: {
+        id: r.id,
+        name: r.name,
+        county: r.county,
+        activeCrews: r.activeCrews,
+        seoCopy: r.seoCopy,
+      },
+    });
+    console.log('✅ Region seeded:', reg.name);
 
-  // 2. Seed Towns
-  const boston = await prisma.town.upsert({
-    where: { id: 'boston' },
-    update: {},
-    create: {
-      id: 'boston',
-      name: 'Boston',
-      pickupPoint: 'Market Square',
-      surrounding: 'Boston surrounding villages',
-      localizedCopy: 'Boston broiler crew pickup point',
-      regionId: region.id
+    if (r.towns) {
+      for (const t of r.towns) {
+        await prisma.town.upsert({
+          where: { id: t.id },
+          update: {
+            name: t.name,
+            pickupPoint: t.pickupPoint,
+            surrounding: t.surroundingAreas.join(', '),
+            localizedCopy: t.localizedCopy,
+            regionId: reg.id,
+          },
+          create: {
+            id: t.id,
+            name: t.name,
+            pickupPoint: t.pickupPoint,
+            surrounding: t.surroundingAreas.join(', '),
+            localizedCopy: t.localizedCopy,
+            regionId: reg.id,
+          },
+        });
+        console.log('  ✅ Town seeded:', t.name);
+      }
     }
-  });
-
-  const sleaford = await prisma.town.upsert({
-    where: { id: 'sleaford' },
-    update: {},
-    create: {
-      id: 'sleaford',
-      name: 'Sleaford',
-      pickupPoint: 'Train Station Car Park',
-      surrounding: 'North Kesteven area',
-      localizedCopy: 'Sleaford night shift pickup point',
-      regionId: region.id
-    }
-  });
-  console.log('✅ Towns seeded:', boston.name, ',', sleaford.name);
+  }
 
   // 3. Seed Job Postings
   const job1 = await prisma.jobPosting.create({

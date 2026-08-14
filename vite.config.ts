@@ -29,13 +29,13 @@ function ssrDevPlugin(): Plugin {
           template = await server.transformIndexHtml(url, template);
 
           const { render } = await server.ssrLoadModule('/src/entry.server.tsx');
-          const { html: appHtml, head: headHtml } = await render(url);
+          const { html: appHtml, head: headHtml, statusCode } = await render(url);
 
           const fullHtml = template
             .replace('<!--app-head-->', headHtml || '')
             .replace('<!--app-html-->', appHtml || '');
 
-          res.statusCode = 200;
+          res.statusCode = statusCode || 200;
           res.setHeader('Content-Type', 'text/html; charset=utf-8');
           res.end(fullHtml);
         } catch (e) {

@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { Link } from 'react-router';
-
+import { Helmet } from 'react-helmet-async';
 import {
   MapPin,
   ArrowRight,
@@ -14,17 +14,15 @@ import {
   FileText,
   Download,
   Users,
-  Rocket,
-  Sun,
-  Brain,
-  Handshake,
-  GitBranch,
-  Clock,
+  Building2,
+  ChevronRight,
+  ShieldCheck,
+  Truck,
 } from 'lucide-react';
 import { REGIONS } from '../data';
 
 interface IndexProps {
-  onNavigate: (subdomain: 'root' | 'chicken' | 'turkey' | 'corporate', regionId: string) => void;
+  onNavigate?: (subdomain: 'root' | 'chicken' | 'turkey' | 'corporate', regionId: string) => void;
 }
 
 export default function Index({ onNavigate }: IndexProps) {
@@ -83,10 +81,23 @@ export default function Index({ onNavigate }: IndexProps) {
 
   return (
     <div className="font-sans w-full bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-[var(--color-paper)]">
+      <Helmet>
+        <title>CatchingJobs | National Poultry Catching Directory & Recruitment</title>
+        <meta
+          name="description"
+          content="UK National Poultry Catching Directory. Explore professional broiler and turkey catching squads across Lincolnshire, Norfolk, Yorkshire, Shropshire, and Suffolk. Door-to-door transit and guaranteed weekly pay."
+        />
+        <meta property="og:title" content="CatchingJobs | UK Poultry Catching Directory" />
+        <meta
+          property="og:description"
+          content="Find localized poultry catching crews with door-to-door transit and weekly payroll."
+        />
+      </Helmet>
+
       {/* Hero Section */}
       <section className="border-b border-[var(--color-rule)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-end">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
             <div className="space-y-8">
               <span className="inline-flex items-center gap-2 text-xs font-mono font-medium text-[var(--color-ink-2)] uppercase tracking-widest">
                 <CheckCircle2 className="w-4 h-4 text-[var(--color-accent)]" />
@@ -97,25 +108,38 @@ export default function Index({ onNavigate }: IndexProps) {
                 <span className="text-[var(--color-accent)]">Weekly pay.</span>
               </h1>
               <p className="text-lg sm:text-xl text-[var(--color-ink-2)] max-w-xl font-normal leading-relaxed">
-                Join the elite ranks of professional poultry catchers. Fast-tracked onto live
-                regional schedules. High pay, guaranteed weekly rosters, and supportive squads.
+                Dedicated agricultural recruitment managed by Pullum Ltd. Door-to-door pickup,
+                friendly teams, and guaranteed weekly payroll across the UK's premier poultry
+                catching corridors.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Link
-                  to="/register"
+                  to="/chickens"
                   className="inline-flex items-center justify-center gap-2 bg-[var(--color-ink)] hover:bg-[var(--color-ink-2)] text-[var(--color-paper)] font-medium px-8 py-4 rounded-none transition-colors duration-200"
                 >
-                  <span>Apply for Catching Roles</span>
+                  <span>Explore Chicken Catching</span>
                   <ArrowRight className="w-5 h-5" />
                 </Link>
-                <a
-                  href="tel:01522504311"
+                <Link
+                  to="/turkeys"
                   className="inline-flex items-center justify-center gap-2 border border-[var(--color-rule)] hover:border-[var(--color-ink)] bg-transparent text-[var(--color-ink)] font-medium px-8 py-4 rounded-none transition-colors duration-200"
                 >
-                  <Phone className="w-5 h-5" />
-                  <span>Call Recruitment</span>
-                </a>
+                  <span>Explore Turkey Catching</span>
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
+
+              <div className="flex items-center gap-6 pt-2 border-t border-[var(--color-rule)] text-xs font-mono text-[var(--color-ink-2)] uppercase tracking-wider">
+                <span className="flex items-center gap-1.5">
+                  <Truck className="w-4 h-4 text-[var(--color-accent)]" /> Minibus Transit
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-[var(--color-accent)]" /> GLAA Licensed
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-[var(--color-accent)]" /> Supportive Crews
+                </span>
               </div>
             </div>
 
@@ -131,23 +155,23 @@ export default function Index({ onNavigate }: IndexProps) {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-32">
-        {/* Core Actions */}
-        <section className="space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
+        {/* Core Agricultural Divisions */}
+        <section className="space-y-8" id="sectors">
           <div className="max-w-3xl space-y-4">
             <h2 className="text-3xl sm:text-4xl font-display text-[var(--color-ink)] leading-tight">
               Select Your Catching Division
             </h2>
             <p className="text-lg text-[var(--color-ink-2)] font-normal leading-relaxed">
-              Choose between our specialized poultry catching paths to view current open schedules
-              and catching operative roles.
+              Choose between our specialized commercial catching operations to view regional
+              schedules and localized town outposts.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            <div
-              onClick={() => onNavigate('chicken', '')}
-              className="group cursor-pointer flex flex-col h-full border border-[var(--color-rule)] hover:border-[var(--color-accent)] transition-colors duration-300 bg-[var(--color-paper)]"
+            <Link
+              to="/chickens"
+              className="group flex flex-col h-full border border-[var(--color-rule)] hover:border-[var(--color-accent)] transition-colors duration-300 bg-[var(--color-paper)] no-underline"
             >
               <div className="relative h-64 overflow-hidden border-b border-[var(--color-rule)]">
                 <img
@@ -156,29 +180,32 @@ export default function Index({ onNavigate }: IndexProps) {
                   className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                 />
                 <div className="absolute top-4 right-4 bg-[var(--color-paper)] border border-[var(--color-rule)] px-3 py-1 text-xs font-mono font-medium tracking-wider uppercase text-[var(--color-ink)]">
-                  Recruiting
+                  Active Corridors
                 </div>
               </div>
               <div className="p-8 flex flex-col flex-1 justify-between bg-[var(--color-paper)]">
                 <div className="space-y-4">
+                  <div className="inline-block text-xs font-mono font-medium text-[var(--color-accent)] uppercase tracking-wider">
+                    Broiler & Breeder Division
+                  </div>
                   <h3 className="text-2xl font-display text-[var(--color-ink)]">
                     Chicken Catching
                   </h3>
                   <p className="text-[var(--color-ink-2)] leading-relaxed text-base">
-                    Operating in highly disciplined, welfare-compliant chicken catching teams. We
-                    recruit for both entry-level roles and experienced team leaders.
+                    Operating in highly disciplined, welfare-compliant chicken catching teams. Night
+                    shift rosters with minibus pickup from local town depots.
                   </p>
                 </div>
                 <div className="pt-8 mt-8 flex items-center justify-between border-t border-[var(--color-rule)] font-medium text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
-                  <span>Explore Roles</span>
+                  <span>Explore Chicken Hubs</span>
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
                 </div>
               </div>
-            </div>
+            </Link>
 
-            <div
-              onClick={() => onNavigate('turkey', '')}
-              className="group cursor-pointer flex flex-col h-full border border-[var(--color-rule)] hover:border-[var(--color-accent)] transition-colors duration-300 bg-[var(--color-paper)]"
+            <Link
+              to="/turkeys"
+              className="group flex flex-col h-full border border-[var(--color-rule)] hover:border-[var(--color-accent)] transition-colors duration-300 bg-[var(--color-paper)] no-underline"
             >
               <div className="relative h-64 overflow-hidden border-b border-[var(--color-rule)]">
                 <img
@@ -187,68 +214,132 @@ export default function Index({ onNavigate }: IndexProps) {
                   className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                 />
                 <div className="absolute top-4 right-4 bg-[var(--color-paper)] border border-[var(--color-rule)] px-3 py-1 text-xs font-mono font-medium tracking-wider uppercase text-[var(--color-ink)]">
-                  Recruiting
+                  Seasonal & Year-Round
                 </div>
               </div>
               <div className="p-8 flex flex-col flex-1 justify-between bg-[var(--color-paper)]">
                 <div className="space-y-4">
+                  <div className="inline-block text-xs font-mono font-medium text-[var(--color-accent)] uppercase tracking-wider">
+                    Commercial Turkey Division
+                  </div>
                   <h3 className="text-2xl font-display text-[var(--color-ink)]">Turkey Catching</h3>
                   <p className="text-[var(--color-ink-2)] leading-relaxed text-base">
-                    Specialized squads handling commercial turkey catching operations. Earn leading
-                    weekly wages with structured heavy-catching shift patterns.
+                    Specialized squads handling commercial turkey catching operations. Stable weekly
+                    earnings and structured shift patterns with full transit support.
                   </p>
                 </div>
                 <div className="pt-8 mt-8 flex items-center justify-between border-t border-[var(--color-rule)] font-medium text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
-                  <span>Explore Roles</span>
+                  <span>Explore Turkey Hubs</span>
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
         </section>
 
-        {/* Local Crews */}
-        <section className="space-y-12">
+        {/* National Regional & Town Routing Directory */}
+        <section className="space-y-12" id="directory">
           <div className="max-w-3xl space-y-4">
+            <span className="text-xs font-mono font-medium text-[var(--color-accent)] uppercase tracking-widest">
+              National Routing Directory
+            </span>
             <h2 className="text-3xl sm:text-4xl font-display text-[var(--color-ink)] leading-tight">
-              Local Catching Crews
+              UK Regional Catching Corridors & Town Depots
             </h2>
             <p className="text-lg text-[var(--color-ink-2)] font-normal leading-relaxed">
-              Select your nearest region to check active poultry catching vacancies.
+              Select your local town pickup depot to view localized schedules, transport points, and
+              join active catching crews.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="space-y-8">
             {REGIONS.map((region) => (
               <div
                 key={region.id}
-                onClick={() => onNavigate('chicken', region.id)}
-                className="group cursor-pointer border border-[var(--color-rule)] hover:border-[var(--color-accent)] bg-[var(--color-paper)] p-6 transition-all duration-200"
+                className="border border-[var(--color-rule)] bg-[var(--color-paper)] p-6 sm:p-8 space-y-6"
+                id={`region-section-${region.id}`}
               >
-                <div className="flex items-start gap-4">
-                  <div className="shrink-0 p-3 bg-[var(--color-paper-2)] rounded-none group-hover:bg-[var(--color-accent)] group-hover:text-[var(--color-paper)] transition-colors">
-                    <MapPin className="w-6 h-6" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between">
-                      <h4 className="font-medium text-lg text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
-                        {region.name}
-                      </h4>
-                      <span className="text-xs font-mono font-medium text-[var(--color-ink-2)]">
-                        {region.activeCrews} Crews
-                      </span>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--color-rule)] pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 bg-[var(--color-paper-2)] text-[var(--color-ink)] shrink-0">
+                      <MapPin className="w-6 h-6 text-[var(--color-accent)]" />
                     </div>
-                    <p className="text-sm text-[var(--color-ink-2)] leading-relaxed line-clamp-2">
-                      {region.seoCopy}
-                    </p>
+                    <div>
+                      <h3 className="text-2xl font-display text-[var(--color-ink)]">
+                        {region.name}
+                      </h3>
+                      <p className="text-xs font-mono text-[var(--color-ink-2)] uppercase tracking-wider">
+                        {region.county} Catching Corridor
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-[var(--color-ink)] bg-[var(--color-paper-2)] px-3 py-1 border border-[var(--color-rule)]">
+                      <Users className="w-3.5 h-3.5 text-[var(--color-accent)]" />
+                      {region.activeCrews} Active Crews
+                    </span>
+                    <Link
+                      to={`/chickens/${region.towns?.[0]?.id || region.id}`}
+                      className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-ink)] hover:text-[var(--color-accent)] transition-colors"
+                    >
+                      <span>View Regional Hub</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </Link>
                   </div>
                 </div>
+
+                <p className="text-sm text-[var(--color-ink-2)] leading-relaxed max-w-4xl">
+                  {region.seoCopy}
+                </p>
+
+                {/* Town Level Routing Links */}
+                {region.towns && region.towns.length > 0 && (
+                  <div className="space-y-3 pt-2">
+                    <div className="text-xs font-mono font-semibold text-[var(--color-ink)] uppercase tracking-wider">
+                      Town Pickup Depots & Direct Hub Routes:
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                      {region.towns.map((town) => (
+                        <div
+                          key={town.id}
+                          className="border border-[var(--color-rule)] p-3 bg-[var(--color-paper-2)]/50 hover:bg-[var(--color-paper-2)] transition-colors space-y-2"
+                        >
+                          <div className="font-semibold text-sm text-[var(--color-ink)] flex items-center justify-between">
+                            <span>{town.name}</span>
+                            <span className="text-[10px] font-mono text-[var(--color-ink-2)]">
+                              Depot
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-[var(--color-ink-2)] line-clamp-1">
+                            {town.pickupPoint}
+                          </p>
+                          <div className="flex items-center gap-2 pt-1 border-t border-[var(--color-rule)] text-xs">
+                            <Link
+                              to={`/chickens/${town.id}`}
+                              className="text-[var(--color-accent)] hover:underline font-medium text-[11px]"
+                            >
+                              Chickens ({town.name}) &rarr;
+                            </Link>
+                            <span className="text-[var(--color-rule)]">•</span>
+                            <Link
+                              to={`/turkeys/${town.id}`}
+                              className="text-[var(--color-ink)] hover:underline font-medium text-[11px]"
+                            >
+                              Turkeys ({town.name}) &rarr;
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </section>
 
-        {/* Info Grids */}
+        {/* Notices, Events & Resources Sections */}
         <section className="grid lg:grid-cols-3 gap-8">
           {/* News */}
           <div className="border border-[var(--color-rule)] bg-[var(--color-paper)]">
@@ -258,7 +349,7 @@ export default function Index({ onNavigate }: IndexProps) {
             </div>
             <div className="p-6 space-y-8">
               {news.map((item) => (
-                <article key={item.id} className="space-y-2 group cursor-pointer">
+                <article key={item.id} className="space-y-2 group">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-mono text-[var(--color-ink-2)]">{item.date}</span>
                     <span className="text-xs font-mono text-[var(--color-accent)]">
@@ -314,7 +405,7 @@ export default function Index({ onNavigate }: IndexProps) {
               {resources.map((res, idx) => (
                 <div
                   key={idx}
-                  className="group p-4 border border-[var(--color-rule)] hover:border-[var(--color-ink)] cursor-pointer transition-colors space-y-3"
+                  className="group p-4 border border-[var(--color-rule)] hover:border-[var(--color-ink)] transition-colors space-y-3"
                 >
                   <div className="flex items-center justify-between text-xs font-mono">
                     <span className="text-[var(--color-ink-2)]">{res.type}</span>
