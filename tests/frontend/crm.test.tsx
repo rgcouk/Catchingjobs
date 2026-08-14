@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
-import IntakeWizard from '../../src/components/IntakeWizard';
+import IntakeWizard from '../../src/pages/wizard/IntakeWizard';
 import { KanbanBoard } from '../../src/components/KanbanBoard';
 
 // Mock Clerk

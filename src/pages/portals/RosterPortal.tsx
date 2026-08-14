@@ -25,7 +25,7 @@ import {
   ExternalLink,
   Sparkles,
 } from 'lucide-react';
-import { ApplicationData } from '../types';
+import { ApplicationData } from '../../types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

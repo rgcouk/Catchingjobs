@@ -161,7 +161,7 @@ const AdminDashboard = () => {
     fetchData();
   }, [fetchData]);
 
-  const updateApplicationStatus = async (id: number, status: string) => {
+  const updateApplicationStatus = async (id: string | number, status: string) => {
     try {
       const token = await getToken();
       const res = await fetch(`/api/admin/applications/${id}`, {

@@ -12,6 +12,7 @@ export class ManageUsers {
   async inviteUser(email: string, role?: string) {
     return this.prisma.user.create({
       data: {
+        id: crypto.randomUUID(),
         email,
         role: role || 'WORKER',
         passwordHash: 'TODO_INVITE_MOCK_HASH',

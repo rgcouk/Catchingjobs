@@ -62,9 +62,13 @@ import {
 import { ApplicationData } from './types';
 
 export interface SubmittedApplication extends ApplicationData {
+  id?: string;
   rosterRef: string;
   sector: 'chicken' | 'turkey';
   timestamp: string;
+  createdAt?: string | Date;
+  status?: string;
+  jobPosting?: { title: string };
   contacted?: boolean;
   safetyResourcesSent?: boolean;
   safetyTasksCompleted?: boolean;

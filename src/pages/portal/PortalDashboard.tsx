@@ -44,8 +44,8 @@ import { SubmittedApplication } from '../../App';
 const PortalDashboard = () => {
   const { activeTab } = useAppShell();
 
-  const [profile, setProfile] = useState<SubmittedApplication | null>(null);
-  const [applications, setApplications] = useState<SubmittedApplication[]>([]);
+  const [profile, setProfile] = useState<any>(null);
+  const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -165,7 +165,6 @@ const PortalDashboard = () => {
               ) : (
                 <IntakeWizard
                   sectorId="chicken"
-                  regionName="all"
                   onSuccess={async (data) => {
                     try {
                       const token = await getToken();

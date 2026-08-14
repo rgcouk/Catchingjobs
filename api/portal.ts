@@ -3,7 +3,10 @@ import { handle } from 'hono/vercel';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
 import { getPrisma } from '../server/db';
 
-const app = new Hono();
+type Variables = {
+  userId: string;
+};
+const app = new Hono<{ Variables: Variables }>();
 
 // Theoretical email function for application submission receipts and alerts
 async function sendApplicationEmail(applicationData: any) {
