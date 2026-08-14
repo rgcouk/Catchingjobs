@@ -731,11 +731,15 @@ const AdminDashboard = () => {
                         </div>
                         <div>
                           <span className="text-muted-foreground block">Account Name</span>
-                          <span className="font-medium">{selectedApp.bankAccountName || 'N/A'}</span>
+                          <span className="font-medium">
+                            {selectedApp.bankAccountName || 'N/A'}
+                          </span>
                         </div>
                         <div>
                           <span className="text-muted-foreground block">Account Number</span>
-                          <span className="font-medium">{selectedApp.bankAccountNumber || 'N/A'}</span>
+                          <span className="font-medium">
+                            {selectedApp.bankAccountNumber || 'N/A'}
+                          </span>
                         </div>
                         <div>
                           <span className="text-muted-foreground block">Sort Code</span>
@@ -750,7 +754,9 @@ const AdminDashboard = () => {
                         <div>
                           <span className="text-muted-foreground block">Emergency Contact</span>
                           <span className="font-medium">
-                            {selectedApp.emergencyName ? `${selectedApp.emergencyName} (${selectedApp.emergencyRelation})` : 'N/A'}
+                            {selectedApp.emergencyName
+                              ? `${selectedApp.emergencyName} (${selectedApp.emergencyRelation})`
+                              : 'N/A'}
                           </span>
                         </div>
                         <div>
@@ -759,19 +765,27 @@ const AdminDashboard = () => {
                         </div>
                         <div>
                           <span className="text-muted-foreground block">Asthma/Allergies</span>
-                          <span className="font-medium">{selectedApp.hasAsthmaOrAllergies ? 'Yes' : 'No'}</span>
+                          <span className="font-medium">
+                            {selectedApp.hasAsthmaOrAllergies ? 'Yes' : 'No'}
+                          </span>
                         </div>
                         <div>
                           <span className="text-muted-foreground block">Back Issues</span>
-                          <span className="font-medium">{selectedApp.hasBackIssues ? 'Yes' : 'No'}</span>
+                          <span className="font-medium">
+                            {selectedApp.hasBackIssues ? 'Yes' : 'No'}
+                          </span>
                         </div>
                         <div>
                           <span className="text-muted-foreground block">Fit to Lift</span>
-                          <span className="font-medium">{selectedApp.isFitToLift ? 'Yes' : 'No'}</span>
+                          <span className="font-medium">
+                            {selectedApp.isFitToLift ? 'Yes' : 'No'}
+                          </span>
                         </div>
                         <div>
                           <span className="text-muted-foreground block">Declaration Signed</span>
-                          <span className="font-medium">{selectedApp.declarationSigned ? 'Yes' : 'No'}</span>
+                          <span className="font-medium">
+                            {selectedApp.declarationSigned ? 'Yes' : 'No'}
+                          </span>
                         </div>
                       </div>
                     </div>

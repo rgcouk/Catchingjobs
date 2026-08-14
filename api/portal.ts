@@ -231,4 +231,6 @@ app.patch('/api/portal/settings', async (c) => {
   }
 });
 
+export { app };
 export default handle(app);
+

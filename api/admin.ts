@@ -150,4 +150,6 @@ app.post('/api/admin/invite', async (c) => {
   }
 });
 
+export { app };
 export default handle(app);
+

@@ -69,4 +69,6 @@ app.post('/api/webhook/intake', async (c) => {
   }
 });
 
+export { app };
 export default handle(app);
+

@@ -69,4 +69,6 @@ app.delete('/api/applications/:rosterRef', async (c) => {
   }
 });
 
+export { app };
 export default handle(app);
+

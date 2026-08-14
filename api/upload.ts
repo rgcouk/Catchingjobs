@@ -44,4 +44,6 @@ app.post('/api/upload', async (c) => {
   }
 });
 
+export { app };
 export default handle(app);
+

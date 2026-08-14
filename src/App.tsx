@@ -4,15 +4,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Routes,
-  Route,
-  useNavigate,
-  useLocation,
-  Navigate,
-  useParams,
-  Link,
-} from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, Navigate, useParams, Link } from 'react-router';
+
 import {
   useAuth,
   useUser,
@@ -43,6 +36,7 @@ import IntakeWizard from './pages/wizard/IntakeWizard';
 import RosterPortal from './pages/portals/RosterPortal';
 import CorporateLander from './pages/landers/CorporateLander';
 import CatcherPortal from './pages/portals/CatcherPortal';
+import SSRTest from './pages/SSRTest';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PortalDashboard from './pages/portal/PortalDashboard';
@@ -515,6 +509,7 @@ function App() {
               path="/turkeys/:regionId"
               element={<RegionRoute sectorId="turkey" onNavigate={handleNavigate} />}
             />
+            <Route path="/ssr-test" element={<SSRTest />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSignIn } from '@clerk/clerk-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router';
+
 import { FcGoogle } from 'react-icons/fc';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';

@@ -47,19 +47,24 @@ export default function AppShell({
 }: AppShellProps) {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState(defaultTab);
-
-  // Basic mobile detection for default sidebar state
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const [isMobile, setIsMobile] = useState(false);
 
   const { user } = useUser();
   const { getToken } = useAuth();
   const [isFullyOnboarded, setIsFullyOnboarded] = useState(true);
 
   useEffect(() => {
-    if (isMobile) {
-      setSidebarOpen(false);
-    }
-  }, [isMobile]);
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setSidebarOpen(false);
+      }
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     if (userType === 'portal' && user) {

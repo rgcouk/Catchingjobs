@@ -20,7 +20,12 @@ export default function IntakeWizard({ sectorId, onSuccess, onClose }: IntakeWiz
     formState: { errors },
   } = useForm();
 
-  if (!isLoaded) return <div className="p-6 max-w-2xl mx-auto flex justify-center text-muted-foreground">Loading profile...</div>;
+  if (!isLoaded)
+    return (
+      <div className="p-6 max-w-2xl mx-auto flex justify-center text-muted-foreground">
+        Loading profile...
+      </div>
+    );
   if (!user) return null;
 
   const onSubmit = (data: Record<string, any>) => {

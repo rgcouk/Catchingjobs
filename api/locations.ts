@@ -18,4 +18,6 @@ app.get('/api/locations', async (c) => {
   }
 });
 
+export { app };
 export default handle(app);
+

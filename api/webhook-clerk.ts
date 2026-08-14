@@ -64,4 +64,6 @@ app.post('/api/webhook/clerk', async (c) => {
   }
 });
 
+export { app };
 export default handle(app);
+
