@@ -15,7 +15,10 @@ async function sendApplicationEmail(applicationData: any) {
   // TODO: Wire up actual Resend/SendGrid API here later.
 }
 
-app.use('*', clerkMiddleware());
+app.use('*', clerkMiddleware({
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,
+  secretKey: process.env.CLERK_SECRET_KEY,
+}));
 
 app.use('*', async (c, next) => {
   const auth = getAuth(c);
@@ -232,5 +235,10 @@ app.patch('/api/portal/settings', async (c) => {
 });
 
 export { app };
-export default handle(app);
+const handler = handle(app);
+export const GET = handler;
+export const POST = handler;
+export const PUT = handler;
+export const PATCH = handler;
+export const DELETE = handler;
 

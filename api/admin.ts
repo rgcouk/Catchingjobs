@@ -10,7 +10,10 @@ import { DomainError } from '../src/services/exceptions.js';
 
 const app = new Hono();
 
-app.use('*', clerkMiddleware());
+app.use('*', clerkMiddleware({
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,
+  secretKey: process.env.CLERK_SECRET_KEY,
+}));
 
 app.use('*', async (c, next) => {
   const auth = getAuth(c);
@@ -151,5 +154,10 @@ app.post('/api/admin/invite', async (c) => {
 });
 
 export { app };
-export default handle(app);
+const handler = handle(app);
+export const GET = handler;
+export const POST = handler;
+export const PUT = handler;
+export const PATCH = handler;
+export const DELETE = handler;
 

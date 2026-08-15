@@ -40,7 +40,10 @@ app.post('/api/triage', async (c) => {
 /**
  * Authenticated claim endpoint to associate Clerk user ID with Draft Application.
  */
-app.post('/api/triage/claim', clerkMiddleware(), async (c) => {
+app.post('/api/triage/claim', clerkMiddleware({
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,
+  secretKey: process.env.CLERK_SECRET_KEY,
+}), async (c) => {
   const auth = getAuth(c);
   if (!auth?.userId) {
     return c.json({ success: false, error: 'Unauthorized' }, 401);
@@ -62,4 +65,9 @@ app.post('/api/triage/claim', clerkMiddleware(), async (c) => {
 });
 
 export { app };
-export default handle(app);
+const handler = handle(app);
+export const GET = handler;
+export const POST = handler;
+export const PUT = handler;
+export const PATCH = handler;
+export const DELETE = handler;
