@@ -166,16 +166,17 @@ const PortalDashboard = () => {
               ) : (
                 <IntakeWizard
                   sectorId="chicken"
+                  initialData={profile?.application}
                   onSuccess={async (data) => {
                     try {
                       const token = await getToken();
-                      const res = await fetch(`/api/portal/onboarding?userId=${USER_ID}`, {
-                        method: 'PATCH',
+                      // The final submission will now hit the actual endpoint
+                      const res = await fetch(`/api/applications/submit`, {
+                        method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',
                           Authorization: `Bearer ${token}`,
                         },
-                        body: JSON.stringify({ ...data, profileFormCompleted: true }),
                       });
                       if (!res.ok) throw new Error('Failed to submit application');
                       await fetchData();

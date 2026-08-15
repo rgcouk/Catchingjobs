@@ -66,6 +66,39 @@ app.post('/api/applications/:rosterRef/link-user', async (c) => {
   }
 });
 
+/**
+ * Auto-save wizard progress to the authenticated user's draft
+ */
+app.patch('/api/applications/draft', async (c) => {
+  const auth = getAuth(c);
+  if (!auth?.userId) return c.json({ error: 'Unauthorized' }, 401);
+
+  const service = new ManageApplications(getPrisma());
+  try {
+    const body = await c.req.json();
+    const application = await service.updateMyDraftApplication(auth.userId, body);
+    return c.json({ success: true, application });
+  } catch (error) {
+    return handleError(error, 'Failed to update draft application', c);
+  }
+});
+
+/**
+ * Submit the wizard, changing draft status to NEW
+ */
+app.post('/api/applications/submit', async (c) => {
+  const auth = getAuth(c);
+  if (!auth?.userId) return c.json({ error: 'Unauthorized' }, 401);
+
+  const service = new ManageApplications(getPrisma());
+  try {
+    const application = await service.submitMyDraftApplication(auth.userId);
+    return c.json({ success: true, application });
+  } catch (error) {
+    return handleError(error, 'Failed to submit application', c);
+  }
+});
+
 app.get('/api/applications', async (c) => {
   const service = new ManageApplications(getPrisma());
   try {

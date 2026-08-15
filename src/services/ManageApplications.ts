@@ -265,4 +265,65 @@ export class ManageApplications {
       where: { rosterRef },
     });
   }
+
+  /**
+   * Updates the authenticated user's Draft Application (Auto-save)
+   */
+  async updateMyDraftApplication(clerkUserId: string, data: any) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: clerkUserId },
+    });
+
+    if (!user || !user.applicationId) {
+      throw new ApplicationNotFoundError();
+    }
+
+    // Only allow updating if it's still a Draft (prevent modifying after submission)
+    const application = await this.prisma.application.findUnique({
+      where: { id: user.applicationId },
+    });
+
+    if (!application || application.status !== 'Draft') {
+      throw new DomainError(
+        'Cannot update application because it is no longer in Draft status',
+        400,
+      );
+    }
+
+    return this.prisma.application.update({
+      where: { id: user.applicationId },
+      data,
+    });
+  }
+
+  /**
+   * Submits the authenticated user's Draft Application, changing status to NEW
+   */
+  async submitMyDraftApplication(clerkUserId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: clerkUserId },
+    });
+
+    if (!user || !user.applicationId) {
+      throw new ApplicationNotFoundError();
+    }
+
+    const application = await this.prisma.application.findUnique({
+      where: { id: user.applicationId },
+    });
+
+    if (!application || application.status !== 'Draft') {
+      throw new DomainError('Application is not in Draft status or does not exist', 400);
+    }
+
+    // Final update to set status to NEW
+    return this.prisma.application.update({
+      where: { id: user.applicationId },
+      data: {
+        status: 'NEW',
+        profileFormCompleted: true,
+        declarationSigned: true,
+      },
+    });
+  }
 }
