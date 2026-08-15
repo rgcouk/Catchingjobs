@@ -34,6 +34,7 @@ export default function PasswordlessOTPModal({
   const [isResending, setIsResending] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [countdown, setCountdown] = useState<number>(30);
+  const hasInitialized = React.useRef(false);
 
   // Countdown timer for code resend
   useEffect(() => {
@@ -48,6 +49,8 @@ export default function PasswordlessOTPModal({
 
     async function initClerkOtp() {
       if (!isSignUpLoaded || !isSignInLoaded) return;
+      if (hasInitialized.current) return;
+      hasInitialized.current = true;
       setIsInitializing(true);
       setErrorMessage('');
 
