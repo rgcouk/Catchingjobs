@@ -10,6 +10,10 @@ const app = new Hono();
 app.use('*', clerkMiddleware());
 
 app.use('*', async (c, next) => {
+  // Allow public draft creation endpoint to bypass Clerk auth
+  if (c.req.path === '/api/applications/draft' && c.req.method === 'POST') {
+    return next();
+  }
   const auth = getAuth(c);
   if (!auth?.userId) {
     return c.json({ error: 'Unauthorized' }, 401);
@@ -19,11 +23,48 @@ app.use('*', async (c, next) => {
 
 const handleError = (error: unknown, defaultMessage: string, c: any) => {
   if (error instanceof DomainError) {
-    return c.json({ error: error.message }, error.statusCode);
+    return c.json({ success: false, error: error.message }, error.statusCode as any);
   }
   console.error(defaultMessage, error);
-  return c.json({ error: defaultMessage }, 500);
+  return c.json({ success: false, error: defaultMessage }, 500);
 };
+
+/**
+ * Public endpoint to create a draft application during triage
+ */
+app.post('/api/applications/draft', async (c) => {
+  const service = new ManageApplications(getPrisma());
+  try {
+    const body = await c.req.json();
+    const application = await service.createDraftApplication({
+      name: body.name,
+      phone: body.phone,
+      email: body.email,
+      town: body.town,
+      sector: body.sector,
+      hasRightToWork: body.hasRightToWork === true || body.hasRightToWork === 'true',
+    });
+    return c.json({ success: true, application }, 201);
+  } catch (error) {
+    return handleError(error, 'Failed to create draft application', c);
+  }
+});
+
+/**
+ * Link authenticated user to draft application
+ */
+app.post('/api/applications/:rosterRef/link-user', async (c) => {
+  const auth = getAuth(c);
+  const service = new ManageApplications(getPrisma());
+  try {
+    const { rosterRef } = c.req.param();
+    const body = await c.req.json().catch(() => ({}));
+    const application = await service.linkUserToDraft(rosterRef, auth!.userId, body.email);
+    return c.json({ success: true, application });
+  } catch (error) {
+    return handleError(error, 'Failed to link user to application', c);
+  }
+});
 
 app.get('/api/applications', async (c) => {
   const service = new ManageApplications(getPrisma());
@@ -71,4 +112,5 @@ app.delete('/api/applications/:rosterRef', async (c) => {
 
 export { app };
 export default handle(app);
+
 

@@ -23,6 +23,7 @@ import { TENANTS } from '../../data';
 import { resolveTown } from '../../data/locations';
 import { useSSRData } from '../../context/SSRDataContext';
 import { TownData } from '../../types';
+import HeroTriageForm from '../../components/triage/HeroTriageForm';
 
 interface RegionLanderProps {
   regionId: string;
@@ -315,36 +316,8 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
             </div>
           </div>
 
-          {/* Action Box */}
-          <div className="bg-[var(--color-paper)] text-[var(--color-ink)] border border-[var(--color-rule)] p-6 sm:p-8 w-full md:w-[340px] shrink-0 shadow-lg space-y-4">
-            <h3 className="font-display text-2xl text-[var(--color-ink)] leading-tight">
-              Apply in {town.name}
-            </h3>
-            <p className="text-xs text-[var(--color-ink-2)] leading-relaxed">
-              Positions on our {town.name} squads are fast-tracked. Register today to join upcoming
-              shifts.
-            </p>
-
-            <div className="space-y-3 pt-2 border-t border-[var(--color-rule)]">
-              <Link
-                to="/register"
-                className="w-full bg-[var(--color-ink)] hover:bg-[var(--color-ink-2)] text-[var(--color-paper)] font-medium py-3 px-4 text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 no-underline"
-                id="btn-trigger-wizard-region"
-              >
-                <span>Join Catching Squad</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-
-              <a
-                href={`tel:${town.phoneNumber || '01522504311'}`}
-                className="w-full bg-transparent hover:bg-[var(--color-paper-2)] text-[var(--color-ink)] border border-[var(--color-rule)] font-medium py-3 px-4 text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 no-underline"
-                id="btn-regional-phone"
-              >
-                <Phone className="w-4 h-4 text-[var(--color-accent)]" />
-                <span>Call Recruitment</span>
-              </a>
-            </div>
-          </div>
+          {/* Hero Automated Triage Form (Ticket 3) */}
+          <HeroTriageForm town={town} sectorId={sectorId} />
         </div>
       </section>
 

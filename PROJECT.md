@@ -36,8 +36,8 @@
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
 | 1 | Ticket 1: React Router v7 SSR Foundation | Configure React Router v7 SSR entry point and Playwright pre-JS raw HTML test | None | DONE |
-| 2 | Ticket 2: National Hub & Dynamic Town Routing | Root `/` directory, dynamic `/:sector/:town` SSR loaders with Prisma querying | M1 | READY |
-| 3 | Ticket 3: Automated Triage & Passwordless Auth | Hero inline triage, Right to Work check, Draft Application creation, Clerk OTP auth | M2 | PLANNED |
+| 2 | Ticket 2: National Hub & Dynamic Town Routing | Root `/` directory, dynamic `/:sector/:town` SSR loaders with Prisma querying | M1 | DONE |
+| 3 | Ticket 3: Automated Triage & Passwordless Auth | Hero inline triage, Right to Work check, Draft Application creation, Clerk OTP auth | M2 | READY |
 | 4 | Ticket 4: 3-Step Wizard & Submission | Post-auth 3-step wizard, auto-save to Draft, final submission status -> NEW | M3 | PLANNED |
 | 5 | Ticket 5: Admin Kanban Filter & Town CMS | Filter Draft on Kanban, Markdown Town copy editor in Admin, live SSR render | M4 | PLANNED |
 | 6 | Ticket 6: Visual Brand & 'Earth Exponential' Aesthetics | Hallmark OKLCH public landers, utilitarian copy, vector art assets | M2 | PLANNED |

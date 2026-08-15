@@ -31,3 +31,18 @@ export class ApplicationNotFoundError extends NotFoundError {
     super('Application not found');
   }
 }
+
+export class ValidationError extends DomainError {
+  constructor(message: string = 'Validation failed', statusCode: number = 400) {
+    super(message, statusCode);
+  }
+}
+
+export class RightToWorkRequiredError extends DomainError {
+  constructor(
+    message: string = 'Right to Work in the UK is required to create an application draft.',
+    statusCode: number = 400,
+  ) {
+    super(message, statusCode);
+  }
+}

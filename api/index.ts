@@ -11,6 +11,7 @@ import { app as portalApp } from './portal';
 import { app as uploadApp } from './upload';
 import { app as clerkWebhookApp } from './webhook-clerk';
 import { app as intakeWebhookApp } from './webhook-intake';
+import { app as triageApp } from './triage';
 
 const app = new Hono();
 
@@ -20,11 +21,13 @@ app.use('*', cors());
 app.route('/', pingApp);
 app.route('/', locationsApp);
 app.route('/', applicationsApp);
+app.route('/', triageApp);
 app.route('/', adminApp);
 app.route('/', portalApp);
 app.route('/', uploadApp);
 app.route('/', clerkWebhookApp);
 app.route('/', intakeWebhookApp);
+
 
 const port = Number(process.env.PORT_API) || 3001;
 

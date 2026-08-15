@@ -41,15 +41,27 @@ app.post('/api/webhook/clerk', async (c) => {
     const email = email_addresses && email_addresses.length > 0 ? email_addresses[0].email_address : `${id}@placeholder.com`;
 
     if (evt?.type === 'user.created' || evt?.type === 'user.updated') {
+      const existingDraft = await prisma.application.findFirst({
+        where: {
+          email: email as string,
+          status: 'Draft',
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+
       await prisma.user.upsert({
         where: { id: id as string },
-        update: { email: email as string },
+        update: {
+          email: email as string,
+          ...(existingDraft ? { applicationId: existingDraft.id } : {}),
+        },
         create: {
           id: id as string,
           email: email as string,
           passwordHash: '',
-          role: 'WORKER'
-        }
+          role: 'WORKER',
+          ...(existingDraft ? { applicationId: existingDraft.id } : {}),
+        },
       });
     } else if (evt?.type === 'user.deleted') {
       await prisma.user.delete({
