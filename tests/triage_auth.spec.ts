@@ -104,9 +104,7 @@ test.describe('Milestone 3: Automated Triage & Passwordless Auth Flow Verificati
 
       // 4. Assert friendly rejection message is rendered
       const rejectionMsg = page
-        .locator(
-          '[data-testid="triage-rejection-msg"], text=/Right to Work in the UK is required|require all applicants to have valid Right to Work|cannot proceed without Right to Work/i',
-        )
+        .locator('[data-testid="triage-rejection-msg"]')
         .first();
       await expect(rejectionMsg).toBeVisible();
 
@@ -246,7 +244,7 @@ test.describe('Milestone 3: Automated Triage & Passwordless Auth Flow Verificati
         .first();
 
       await expect(otpContainer).toBeVisible();
-      await expect(otpInput).toBeVisible();
+      await expect(otpInput).toBeVisible({ timeout: 15000 });
 
       // Assert password input was NOT prompted (strictly passwordless flow)
       const passwordInput = page.locator('input[type="password"]');

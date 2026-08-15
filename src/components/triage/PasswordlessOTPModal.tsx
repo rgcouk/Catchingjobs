@@ -56,50 +56,60 @@ export default function PasswordlessOTPModal({
         const firstName = nameParts[0] || 'Applicant';
         const lastName = nameParts.slice(1).join(' ') || 'Candidate';
 
-        // 1. Attempt Sign-Up with Email
-        try {
-          if (signUp) {
-            await signUp.create({
-              emailAddress: formData.email,
-              firstName,
-              lastName,
-            });
+        const initTask = async () => {
+          // 1. Attempt Sign-Up with Email
+          try {
+            if (signUp) {
+              await signUp.create({
+                emailAddress: formData.email,
+                firstName,
+                lastName,
+              });
 
-            await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-            if (isMounted) {
-              setStrategy('email_code');
-              setIsExistingUser(false);
-              setCountdown(30);
-            }
-          }
-        } catch (signUpErr: any) {
-          // If user already exists in Clerk, switch to Sign-In OTP
-          if (
-            signUpErr.errors?.[0]?.code === 'form_identifier_exists' ||
-            signUpErr.errors?.[0]?.message?.includes('already exists')
-          ) {
-            if (signIn) {
-              const signInAttempt = await signIn.create({ identifier: formData.email });
-              const emailFactor = signInAttempt.supportedFirstFactors?.find(
-                (f: any) => f.strategy === 'email_code',
-              );
-
-              if (emailFactor && 'emailAddressId' in emailFactor) {
-                await signIn.prepareFirstFactor({
-                  strategy: 'email_code',
-                  emailAddressId: emailFactor.emailAddressId as string,
-                });
-                if (isMounted) {
-                  setStrategy('email_code');
-                  setIsExistingUser(true);
-                  setCountdown(30);
-                }
+              await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+              if (isMounted) {
+                setStrategy('email_code');
+                setIsExistingUser(false);
+                setCountdown(30);
               }
             }
-          } else {
-            console.warn('Clerk SignUp initialization warning:', signUpErr);
+          } catch (signUpErr: any) {
+            // If user already exists in Clerk, switch to Sign-In OTP
+            if (
+              signUpErr.errors?.[0]?.code === 'form_identifier_exists' ||
+              signUpErr.errors?.[0]?.message?.includes('already exists')
+            ) {
+              if (signIn) {
+                const signInAttempt = await signIn.create({ identifier: formData.email });
+                const emailFactor = signInAttempt.supportedFirstFactors?.find(
+                  (f: any) => f.strategy === 'email_code',
+                );
+
+                if (emailFactor && 'emailAddressId' in emailFactor) {
+                  await signIn.prepareFirstFactor({
+                    strategy: 'email_code',
+                    emailAddressId: emailFactor.emailAddressId as string,
+                  });
+                  if (isMounted) {
+                    setStrategy('email_code');
+                    setIsExistingUser(true);
+                    setCountdown(30);
+                  }
+                }
+              }
+            } else {
+              console.warn('Clerk SignUp initialization warning:', signUpErr);
+            }
           }
-        }
+        };
+
+        // Run with a 3-second safety timeout
+        await Promise.race([
+          initTask(),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Clerk init timeout')), 3000),
+          ),
+        ]);
       } catch (err: any) {
         console.warn('Clerk OTP init notice:', err);
       } finally {
