@@ -14,6 +14,8 @@ import {
   Users,
 } from 'lucide-react';
 import { useAuth } from '@clerk/clerk-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
+import ReactMarkdown from 'react-markdown';
 import {
   Card,
   CardContent,
@@ -82,6 +84,41 @@ const jobSchema = z.object({
 type JobFormValues = z.infer<typeof jobSchema>;
 
 import { useAppShell } from '../../components/layout/AppShell';
+
+const MarkdownEditor = ({
+  name,
+  defaultValue,
+  placeholder,
+}: {
+  name: string;
+  defaultValue?: string;
+  placeholder?: string;
+}) => {
+  const [content, setContent] = useState(defaultValue || '');
+  return (
+    <Tabs defaultValue="write" className="w-full">
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="write">Write</TabsTrigger>
+        <TabsTrigger value="preview">Preview</TabsTrigger>
+      </TabsList>
+      <TabsContent value="write">
+        <Textarea
+          name={name}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="flex min-h-[120px] w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          placeholder={placeholder}
+        />
+      </TabsContent>
+      <TabsContent
+        value="preview"
+        className="min-h-[120px] p-4 rounded-md border border-border prose prose-sm max-w-none text-foreground bg-background"
+      >
+        <ReactMarkdown>{content || '*Nothing to preview*'}</ReactMarkdown>
+      </TabsContent>
+    </Tabs>
+  );
+};
 
 const AdminDashboard = () => {
   const { activeTab } = useAppShell();
@@ -457,6 +494,7 @@ const AdminDashboard = () => {
       case 'rejected':
       case 'applicants': {
         const filteredApps = applications.filter((app) => {
+          if (activeTab === 'kanban' && app.status === 'Draft') return false;
           if (activeTab === 'hired') return app.status === 'HIRED';
           if (activeTab === 'rejected') return app.status === 'REJECTED';
           return true; // for 'all', 'kanban', 'applicants'
@@ -1033,6 +1071,22 @@ const AdminDashboard = () => {
                         defaultValue={editingLocationData?.description || ''}
                         className="flex min-h-[80px] w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         placeholder="Optional description"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Region SEO Copy (Region only)</Label>
+                      <MarkdownEditor
+                        name="seoCopy"
+                        defaultValue={editingLocationData?.seoCopy || ''}
+                        placeholder="Markdown SEO copy"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Town SEO Copy (Town only)</Label>
+                      <MarkdownEditor
+                        name="localizedCopy"
+                        defaultValue={editingLocationData?.localizedCopy || ''}
+                        placeholder="Markdown SEO copy"
                       />
                     </div>
                     <div className="space-y-2">

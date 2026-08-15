@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import {
   MapPin,
   Users,
@@ -295,9 +296,9 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
               Join our professional catching crews in {town.name}.
             </h1>
 
-            <p className="text-base text-white/80 leading-relaxed font-normal max-w-xl mx-auto md:mx-0">
-              {town.localizedCopy}
-            </p>
+            <div className="text-base text-white/80 leading-relaxed font-normal max-w-xl mx-auto md:mx-0 prose prose-invert prose-p:mb-4">
+              <ReactMarkdown>{town.localizedCopy}</ReactMarkdown>
+            </div>
 
             {/* Value Props & Guarantees */}
             <div className="flex flex-wrap justify-center md:justify-start gap-6 pt-4 border-t border-white/15">
