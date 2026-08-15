@@ -53,9 +53,9 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
   const industryName =
     sectorId === 'chicken' ? 'Broiler & Breeder Industry' : 'Commercial Turkey Harvesting';
   const heroImage =
-    sectorId === 'chicken'
-      ? 'https://images.unsplash.com/photo-1548817294-4361e1b4020a?auto=format&fit=crop&q=80&w=2000'
-      : 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=2000';
+    sectorSlug === 'chickens'
+      ? 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=2000'
+      : 'https://images.unsplash.com/photo-1550684376-efcbd6e3f031?auto=format&fit=crop&q=80&w=2000';
 
   const flatLocations = regions.flatMap((region) => {
     if (region.towns && region.towns.length > 0) {

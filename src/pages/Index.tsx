@@ -145,7 +145,7 @@ export default function Index({ onNavigate }: IndexProps) {
 
             <div className="relative aspect-square lg:aspect-[4/5] bg-[var(--color-paper-2)] overflow-hidden mix-blend-multiply border border-[var(--color-rule)]">
               <img
-                src="https://images.unsplash.com/photo-1592982537447-6f2e2ee67d8f?auto=format&fit=crop&q=80&w=2500"
+                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=2500"
                 alt="Poultry catching operations"
                 className="absolute inset-0 w-full h-full object-cover grayscale opacity-90"
               />
@@ -175,7 +175,7 @@ export default function Index({ onNavigate }: IndexProps) {
             >
               <div className="relative h-64 overflow-hidden border-b border-[var(--color-rule)]">
                 <img
-                  src="https://images.unsplash.com/photo-1548817294-4361e1b4020a?auto=format&fit=crop&q=80&w=800"
+                  src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800"
                   alt="Chicken Catching"
                   className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                 />
@@ -209,7 +209,7 @@ export default function Index({ onNavigate }: IndexProps) {
             >
               <div className="relative h-64 overflow-hidden border-b border-[var(--color-rule)]">
                 <img
-                  src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=800"
+                  src="https://images.unsplash.com/photo-1550684376-efcbd6e3f031?auto=format&fit=crop&q=80&w=800"
                   alt="Turkey Catching"
                   className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                 />

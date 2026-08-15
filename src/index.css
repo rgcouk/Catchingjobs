@@ -11,13 +11,14 @@
   --font-display: 'Instrument Serif', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
-  --color-paper: oklch(98% 0.01 90);
-  --color-paper-2: oklch(95% 0.015 90);
-  --color-ink: oklch(15% 0.02 240);
-  --color-ink-2: oklch(45% 0.01 240);
-  --color-rule: oklch(85% 0.01 240);
-  --color-accent: oklch(50% 0.15 40);
-  --color-focus: oklch(65% 0.2 45);
+  /* Hallmark · Earth Exponential Tokens */
+  --color-paper: oklch(96% 0.02 80);
+  --color-paper-2: oklch(92% 0.03 80);
+  --color-ink: oklch(25% 0.03 120);
+  --color-ink-2: oklch(45% 0.04 120);
+  --color-rule: oklch(80% 0.03 80);
+  --color-accent: oklch(55% 0.12 40);
+  --color-focus: oklch(65% 0.15 45);
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-short: 220ms;
