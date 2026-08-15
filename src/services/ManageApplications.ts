@@ -4,7 +4,7 @@ import {
   ApplicationNotFoundError,
   RightToWorkRequiredError,
   ValidationError,
-} from './exceptions';
+} from './exceptions.js';
 
 export interface CreateDraftApplicationInput {
   name: string;

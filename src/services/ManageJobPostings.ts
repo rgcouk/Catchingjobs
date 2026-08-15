@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@prisma/client';
-import { ForbiddenError } from './exceptions';
+import { ForbiddenError } from './exceptions.js';
 
 export class ManageJobPostings {
   constructor(private prisma: PrismaClient) {}

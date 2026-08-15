@@ -1,12 +1,12 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
-import { getPrisma } from '../server/db';
-import { ManageLocations } from '../src/services/ManageLocations';
-import { ManageApplications } from '../src/services/ManageApplications';
-import { ManageJobPostings } from '../src/services/ManageJobPostings';
-import { ManageUsers } from '../src/services/ManageUsers';
-import { DomainError } from '../src/services/exceptions';
+import { getPrisma } from '../server/db.js';
+import { ManageLocations } from '../src/services/ManageLocations.js';
+import { ManageApplications } from '../src/services/ManageApplications.js';
+import { ManageJobPostings } from '../src/services/ManageJobPostings.js';
+import { ManageUsers } from '../src/services/ManageUsers.js';
+import { DomainError } from '../src/services/exceptions.js';
 
 const app = new Hono();
 

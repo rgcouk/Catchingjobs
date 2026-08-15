@@ -3,15 +3,15 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
 // Import individual route sub-apps
-import { app as pingApp } from './ping';
-import { app as locationsApp } from './locations';
-import { app as applicationsApp } from './applications';
-import { app as adminApp } from './admin';
-import { app as portalApp } from './portal';
-import { app as uploadApp } from './upload';
-import { app as clerkWebhookApp } from './webhook-clerk';
-import { app as intakeWebhookApp } from './webhook-intake';
-import { app as triageApp } from './triage';
+import { app as pingApp } from './ping.js';
+import { app as locationsApp } from './locations.js';
+import { app as applicationsApp } from './applications.js';
+import { app as adminApp } from './admin.js';
+import { app as portalApp } from './portal.js';
+import { app as uploadApp } from './upload.js';
+import { app as clerkWebhookApp } from './webhook-clerk.js';
+import { app as intakeWebhookApp } from './webhook-intake.js';
+import { app as triageApp } from './triage.js';
 
 const app = new Hono();
 

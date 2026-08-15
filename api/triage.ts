@@ -1,9 +1,9 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
-import { getPrisma } from '../server/db';
-import { ManageApplications } from '../src/services/ManageApplications';
-import { DomainError } from '../src/services/exceptions';
+import { getPrisma } from '../server/db.js';
+import { ManageApplications } from '../src/services/ManageApplications.js';
+import { DomainError } from '../src/services/exceptions.js';
 
 const app = new Hono();
 

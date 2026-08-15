@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@prisma/client';
-import { DomainError, NotFoundError } from './exceptions';
+import { DomainError, NotFoundError } from './exceptions.js';
 
 export class ManageLocations {
   constructor(private prisma: PrismaClient) {}
