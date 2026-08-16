@@ -322,7 +322,6 @@ function App() {
             : 'root';
 
   const isAppRoute =
-    path.startsWith('/employee') ||
     path.startsWith('/admin') ||
     path.startsWith('/login') ||
     path.startsWith('/register') ||
@@ -387,7 +386,13 @@ function App() {
               </button>
             </SignedOut>
             <SignedIn>
-              <div className="px-2">
+              <div className="flex items-center gap-4 px-2">
+                <Link
+                  to="/employee"
+                  className="text-sm font-semibold transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer text-[var(--color-ink)] hover:text-[var(--color-accent)]"
+                >
+                  My Portal
+                </Link>
                 <UserButton afterSignOutUrl="/" />
               </div>
             </SignedIn>
