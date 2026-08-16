@@ -86,7 +86,7 @@ export default function Register() {
         setError('Unable to complete registration. Please try again.');
       } else {
         await setActive({ session: completeSignUp.createdSessionId });
-        navigate('/user-portal');
+        navigate('/employee');
       }
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));
@@ -99,7 +99,7 @@ export default function Register() {
     signUp.authenticateWithRedirect({
       strategy: 'oauth_google',
       redirectUrl: '/sso-callback',
-      redirectUrlComplete: '/user-portal',
+      redirectUrlComplete: '/employee',
     });
   };
 

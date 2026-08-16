@@ -49,7 +49,7 @@ export default function Login() {
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
-        navigate('/user-portal');
+        navigate('/employee');
       } else {
         // More steps needed (like MFA). For simplicity, we just log it here.
         console.log(result);
@@ -66,7 +66,7 @@ export default function Login() {
     signIn.authenticateWithRedirect({
       strategy: 'oauth_google',
       redirectUrl: '/sso-callback',
-      redirectUrlComplete: '/user-portal',
+      redirectUrlComplete: '/employee',
     });
   };
 

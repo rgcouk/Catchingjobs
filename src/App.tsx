@@ -209,7 +209,7 @@ function App() {
         const savedApp = await res.json();
         setApplications((prev) => [savedApp, ...prev]);
 
-        if (!location.pathname.includes('/user-portal')) {
+        if (!location.pathname.includes('/employee')) {
           setActiveNotification({
             name: data.name,
             ref: data.rosterRef,
@@ -322,8 +322,8 @@ function App() {
             : 'root';
 
   const isAppRoute =
+    path.startsWith('/employee') ||
     path.startsWith('/admin') ||
-    path.startsWith('/user-portal') ||
     path.startsWith('/login') ||
     path.startsWith('/register') ||
     path === '/sso-callback';
@@ -455,8 +455,8 @@ function App() {
               path="/sso-callback"
               element={
                 <AuthenticateWithRedirectCallback
-                  signInForceRedirectUrl="/user-portal"
-                  signUpForceRedirectUrl="/user-portal"
+                  signInForceRedirectUrl="/employee"
+                  signUpForceRedirectUrl="/employee"
                 />
               }
             />
@@ -471,12 +471,10 @@ function App() {
               }
             />
             <Route
-              path="/user-portal"
+              path="/employee"
               element={
                 <ProtectedRoute>
-                  <AppShell navItems={portalNavItems} defaultTab="onboarding" userType="portal">
-                    <PortalDashboard />
-                  </AppShell>
+                  <PortalDashboard />
                 </ProtectedRoute>
               }
             />

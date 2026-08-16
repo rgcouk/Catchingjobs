@@ -191,7 +191,7 @@ export default function PasswordlessOTPModal({
 
       // Successful OTP verification -> route to wizard
       onClose();
-      navigate('/user-portal?wizard=active');
+      navigate('/employee?wizard=active');
     } catch (err: any) {
       console.error('Clerk OTP attempt error:', err);
       setErrorMessage(
