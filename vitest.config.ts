@@ -19,7 +19,7 @@ export default defineConfig({
       '**/dist/**', 
       '**/.{idea,git,cache,output,temp}/**', 
       '**/{karma,rollup,webpack,vite,vitest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*',
-      'tests/intake.spec.ts',
+      'tests/*.spec.ts',
       'src/hooks/use-table-url-state.test.ts'
     ],
   },
