@@ -76,8 +76,8 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
               You're in the right place.
             </h2>
             <p className="text-lg mt-6 text-[var(--color-paper-2)] opacity-80 leading-relaxed">
-              Join one of the UK’s most trusted Poultry Companies, (probably). We accommodate intact
-              local crews with clean transport, industry-leading rates, and premium schedules.
+              Join one of the UK's most dependable poultry catching operators. We accommodate intact
+              local crews with clean transport, industry-leading rates, and predictable schedules.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-x-8 gap-y-12">
