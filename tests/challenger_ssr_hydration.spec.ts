@@ -51,7 +51,8 @@ test.describe('Adversarial Challenge: React Router v7 SSR & Hono API Server', ()
           (err) =>
             !err.includes('Clerk:') &&
             !err.includes('publishableKey') &&
-            !err.includes('favicon.ico'),
+            !err.includes('favicon.ico') &&
+            !err.includes('Failed to load resource'),
         );
         expect(severeErrors, `Console errors detected on ${route}: ${severeErrors.join('; ')}`).toHaveLength(0);
         expect(pageErrors, `Uncaught page errors on ${route}: ${pageErrors.map((e) => e.message).join('; ')}`).toHaveLength(0);

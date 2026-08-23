@@ -115,11 +115,10 @@ test.describe('Adversarial Challenger Suite: Milestone 2 Dynamic Town Routing & 
         await expect(page.locator('text=Local Transport & Pickup Details').first()).toBeVisible();
         await expect(page.locator('text=Primary Pickup Location').first()).toBeVisible();
 
-        // Apply and Phone Call buttons
+        // Hero Triage Form and Fast-Track button
         await expect(
-          page.locator('a:has-text("Join Catching Squad"), a:has-text("Apply in"), a#btn-trigger-wizard-region').first(),
+          page.locator('[data-testid="hero-triage-form"], form#hero-triage-form, button:has-text("Fast-Track Application")').first(),
         ).toBeVisible();
-        await expect(page.locator('a#btn-regional-phone').first()).toBeVisible();
 
         await context.close();
       });

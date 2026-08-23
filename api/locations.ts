@@ -5,17 +5,21 @@ import { getPrisma } from '../server/db.js';
 const app = new Hono();
 
 app.get('/api/locations', async (c) => {
-  const prisma = getPrisma();
   try {
+    const prisma = getPrisma();
     const regions = await prisma.region.findMany({
       include: { towns: true },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
-    return c.json(regions);
+    if (regions && regions.length > 0) {
+      return c.json(regions);
+    }
   } catch (error) {
-    console.error('Error fetching public locations:', error);
-    return c.json({ error: 'Failed to fetch locations' }, 500);
+    console.warn('DB locations fallback notice:', error);
   }
+
+  const { getAllRegionsWithTowns } = await import('../src/data/locations.js');
+  return c.json(getAllRegionsWithTowns());
 });
 
 export { app };

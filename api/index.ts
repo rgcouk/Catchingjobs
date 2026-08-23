@@ -28,6 +28,10 @@ app.route('/', uploadApp);
 app.route('/', clerkWebhookApp);
 app.route('/', intakeWebhookApp);
 
+app.notFound((c) => {
+  return c.json({ error: 'Not Found' }, 404);
+});
+
 
 const port = Number(process.env.PORT_API) || 3001;
 

@@ -15,12 +15,12 @@ async function sendApplicationEmail(applicationData: any) {
   // TODO: Wire up actual Resend/SendGrid API here later.
 }
 
-app.use('*', clerkMiddleware({
+app.use('/api/portal/*', clerkMiddleware({
   publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,
   secretKey: process.env.CLERK_SECRET_KEY,
 }));
 
-app.use('*', async (c, next) => {
+app.use('/api/portal/*', async (c, next) => {
   const auth = getAuth(c);
   // Support theoretical non-clerk headers/query logic from old implementation if needed,
   // but we enforce Clerk auth:

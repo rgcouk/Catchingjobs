@@ -10,12 +10,12 @@ import { DomainError } from '../src/services/exceptions.js';
 
 const app = new Hono();
 
-app.use('*', clerkMiddleware({
+app.use('/api/admin/*', clerkMiddleware({
   publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,
   secretKey: process.env.CLERK_SECRET_KEY,
 }));
 
-app.use('*', async (c, next) => {
+app.use('/api/admin/*', async (c, next) => {
   const auth = getAuth(c);
   if (!auth?.userId) {
     return c.json({ error: 'Unauthorized' }, 401);

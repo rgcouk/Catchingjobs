@@ -3,8 +3,13 @@ import { Helmet } from 'react-helmet-async';
 import { CheckCircle2, Server, Globe2, ShieldCheck } from 'lucide-react';
 
 export default function SSRTest() {
-  const isServer = typeof window === 'undefined';
-  const renderedAt = isServer ? 'Server (SSR)' : 'Client (Hydrated)';
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const renderedAt = mounted ? 'Client (Hydrated)' : 'Server (SSR)';
 
   return (
     <div

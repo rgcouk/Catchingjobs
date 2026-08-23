@@ -41,7 +41,7 @@
 | 4 | Ticket 4: 3-Step Wizard & Submission | Post-auth 3-step wizard, auto-save to Draft, final submission status -> NEW | M3 | DONE |
 | 5 | Ticket 5: Admin Kanban Filter & Town CMS | Filter Draft on Kanban, Markdown Town copy editor in Admin, live SSR render | M4 | DONE |
 | 6 | Ticket 6: Visual Brand & 'Earth Exponential' Aesthetics | Hallmark OKLCH public landers, utilitarian copy, vector art assets | M2 | DONE |
-| 7 | Milestone 7: Final E2E Suite & Quality Gate | `npm run quality-check`, Playwright suite, verification of sequential commits | M1-M6 | READY |
+| 7 | Milestone 7: Final E2E Suite & Quality Gate | `npm run quality-check`, Playwright suite, verification of sequential commits | M1-M6 | DONE |
 
 ## Interface Contracts
 
