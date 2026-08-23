@@ -1,9 +1,9 @@
-/* Hallmark · macrostructure: Bento Grid · Hero: H2 Split Diptych
+/* Hallmark · macrostructure: Bento Grid · Hero: H2 Split Diptych (Hum Playful Register)
  * theme: Hum (catalog: playful, vibrant, alive) · vibe: "warm, friendly, exact, tactile agricultural trade"
- * paper: oklch(97% 0.012 95) [cream] · ink: oklch(20% 0.012 250) [near-black]
+ * paper: oklch(97% 0.012 95) [#FAF8F5] · ink: oklch(20% 0.012 250) [#181E29]
  * accents: pear-yellow oklch(86% 0.18 95) · sky-cyan oklch(66% 0.18 235) · coral-red oklch(68% 0.24 18) · mint oklch(80% 0.16 150)
- * display: Plus Jakarta Sans (600/700) · body: Plus Jakarta Sans / Inter · mono: JetBrains Mono
- * signature moves: 3D press buttons, multi-accent bento cards, big rounded radii, color-shift on hover
+ * display: Plus Jakarta Sans (700) · body: Plus Jakarta Sans (400/500) · mono: JetBrains Mono (500 tabular-nums)
+ * signature moves: 3D press buttons, interactive piece-rate calculator, multi-accent bento cards, character reaction mark, starburst celebration
  */
 
 import React, { useState } from 'react';
@@ -32,6 +32,9 @@ import {
   Flame,
   Star,
   Compass,
+  Sliders,
+  Calendar,
+  HeartHandshake,
 } from 'lucide-react';
 import { REGIONS } from '../../data';
 
@@ -39,56 +42,104 @@ export default function HallmarkBrandDemo() {
   const navigate = useNavigate();
   const [selectedSector, setSelectedSector] = useState<'all' | 'chicken' | 'turkey'>('all');
   const [selectedRegion, setSelectedRegion] = useState('all');
-  const [starBurstPos, setStarBurstPos] = useState<{ x: number; y: number } | null>(null);
+  const [selectedShiftType, setSelectedShiftType] = useState<'all' | 'night' | 'day'>('all');
   const [toggledShift, setToggledShift] = useState<string>('shift-1');
+  const [birdCount, setBirdCount] = useState<number>(4200);
+  const [nightsPerWeek, setNightsPerWeek] = useState<number>(5);
+  const [starBurstActive, setStarBurstActive] = useState<boolean>(false);
+  const [starBurstCoords, setStarBurstCoords] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  // Real-time piece rate earnings calculation: base £0.042/bird + £20 nightly transit attendance bonus
+  const nightlyEarnings = Math.round(birdCount * 0.042 + 20);
+  const weeklyEarnings = nightlyEarnings * nightsPerWeek;
 
   const liveShifts = [
     {
       id: 'shift-1',
       title: 'Broiler Squad Catcher',
+      sector: 'chicken',
+      regionId: 'lincolnshire',
       region: 'Lincolnshire',
       town: 'Boston Depot',
       pay: '£780 – £920 / wk',
+      nightPay: '£175 / night',
       shift: 'Night (20:00 – 04:30)',
-      transit: 'Free Minibus Pickup',
+      transit: 'Free Minibus Pickup (Market Place)',
       accentColor: 'border-[#F5C842] bg-[#FDF8E8]',
-      badgeColor: 'bg-[#F5C842] text-[#151515]',
+      badgeColor: 'bg-[#F5C842] text-[#181E29]',
       accentHue: 'pear',
-      badges: ['Lantra Certified', 'Immediate Start'],
+      badges: ['Lantra Level 2', 'Immediate Start', 'Full Welfare PPE'],
       rating: '98% match',
       spots: '3 spots left',
     },
     {
       id: 'shift-2',
       title: 'Free-Range Turkey Crew',
+      sector: 'turkey',
+      regionId: 'norfolk',
       region: 'Norfolk',
       town: 'Thetford Hub',
       pay: '£850 – £1,050 / wk',
+      nightPay: '£195 / night',
       shift: 'Night (21:00 – 05:00)',
-      transit: 'Depot Pickup Included',
+      transit: 'Minibus from Thetford Bus Station',
       accentColor: 'border-[#38BDF8] bg-[#F0F9FF]',
-      badgeColor: 'bg-[#38BDF8] text-[#151515]',
+      badgeColor: 'bg-[#38BDF8] text-[#181E29]',
       accentHue: 'cyan',
-      badges: ['Seasonal Premium', 'GLAA Protected'],
+      badges: ['Seasonal Premium', 'GLAA Protected', 'Holiday Accrual'],
       rating: '95% match',
       spots: '2 spots left',
     },
     {
       id: 'shift-3',
-      title: 'Squad Driver & Lead',
+      title: 'Squad Driver & Lead Catcher',
+      sector: 'chicken',
+      regionId: 'yorkshire',
       region: 'Yorkshire',
       town: 'Thirsk Centre',
       pay: '£900 – £1,150 / wk',
+      nightPay: '£215 / night',
       shift: 'Flexible Rotation',
-      transit: 'Company Van + Fuel Card',
+      transit: 'Company 9-Seater Van + Fuel Card',
       accentColor: 'border-[#F43F5E] bg-[#FFF1F2]',
       badgeColor: 'bg-[#F43F5E] text-white',
       accentHue: 'coral',
-      badges: ['Clean Driving Lic.', 'Weekly Payroll'],
+      badges: ['Clean Driving Lic.', 'Weekly Payroll', 'Team Bonus'],
       rating: '92% match',
       spots: '1 spot left',
     },
+    {
+      id: 'shift-4',
+      title: 'West Midlands Broiler Squad',
+      sector: 'chicken',
+      regionId: 'shropshire',
+      region: 'Shropshire',
+      town: 'Oswestry Depot',
+      pay: '£760 – £900 / wk',
+      nightPay: '£170 / night',
+      shift: 'Night (19:30 – 04:00)',
+      transit: 'Free Door-to-Door Transit',
+      accentColor: 'border-[#10B981] bg-[#F0FDF4]',
+      badgeColor: 'bg-[#10B981] text-white',
+      accentHue: 'mint',
+      badges: ['GLAA Audited', 'Permanent Contract', 'Weekly BACS'],
+      rating: '94% match',
+      spots: '4 spots left',
+    },
   ];
+
+  const filteredShifts = liveShifts.filter((s) => {
+    if (selectedSector !== 'all' && s.sector !== selectedSector) return false;
+    if (selectedRegion !== 'all' && s.regionId !== selectedRegion) return false;
+    return true;
+  });
+
+  const triggerCelebration = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setStarBurstCoords({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    setStarBurstActive(true);
+    setTimeout(() => setStarBurstActive(false), 500);
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,12 +152,6 @@ export default function HallmarkBrandDemo() {
     } else {
       navigate('/chickens');
     }
-  };
-
-  const triggerStarBurst = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setStarBurstPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-    setTimeout(() => setStarBurstPos(null), 500);
   };
 
   return (
@@ -122,20 +167,19 @@ export default function HallmarkBrandDemo() {
       {/* Hum Theme Announcement Bar */}
       <div className="bg-[#F5EFE6] border-b border-[#E8DFC8] px-4 py-2 text-xs font-mono text-[#5C5549] flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#F5C842] text-[#181E29] font-bold text-[10px]">
+          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#F5C842] text-[#181E29] font-bold text-[11px] shadow-[0_2px_0_0_#D4A017]">
             ⚡
           </span>
-          <span className="font-semibold text-[#181E29]">Hallmark Theme: Hum</span>
+          <span className="font-bold text-[#181E29]">Hallmark Theme: Hum</span>
           <span>·</span>
-          <span>Multi-Accent (Pear · Sky Cyan · Coral · Mint)</span>
+          <span>
+            Multi-Accent (Pear `#F5C842` · Sky Cyan `#38BDF8` · Coral `#F43F5E` · Mint `#10B981`)
+          </span>
           <span>·</span>
-          <span>3D Press Feedback & Rounded Geometries</span>
+          <span>Chunky 3D Press Buttons & Interactive Earnings Engine</span>
         </div>
         <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            className="text-[#181E29] font-semibold hover:underline flex items-center gap-1"
-          >
+          <Link to="/" className="text-[#181E29] font-bold hover:underline flex items-center gap-1">
             Live Site <ArrowUpRight className="w-3 h-3 text-[#E11D48]" />
           </Link>
         </div>
@@ -146,14 +190,14 @@ export default function HallmarkBrandDemo() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link to="/demo" className="flex items-center gap-2.5 group">
-              <div className="w-10 h-10 rounded-2xl bg-[#F5C842] flex items-center justify-center font-bold text-lg shadow-[0_3px_0_0_#D4A017] group-hover:translate-y-[-1px] group-hover:shadow-[0_4px_0_0_#D4A017] transition-all">
+              <div className="w-10 h-10 rounded-2xl bg-[#F5C842] flex items-center justify-center font-bold text-xl shadow-[0_3px_0_0_#D4A017] group-hover:translate-y-[-1px] group-hover:shadow-[0_4px_0_0_#D4A017] transition-all">
                 🐔
               </div>
               <div>
                 <span className="font-bold text-2xl tracking-tight text-[#181E29]">
                   Catching<span className="text-[#E11D48]">jobs</span>
                 </span>
-                <span className="block text-[10px] font-mono text-[#8C8270] uppercase tracking-wider -mt-1">
+                <span className="block text-[10px] font-mono text-[#8C8270] uppercase font-bold tracking-wider -mt-1">
                   Pullum Ltd · Trade Network
                 </span>
               </div>
@@ -206,38 +250,38 @@ export default function HallmarkBrandDemo() {
         </div>
       </header>
 
-      {/* Hero: H2 Split Diptych in Hum Playful Register */}
+      {/* Hero: H2 Split Diptych with Hum Live Filter Console */}
       <section className="relative overflow-hidden pt-12 pb-16 lg:py-20 border-b border-[#E8DFC8]">
-        {/* Soft Background Accents */}
-        <div className="absolute top-12 left-1/4 w-72 h-72 bg-[#F5C842]/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-[#38BDF8]/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Soft Multi-Accent Radial Background Atmosphere */}
+        <div className="absolute top-10 left-1/4 w-80 h-80 bg-[#F5C842]/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-6 right-1/4 w-96 h-96 bg-[#38BDF8]/15 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left 7 Columns: Hum Headline & Multi-Segment Search Dock */}
+            {/* Left 7 Columns: Hero Statement & Multi-Segment Search Dock */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#F0FDF4] border border-[#BBF7D0] rounded-full text-xs font-mono text-[#15803D] font-bold">
-                <span className="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse" />
-                <span>GLAA Licensed · Sponsored Lantra Level 2 Animal Welfare</span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#F0FDF4] border border-[#BBF7D0] rounded-full text-xs font-mono text-[#15803D] font-bold shadow-sm">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E] animate-pulse" />
+                <span>GLAA Licensed Operator · Sponsored Lantra Welfare Certified</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#181E29] leading-[1.15]">
                 Hard work, great crews, and{' '}
                 <span className="relative inline-block">
-                  <span className="relative z-10 px-2 py-0.5 rounded-xl bg-[#F5C842] shadow-[0_3px_0_0_#D4A017] text-[#181E29]">
+                  <span className="relative z-10 px-3 py-1 rounded-2xl bg-[#F5C842] shadow-[0_4px_0_0_#D4A017] text-[#181E29]">
                     guaranteed Friday pay.
                   </span>
                 </span>
               </h1>
 
               <p className="text-lg text-[#5C5549] font-normal leading-relaxed max-w-2xl">
-                The UK's top-rated poultry catching network. We collect you in modern squad
-                minibuses, supply full welfare PPE, and deposit your earnings directly to your bank
-                every single week.
+                The UK's dedicated agricultural poultry catching network. Door-to-door minibus
+                transit, certified bird welfare standards, and crystal-clear weekly payroll straight
+                to your bank account.
               </p>
 
               {/* Multi-Segment Hum Search Dock */}
-              <div className="p-3 sm:p-4 bg-white rounded-3xl border-2 border-[#E8DFC8] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.06)] space-y-3">
+              <div className="p-3 sm:p-4 bg-white rounded-3xl border-2 border-[#E8DFC8] shadow-[0_12px_32px_-8px_rgba(0,0,0,0.06)] space-y-3">
                 <form
                   onSubmit={handleSearch}
                   className="grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs"
@@ -260,18 +304,18 @@ export default function HallmarkBrandDemo() {
 
                   <div className="sm:col-span-4 bg-[#FAF8F5] border border-[#E8DFC8] rounded-2xl p-3 flex flex-col justify-center focus-within:border-[#38BDF8] focus-within:bg-white transition-all">
                     <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#8C8270] mb-1 flex items-center gap-1">
-                      <span>📍 UK Depot / Region</span>
+                      <span>📍 UK Depot Hub</span>
                     </label>
                     <select
                       value={selectedRegion}
                       onChange={(e) => setSelectedRegion(e.target.value)}
-                      aria-label="UK Depot / Region"
+                      aria-label="UK Depot Hub"
                       className="bg-transparent font-bold text-[#181E29] outline-none cursor-pointer text-sm"
                     >
                       <option value="all">All Regional Depots (18)</option>
                       {REGIONS.map((r) => (
                         <option key={r.id} value={r.id}>
-                          {r.name} ({r.towns.length} Town Pickups)
+                          {r.name} ({r.towns.length} Depots)
                         </option>
                       ))}
                     </select>
@@ -280,7 +324,7 @@ export default function HallmarkBrandDemo() {
                   <div className="sm:col-span-4 flex items-stretch">
                     <button
                       type="submit"
-                      onClick={triggerStarBurst}
+                      onClick={triggerCelebration}
                       className="w-full relative overflow-hidden bg-[#F5C842] hover:bg-[#F3BD21] active:translate-y-[2px] active:shadow-[0_1px_0_0_#B8860B] text-[#181E29] font-bold font-mono uppercase tracking-wider text-xs py-3.5 px-4 rounded-2xl shadow-[0_4px_0_0_#D4A017] flex items-center justify-center gap-2 transition-all cursor-pointer"
                     >
                       <Search className="w-4 h-4" />
@@ -292,93 +336,127 @@ export default function HallmarkBrandDemo() {
                 {/* Popular Pickup Chips */}
                 <div className="flex flex-wrap items-center gap-2 pt-1 text-xs font-mono text-[#5C5549]">
                   <span className="font-bold text-[10px] uppercase tracking-wider text-[#8C8270]">
-                    Quick Pickups:
+                    Quick Depots:
                   </span>
                   {[
-                    { name: 'Boston (PE21)', color: 'hover:bg-[#FDF8E8] hover:border-[#F5C842]' },
-                    { name: 'Thetford (IP24)', color: 'hover:bg-[#F0F9FF] hover:border-[#38BDF8]' },
-                    { name: 'Thirsk (YO7)', color: 'hover:bg-[#FFF1F2] hover:border-[#F43F5E]' },
-                    { name: 'Grantham (NG31)', color: 'hover:bg-[#F0FDF4] hover:border-[#22C55E]' },
+                    {
+                      name: 'Boston (PE21)',
+                      region: 'lincolnshire',
+                      color: 'hover:bg-[#FDF8E8] hover:border-[#F5C842]',
+                    },
+                    {
+                      name: 'Thetford (IP24)',
+                      region: 'norfolk',
+                      color: 'hover:bg-[#F0F9FF] hover:border-[#38BDF8]',
+                    },
+                    {
+                      name: 'Thirsk (YO7)',
+                      region: 'yorkshire',
+                      color: 'hover:bg-[#FFF1F2] hover:border-[#F43F5E]',
+                    },
+                    {
+                      name: 'Oswestry (SY11)',
+                      region: 'shropshire',
+                      color: 'hover:bg-[#F0FDF4] hover:border-[#22C55E]',
+                    },
                   ].map((chip) => (
                     <button
                       key={chip.name}
                       type="button"
-                      onClick={() => setSelectedRegion('all')}
-                      className={`px-3 py-1 bg-[#FAF8F5] rounded-full border border-[#E8DFC8] font-medium text-[11px] transition-all cursor-pointer ${chip.color}`}
+                      onClick={() => setSelectedRegion(chip.region)}
+                      className={`px-3 py-1 bg-[#FAF8F5] rounded-full border border-[#E8DFC8] font-bold text-[11px] transition-all cursor-pointer ${
+                        selectedRegion === chip.region
+                          ? 'bg-[#181E29] text-white border-[#181E29]'
+                          : chip.color
+                      }`}
                     >
                       {chip.name}
                     </button>
                   ))}
+                  {selectedRegion !== 'all' && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedRegion('all')}
+                      className="px-2 py-0.5 text-[10px] font-mono text-[#E11D48] hover:underline"
+                    >
+                      Reset Filter
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Right 5 Columns: Hum Interactive Shift Stack */}
+            {/* Right 5 Columns: Interactive Real-Time Shift Stack */}
             <div className="lg:col-span-5 space-y-4">
               <div className="flex items-center justify-between px-2 text-xs font-mono text-[#8C8270]">
                 <div className="flex items-center gap-2 font-bold text-[#181E29] uppercase tracking-wider">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
-                  <span>Real-Time Shift Board</span>
+                  <span>Real-Time Shift Board ({filteredShifts.length} open)</span>
                 </div>
-                <span className="bg-[#FAF8F5] px-2 py-0.5 rounded-full border border-[#E8DFC8]">
-                  Updated 4 mins ago
+                <span className="bg-[#FAF8F5] px-2.5 py-0.5 rounded-full border border-[#E8DFC8] font-semibold">
+                  Updated live
                 </span>
               </div>
 
-              {liveShifts.map((shift) => {
-                const isToggled = toggledShift === shift.id;
-                return (
-                  <div
-                    key={shift.id}
-                    onClick={() => setToggledShift(shift.id)}
-                    className={`p-5 rounded-3xl border-2 transition-all cursor-pointer ${
-                      isToggled
-                        ? `${shift.accentColor} shadow-[0_6px_20px_-6px_rgba(0,0,0,0.08)] scale-[1.01]`
-                        : 'bg-white border-[#E8DFC8] hover:border-[#B8AF98] hover:shadow-sm'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#8C8270]">
-                            {shift.region} · {shift.town}
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full bg-[#F5EFE6] text-[10px] font-mono font-bold text-[#5C5549]">
-                            {shift.spots}
-                          </span>
+              <div className="space-y-3">
+                {filteredShifts.map((shift) => {
+                  const isToggled = toggledShift === shift.id;
+                  return (
+                    <div
+                      key={shift.id}
+                      onClick={() => setToggledShift(shift.id)}
+                      className={`p-5 rounded-3xl border-2 transition-all cursor-pointer ${
+                        isToggled
+                          ? `${shift.accentColor} shadow-[0_8px_24px_-6px_rgba(0,0,0,0.08)] scale-[1.01]`
+                          : 'bg-white border-[#E8DFC8] hover:border-[#B8AF98] hover:shadow-sm'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#8C8270]">
+                              {shift.region} · {shift.town}
+                            </span>
+                            <span className="px-2 py-0.5 rounded-full bg-[#F5EFE6] text-[10px] font-mono font-bold text-[#5C5549]">
+                              {shift.spots}
+                            </span>
+                          </div>
+                          <h3 className="text-lg font-bold text-[#181E29]">{shift.title}</h3>
                         </div>
-                        <h3 className="text-lg font-bold text-[#181E29]">{shift.title}</h3>
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold ${shift.badgeColor}`}
+                        >
+                          {shift.rating}
+                        </span>
                       </div>
-                      <span
-                        className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold ${shift.badgeColor}`}
-                      >
-                        {shift.rating}
-                      </span>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-black/5 text-xs font-mono">
-                      <div className="flex items-center gap-1.5">
-                        <Coins className="w-4 h-4 text-[#D4A017]" />
-                        <span className="font-bold text-[#181E29]">{shift.pay}</span>
+                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-black/5 text-xs font-mono">
+                        <div className="flex items-center gap-1.5">
+                          <Coins className="w-4 h-4 text-[#D4A017]" />
+                          <span className="font-bold text-[#181E29]">{shift.pay}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[#5C5549]">
+                          <Clock className="w-4 h-4 text-[#8C8270]" />
+                          <span>{shift.shift}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[#5C5549]">
-                        <Clock className="w-4 h-4 text-[#8C8270]" />
-                        <span>{shift.shift}</span>
-                      </div>
-                    </div>
 
-                    <div className="flex items-center justify-between pt-3 text-xs font-mono">
-                      <div className="flex items-center gap-1.5 text-[#15803D]">
-                        <Truck className="w-3.5 h-3.5" />
-                        <span className="font-semibold">{shift.transit}</span>
+                      <div className="flex items-center justify-between pt-3 text-xs font-mono">
+                        <div className="flex items-center gap-1.5 text-[#15803D]">
+                          <Truck className="w-3.5 h-3.5" />
+                          <span className="font-semibold">{shift.transit}</span>
+                        </div>
+                        <Link
+                          to={`/chickens/${shift.regionId}`}
+                          className="font-bold text-[#181E29] hover:text-[#E11D48] flex items-center gap-1"
+                        >
+                          Apply <ChevronRight className="w-4 h-4 text-[#E11D48]" />
+                        </Link>
                       </div>
-                      <span className="font-bold text-[#181E29] flex items-center gap-1 group">
-                        Quick Triage <ChevronRight className="w-4 h-4 text-[#E11D48]" />
-                      </span>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -427,6 +505,111 @@ export default function HallmarkBrandDemo() {
         </div>
       </section>
 
+      {/* Interactive Piece-Rate Wage Estimator (Hum Unique Interactive Component) */}
+      <section className="py-16 bg-[#F5EFE6] border-b border-[#E8DFC8]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="p-8 sm:p-12 rounded-3xl bg-white border-2 border-[#E8DFC8] shadow-[0_12px_32px_-8px_rgba(0,0,0,0.06)] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-7 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FDF8E8] border border-[#FDE68A] text-xs font-mono font-bold text-[#92400E]">
+                <Coins className="w-3.5 h-3.5 text-[#D4A017]" />
+                <span>Interactive Earnings Estimator</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#181E29]">
+                Calculate your weekly catching income
+              </h2>
+              <p className="text-sm text-[#5C5549] leading-relaxed">
+                Catching pay is transparent and calculated piece-rate per bird with nightly transit
+                allowance. Adjust the sliders below to estimate your net weekly take-home.
+              </p>
+
+              {/* Slider 1: Birds Caught per Night */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs font-mono">
+                  <span className="font-bold text-[#181E29]">Birds Caught per Shift:</span>
+                  <span className="font-bold text-[#D4A017]">
+                    {birdCount.toLocaleString()} birds
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="2000"
+                  max="6500"
+                  step="100"
+                  value={birdCount}
+                  onChange={(e) => setBirdCount(Number(e.target.value))}
+                  className="w-full h-3 bg-[#FAF8F5] border border-[#E8DFC8] rounded-lg appearance-none cursor-pointer accent-[#F5C842]"
+                />
+                <div className="flex justify-between text-[10px] font-mono text-[#8C8270]">
+                  <span>2,000 (Standard Squad)</span>
+                  <span>4,200 (Experienced)</span>
+                  <span>6,500 (High Volume)</span>
+                </div>
+              </div>
+
+              {/* Slider 2: Nights worked per week */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs font-mono">
+                  <span className="font-bold text-[#181E29]">Nights per Week:</span>
+                  <span className="font-bold text-[#38BDF8]">{nightsPerWeek} nights</span>
+                </div>
+                <input
+                  type="range"
+                  min="3"
+                  max="6"
+                  step="1"
+                  value={nightsPerWeek}
+                  onChange={(e) => setNightsPerWeek(Number(e.target.value))}
+                  className="w-full h-3 bg-[#FAF8F5] border border-[#E8DFC8] rounded-lg appearance-none cursor-pointer accent-[#38BDF8]"
+                />
+                <div className="flex justify-between text-[10px] font-mono text-[#8C8270]">
+                  <span>3 Nights (Part-Time)</span>
+                  <span>5 Nights (Full Squad)</span>
+                  <span>6 Nights (Peak Rotation)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right 5 Columns: Result Box */}
+            <div className="lg:col-span-5 p-6 sm:p-8 rounded-3xl bg-[#FDF8E8] border-2 border-[#FDE68A] space-y-6 text-center lg:text-left">
+              <div>
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#92400E]">
+                  Estimated Weekly Friday Pay
+                </span>
+                <div className="text-4xl sm:text-5xl font-black font-mono text-[#181E29] tracking-tight mt-1">
+                  £{weeklyEarnings.toLocaleString()}
+                </div>
+                <span className="text-xs font-mono text-[#5C5549] block mt-1">
+                  ≈ £{nightlyEarnings} per night (including transit allowance)
+                </span>
+              </div>
+
+              <div className="space-y-2 text-xs font-mono text-[#5C5549] bg-white p-4 rounded-2xl border border-[#FDE68A]">
+                <div className="flex justify-between">
+                  <span>Piece-Rate Base:</span>
+                  <span className="font-bold text-[#181E29]">£0.042 / bird</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Minibus Transit Allowance:</span>
+                  <span className="font-bold text-[#15803D]">£20.00 / night</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Holiday Accrual:</span>
+                  <span className="font-bold text-[#181E29]">Included (12.07%)</span>
+                </div>
+              </div>
+
+              <Link
+                to="/chickens"
+                className="w-full inline-flex items-center justify-center gap-2 bg-[#F5C842] hover:bg-[#F3BD21] active:translate-y-[2px] text-[#181E29] font-mono text-xs font-bold uppercase tracking-wider py-4 rounded-2xl shadow-[0_4px_0_0_#D4A017] transition-all cursor-pointer"
+              >
+                <span>Apply for this Roster</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Hum Multi-Accent Bento Grid (F1 Asymmetric) */}
       <section className="py-16 lg:py-24 border-b border-[#E8DFC8]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
@@ -435,16 +618,16 @@ export default function HallmarkBrandDemo() {
               Worker-First Operations
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#181E29]">
-              Built for real human comfort, fair wages, and total reliability.
+              Designed for physical efficiency, worker welfare, and absolute transparency.
             </h2>
             <p className="text-base text-[#5C5549] leading-relaxed">
-              We treat agricultural catching as a skilled professional craft. Dedicated
-              transportation, certified bird welfare, and crystal-clear weekly pay slips.
+              We treat poultry catching as a skilled agricultural profession. Clean minibuses,
+              sponsored training, and guaranteed Friday deposits.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-            {/* Tile 1: Minibus Network (Span 8, Pear/Yellow Accent) */}
+            {/* Tile 1: Minibus Network (Span 8, Pear Accent) */}
             <div className="md:col-span-8 p-8 rounded-3xl bg-white border-2 border-[#E8DFC8] shadow-sm hover:border-[#F5C842] transition-all flex flex-col justify-between space-y-6">
               <div className="space-y-3">
                 <div className="w-12 h-12 rounded-2xl bg-[#FDF8E8] border border-[#FDE68A] flex items-center justify-center text-2xl">
@@ -585,7 +768,9 @@ export default function HallmarkBrandDemo() {
                 Active Catching Corridors & Minibus Depots
               </h2>
             </div>
-            <p className="text-xs font-mono text-[#8C8270] uppercase">18 Town Pickup Depots</p>
+            <p className="text-xs font-mono text-[#8C8270] uppercase font-bold">
+              18 Town Pickup Depots
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
