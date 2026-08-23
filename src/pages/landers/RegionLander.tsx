@@ -2,6 +2,10 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
+/* Hallmark · macrostructure: Split Diptych
+ * theme: Clean Modern Minimal Agricultural Trade SaaS
+ * paper: #F8FAFC · surface: #FFFFFF · ink: #0F172A · rule: #E2E8F0 · accent: #059669
+ */
 
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -14,8 +18,9 @@ import {
   Quote,
   Phone,
   ArrowRight,
-  Bus,
-  AlertTriangle,
+  Truck,
+  Coins,
+  CheckCircle2,
 } from 'lucide-react';
 import { Link } from 'react-router';
 import { Helmet } from 'react-helmet-async';
@@ -37,9 +42,7 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
   const tenant = TENANTS[sectorId];
   const sectorTitle = sectorId === 'chicken' ? 'Chicken Catching' : 'Turkey Catching';
 
-  // Synchronous initialization from SSR context or synchronous static resolver
   const [town, setTown] = useState<TownData | null>(() => {
-    // 1. Check SSR initialData from server
     if (
       initialData &&
       initialData.town &&
@@ -49,7 +52,6 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
       return initialData.town;
     }
 
-    // 2. Synchronously resolve from static dataset
     const resolved = resolveTown(sectorId, regionId);
     if (resolved && resolved.town) {
       return resolved.town;
@@ -68,7 +70,6 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
     return !town && !isNotFound;
   });
 
-  // Client-side fallback / dynamic navigation
   useEffect(() => {
     const syncResolved = resolveTown(sectorId, regionId);
     if (syncResolved && syncResolved.town) {
@@ -98,43 +99,11 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
                 pickupPoint: match.pickupPoint,
                 surrounding: match.surrounding || match.surroundingAreas?.join(', ') || '',
                 localizedCopy: match.localizedCopy,
-                description: match.description,
-                phoneNumber: match.phoneNumber,
-                region: {
-                  id: r.id,
-                  name: r.name,
-                  county: r.county,
-                  activeCrews: r.activeCrews,
-                  seoCopy: r.seoCopy,
-                },
+                faqs: match.faqs || [],
+                testimonial: match.testimonial || undefined,
               };
               break;
             }
-          }
-          if (
-            r.id.toLowerCase() === regionId.toLowerCase() ||
-            r.name.toLowerCase() === regionId.toLowerCase()
-          ) {
-            const firstTown = r.towns?.[0];
-            foundTown = {
-              id: r.id,
-              name: firstTown ? firstTown.name : r.name,
-              pickupPoint: firstTown ? firstTown.pickupPoint : `${r.name} Central Outpost`,
-              surrounding: firstTown
-                ? firstTown.surrounding || firstTown.surroundingAreas?.join(', ') || ''
-                : `${r.county} Area`,
-              localizedCopy: firstTown ? firstTown.localizedCopy : r.seoCopy,
-              description: r.description,
-              phoneNumber: r.phoneNumber,
-              region: {
-                id: r.id,
-                name: r.name,
-                county: r.county,
-                activeCrews: r.activeCrews,
-                seoCopy: r.seoCopy,
-              },
-            };
-            break;
           }
         }
 
@@ -144,246 +113,205 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
         } else {
           setIsNotFound(true);
         }
-        setLoading(false);
       })
       .catch((err) => {
-        console.warn('Failed to load location context via API:', err);
+        console.error('Error fetching dynamic town data:', err);
         setIsNotFound(true);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, [regionId, sectorId]);
 
-  // 1. Resilient 404 / Location Not Found View
-  if (isNotFound || (!loading && !town)) {
+  const sectorSlug = sectorId === 'chicken' ? 'chickens' : 'turkeys';
+
+  if (loading) {
     return (
-      <div className="font-sans w-full py-20 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto text-center space-y-6 bg-[var(--color-paper)] text-[var(--color-ink)]">
-        <Helmet>
-          <title>Location Not Found | CatchingJobs.co.uk</title>
-          <meta name="robots" content="noindex, nofollow" />
-        </Helmet>
-        <div className="w-16 h-16 bg-[var(--color-paper-2)] border border-[var(--color-rule)] flex items-center justify-center mx-auto text-[var(--color-accent)]">
-          <AlertTriangle className="w-8 h-8" />
-        </div>
-        <h1 className="text-3xl font-display text-[var(--color-ink)]">
-          Catching Location Not Found
-        </h1>
-        <p className="text-sm text-[var(--color-ink-2)] max-w-md mx-auto leading-relaxed">
-          Error: Regional page context not found. We currently do not operate an active catching
-          outpost in <strong>"{regionId}"</strong>. Please explore our active regional directories
-          or return to the national hub.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-          <Link
-            to={sectorId === 'chicken' ? '/chickens' : '/turkeys'}
-            onClick={onBackToSector}
-            className="w-full sm:w-auto bg-[var(--color-ink)] hover:bg-[var(--color-ink-2)] text-[var(--color-paper)] font-medium px-6 py-3 text-xs uppercase tracking-wider transition-colors no-underline"
-            id="btn-error-back"
-          >
-            Return to {tenant.title}
-          </Link>
-          <Link
-            to="/"
-            className="w-full sm:w-auto border border-[var(--color-rule)] hover:border-[var(--color-ink)] text-[var(--color-ink)] font-medium px-6 py-3 text-xs uppercase tracking-wider transition-colors no-underline"
-          >
-            Return to National Hub
-          </Link>
+      <div className="font-sans min-h-[60vh] flex items-center justify-center bg-[#F8FAFC]">
+        <div className="text-center space-y-3">
+          <div className="w-8 h-8 border-2 border-[#059669] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="font-mono text-xs text-[#64748B]">Loading {sectorTitle} Depot...</p>
         </div>
       </div>
     );
   }
 
-  // 2. Loading Skeleton Fallback (only during unexpected SPA transition delays)
-  if (loading || !town) {
+  if (isNotFound || !town) {
     return (
-      <div className="text-center py-16 bg-[var(--color-paper)]">
-        <p className="text-sm font-mono text-[var(--color-ink-2)] animate-pulse">
-          Loading {regionId} catching hub...
-        </p>
+      <div className="font-sans min-h-[60vh] flex items-center justify-center bg-[#F8FAFC] px-4">
+        <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-[#E2E8F0] text-center space-y-4 shadow-sm">
+          <MapPin className="w-8 h-8 text-[#64748B] mx-auto" />
+          <h2 className="text-xl font-bold text-[#0F172A]">Depot Location Not Found</h2>
+          <p className="text-xs text-[#64748B]">
+            We could not resolve an active catching depot for "{regionId}".
+          </p>
+          <Link
+            to={`/${sectorSlug}`}
+            className="inline-flex items-center justify-center gap-2 bg-[#059669] text-white px-5 py-2.5 rounded-lg text-xs font-mono font-semibold uppercase tracking-wider"
+          >
+            <span>View All Regional Depots</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       </div>
     );
   }
-
-  // 3. Structured Data Schema.org (JobPosting)
-  const jsonLd = {
-    '@context': 'https://schema.org/',
-    '@type': 'JobPosting',
-    title: `Poultry Catcher - ${town.name}`,
-    description: town.localizedCopy,
-    identifier: {
-      '@type': 'PropertyValue',
-      name: 'Pullum Ltd',
-      value: `${sectorId}-${town.id}`,
-    },
-    hiringOrganization: {
-      '@type': 'Organization',
-      name: 'Pullum Ltd',
-      sameAs: 'https://catchingjobs.co.uk',
-    },
-    jobLocation: {
-      '@type': 'Place',
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: town.name,
-        addressRegion: town.region.county,
-        addressCountry: 'UK',
-      },
-    },
-    employmentType: 'FULL_TIME',
-    baseSalary: {
-      '@type': 'MonetaryAmount',
-      currency: 'GBP',
-      value: {
-        '@type': 'QuantitativeValue',
-        value: 750,
-        unitText: 'WEEK',
-      },
-    },
-  };
-
-  const testimonials = [
-    {
-      quote: `Pullum Ltd runs the most organized catching crews in ${town.name}. The hours are guaranteed, minibus pickup from ${town.pickupPoint} is always on time, and weekly wages are deposited every Friday morning without fail.`,
-      author: `Arthur K.`,
-      role: `Senior Catching Crew Leader (${town.name})`,
-    },
-    {
-      quote: `As an agricultural facility manager near ${town.name}, I demand absolute safety and animal welfare compliance. Pullum Ltd's catching squads from ${town.region.name} are disciplined, professional, and Lantra certified.`,
-      author: `Mark R.`,
-      role: `Agricultural Facility Manager`,
-    },
-  ];
 
   return (
-    <div className="font-sans w-full pb-16 bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-[var(--color-paper)]">
+    <div className="font-sans w-full bg-[#F8FAFC] text-[#0F172A] selection:bg-[#059669] selection:text-white min-h-screen antialiased">
       <Helmet>
-        <title>{`Poultry Catching Jobs in ${town.name} | CatchingJobs.co.uk`}</title>
-        <meta name="description" content={town.localizedCopy} />
+        <title>{`${town.name} ${sectorTitle} Jobs | CatchingJobs`}</title>
         <meta
-          property="og:title"
-          content={`Poultry Catching Jobs in ${town.name} | CatchingJobs`}
+          name="description"
+          content={`Professional UK ${sectorTitle} roles departing from ${town.name} Depot. Free local minibus collection from ${town.pickupPoint}, weekly Friday pay, and full PPE supplied.`}
         />
-        <meta property="og:description" content={town.localizedCopy} />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`Poultry Catching Jobs in ${town.name}`} />
-        <meta name="twitter:description" content={town.localizedCopy} />
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
 
-      {/* Hero Section */}
-      <section className="relative bg-[var(--color-ink)] text-[var(--color-paper)] overflow-hidden min-h-[42vh] flex items-center border-b border-[var(--color-rule)]">
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex flex-col md:flex-row gap-8 justify-between items-center">
-          <div className="space-y-6 flex-1 text-center md:text-left">
-            <div>
-              <button
-                onClick={onBackToSector}
-                className="text-xs font-mono font-medium text-[var(--color-accent)] hover:text-white flex items-center gap-1.5 p-1 -ml-1 transition-colors cursor-pointer mb-3 mx-auto md:mx-0"
-                id="btn-region-back"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                Back to {tenant.title}
-              </button>
+      {/* Breadcrumb Bar */}
+      <div className="bg-white border-b border-[#E2E8F0] px-4 py-2.5 text-xs font-mono text-[#64748B]">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Link to="/" className="hover:text-[#0F172A] hover:underline">
+              Catchingjobs
+            </Link>
+            <span>/</span>
+            <Link to={`/${sectorSlug}`} className="hover:text-[#0F172A] hover:underline">
+              {sectorTitle}
+            </Link>
+            <span>/</span>
+            <span className="font-semibold text-[#0F172A]">{town.name} Depot</span>
+          </div>
+          <Link
+            to={`/${sectorSlug}`}
+            className="text-[#059669] hover:underline flex items-center gap-1 font-medium"
+          >
+            <ChevronLeft className="w-3 h-3" />
+            <span>All Depots</span>
+          </Link>
+        </div>
+      </div>
 
-              <div className="inline-flex items-center gap-2 text-xs font-mono font-medium text-[var(--color-paper)] bg-white/10 px-3 py-1 border border-white/20 uppercase tracking-wider mx-auto md:mx-0">
-                <MapPin className="w-3.5 h-3.5 text-[var(--color-accent)]" />
-                <span>
-                  {town.name} Catching Area • {town.region.name}
+      {/* Hero Section: Diptych Layout */}
+      <section className="bg-white border-b border-[#E2E8F0] py-12 lg:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            {/* Left 7 Columns: Pitch & Localized Info */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#ECFDF5] border border-[#A7F3D0] rounded-full text-xs font-mono text-[#065F46] font-medium">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#059669]" />
+                <span>GLAA Licensed · {town.name} Minibus Depot</span>
+              </div>
+
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0F172A] leading-[1.15]">
+                {town.name} {sectorTitle} Squads
+              </h1>
+
+              <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
+                <div className="flex items-start gap-2 text-xs font-mono text-[#0F172A]">
+                  <Truck className="w-4 h-4 text-[#059669] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-bold">Direct Pickup Point:</span> {town.pickupPoint}
+                  </div>
+                </div>
+                {town.surrounding && (
+                  <div className="text-[11px] font-mono text-[#64748B] pl-6">
+                    <span className="font-semibold">Servicing Areas:</span> {town.surrounding}
+                  </div>
+                )}
+              </div>
+
+              <div className="prose prose-sm text-[#64748B] leading-relaxed">
+                {town.localizedCopy ? (
+                  <ReactMarkdown>{town.localizedCopy}</ReactMarkdown>
+                ) : (
+                  <p>
+                    Join our professional {town.name} catching team. We collect operatives directly
+                    from {town.pickupPoint} in modern heated minibuses, deliver you safely to
+                    regional poultry farms, and guarantee your wages every Friday morning via BACS.
+                  </p>
+                )}
+              </div>
+
+              {/* Snapshot Metrics */}
+              <div className="grid grid-cols-3 gap-3 pt-2 font-mono text-xs">
+                <div className="p-3 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0]">
+                  <span className="text-[10px] text-[#94A3B8] uppercase block">Weekly Pay</span>
+                  <span className="font-bold text-[#0F172A]">£780 – £950 / wk</span>
+                </div>
+                <div className="p-3 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0]">
+                  <span className="text-[10px] text-[#94A3B8] uppercase block">Transit Cost</span>
+                  <span className="font-bold text-[#059669]">£0.00 (Free)</span>
+                </div>
+                <div className="p-3 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0]">
+                  <span className="text-[10px] text-[#94A3B8] uppercase block">Deposit Day</span>
+                  <span className="font-bold text-[#EA580C]">Every Friday</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right 5 Columns: Fast Triage Form */}
+            <div className="lg:col-span-5 bg-[#F8FAFC] p-6 sm:p-8 rounded-2xl border border-[#E2E8F0] shadow-sm space-y-4">
+              <div className="space-y-1">
+                <span className="text-xs font-mono uppercase font-semibold text-[#059669]">
+                  3-Minute Onboarding
                 </span>
+                <h3 className="text-xl font-bold text-[#0F172A]">Register for {town.name} Depot</h3>
+                <p className="text-xs text-[#64748B]">
+                  Confirm right-to-work and get assigned to the next available minibus run.
+                </p>
               </div>
-            </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display text-white leading-tight tracking-tight">
-              Join our professional catching crews in {town.name}.
-            </h1>
-
-            <div className="text-base text-white/80 leading-relaxed font-normal max-w-xl mx-auto md:mx-0 prose prose-invert prose-p:mb-4">
-              <ReactMarkdown>{town.localizedCopy}</ReactMarkdown>
-            </div>
-
-            {/* Value Props & Guarantees */}
-            <div className="flex flex-wrap justify-center md:justify-start gap-6 pt-4 border-t border-white/15">
-              <div className="flex items-center gap-2 text-xs text-white/90 font-medium font-mono">
-                <Users className="w-4 h-4 text-[var(--color-accent)]" />
-                <span>{town.region.activeCrews} Active Local Crews</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-white/90 font-medium font-mono">
-                <ShieldCheck className="w-4 h-4 text-[var(--color-accent)]" />
-                <span>AHVLA Licensed</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-white/90 font-medium font-mono">
-                <Clock className="w-4 h-4 text-[var(--color-accent)]" />
-                <span>Guaranteed Weekly Pay</span>
-              </div>
+              <HeroTriageForm regionId={town.id} sectorId={sectorId} townName={town.name} />
             </div>
           </div>
-
-          {/* Hero Automated Triage Form (Ticket 3) */}
-          <HeroTriageForm town={town} sectorId={sectorId} />
         </div>
       </section>
 
-      {/* Transit & Pickup Points Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
-        <section className="border border-[var(--color-rule)] bg-[var(--color-paper)] p-6 sm:p-8 space-y-4">
-          <div className="flex items-center gap-3 border-b border-[var(--color-rule)] pb-4">
-            <div className="p-2 bg-[var(--color-paper-2)] text-[var(--color-accent)]">
-              <Bus className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-display text-xl text-[var(--color-ink)]">
-                Local Transport & Pickup Details
-              </h3>
-              <p className="text-xs text-[var(--color-ink-2)] font-mono">
-                Door-to-door transit provided for all rostered team members.
-              </p>
-            </div>
+      {/* Localized FAQ Section */}
+      {town.faqs && town.faqs.length > 0 && (
+        <section className="py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          <div className="space-y-1">
+            <span className="text-xs font-mono uppercase font-semibold text-[#059669]">
+              Depot FAQ
+            </span>
+            <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              Frequently Asked Questions for {town.name} Catchers
+            </h2>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6 pt-2">
-            <div className="space-y-1">
-              <span className="text-xs font-mono font-medium text-[var(--color-ink-2)] uppercase tracking-wider">
-                Primary Pickup Location
-              </span>
-              <p className="text-base font-semibold text-[var(--color-ink)]">{town.pickupPoint}</p>
-            </div>
-            <div className="space-y-1">
-              <span className="text-xs font-mono font-medium text-[var(--color-ink-2)] uppercase tracking-wider">
-                Surrounding Service Areas
-              </span>
-              <p className="text-base text-[var(--color-ink)]">
-                {town.surrounding || `${town.name} and surrounding agricultural corridors`}
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Testimonials */}
-        <section className="space-y-6">
-          <h2 className="text-2xl font-display text-[var(--color-ink)]">
-            Feedback from {town.name} Catchers
-          </h2>
-
-          <div className="grid sm:grid-cols-2 gap-6">
-            {testimonials.map((t, idx) => (
+          <div className="space-y-4">
+            {town.faqs.map((faq: any, idx: number) => (
               <div
                 key={idx}
-                className="bg-[var(--color-paper)] border border-[var(--color-rule)] p-6 flex flex-col justify-between space-y-4 relative"
+                className="p-5 bg-white rounded-xl border border-[#E2E8F0] space-y-2 shadow-sm"
               >
-                <Quote className="absolute top-4 right-4 w-8 h-8 text-[var(--color-rule)] pointer-events-none" />
-                <p className="text-sm text-[var(--color-ink-2)] leading-relaxed italic pr-6">
-                  "{t.quote}"
-                </p>
-                <div className="pt-4 border-t border-[var(--color-rule)] flex items-center justify-between">
-                  <span className="font-medium text-[var(--color-ink)] text-sm">{t.author}</span>
-                  <span className="text-xs font-mono text-[var(--color-ink-2)] uppercase">
-                    {t.role}
-                  </span>
-                </div>
+                <h4 className="text-base font-bold text-[#0F172A]">{faq.question}</h4>
+                <p className="text-xs text-[#64748B] leading-relaxed">{faq.answer}</p>
               </div>
             ))}
           </div>
         </section>
-      </div>
+      )}
+
+      {/* Minimal Footer */}
+      <footer className="bg-white border-t border-[#E2E8F0] py-8 text-xs font-mono text-[#64748B]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            © {new Date().getFullYear()} Pullum Ltd · {town.name} Catching Depot
+          </div>
+          <div className="flex items-center gap-6">
+            <Link to="/" className="hover:text-[#0F172A]">
+              Home
+            </Link>
+            <Link to={`/${sectorSlug}`} className="hover:text-[#0F172A]">
+              {sectorTitle}
+            </Link>
+            <Link to="/corporate" className="hover:text-[#0F172A]">
+              Growers
+            </Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

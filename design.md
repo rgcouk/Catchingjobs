@@ -7,24 +7,26 @@ Locked design system for Catchingjobs.co.uk. Future Hallmark runs and AI agents 
 ## System
 
 - **Brand**: Catchingjobs.co.uk (Operated by Pullum Ltd)
-- **Genre**: Editorial / Utilitarian Agricultural Trade
-- **Primary Macrostructures**: Stat-Led (`h4-stat-led`), Marquee Hero (`h1-marquee`), Tabular Spec (`f3-tabular-spec-sheet`)
-- **Theme**: Custom — Earth Exponential (`custom-earth-terracotta`) & Hum (`theme: hum` - Playful, Vibrant, Alive)
+- **Genre**: Modern-Minimal / Clean Agricultural Trade SaaS (grounded in Dribbble Design DNA References 23963312, 19351493, 16062197, 27504183)
+- **Primary Macrostructures**: Bento Grid (`bento-grid`), Split Diptych Hero (`h2-split-diptych`), Numbered Stat Strip (`t4-stat-strip`), Structured Index Footer (`ft3-structured-footer`)
+- **Theme**: Clean Modern Minimal Trade
 - **Axes**:
-  - **Paper band**: Light Cream (`--color-paper` L = 96–97%) with Warm Tinted Paper 2 (`--color-paper-2` L = 92–94%)
-  - **Display style**: Plus Jakarta Sans (600/700 rounded humanist display) & Instrument Serif (roman classical)
-  - **Accent hue**: Multi-Accent (Pear-Yellow `#F5C842` / Sky-Cyan `#38BDF8` / Coral-Red `#F43F5E` / Mint `#10B981`) paired with near-black ink (`oklch(20% 0.012 250)`)
+  - **Paper band**: Crisp Light Slate Canvas (`--color-paper`: `#F8FAFC` / `oklch(98.5% 0.005 240)`), Pure White Surfaces (`#FFFFFF`) with precise 1px hairline borders (`#E2E8F0` / `oklch(92% 0.005 260)`).
+  - **Display style**: Clean Bold Sans (`Plus Jakarta Sans`, 700 bold, tracking `-0.03em`)
+  - **Body style**: Readable Neutral Sans (`Inter`, 400/500, leading relaxed `1.55`)
+  - **Mono style**: Tabular Monospace (`JetBrains Mono` / `Geist Mono`, 500 medium, uppercase tracking `+0.04em`)
+  - **Accent hue**: Disciplined Emerald Green (`#059669` / `oklch(62% 0.17 150)`) as primary anchor action & compliance badge, paired with Harvest Orange (`#EA580C` / `oklch(65% 0.18 45)`) for Friday payroll highlights (≤ 6% total viewport footprint).
 
 ---
 
 ## Component Boundaries (Critical Architecture)
 
-1. **Public Marketing & Regional Landers** (`src/pages/landers/*`, `src/pages/Index.tsx`, `src/pages/landers/HallmarkBrandDemo.tsx`):
-   - **MUST** enforce the Hallmark OKLCH design tokens and anti-AI-slop typography below.
-   - Zero faux UI chrome, zero hyperbolic slop copy, zero italic headers.
+1. **Public Marketing & Regional Landers** (`src/pages/landers/*`, `src/pages/Index.tsx`):
+   - **MUST** enforce the clean minimal OKLCH / Slate tokens, hairline borders, and disciplined green/orange accents.
+   - Zero faux 3D bloat, zero hyperbolic marketing slop copy, zero decorative serif headings.
 2. **Internal Portals, Auth & Dashboards** (`src/pages/admin/*`, `src/pages/portals/*`, `src/pages/wizard/*`):
    - **MUST** use **shadcn/ui** components (`@/components/ui/`) with standard dashboard variables.
-   - Do NOT mix Hallmark editorial styling into internal operational tables or kanban boards.
+   - Do NOT mix public marketing styling into internal operational tables or kanban boards.
 
 ---
 
@@ -32,18 +34,18 @@ Locked design system for Catchingjobs.co.uk. Future Hallmark runs and AI agents 
 
 ```css
 :root {
-  /* Hallmark · Earth Exponential OKLCH Palette */
-  --color-paper: oklch(96% 0.02 80);        /* Warm bone/linen background canvas */
-  --color-paper-2: oklch(92% 0.03 80);      /* Tinted container / card background */
-  --color-ink: oklch(25% 0.03 120);         /* Deep charcoal earth ink (primary) */
-  --color-ink-2: oklch(45% 0.04 120);       /* Muted agricultural graphite ink */
-  --color-rule: oklch(80% 0.03 80);         /* Subtle hairline dividing rule */
-  --color-accent: oklch(55% 0.12 40);       /* Rich terracotta / harvest amber */
-  --color-accent-ink: oklch(98% 0.01 80);   /* Contrast ink on accent fill */
-  --color-focus: oklch(65% 0.15 45);        /* High-visibility focus ring */
+  /* Clean Minimal Slate & Trade Palette */
+  --color-paper: oklch(98.5% 0.005 240);     /* Crisp light slate canvas (#F8FAFC) */
+  --color-surface: #FFFFFF;                  /* Elevated crisp white card surfaces */
+  --color-rule: oklch(92% 0.005 260);        /* 1px hairline card borders (#E2E8F0) */
+  --color-ink: oklch(20% 0.02 260);          /* High-contrast deep slate ink (#0F172A) */
+  --color-ink-muted: oklch(52% 0.02 260);    /* Secondary muted slate (#64748B) */
+  --color-accent-green: oklch(62% 0.17 150); /* Emerald Green (#059669) */
+  --color-accent-orange: oklch(65% 0.18 45); /* Harvest Orange (#EA580C) */
+  --color-focus: oklch(62% 0.17 150);
 
   /* Typography Stack */
-  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
@@ -61,14 +63,13 @@ Locked design system for Catchingjobs.co.uk. Future Hallmark runs and AI agents 
 
   /* Motion & Easing */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --dur-fast: 180ms;
-  --dur-base: 240ms;
-  --dur-slow: 320ms;
+  --dur-fast: 150ms;
+  --dur-base: 220ms;
 
   /* Radii */
-  --radius-card: 0px;    /* Utilitarian crisp slab borders */
+  --radius-card: 16px;   /* Clean rounded card corners */
   --radius-pill: 9999px; /* Status tags & badges */
-  --radius-input: 2px;   /* Clean input containers */
+  --radius-input: 8px;   /* Crisp form inputs */
 }
 ```
 
@@ -76,33 +77,19 @@ Locked design system for Catchingjobs.co.uk. Future Hallmark runs and AI agents 
 
 ## Typography & Copy Rules
 
-1. **Upright Display Headlines**:
-   - `h1`, `h2`, `h3`, `h4`, `h5`, `h6`, and `.font-display` must always render with `font-style: normal`.
-   - Never use italic display fonts or italicized emphasis tags (`<em>`) inside headings.
+1. **Clean Display Headlines**:
+   - Display headlines use `Plus Jakarta Sans` in weight 700 with letter-spacing `-0.03em`.
+   - Never use serif display fonts or italicized headers.
 2. **Utilitarian Agricultural Copy**:
    - Write factual, direct, and authoritative copy centered on real agricultural logistics.
-   - Mention legitimate compliance credentials: **Lantra Level 2 Animal Welfare**, **GLAA Licensed**, **AHVLA Certified**, **Weekly Friday Payroll**, and **Door-to-door crew transport**.
+   - Mention legitimate compliance credentials: **Lantra Level 2 Animal Welfare**, **GLAA Licensed**, **AHVLA Certified**, **Weekly Friday Payroll**, and **Door-to-door minibus transport**.
    - No hyperbolic marketing buzzwords (*"seamless synergy"*, *"revolutionary platform"*, *"10x faster"*).
 
 ---
 
 ## CTA Voice & Interactive States
 
-- **Primary Action**: Solid Dark Ink (`bg-[var(--color-ink)]`) or Terracotta Accent (`bg-[var(--color-accent)]`), sharp corners (`rounded-none` or `rounded-sm`), uppercase tracking-wide label.
-- **Secondary Action**: Outlined Hairline (`border border-[var(--color-ink)] bg-[var(--color-paper)]`), transitions to `bg-[var(--color-rule)]` on hover.
+- **Primary Action**: Solid Emerald Green (`bg-[#059669] hover:bg-[#047857] text-white`), clean rounded corners (`rounded-lg`), uppercase tracking-wider font-mono text.
+- **Secondary Action**: White Card Hairline (`border border-[#E2E8F0] bg-white hover:border-[#0F172A] text-[#0F172A]`).
 - **8-State Coverage**: All interactive inputs and buttons must implement styling for: `default`, `hover`, `:focus-visible`, `:active`, `disabled`, `loading`, `error`, and `success`.
-- **Touch Target Floor**: All clickable controls must maintain >= 48px touch targets.
-
----
-
-## Motion Stance
-
-- **Motion-on stance**: Subtle microinteractions using `--ease-out` (<= 240ms).
-- **Accessible motion**: Enforce `@media (prefers-reduced-motion: reduce)` with <= 150ms simple opacity crossfades.
-
----
-
-## Exports & Integrations
-
-- **Tailwind CSS v4**: Bound in `src/index.css` under `@theme`.
-- **shadcn/ui**: Integrated for dashboard sidebars, dialogs, and kanban cards without polluting public lander tokens.
+- **Touch Target Floor**: All clickable controls must maintain >= 44px touch targets.
