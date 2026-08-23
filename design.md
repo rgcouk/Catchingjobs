@@ -9,17 +9,17 @@ Locked design system for Catchingjobs.co.uk. Future Hallmark runs and AI agents 
 - **Brand**: Catchingjobs.co.uk (Operated by Pullum Ltd)
 - **Genre**: Editorial / Utilitarian Agricultural Trade
 - **Primary Macrostructures**: Stat-Led (`h4-stat-led`), Marquee Hero (`h1-marquee`), Tabular Spec (`f3-tabular-spec-sheet`)
-- **Theme**: Custom — Earth Exponential (`custom-earth-terracotta`)
+- **Theme**: Custom — Earth Exponential (`custom-earth-terracotta`) & Hum (`theme: hum` - Playful, Vibrant, Alive)
 - **Axes**:
-  - **Paper band**: Light (`--color-paper` L = 96%) with Warm Tinted Paper 2 (`--color-paper-2` L = 92%)
-  - **Display style**: Roman classical serif (`Instrument Serif`, strictly roman `font-style: normal`)
-  - **Accent hue**: Warm harvest terracotta / earth amber (`oklch(55% 0.12 40)`) paired with charcoal field ink (`oklch(25% 0.03 120)`)
+  - **Paper band**: Light Cream (`--color-paper` L = 96–97%) with Warm Tinted Paper 2 (`--color-paper-2` L = 92–94%)
+  - **Display style**: Plus Jakarta Sans (600/700 rounded humanist display) & Instrument Serif (roman classical)
+  - **Accent hue**: Multi-Accent (Pear-Yellow `#F5C842` / Sky-Cyan `#38BDF8` / Coral-Red `#F43F5E` / Mint `#10B981`) paired with near-black ink (`oklch(20% 0.012 250)`)
 
 ---
 
 ## Component Boundaries (Critical Architecture)
 
-1. **Public Marketing & Regional Landers** (`src/pages/landers/*`, `src/pages/Index.tsx`):
+1. **Public Marketing & Regional Landers** (`src/pages/landers/*`, `src/pages/Index.tsx`, `src/pages/landers/HallmarkBrandDemo.tsx`):
    - **MUST** enforce the Hallmark OKLCH design tokens and anti-AI-slop typography below.
    - Zero faux UI chrome, zero hyperbolic slop copy, zero italic headers.
 2. **Internal Portals, Auth & Dashboards** (`src/pages/admin/*`, `src/pages/portals/*`, `src/pages/wizard/*`):

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
@@ -7,18 +7,28 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Instrument Serif', serif;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-serif: 'Instrument Serif', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
   /* Hallmark · Earth Exponential Tokens */
   --color-paper: oklch(96% 0.02 80);
   --color-paper-2: oklch(92% 0.03 80);
-  --color-ink: oklch(25% 0.03 120);
+  --color-ink: oklch(20% 0.012 250);
   --color-ink-2: oklch(45% 0.04 120);
   --color-rule: oklch(80% 0.03 80);
   --color-accent: oklch(55% 0.12 40);
   --color-focus: oklch(65% 0.15 45);
+
+  /* Hallmark · Hum Tokens */
+  --color-hum-paper: oklch(97% 0.012 95);
+  --color-hum-paper-2: oklch(94% 0.016 95);
+  --color-hum-ink: oklch(20% 0.012 250);
+  --color-hum-pear: oklch(86% 0.18 95);
+  --color-hum-cyan: oklch(66% 0.18 235);
+  --color-hum-coral: oklch(68% 0.24 18);
+  --color-hum-mint: oklch(80% 0.16 150);
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-short: 220ms;
