@@ -42,6 +42,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import PortalDashboard from './pages/portal/PortalDashboard';
 import TestLandingPage from './pages/landers/test-landing';
 import HallmarkBrandDemo from './pages/landers/HallmarkBrandDemo';
+import { ErrorBoundary } from './components/shared/ErrorBoundary';
 
 import AppShell, { NavItem } from './components/layout/AppShell';
 import {
@@ -447,75 +448,80 @@ function App() {
         className={`flex-1 w-full flex flex-col lg:flex-row relative ${!isAppRoute ? 'pt-24' : ''}`}
       >
         <div className="flex-1 space-y-6">
-          <Routes>
-            <Route path="/" element={<Index onNavigate={handleNavigate} />} />
-            <Route path="/corporate" element={<CorporateLander onNavigate={handleNavigate} />} />
-            <Route path="/login/*" element={<Login />} />
-            <Route path="/register/*" element={<Register />} />
-            <Route
-              path="/sso-callback"
-              element={
-                <AuthenticateWithRedirectCallback
-                  signInForceRedirectUrl="/employee"
-                  signUpForceRedirectUrl="/employee"
-                />
-              }
-            />
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute role="ADMIN">
-                  <AppShell navItems={adminNavItems} defaultTab="dashboard" userType="admin">
-                    <AdminDashboard />
-                  </AppShell>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/employee"
-              element={
-                <ProtectedRoute>
-                  <PortalDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/portal"
-              element={
-                <CatcherPortal applications={applications} onUpdateProfile={handleUpdateProfile} />
-              }
-            />
-            <Route
-              path="/chickens"
-              element={
-                <SectorHub
-                  sectorId="chicken"
-                  onSelectRegion={(reg) => handleNavigate('chicken', reg)}
-                />
-              }
-            />
-            <Route
-              path="/turkeys"
-              element={
-                <SectorHub
-                  sectorId="turkey"
-                  onSelectRegion={(reg) => handleNavigate('turkey', reg)}
-                />
-              }
-            />
-            <Route
-              path="/chickens/:regionId"
-              element={<RegionRoute sectorId="chicken" onNavigate={handleNavigate} />}
-            />
-            <Route
-              path="/turkeys/:regionId"
-              element={<RegionRoute sectorId="turkey" onNavigate={handleNavigate} />}
-            />
-            <Route path="/ssr-test" element={<SSRTest />} />
-            <Route path="/demo" element={<HallmarkBrandDemo />} />
-            <Route path="/landings/test-landing" element={<TestLandingPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/" element={<Index onNavigate={handleNavigate} />} />
+              <Route path="/corporate" element={<CorporateLander onNavigate={handleNavigate} />} />
+              <Route path="/login/*" element={<Login />} />
+              <Route path="/register/*" element={<Register />} />
+              <Route
+                path="/sso-callback"
+                element={
+                  <AuthenticateWithRedirectCallback
+                    signInForceRedirectUrl="/employee"
+                    signUpForceRedirectUrl="/employee"
+                  />
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute role="ADMIN">
+                    <AppShell navItems={adminNavItems} defaultTab="dashboard" userType="admin">
+                      <AdminDashboard />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/employee"
+                element={
+                  <ProtectedRoute>
+                    <PortalDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/portal"
+                element={
+                  <CatcherPortal
+                    applications={applications}
+                    onUpdateProfile={handleUpdateProfile}
+                  />
+                }
+              />
+              <Route
+                path="/chickens"
+                element={
+                  <SectorHub
+                    sectorId="chicken"
+                    onSelectRegion={(reg) => handleNavigate('chicken', reg)}
+                  />
+                }
+              />
+              <Route
+                path="/turkeys"
+                element={
+                  <SectorHub
+                    sectorId="turkey"
+                    onSelectRegion={(reg) => handleNavigate('turkey', reg)}
+                  />
+                }
+              />
+              <Route
+                path="/chickens/:regionId"
+                element={<RegionRoute sectorId="chicken" onNavigate={handleNavigate} />}
+              />
+              <Route
+                path="/turkeys/:regionId"
+                element={<RegionRoute sectorId="turkey" onNavigate={handleNavigate} />}
+              />
+              <Route path="/ssr-test" element={<SSRTest />} />
+              <Route path="/demo" element={<HallmarkBrandDemo />} />
+              <Route path="/landings/test-landing" element={<TestLandingPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </ErrorBoundary>
         </div>
 
         {showPortal && (

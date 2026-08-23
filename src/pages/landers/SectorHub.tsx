@@ -27,6 +27,7 @@ import {
   GitBranch,
   ShieldCheck,
   Truck,
+  Award,
 } from 'lucide-react';
 import { TENANTS, REGIONS } from '../../data';
 import { getAllRegionsWithTowns } from '../../data/locations';

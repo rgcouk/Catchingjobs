@@ -340,17 +340,14 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
       )}
 
       {/* Clerk OTP Verification Modal */}
-      <PasswordlessOTPModal
-        isOpen={showOtpModal}
-        onClose={() => setShowOtpModal(false)}
-        email={watch('email')}
-        phone={watch('phone')}
-        name={watch('name')}
-        townName={town.name}
-        sectorId={sectorId}
-        draftId={draftResult?.id}
-        rosterRef={draftResult?.rosterRef}
-      />
+      {showOtpModal && (
+        <PasswordlessOTPModal
+          isOpen={showOtpModal}
+          onClose={() => setShowOtpModal(false)}
+          formData={watch()}
+          draftApplication={draftResult}
+        />
+      )}
     </div>
   );
 }
