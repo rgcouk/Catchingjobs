@@ -1,0 +1,83 @@
+{
+  "version": "2.17",
+  "children": [
+    {
+      "type": "frame",
+      "id": "s3R0hy",
+      "x": 4416,
+      "y": 0,
+      "name": "CatchingJobs | National Poultry Catching Directory & Recruitment",
+      "width": 952,
+      "height": 6685,
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "i6QDUt",
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "screenshot-catchingjobs.co.uk-1.png",
+            "mode": "fill"
+          },
+          "width": 952,
+          "height": 4096
+        },
+        {
+          "type": "rectangle",
+          "id": "DiqPf",
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "screenshot-catchingjobs.co.uk-2.png",
+            "mode": "fill"
+          },
+          "width": 952,
+          "height": 2589
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "color-primary": {
+      "type": "color",
+      "value": "#4CAF50"
+    },
+    "color-secondary": {
+      "type": "color",
+      "value": "#2E7D32"
+    },
+    "color-background": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "color-surface": {
+      "type": "color",
+      "value": "#F5F5F5"
+    },
+    "color-text-primary": {
+      "type": "color",
+      "value": "#212121"
+    },
+    "color-text-secondary": {
+      "type": "color",
+      "value": "#757575"
+    },
+    "font-heading": {
+      "type": "string",
+      "value": "Inter"
+    },
+    "font-body": {
+      "type": "string",
+      "value": "Inter"
+    },
+    "spacing-unit": {
+      "type": "number",
+      "value": 8
+    }
+  },
+  "imports": {
+    "1": "pencil:lunaris.lib.pen"
+  },
+  "fileToken": "43627f56-7b19-46e8-a294-64c0b1fb383c"
+}

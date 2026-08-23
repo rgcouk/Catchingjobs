@@ -10,8 +10,10 @@
     "clean": "rm -rf dist server.js",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
     "seed": "tsx prisma/scripts/auto-seed.ts",
-    "quality-check": "npm run format && npm run lint && npm run build"
+    "quality-check": "npm run format && npm run lint && npm run test && npm run build"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

@@ -39,7 +39,8 @@
 - `npm run lint` - Runs ESLint.
 - `npm run format` - Formats the code using Prettier.
 - `npm run seed` - Runs automated database seeding (`prisma/scripts/auto-seed.ts`).
-- `npm run quality-check` - Runs 1-command pre-flight quality verification (format, lint, build).
+- `npm test` - Runs unit tests using Vitest.
+- `npm run quality-check` - Runs 1-command pre-flight quality verification (format, lint, test, build).
 
 ## Agent skills
 

@@ -192,7 +192,7 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [activeTab, getToken]);
+  }, [activeTab, getToken, loadApplications]);
 
   useEffect(() => {
     fetchData();

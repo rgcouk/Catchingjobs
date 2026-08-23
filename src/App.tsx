@@ -40,6 +40,7 @@ import SSRTest from './pages/SSRTest';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PortalDashboard from './pages/portal/PortalDashboard';
+import TestLandingPage from './pages/landers/test-landing';
 
 import AppShell, { NavItem } from './components/layout/AppShell';
 import {
@@ -516,6 +517,7 @@ function App() {
               element={<RegionRoute sectorId="turkey" onNavigate={handleNavigate} />}
             />
             <Route path="/ssr-test" element={<SSRTest />} />
+            <Route path="/landings/test-landing" element={<TestLandingPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>

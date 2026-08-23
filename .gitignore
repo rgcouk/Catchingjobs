@@ -3,6 +3,7 @@ build/
 dist/
 coverage/
 .DS_Store
+**/.DS_Store
 *.log
 .env*
 !.env.example
@@ -10,6 +11,7 @@ coverage/
 /src/generated/prisma
 dev.db
 .vercel
+.claude/
 playwright-report/
 test-results/
 .stitch/

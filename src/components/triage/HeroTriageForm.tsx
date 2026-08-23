@@ -19,7 +19,7 @@ export const triageSchema = z.object({
     .trim()
     .email({ message: 'Valid email address is required for verification code.' }),
   hasRightToWork: z.boolean({
-    required_error: 'Right to Work selection is required.',
+    message: 'Right to Work selection is required.',
   }),
 });
 

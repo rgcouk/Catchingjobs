@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import IntakeWizard from '../../src/pages/wizard/IntakeWizard';
@@ -33,7 +33,7 @@ describe('CRM Features Integration Tests', () => {
           ok: true,
           json: () => Promise.resolve({}),
         })
-      ) as vi.Mock;
+      ) as unknown as Mock;
 
       render(<IntakeWizard sectorId="chicken" onSuccess={mockSuccess} />);
 
