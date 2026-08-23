@@ -359,7 +359,7 @@ function App() {
                       : 'hover:text-[#0F172A]'
                   }`}
                 >
-                  Broiler Catching
+                  Chickens
                 </button>
               </li>
               <li>
@@ -371,24 +371,7 @@ function App() {
                       : 'hover:text-[#0F172A]'
                   }`}
                 >
-                  Turkey Harvest
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigate('/corporate')}
-                  className="hover:text-[#0F172A] transition-colors cursor-pointer"
-                >
-                  Grower Logistics
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigate('/portal')}
-                  className="hover:text-[#0F172A] transition-colors cursor-pointer flex items-center gap-1.5"
-                >
-                  <span>Catcher Portal</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+                  Turkeys
                 </button>
               </li>
             </ul>
@@ -401,17 +384,11 @@ function App() {
                 className="text-xs font-mono font-medium uppercase tracking-wider text-[#64748B] hover:text-[#0F172A] px-3 py-2 cursor-pointer flex items-center gap-1.5"
               >
                 <Lock className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Sign In</span>
+                <span className="hidden sm:inline">Log In</span>
               </button>
             </SignedOut>
             <SignedIn>
               <div className="flex items-center gap-3 px-2">
-                <Link
-                  to="/employee"
-                  className="text-xs font-mono font-medium uppercase tracking-wider text-[#64748B] hover:text-[#0F172A]"
-                >
-                  Portal
-                </Link>
                 <UserButton afterSignOutUrl="/" />
               </div>
             </SignedIn>
