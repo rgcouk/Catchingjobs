@@ -51,8 +51,6 @@ export default function PasswordlessOTPModal({
       return;
     }
 
-    let isMounted = true;
-
     async function initClerkOtp() {
       if (!isSignUpLoaded || !isSignInLoaded) return;
       if (hasInitialized.current) return;

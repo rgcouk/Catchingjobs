@@ -318,4 +318,119 @@ describe('ManageApplications Service - createDraftApplication & linkUserToDraft'
       ).rejects.toThrow(ApplicationNotFoundError);
     });
   });
+
+  describe('TC-UNIT-011: updateMyDraftApplication (Auto-Save)', () => {
+    it('successfully auto-saves fields to active Draft application', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 'user_123',
+        email: 'test@example.com',
+        applicationId: 300,
+      });
+
+      mockPrisma.application.findUnique.mockResolvedValue({
+        id: 300,
+        status: 'Draft',
+      });
+
+      mockPrisma.application.update.mockResolvedValue({
+        id: 300,
+        status: 'Draft',
+        hasDrivingLicense: true,
+        niNumber: 'AB123456C',
+      });
+
+      const result = await service.updateMyDraftApplication('user_123', {
+        hasDrivingLicense: true,
+        niNumber: 'AB123456C',
+      });
+
+      expect(mockPrisma.application.update).toHaveBeenCalledWith({
+        where: { id: 300 },
+        data: {
+          hasDrivingLicense: true,
+          niNumber: 'AB123456C',
+        },
+      });
+      expect(result.id).toBe(300);
+      expect(result.niNumber).toBe('AB123456C');
+    });
+
+    it('rejects updates if application is not in Draft status', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 'user_123',
+        applicationId: 300,
+      });
+
+      mockPrisma.application.findUnique.mockResolvedValue({
+        id: 300,
+        status: 'NEW',
+      });
+
+      await expect(
+        service.updateMyDraftApplication('user_123', { niNumber: 'AB123456C' }),
+      ).rejects.toThrow('Cannot update application because it is no longer in Draft status');
+    });
+
+    it('throws ApplicationNotFoundError if user has no linked application', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 'user_123',
+        applicationId: null,
+      });
+
+      await expect(
+        service.updateMyDraftApplication('user_123', { niNumber: 'AB123456C' }),
+      ).rejects.toThrow(ApplicationNotFoundError);
+    });
+  });
+
+  describe('TC-UNIT-012: submitMyDraftApplication (Final Submit)', () => {
+    it('transitions status from Draft to NEW and marks profileFormCompleted & declarationSigned', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 'user_123',
+        applicationId: 300,
+      });
+
+      mockPrisma.application.findUnique.mockResolvedValue({
+        id: 300,
+        status: 'Draft',
+      });
+
+      mockPrisma.application.update.mockResolvedValue({
+        id: 300,
+        status: 'NEW',
+        profileFormCompleted: true,
+        declarationSigned: true,
+      });
+
+      const result = await service.submitMyDraftApplication('user_123');
+
+      expect(mockPrisma.application.update).toHaveBeenCalledWith({
+        where: { id: 300 },
+        data: {
+          status: 'NEW',
+          profileFormCompleted: true,
+          declarationSigned: true,
+        },
+      });
+      expect(result.status).toBe('NEW');
+      expect(result.profileFormCompleted).toBe(true);
+      expect(result.declarationSigned).toBe(true);
+    });
+
+    it('rejects submission if application is not in Draft status', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 'user_123',
+        applicationId: 300,
+      });
+
+      mockPrisma.application.findUnique.mockResolvedValue({
+        id: 300,
+        status: 'APPROVED',
+      });
+
+      await expect(service.submitMyDraftApplication('user_123')).rejects.toThrow(
+        'Application is not in Draft status or does not exist',
+      );
+    });
+  });
 });

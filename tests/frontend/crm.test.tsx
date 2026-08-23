@@ -91,5 +91,36 @@ describe('CRM Features Integration Tests', () => {
         expect(submittedData.hasDrivingLicense).toBe('true');
       });
     });
+
+    it('should support Back button navigation between steps without losing state', async () => {
+      const mockSuccess = vi.fn();
+      global.fetch = vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({}),
+        })
+      ) as unknown as Mock;
+
+      render(
+        <IntakeWizard
+          sectorId="turkey"
+          initialData={{ hasDrivingLicense: 'true', hasForkliftLicense: 'true', shiftAvailability: 'Night' }}
+          onSuccess={mockSuccess}
+        />
+      );
+
+      // Verify Step 1 initial data
+      expect(screen.getByText(/Step 1 of 3/i)).toBeInTheDocument();
+      fireEvent.click(screen.getByText('Save & Continue'));
+
+      // In Step 2, click Back
+      await waitFor(() => expect(screen.getByText(/Step 2 of 3/i)).toBeInTheDocument());
+      fireEvent.click(screen.getByText('Back'));
+
+      // Back in Step 1
+      await waitFor(() => expect(screen.getByText(/Step 1 of 3/i)).toBeInTheDocument());
+      const drivingSelect = document.querySelector('select[name="hasDrivingLicense"]') as HTMLSelectElement;
+      expect(drivingSelect.value).toBe('true');
+    });
   });
 });
