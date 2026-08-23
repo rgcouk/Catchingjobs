@@ -1,10 +1,27 @@
-import React, { useState, useEffect } from 'react';
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
+import {
+  Loader2,
+  CheckCircle2,
+  ShieldCheck,
+  User,
+  Truck,
+  Coins,
+  FileText,
+  HeartPulse,
+  ArrowRight,
+  ArrowLeft,
+  Save,
+} from 'lucide-react';
 
 interface IntakeWizardProps {
   sectorId?: string;
@@ -14,7 +31,7 @@ interface IntakeWizardProps {
 }
 
 export default function IntakeWizard({
-  sectorId,
+  sectorId = 'chicken',
   initialData,
   onSuccess,
   onClose,
@@ -23,6 +40,7 @@ export default function IntakeWizard({
   const { getToken } = useAuth();
   const [step, setStep] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
+  const [savedSuccess, setSavedSuccess] = useState(false);
 
   const {
     register,
@@ -30,31 +48,46 @@ export default function IntakeWizard({
     watch,
     formState: { errors },
   } = useForm({
-    defaultValues: initialData || {},
+    defaultValues: {
+      hasDrivingLicense: 'false',
+      hasForkliftLicense: 'false',
+      poultryExperience: 'none',
+      isFitToLift: true,
+      hasAsthmaOrAllergies: false,
+      hasBackIssues: false,
+      declarationSigned: true,
+      ...initialData,
+    },
   });
 
   if (!isLoaded) {
     return (
-      <div className="p-6 max-w-2xl mx-auto flex justify-center text-muted-foreground">
-        <Loader2 className="w-6 h-6 animate-spin" />
+      <div className="p-12 max-w-2xl mx-auto flex flex-col items-center justify-center space-y-3 text-[#64748B]">
+        <Loader2 className="w-8 h-8 animate-spin text-[#059669]" />
+        <p className="text-xs font-mono">Loading onboarding wizard...</p>
       </div>
     );
   }
+
   if (!user) return null;
 
   const autoSave = async (data: any) => {
     setIsSaving(true);
+    setSavedSuccess(false);
     try {
       const token = await getToken();
-
-      // Convert string booleans to actual booleans for the API if necessary
       const payload = {
         ...data,
         hasDrivingLicense: data.hasDrivingLicense === 'true' || data.hasDrivingLicense === true,
         hasForkliftLicense: data.hasForkliftLicense === 'true' || data.hasForkliftLicense === true,
+        isFitToLift: data.isFitToLift === 'true' || data.isFitToLift === true,
+        hasAsthmaOrAllergies:
+          data.hasAsthmaOrAllergies === 'true' || data.hasAsthmaOrAllergies === true,
+        hasBackIssues: data.hasBackIssues === 'true' || data.hasBackIssues === true,
+        declarationSigned: data.declarationSigned === 'true' || data.declarationSigned === true,
       };
 
-      await fetch('/api/applications/draft', {
+      await fetch('/api/portal/onboarding', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -62,6 +95,9 @@ export default function IntakeWizard({
         },
         body: JSON.stringify(payload),
       });
+
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 2500);
     } catch (err) {
       console.warn('Auto-save failed', err);
     } finally {
@@ -74,6 +110,7 @@ export default function IntakeWizard({
 
     if (step < 3) {
       setStep(step + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
@@ -82,269 +119,398 @@ export default function IntakeWizard({
     onSuccess({
       ...data,
       userId: user.id,
-      name: user.fullName || data.name || 'Anonymous',
+      name: user.fullName || data.name || 'Candidate',
       email: user.primaryEmailAddress?.emailAddress,
       sector: finalSector,
     });
   };
 
   return (
-    <div className="bg-card border border-border rounded-lg shadow-sm p-6 w-full max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold tracking-tight">Complete Your Profile</h2>
-        <div className="text-sm font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full">
-          Step {step} of 3
+    <div className="bg-white border border-[#E2E8F0] rounded-2xl shadow-xs p-6 sm:p-8 w-full max-w-3xl mx-auto space-y-8 text-[#0F172A]">
+      {/* Header & Step Progress Bar */}
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F1F5F9] pb-5">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase text-[#059669] mb-1">
+              <ShieldCheck className="w-4 h-4" />
+              Candidate Intake Wizard
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              Complete Your Crew Profile
+            </h2>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-mono">
+            {isSaving && (
+              <span className="text-[#64748B] flex items-center gap-1">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving...
+              </span>
+            )}
+            {savedSuccess && (
+              <span className="text-[#059669] flex items-center gap-1 font-semibold">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Progress Saved
+              </span>
+            )}
+            <span className="bg-[#F8FAFC] border border-[#E2E8F0] px-3 py-1 rounded-full text-[#0F172A] font-semibold">
+              Step {step} of 3
+            </span>
+          </div>
+        </div>
+
+        {/* Stepper Pills */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          <button
+            type="button"
+            onClick={() => setStep(1)}
+            className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+              step === 1
+                ? 'border-[#059669] bg-[#ECFDF5] text-[#065F46]'
+                : step > 1
+                  ? 'border-[#A7F3D0] bg-white text-[#059669]'
+                  : 'border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B]'
+            }`}
+          >
+            <span className="text-[10px] font-mono uppercase tracking-wider block">Stage 1</span>
+            <span className="text-xs font-bold block truncate">Basic & Licenses</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setStep(2)}
+            className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+              step === 2
+                ? 'border-[#059669] bg-[#ECFDF5] text-[#065F46]'
+                : step > 2
+                  ? 'border-[#A7F3D0] bg-white text-[#059669]'
+                  : 'border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B]'
+            }`}
+          >
+            <span className="text-[10px] font-mono uppercase tracking-wider block">Stage 2</span>
+            <span className="text-xs font-bold block truncate">Emergency & Bank</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setStep(3)}
+            className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+              step === 3
+                ? 'border-[#059669] bg-[#ECFDF5] text-[#065F46]'
+                : 'border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B]'
+            }`}
+          >
+            <span className="text-[10px] font-mono uppercase tracking-wider block">Stage 3</span>
+            <span className="text-xs font-bold block truncate">Health & Welfare</span>
+          </button>
         </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* STEP 1: Basic Info & Licenses */}
         {step === 1 && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div>
-              <h3 className="font-semibold text-lg border-b pb-2 mb-4">Basic Info & Licenses</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Tell us about your experience and qualifications.
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-[#0F172A] flex items-center gap-2">
+                <User className="w-4 h-4 text-[#059669]" />
+                Personal Details & Qualifications
+              </h3>
+              <p className="text-xs text-[#64748B]">
+                Enter your home collection address and driving capabilities.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>UK Driving License?</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">Date of Birth</Label>
+                <Input
+                  type="date"
+                  {...register('dateOfBirth')}
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">
+                  National Insurance (NI)
+                </Label>
+                <Input
+                  placeholder="QQ 12 34 56 A"
+                  {...register('niNumber')}
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm font-mono uppercase"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label className="text-xs font-mono uppercase text-[#64748B] flex items-center gap-1.5">
+                  <Truck className="w-3.5 h-3.5 text-[#059669]" />
+                  Door-to-Door Home Pickup Address
+                </Label>
+                <Input
+                  placeholder="12 High Street, Flat 4"
+                  {...register('addressLine1')}
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">Postcode</Label>
+                <Input
+                  placeholder="PE21 8SS"
+                  {...register('postcode')}
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm font-mono uppercase"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">
+                  Poultry Catching Experience
+                </Label>
+                <select
+                  {...register('poultryExperience')}
+                  className="w-full p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm"
+                >
+                  <option value="none">New to Poultry Catching (Full training provided)</option>
+                  <option value="1-2-years">1 - 2 Years Commercial Experience</option>
+                  <option value="3-plus-years">3+ Years Experienced Catcher</option>
+                  <option value="crew-leader">Experienced Crew Leader</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">
+                  UK Driving License?
+                </Label>
                 <select
                   {...register('hasDrivingLicense')}
-                  className="w-full p-2.5 border border-input bg-background rounded-md shadow-sm focus:ring-1 focus:ring-ring"
-                  required
+                  className="w-full p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm"
                 >
-                  <option value="">Select...</option>
-                  <option value="true">Yes</option>
                   <option value="false">No</option>
+                  <option value="true">Yes (Full UK Clean License)</option>
                 </select>
               </div>
-              <div className="space-y-2">
-                <Label>Forklift License?</Label>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">
+                  Forklift / Telehandler Ticket?
+                </Label>
                 <select
                   {...register('hasForkliftLicense')}
-                  className="w-full p-2.5 border border-input bg-background rounded-md shadow-sm focus:ring-1 focus:ring-ring"
-                  required
+                  className="w-full p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm"
                 >
-                  <option value="">Select...</option>
-                  <option value="true">Yes</option>
                   <option value="false">No</option>
+                  <option value="true">Yes (Active Certificate)</option>
                 </select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Shift Availability</Label>
-                <select
-                  {...register('shiftAvailability')}
-                  className="w-full p-2.5 border border-input bg-background rounded-md shadow-sm focus:ring-1 focus:ring-ring"
-                  required
-                >
-                  <option value="Any">Any Shifts</option>
-                  <option value="Day">Day Shifts Only</option>
-                  <option value="Night">Night Shifts Only</option>
-                </select>
-              </div>
-
-              <div className="col-span-1 md:col-span-2 space-y-2">
-                <Label>Poultry / Catching Experience</Label>
-                <textarea
-                  {...register('poultryExperience')}
-                  className="w-full p-3 border border-input bg-background rounded-md shadow-sm focus:ring-1 focus:ring-ring min-h-[100px]"
-                  placeholder="Describe your previous experience (e.g., worked on turkey farms for 2 years)..."
-                />
               </div>
             </div>
           </div>
         )}
 
+        {/* STEP 2: Emergency Contact & Bank Account Details */}
         {step === 2 && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div>
-              <h3 className="font-semibold text-lg border-b pb-2 mb-4">Identity & Contact</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                We need these details for compliance and payroll setup.
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-[#0F172A] flex items-center gap-2">
+                <Coins className="w-4 h-4 text-[#059669]" />
+                Emergency Contact & Friday Payroll Details
+              </h3>
+              <p className="text-xs text-[#64748B]">
+                Required for payroll setup and health & safety compliance on farm sites.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>Date of Birth</Label>
-                <Input type="date" {...register('dateOfBirth')} required className="min-h-[48px]" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5 sm:col-span-2 pt-2 border-t border-[#F1F5F9]">
+                <span className="text-xs font-mono font-semibold uppercase text-[#059669]">
+                  Emergency Contact
+                </span>
               </div>
-              <div className="space-y-2">
-                <Label>National Insurance Number</Label>
-                <Input
-                  {...register('niNumber')}
-                  placeholder="AB123456C"
-                  required
-                  className="min-h-[48px]"
-                />
-              </div>
-              <div className="col-span-1 md:col-span-2 space-y-2">
-                <Label>Address Line 1</Label>
-                <Input
-                  {...register('addressLine1')}
-                  placeholder="123 Example Street"
-                  required
-                  className="min-h-[48px]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Postcode</Label>
-                <Input
-                  {...register('postcode')}
-                  placeholder="AB12 3CD"
-                  required
-                  className="min-h-[48px]"
-                />
-              </div>
-            </div>
-          </div>
-        )}
 
-        {step === 3 && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div>
-              <h3 className="font-semibold text-lg border-b pb-2 mb-4">Bank & Medical Details</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Final details to complete your application.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>Bank Name</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">Contact Name</Label>
                 <Input
-                  {...register('bankName')}
-                  placeholder="e.g. Barclays"
+                  placeholder="e.g. Sarah King"
+                  {...register('emergencyName')}
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm"
                   required
-                  className="min-h-[48px]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Account Holder Name</Label>
-                <Input {...register('bankAccountName')} required className="min-h-[48px]" />
-              </div>
-              <div className="space-y-2">
-                <Label>Account Number</Label>
-                <Input
-                  {...register('bankAccountNumber')}
-                  placeholder="8 digits"
-                  required
-                  className="min-h-[48px]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Sort Code</Label>
-                <Input
-                  {...register('bankSortCode')}
-                  placeholder="12-34-56"
-                  required
-                  className="min-h-[48px]"
                 />
               </div>
 
-              <div className="col-span-1 md:col-span-2 mt-4">
-                <h4 className="font-semibold mb-3">Emergency Contact</h4>
-              </div>
-              <div className="space-y-2">
-                <Label>Contact Name</Label>
-                <Input {...register('emergencyName')} required className="min-h-[48px]" />
-              </div>
-              <div className="space-y-2">
-                <Label>Contact Phone</Label>
-                <Input {...register('emergencyPhone')} required className="min-h-[48px]" />
-              </div>
-              <div className="space-y-2">
-                <Label>Relationship</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">Contact Phone</Label>
                 <Input
+                  placeholder="07700 900123"
+                  {...register('emergencyPhone')}
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm font-mono"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">Relationship</Label>
+                <Input
+                  placeholder="e.g. Spouse / Parent / Sibling"
                   {...register('emergencyRelation')}
-                  placeholder="e.g. Parent, Spouse"
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm"
                   required
-                  className="min-h-[48px]"
                 />
               </div>
 
-              <div className="col-span-1 md:col-span-2 space-y-4 mt-6 bg-muted/30 p-4 rounded-lg border border-border">
-                <h4 className="font-semibold">Medical & Declarations</h4>
-                <div className="space-y-3">
-                  <Label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      {...register('hasAsthmaOrAllergies')}
-                      className="mt-1 min-w-[20px] min-h-[20px] rounded border-input"
-                    />
-                    <span className="text-sm leading-relaxed">
-                      I suffer from Asthma, Respiratory Issues, or Dust/Feather Allergies.
-                    </span>
-                  </Label>
-                  <Label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      {...register('hasBackIssues')}
-                      className="mt-1 min-w-[20px] min-h-[20px] rounded border-input"
-                    />
-                    <span className="text-sm leading-relaxed">
-                      I suffer from severe Back, Neck, or Joint physical limitations.
-                    </span>
-                  </Label>
-                  <Label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      {...register('isFitToLift')}
-                      className="mt-1 min-w-[20px] min-h-[20px] rounded border-input"
-                    />
-                    <span className="text-sm leading-relaxed">
-                      I confirm I am fit and capable of lifting up to 15-20kg repeatedly.
-                    </span>
-                  </Label>
-                  <hr className="my-4 border-border" />
-                  <Label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      {...register('declarationSigned')}
-                      required
-                      className="mt-1 min-w-[20px] min-h-[20px] rounded border-input"
-                    />
-                    <span className="text-sm font-medium">
-                      I declare that all the information provided in this application is accurate
-                      and true to the best of my knowledge.
-                    </span>
-                  </Label>
-                </div>
+              <div className="space-y-1.5 sm:col-span-2 pt-4 border-t border-[#F1F5F9]">
+                <span className="text-xs font-mono font-semibold uppercase text-[#059669]">
+                  Weekly Friday Payroll (Direct BACS)
+                </span>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">Bank Name</Label>
+                <Input
+                  placeholder="e.g. Barclays / Lloyds"
+                  {...register('bankName')}
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">
+                  Account Holder Name
+                </Label>
+                <Input
+                  placeholder="e.g. Arthur King"
+                  {...register('bankAccountName')}
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">Sort Code</Label>
+                <Input
+                  placeholder="20-00-00"
+                  {...register('bankSortCode')}
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm font-mono"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">Account Number</Label>
+                <Input
+                  placeholder="12345678"
+                  {...register('bankAccountNumber')}
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] rounded-lg text-sm font-mono"
+                  required
+                />
               </div>
             </div>
           </div>
         )}
 
-        <div className="flex justify-between items-center pt-6 mt-6 border-t border-border">
+        {/* STEP 3: Health & Welfare Declaration */}
+        {step === 3 && (
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-[#0F172A] flex items-center gap-2">
+                <HeartPulse className="w-4 h-4 text-[#059669]" />
+                Health, Safety & Animal Welfare Declaration
+              </h3>
+              <p className="text-xs text-[#64748B]">
+                Catching involves physical activity in agricultural environments.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#0F172A]">
+                    Physical Fitness for Manual Handling
+                  </span>
+                  <input
+                    type="checkbox"
+                    {...register('isFitToLift')}
+                    className="w-4 h-4 text-[#059669] accent-[#059669]"
+                  />
+                </div>
+                <p className="text-[11px] text-[#64748B]">
+                  I confirm I am physically capable of active agricultural trade work, lifting, and
+                  night shift patterns.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#0F172A]">Asthma / Dust Allergies?</span>
+                  <input
+                    type="checkbox"
+                    {...register('hasAsthmaOrAllergies')}
+                    className="w-4 h-4 text-[#059669] accent-[#059669]"
+                  />
+                </div>
+                <p className="text-[11px] text-[#64748B]">
+                  Tick if you have diagnosed respiratory conditions so we can provide suitable
+                  specialist particulate PPE masks.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#0F172A]">
+                    Lantra & Animal Welfare Commitment
+                  </span>
+                  <input
+                    type="checkbox"
+                    {...register('declarationSigned')}
+                    className="w-4 h-4 text-[#059669] accent-[#059669]"
+                    required
+                  />
+                </div>
+                <p className="text-[11px] text-[#64748B]">
+                  I agree to adhere to Pullum Ltd's humane bird welfare standards, Lantra handling
+                  practices, and on-site GLAA safety protocols.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation Actions */}
+        <div className="flex items-center justify-between pt-6 border-t border-[#F1F5F9]">
           {step > 1 ? (
-            <Button
+            <button
               type="button"
-              variant="outline"
               onClick={() => setStep(step - 1)}
-              className="min-h-[48px] px-6"
+              className="px-4 py-2.5 text-xs font-mono font-semibold uppercase text-[#64748B] hover:text-[#0F172A] border border-[#E2E8F0] rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              Back
-            </Button>
+              <ArrowLeft className="w-3.5 h-3.5" /> Previous
+            </button>
           ) : (
-            <div></div>
+            <div />
           )}
 
-          <div className="flex items-center gap-4">
-            {isSaving && (
-              <span className="text-xs text-muted-foreground flex items-center gap-2">
-                <Loader2 className="w-3 h-3 animate-spin" /> Saving...
-              </span>
+          <Button
+            type="submit"
+            disabled={isSaving}
+            className="bg-[#059669] hover:bg-[#047857] text-white font-mono font-semibold text-xs uppercase tracking-wider px-6 py-3 rounded-lg shadow-xs cursor-pointer transition-colors flex items-center gap-2"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Saving Details...
+              </>
+            ) : step < 3 ? (
+              <>
+                <span>Next Stage</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            ) : (
+              <>
+                <span>Submit & Complete Profile</span>
+                <CheckCircle2 className="w-4 h-4" />
+              </>
             )}
-            <Button
-              type="submit"
-              className="min-h-[48px] px-8 bg-[var(--color-accent)] text-white hover:opacity-90"
-            >
-              {step < 3 ? 'Save & Continue' : 'Submit Application'}
-            </Button>
-          </div>
+          </Button>
         </div>
       </form>
     </div>
