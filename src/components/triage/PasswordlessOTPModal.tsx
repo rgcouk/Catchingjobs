@@ -43,8 +43,14 @@ export default function PasswordlessOTPModal({
     return () => clearInterval(timer);
   }, [countdown]);
 
-  // Initiate Clerk Passwordless flow upon mounting
+  // Initiate Clerk Passwordless flow when modal opens
   useEffect(() => {
+    if (!isOpen || !formData.email) {
+      hasInitialized.current = false;
+      setIsInitializing(false);
+      return;
+    }
+
     let isMounted = true;
 
     async function initClerkOtp() {
@@ -70,11 +76,9 @@ export default function PasswordlessOTPModal({
               });
 
               await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-              if (isMounted) {
-                setStrategy('email_code');
-                setIsExistingUser(false);
-                setCountdown(30);
-              }
+              setStrategy('email_code');
+              setIsExistingUser(false);
+              setCountdown(30);
             }
           } catch (signUpErr: any) {
             // If user already exists in Clerk, switch to Sign-In OTP
@@ -93,11 +97,9 @@ export default function PasswordlessOTPModal({
                     strategy: 'email_code',
                     emailAddressId: emailFactor.emailAddressId as string,
                   });
-                  if (isMounted) {
-                    setStrategy('email_code');
-                    setIsExistingUser(true);
-                    setCountdown(30);
-                  }
+                  setStrategy('email_code');
+                  setIsExistingUser(true);
+                  setCountdown(30);
                 }
               }
             } else {
@@ -116,16 +118,12 @@ export default function PasswordlessOTPModal({
       } catch (err: any) {
         console.warn('Clerk OTP init notice:', err);
       } finally {
-        if (isMounted) setIsInitializing(false);
+        setIsInitializing(false);
       }
     }
 
     initClerkOtp();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isSignUpLoaded, isSignInLoaded, formData.email, formData.name, signUp, signIn]);
+  }, [isOpen, isSignUpLoaded, isSignInLoaded, formData.email, formData.name, signUp, signIn]);
 
   // Verify entered 6-digit code
   const handleVerify = async (e: React.FormEvent) => {
