@@ -332,68 +332,85 @@ function App() {
   return (
     <div className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] flex flex-col font-sans selection:bg-[var(--color-accent)] selection:text-white antialiased relative">
       {!isAppRoute && (
-        <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--color-rule)] bg-[var(--color-paper)]/90 backdrop-blur-md shadow-sm px-6 h-16 flex items-center justify-between transition-all">
+        <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--color-rule)] bg-white/95 backdrop-blur-md shadow-xs px-4 sm:px-6 h-16 flex items-center justify-between transition-all">
           <div className="flex items-center gap-6">
             <div
               onClick={() => handleNavigate('root', '')}
-              className="flex items-center gap-2 cursor-pointer group no-underline transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]"
+              className="flex items-center gap-2 cursor-pointer group no-underline transition-colors"
               title="CatchingJobs Directory"
             >
-              <div className="bg-[var(--color-ink)] w-6 h-6 rounded-full flex items-center justify-center text-[var(--color-paper)] group-hover:bg-[var(--color-accent)] transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)]">
-                <Building2 className="w-3 h-3" />
+              <div className="bg-[#0F172A] w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-xs">
+                CJ
               </div>
-              <span className="font-display font-semibold text-sm tracking-tight text-[var(--color-ink)]">
-                CatchingJobs
+              <span className="font-bold text-lg tracking-tight text-[#0F172A]">
+                Catching<span className="text-[#059669]">jobs</span>
               </span>
             </div>
 
-            <div className="w-[1px] h-4 bg-[var(--color-rule)] mx-1" />
+            <div className="w-[1px] h-4 bg-[var(--color-rule)] mx-1 hidden sm:block" />
 
-            <ul className="hidden md:flex items-center gap-4 list-none m-0 p-0">
+            <ul className="hidden md:flex items-center gap-5 list-none m-0 p-0 text-sm font-medium text-[#64748B]">
               <li>
                 <button
                   onClick={() => handleNavigate('chicken', '')}
-                  className={`text-sm font-medium transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer ${
+                  className={`transition-colors cursor-pointer ${
                     activeTab === 'chicken' && !regionIdFromPath
-                      ? 'text-[var(--color-ink)]'
-                      : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)]'
+                      ? 'text-[#0F172A] font-semibold'
+                      : 'hover:text-[#0F172A]'
                   }`}
                 >
-                  Chickens
+                  Broiler Catching
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => handleNavigate('turkey', '')}
-                  className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer ${
+                  className={`transition-colors cursor-pointer ${
                     activeTab === 'turkey' && !regionIdFromPath
-                      ? 'bg-[var(--color-ink)] text-[var(--color-paper)]'
-                      : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-paper-2)]'
+                      ? 'text-[#0F172A] font-semibold'
+                      : 'hover:text-[#0F172A]'
                   }`}
                 >
-                  Turkeys
+                  Turkey Harvest
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigate('/corporate')}
+                  className="hover:text-[#0F172A] transition-colors cursor-pointer"
+                >
+                  Grower Logistics
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigate('/portal')}
+                  className="hover:text-[#0F172A] transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>Catcher Portal</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
                 </button>
               </li>
             </ul>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <SignedOut>
               <button
                 onClick={() => navigate('/login')}
-                className="text-sm font-semibold transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer text-[var(--color-ink)] hover:text-[var(--color-accent)] flex items-center gap-1"
+                className="text-xs font-mono font-medium uppercase tracking-wider text-[#64748B] hover:text-[#0F172A] px-3 py-2 cursor-pointer flex items-center gap-1.5"
               >
-                <Lock className="w-4 h-4" />
-                <span className="hidden sm:inline">Log In</span>
+                <Lock className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Sign In</span>
               </button>
             </SignedOut>
             <SignedIn>
-              <div className="flex items-center gap-4 px-2">
+              <div className="flex items-center gap-3 px-2">
                 <Link
                   to="/employee"
-                  className="text-sm font-semibold transition-colors duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer text-[var(--color-ink)] hover:text-[var(--color-accent)]"
+                  className="text-xs font-mono font-medium uppercase tracking-wider text-[#64748B] hover:text-[#0F172A]"
                 >
-                  My Portal
+                  Portal
                 </Link>
                 <UserButton afterSignOutUrl="/" />
               </div>
@@ -401,7 +418,7 @@ function App() {
 
             <Link
               to="/register"
-              className="bg-[var(--color-accent)] hover:opacity-90 text-[var(--color-paper)] px-4 py-1.5 rounded-full font-semibold text-xs transition-opacity duration-[var(--dur-short)] ease-[var(--ease-out)] cursor-pointer shadow-sm"
+              className="bg-[#059669] hover:bg-[#047857] text-white px-4 py-2 rounded-lg font-mono font-semibold text-xs uppercase tracking-wider transition-colors shadow-xs cursor-pointer"
             >
               Apply Now
             </Link>
@@ -539,26 +556,27 @@ function App() {
       </main>
 
       {!isAppRoute && (
-        <footer className="border-t border-[var(--color-rule)] bg-[var(--color-paper)] pt-24 pb-32 px-6 lg:px-8 mt-auto shrink-0 relative overflow-hidden">
-          <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-end justify-between gap-12">
-            <div className="space-y-6 max-w-md">
-              <h2 className="font-display text-4xl tracking-tight text-[var(--color-ink)] leading-none">
-                Honest work. <br /> Weekly pay.
+        <footer className="border-t border-[var(--color-rule)] bg-white py-12 px-6 lg:px-8 mt-auto shrink-0">
+          <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
+            <div className="space-y-3 max-w-md">
+              <h2 className="font-bold text-2xl tracking-tight text-[#0F172A]">
+                Honest work. Weekly pay.
               </h2>
-              <p className="text-base text-[var(--color-ink-2)] leading-relaxed">
+              <p className="text-sm text-[#64748B] leading-relaxed">
                 CatchingJobs is the dedicated agricultural recruitment platform managed by Pullum
                 Ltd. We supply certified catchers to the UK's leading poultry producers.
               </p>
             </div>
-            <div className="flex flex-col items-start md:items-end gap-3 text-sm text-[var(--color-ink-2)] font-mono uppercase tracking-wider">
-              <span className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4" /> AHVLA Licensed
+            <div className="flex flex-col items-start md:items-end gap-2.5 text-xs text-[#64748B] font-mono">
+              <span className="flex items-center gap-2 text-[#059669] font-medium">
+                <ShieldCheck className="w-4 h-4" /> GLAA Licensed & AHVLA Approved
               </span>
               <span className="flex items-center gap-2">
-                <HelpCircle className="w-4 h-4" /> Lantra Quality Approved
+                <HelpCircle className="w-4 h-4 text-[#94A3B8]" /> Lantra Level 2 Animal Welfare
+                Standard
               </span>
-              <div className="mt-8 text-xs text-[var(--color-ink-2)]/60">
-                © {new Date().getFullYear()} Pullum Ltd. (048293)
+              <div className="pt-2 text-[11px] text-[#94A3B8]">
+                © {new Date().getFullYear()} Pullum Ltd. All rights reserved.
               </div>
             </div>
           </div>
