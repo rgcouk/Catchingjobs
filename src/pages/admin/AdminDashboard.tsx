@@ -1090,6 +1090,24 @@ const AdminDashboard = () => {
                       />
                     </div>
                     <div className="space-y-2">
+                      <Label htmlFor="pickupPoint">Pickup Point (Town only)</Label>
+                      <Input
+                        id="pickupPoint"
+                        name="pickupPoint"
+                        defaultValue={editingLocationData?.pickupPoint || ''}
+                        placeholder="e.g. Market Square / Main Depot"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="surrounding">Surrounding Areas (Town only)</Label>
+                      <Input
+                        id="surrounding"
+                        name="surrounding"
+                        defaultValue={editingLocationData?.surrounding || ''}
+                        placeholder="e.g. Kirton, Sutterton, Spalding"
+                      />
+                    </div>
+                    <div className="space-y-2">
                       <Label htmlFor="phoneNumber">Phone Number</Label>
                       <Input
                         id="phoneNumber"

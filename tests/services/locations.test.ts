@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { resolveTown, getAllRegionsWithTowns } from '../../src/data/locations';
 import { loadRouteData } from '../../server/ssrLoader';
 
@@ -87,6 +87,105 @@ describe('Location & SSR Data Services', () => {
       expect(await loadRouteData('/')).toBeNull();
       expect(await loadRouteData('/corporate')).toBeNull();
       expect(await loadRouteData('/ssr-test')).toBeNull();
+    });
+  });
+
+  describe('ManageLocations Service', () => {
+    let mockPrisma: any;
+    let service: import('../../src/services/ManageLocations').ManageLocations;
+
+    beforeEach(async () => {
+      const { ManageLocations } = await import('../../src/services/ManageLocations');
+      mockPrisma = {
+        region: {
+          findMany: vi.fn(),
+          create: vi.fn(),
+          update: vi.fn(),
+          delete: vi.fn(),
+        },
+        town: {
+          findMany: vi.fn(),
+          create: vi.fn(),
+          update: vi.fn(),
+          delete: vi.fn(),
+        },
+      };
+      service = new ManageLocations(mockPrisma as any);
+    });
+
+    it('fetches all locations including towns', async () => {
+      mockPrisma.region.findMany.mockResolvedValue([
+        { id: 'lincolnshire', name: 'Lincolnshire', towns: [{ id: 'boston', name: 'Boston' }] },
+      ]);
+
+      const result = await service.getLocations();
+      expect(mockPrisma.region.findMany).toHaveBeenCalledWith({ include: { towns: true } });
+      expect(result.length).toBe(1);
+    });
+
+    it('creates a new town location', async () => {
+      mockPrisma.town.create.mockResolvedValue({
+        id: 'boston',
+        name: 'Boston',
+        pickupPoint: 'Marketplace',
+        surrounding: 'Kirton, Sutterton',
+        localizedCopy: '# Boston Info',
+        regionId: 'lincolnshire',
+      });
+
+      const result = await service.createLocation({
+        type: 'town',
+        id: 'boston',
+        name: 'Boston',
+        pickupPoint: 'Marketplace',
+        surrounding: 'Kirton, Sutterton',
+        localizedCopy: '# Boston Info',
+        regionId: 'lincolnshire',
+      });
+
+      expect(mockPrisma.town.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          id: 'boston',
+          name: 'Boston',
+          pickupPoint: 'Marketplace',
+          surrounding: 'Kirton, Sutterton',
+          localizedCopy: '# Boston Info',
+          regionId: 'lincolnshire',
+        }),
+      });
+      expect(result.id).toBe('boston');
+    });
+
+    it('updates existing town location details and Markdown copy', async () => {
+      mockPrisma.town.update.mockResolvedValue({
+        id: 'boston',
+        name: 'Boston Updated',
+        pickupPoint: 'New Bus Station',
+        localizedCopy: '### Updated Markdown Copy',
+      });
+
+      const result = await service.updateLocation('town', 'boston', {
+        name: 'Boston Updated',
+        pickupPoint: 'New Bus Station',
+        localizedCopy: '### Updated Markdown Copy',
+      });
+
+      expect(mockPrisma.town.update).toHaveBeenCalledWith({
+        where: { id: 'boston' },
+        data: expect.objectContaining({
+          name: 'Boston Updated',
+          pickupPoint: 'New Bus Station',
+          localizedCopy: '### Updated Markdown Copy',
+        }),
+      });
+      expect(result.name).toBe('Boston Updated');
+    });
+
+    it('deletes a location by type and ID', async () => {
+      mockPrisma.town.delete.mockResolvedValue({ id: 'boston' });
+
+      await service.deleteLocation('town', 'boston');
+      expect(mockPrisma.town.delete).toHaveBeenCalledWith({ where: { id: 'boston' } });
     });
   });
 });
