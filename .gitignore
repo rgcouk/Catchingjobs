@@ -18,3 +18,4 @@ test-results/
 scratch/
 *.diff
 *.patch
+mcp.json
