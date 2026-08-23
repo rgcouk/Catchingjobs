@@ -5,8 +5,21 @@ import { HelmetProvider } from 'react-helmet-async';
 
 // Mock Clerk hooks to prevent auth errors during unit tests
 vi.mock('@clerk/clerk-react', () => ({
-  useSignIn: () => ({ isLoaded: true, signIn: { create: vi.fn() }, setActive: vi.fn() }),
-  useSignUp: () => ({ isLoaded: true, signUp: { create: vi.fn() }, setActive: vi.fn() }),
+  useSignIn: () => ({
+    isLoaded: true,
+    signIn: { create: vi.fn(), authenticateWithRedirect: vi.fn() },
+    setActive: vi.fn(),
+  }),
+  useSignUp: () => ({
+    isLoaded: true,
+    signUp: {
+      create: vi.fn(),
+      prepareEmailAddressVerification: vi.fn(),
+      attemptEmailAddressVerification: vi.fn(),
+      authenticateWithRedirect: vi.fn(),
+    },
+    setActive: vi.fn(),
+  }),
   useAuth: () => ({ isLoaded: true, userId: 'test-user' }),
   useUser: () => ({ isLoaded: true, user: { publicMetadata: { role: 'CANDIDATE' } } }),
   SignedIn: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -19,6 +32,8 @@ import Index from '../../src/pages/Index';
 import SectorHub from '../../src/pages/landers/SectorHub';
 import RegionLander from '../../src/pages/landers/RegionLander';
 import CorporateLander from '../../src/pages/landers/CorporateLander';
+import Login from '../../src/pages/auth/Login';
+import Register from '../../src/pages/auth/Register';
 
 describe('Public Lander Page Components Render Integrity', () => {
   it('renders Index homepage without blank screen or errors', () => {
@@ -86,6 +101,32 @@ describe('Public Lander Page Components Render Integrity', () => {
     expect(
       screen.getByText(/Professional Poultry Catching & Agricultural Crew Management/i),
     ).toBeDefined();
+    expect(container.innerHTML).not.toBe('');
+  });
+
+  it('renders Login auth page with clean brand style without errors', () => {
+    const { container } = render(
+      <HelmetProvider>
+        <MemoryRouter>
+          <Login />
+        </MemoryRouter>
+      </HelmetProvider>,
+    );
+    expect(screen.getAllByText(/Welcome back/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Sign In/i).length).toBeGreaterThan(0);
+    expect(container.innerHTML).not.toBe('');
+  });
+
+  it('renders Register auth page with clean brand style without errors', () => {
+    const { container } = render(
+      <HelmetProvider>
+        <MemoryRouter>
+          <Register />
+        </MemoryRouter>
+      </HelmetProvider>,
+    );
+    expect(screen.getAllByText(/Start your career with Pullum Ltd/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Create Account/i).length).toBeGreaterThan(0);
     expect(container.innerHTML).not.toBe('');
   });
 });
