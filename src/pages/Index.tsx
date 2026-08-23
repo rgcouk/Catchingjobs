@@ -1,5 +1,7 @@
-/* Hallmark · pre-emit critique: P5 H4 E5 S5 R5 V5 */
-/* Hallmark · macrostructure: Stat-Led · theme: Newsprint (catalog) */
+/* Hallmark · macrostructure: Stat-Led · Hero: Split Diptych
+ * theme: Clean Minimal Modern Agricultural Trade SaaS
+ * paper: #F8FAFC · surface: #FFFFFF · ink: #0F172A · rule: #E2E8F0 · accent: #059669
+ */
 
 import React from 'react';
 import { Link } from 'react-router';
@@ -18,6 +20,9 @@ import {
   ChevronRight,
   ShieldCheck,
   Truck,
+  Coins,
+  Clock,
+  Award,
 } from 'lucide-react';
 import { REGIONS } from '../data';
 
@@ -38,10 +43,10 @@ export default function Index({ onNavigate }: IndexProps) {
     {
       id: 'news-2',
       date: '02 July 2026',
-      title: 'Expanded Catching Crew Operations & Transport Networks',
+      title: 'Expanded Door-to-Door Home Collection Fleet',
       category: 'Operations',
       summary:
-        'Pullum Ltd has added direct minibus pickup points across our regional catching hubs, ensuring seamless worker transit and punctual arrival times.',
+        'Pullum Ltd has expanded our door-to-door home collection fleet across all regional hubs, collecting crew members directly from their front doors and returning everyone safely.',
     },
   ];
 
@@ -80,157 +85,167 @@ export default function Index({ onNavigate }: IndexProps) {
   ];
 
   return (
-    <div className="font-sans w-full bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-[var(--color-paper)]">
+    <div className="font-sans w-full bg-[#F8FAFC] text-[#0F172A] selection:bg-[#059669] selection:text-white antialiased">
       <Helmet>
         <title>CatchingJobs | National Poultry Catching Directory & Recruitment</title>
         <meta
           name="description"
-          content="UK National Poultry Catching Directory. Explore professional broiler and turkey catching squads across Lincolnshire, Norfolk, Yorkshire, Shropshire, and Suffolk. Door-to-door transit and guaranteed weekly pay."
+          content="UK National Poultry Catching Directory. Explore professional broiler and turkey catching squads across Lincolnshire, Norfolk, Yorkshire, Shropshire, and Suffolk. Free door-to-door home pickup and guaranteed weekly pay."
         />
         <meta property="og:title" content="CatchingJobs | UK Poultry Catching Directory" />
         <meta
           property="og:description"
-          content="Find localized poultry catching crews with door-to-door transit and weekly payroll."
+          content="Find localized poultry catching crews with free door-to-door home pickup and weekly payroll."
         />
       </Helmet>
 
       {/* Hero Section */}
-      <section className="border-b border-[var(--color-rule)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+      <section className="border-b border-[#E2E8F0] bg-white py-12 lg:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-            <div className="space-y-8">
-              <span className="inline-flex items-center gap-2 text-xs font-mono font-medium text-[var(--color-ink-2)] uppercase tracking-widest">
-                <CheckCircle2 className="w-4 h-4 text-[var(--color-accent)]" />
-                UK's #1 Rated Poultry Catching Operator
-              </span>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-medium leading-[1.1] tracking-tight text-[var(--color-ink)]">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#ECFDF5] border border-[#A7F3D0] rounded-full text-xs font-mono font-medium text-[#065F46]">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" />
+                <span>UK's #1 Rated Poultry Catching Operator · GLAA Licensed</span>
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#0F172A] leading-[1.12]">
                 Honest work. <br />
-                <span className="text-[var(--color-accent)]">Weekly pay.</span>
+                <span className="text-[#059669]">Weekly Friday pay.</span>
               </h1>
-              <p className="text-lg sm:text-xl text-[var(--color-ink-2)] max-w-xl font-normal leading-relaxed">
-                Dedicated agricultural recruitment managed by Pullum Ltd. Door-to-door pickup,
-                friendly teams, and guaranteed weekly payroll across the UK's premier poultry
-                catching corridors.
+
+              <p className="text-base sm:text-lg text-[#64748B] max-w-xl font-normal leading-relaxed">
+                Dedicated agricultural recruitment managed by Pullum Ltd. Free door-to-door home
+                pickup, friendly teams, and guaranteed weekly payroll across the UK's premier
+                poultry catching corridors.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <Link
                   to="/chickens"
-                  className="inline-flex items-center justify-center gap-2 bg-[var(--color-ink)] hover:bg-[var(--color-ink-2)] text-[var(--color-paper)] font-medium px-8 py-4 rounded-none transition-colors duration-200"
+                  className="inline-flex items-center justify-center gap-2 bg-[#059669] hover:bg-[#047857] text-white font-mono text-xs font-semibold uppercase tracking-wider px-6 py-3.5 rounded-lg transition-colors shadow-xs"
                 >
                   <span>Explore Chicken Catching</span>
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   to="/turkeys"
-                  className="inline-flex items-center justify-center gap-2 border border-[var(--color-rule)] hover:border-[var(--color-ink)] bg-transparent text-[var(--color-ink)] font-medium px-8 py-4 rounded-none transition-colors duration-200"
+                  className="inline-flex items-center justify-center gap-2 border border-[#E2E8F0] hover:border-[#0F172A] bg-white text-[#0F172A] font-mono text-xs font-semibold uppercase tracking-wider px-6 py-3.5 rounded-lg transition-colors"
                 >
                   <span>Explore Turkey Catching</span>
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
 
-              <div className="flex items-center gap-6 pt-2 border-t border-[var(--color-rule)] text-xs font-mono text-[var(--color-ink-2)] uppercase tracking-wider">
-                <span className="flex items-center gap-1.5">
-                  <Truck className="w-4 h-4 text-[var(--color-accent)]" /> Minibus Transit
+              <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-[#E2E8F0] text-xs font-mono text-[#64748B]">
+                <span className="flex items-center gap-1.5 font-medium text-[#0F172A]">
+                  <Truck className="w-4 h-4 text-[#059669]" /> Free Door-to-Door Pickup
                 </span>
-                <span className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-[var(--color-accent)]" /> GLAA Licensed
+                <span className="flex items-center gap-1.5 font-medium text-[#0F172A]">
+                  <ShieldCheck className="w-4 h-4 text-[#059669]" /> GLAA Licensed
                 </span>
-                <span className="flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-[var(--color-accent)]" /> Supportive Crews
+                <span className="flex items-center gap-1.5 font-medium text-[#0F172A]">
+                  <Users className="w-4 h-4 text-[#059669]" /> Supportive Crews
                 </span>
               </div>
             </div>
 
-            <div className="relative aspect-square lg:aspect-[4/5] bg-[var(--color-paper-2)] overflow-hidden mix-blend-multiply border border-[var(--color-rule)]">
+            <div className="relative aspect-square lg:aspect-[4/3] rounded-2xl bg-[#F8FAFC] overflow-hidden border border-[#E2E8F0] shadow-xs">
               <img
                 src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=2500"
                 alt="Poultry catching operations"
-                className="absolute inset-0 w-full h-full object-cover grayscale opacity-90"
+                className="absolute inset-0 w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-[var(--color-accent)] mix-blend-color-burn opacity-20"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-xs p-3 rounded-xl border border-white/50 text-xs font-mono text-[#0F172A] flex items-center justify-between">
+                <span className="font-semibold flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
+                  Live UK Roster
+                </span>
+                <span className="text-[#64748B]">18 Regional Corridors</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
         {/* Core Agricultural Divisions */}
         <section className="space-y-8" id="sectors">
-          <div className="max-w-3xl space-y-4">
-            <h2 className="text-3xl sm:text-4xl font-display text-[var(--color-ink)] leading-tight">
+          <div className="max-w-3xl space-y-3">
+            <span className="text-xs font-mono uppercase font-semibold text-[#059669]">
+              Specialized Divisions
+            </span>
+            <h2 className="text-3xl font-bold tracking-tight text-[#0F172A]">
               Select Your Catching Division
             </h2>
-            <p className="text-lg text-[var(--color-ink-2)] font-normal leading-relaxed">
+            <p className="text-base text-[#64748B] leading-relaxed">
               Choose between our specialized commercial catching operations to view regional
-              schedules and localized town outposts.
+              schedules and localized door-to-door home collection areas.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             <Link
               to="/chickens"
-              className="group flex flex-col h-full border border-[var(--color-rule)] hover:border-[var(--color-accent)] transition-colors duration-300 bg-[var(--color-paper)] no-underline"
+              className="group flex flex-col h-full rounded-2xl border border-[#E2E8F0] hover:border-[#059669] transition-all bg-white overflow-hidden shadow-xs no-underline"
             >
-              <div className="relative h-64 overflow-hidden border-b border-[var(--color-rule)]">
+              <div className="relative h-60 overflow-hidden border-b border-[#E2E8F0]">
                 <img
                   src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800"
                   alt="Chicken Catching"
-                  className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute top-4 right-4 bg-[var(--color-paper)] border border-[var(--color-rule)] px-3 py-1 text-xs font-mono font-medium tracking-wider uppercase text-[var(--color-ink)]">
+                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-xs border border-[#E2E8F0] px-3 py-1 rounded-full text-xs font-mono font-semibold uppercase text-[#059669]">
                   Active Corridors
                 </div>
               </div>
-              <div className="p-8 flex flex-col flex-1 justify-between bg-[var(--color-paper)]">
-                <div className="space-y-4">
-                  <div className="inline-block text-xs font-mono font-medium text-[var(--color-accent)] uppercase tracking-wider">
+              <div className="p-6 flex flex-col flex-1 justify-between bg-white space-y-4">
+                <div className="space-y-2">
+                  <span className="text-xs font-mono font-semibold text-[#059669] uppercase">
                     Broiler & Breeder Division
-                  </div>
-                  <h3 className="text-2xl font-display text-[var(--color-ink)]">
-                    Chicken Catching
-                  </h3>
-                  <p className="text-[var(--color-ink-2)] leading-relaxed text-base">
+                  </span>
+                  <h3 className="text-xl font-bold text-[#0F172A]">Chicken Catching</h3>
+                  <p className="text-sm text-[#64748B] leading-relaxed">
                     Operating in highly disciplined, welfare-compliant chicken catching teams. Night
-                    shift rosters with minibus pickup from local town depots.
+                    shift rosters with free door-to-door home pickup in modern heated minibuses.
                   </p>
                 </div>
-                <div className="pt-8 mt-8 flex items-center justify-between border-t border-[var(--color-rule)] font-medium text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
+                <div className="pt-4 flex items-center justify-between border-t border-[#F1F5F9] text-xs font-mono font-semibold text-[#0F172A] group-hover:text-[#059669] transition-colors">
                   <span>Explore Chicken Hubs</span>
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
             </Link>
 
             <Link
               to="/turkeys"
-              className="group flex flex-col h-full border border-[var(--color-rule)] hover:border-[var(--color-accent)] transition-colors duration-300 bg-[var(--color-paper)] no-underline"
+              className="group flex flex-col h-full rounded-2xl border border-[#E2E8F0] hover:border-[#059669] transition-all bg-white overflow-hidden shadow-xs no-underline"
             >
-              <div className="relative h-64 overflow-hidden border-b border-[var(--color-rule)]">
+              <div className="relative h-60 overflow-hidden border-b border-[#E2E8F0]">
                 <img
                   src="https://images.unsplash.com/photo-1550684376-efcbd6e3f031?auto=format&fit=crop&q=80&w=800"
                   alt="Turkey Catching"
-                  className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute top-4 right-4 bg-[var(--color-paper)] border border-[var(--color-rule)] px-3 py-1 text-xs font-mono font-medium tracking-wider uppercase text-[var(--color-ink)]">
+                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-xs border border-[#E2E8F0] px-3 py-1 rounded-full text-xs font-mono font-semibold uppercase text-[#EA580C]">
                   Seasonal & Year-Round
                 </div>
               </div>
-              <div className="p-8 flex flex-col flex-1 justify-between bg-[var(--color-paper)]">
-                <div className="space-y-4">
-                  <div className="inline-block text-xs font-mono font-medium text-[var(--color-accent)] uppercase tracking-wider">
+              <div className="p-6 flex flex-col flex-1 justify-between bg-white space-y-4">
+                <div className="space-y-2">
+                  <span className="text-xs font-mono font-semibold text-[#EA580C] uppercase">
                     Commercial Turkey Division
-                  </div>
-                  <h3 className="text-2xl font-display text-[var(--color-ink)]">Turkey Catching</h3>
-                  <p className="text-[var(--color-ink-2)] leading-relaxed text-base">
+                  </span>
+                  <h3 className="text-xl font-bold text-[#0F172A]">Turkey Catching</h3>
+                  <p className="text-sm text-[#64748B] leading-relaxed">
                     Specialized squads handling commercial turkey catching operations. Stable weekly
-                    earnings and structured shift patterns with full transit support.
+                    Friday pay, seasonal premiums, and full door-to-door transit support.
                   </p>
                 </div>
-                <div className="pt-8 mt-8 flex items-center justify-between border-t border-[var(--color-rule)] font-medium text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors">
+                <div className="pt-4 flex items-center justify-between border-t border-[#F1F5F9] text-xs font-mono font-semibold text-[#0F172A] group-hover:text-[#059669] transition-colors">
                   <span>Explore Turkey Hubs</span>
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
             </Link>
@@ -238,95 +253,91 @@ export default function Index({ onNavigate }: IndexProps) {
         </section>
 
         {/* National Regional & Town Routing Directory */}
-        <section className="space-y-12" id="directory">
-          <div className="max-w-3xl space-y-4">
-            <span className="text-xs font-mono font-medium text-[var(--color-accent)] uppercase tracking-widest">
+        <section className="space-y-10" id="directory">
+          <div className="max-w-3xl space-y-3">
+            <span className="text-xs font-mono font-semibold text-[#059669] uppercase tracking-widest">
               National Routing Directory
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display text-[var(--color-ink)] leading-tight">
-              UK Regional Catching Corridors & Town Depots
+            <h2 className="text-3xl font-bold tracking-tight text-[#0F172A]">
+              UK Regional Catching Corridors & Door-to-Door Coverage
             </h2>
-            <p className="text-lg text-[var(--color-ink-2)] font-normal leading-relaxed">
-              Select your local town pickup depot to view localized schedules, transport points, and
-              join active catching crews.
+            <p className="text-base text-[#64748B] leading-relaxed">
+              Select your local area to view localized schedules, door-to-door home collection
+              routes, and join active catching crews.
             </p>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-6">
             {REGIONS.map((region) => (
               <div
                 key={region.id}
-                className="border border-[var(--color-rule)] bg-[var(--color-paper)] p-6 sm:p-8 space-y-6"
+                className="rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8 space-y-6 shadow-xs"
                 id={`region-section-${region.id}`}
               >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--color-rule)] pb-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#F1F5F9] pb-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-3 bg-[var(--color-paper-2)] text-[var(--color-ink)] shrink-0">
-                      <MapPin className="w-6 h-6 text-[var(--color-accent)]" />
+                    <div className="p-3 bg-[#F8FAFC] text-[#059669] rounded-xl border border-[#E2E8F0] shrink-0">
+                      <MapPin className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-display text-[var(--color-ink)]">
-                        {region.name}
-                      </h3>
-                      <p className="text-xs font-mono text-[var(--color-ink-2)] uppercase tracking-wider">
+                      <h3 className="text-xl font-bold text-[#0F172A]">{region.name}</h3>
+                      <p className="text-xs font-mono text-[#64748B] uppercase">
                         {region.county} Catching Corridor
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-[var(--color-ink)] bg-[var(--color-paper-2)] px-3 py-1 border border-[var(--color-rule)]">
-                      <Users className="w-3.5 h-3.5 text-[var(--color-accent)]" />
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-[#0F172A] bg-[#F8FAFC] px-3 py-1 rounded-md border border-[#E2E8F0]">
+                      <Users className="w-3.5 h-3.5 text-[#059669]" />
                       {region.activeCrews} Active Crews
                     </span>
                     <Link
                       to={`/chickens/${region.towns?.[0]?.id || region.id}`}
-                      className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-ink)] hover:text-[var(--color-accent)] transition-colors"
+                      className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-[#059669] hover:underline transition-colors"
                     >
-                      <span>View Regional Hub</span>
+                      <span>View Hub</span>
                       <ChevronRight className="w-4 h-4" />
                     </Link>
                   </div>
                 </div>
 
-                <p className="text-sm text-[var(--color-ink-2)] leading-relaxed max-w-4xl">
-                  {region.seoCopy}
-                </p>
+                <p className="text-sm text-[#64748B] leading-relaxed max-w-4xl">{region.seoCopy}</p>
 
                 {/* Town Level Routing Links */}
                 {region.towns && region.towns.length > 0 && (
                   <div className="space-y-3 pt-2">
-                    <div className="text-xs font-mono font-semibold text-[var(--color-ink)] uppercase tracking-wider">
-                      Town Pickup Depots & Direct Hub Routes:
+                    <div className="text-xs font-mono font-semibold text-[#0F172A] uppercase tracking-wider">
+                      Door-to-Door Collection Areas:
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                       {region.towns.map((town) => (
                         <div
                           key={town.id}
-                          className="border border-[var(--color-rule)] p-3 bg-[var(--color-paper-2)]/50 hover:bg-[var(--color-paper-2)] transition-colors space-y-2"
+                          className="rounded-xl border border-[#E2E8F0] p-3.5 bg-[#F8FAFC] hover:bg-white hover:border-[#0F172A] transition-all space-y-2"
                         >
-                          <div className="font-semibold text-sm text-[var(--color-ink)] flex items-center justify-between">
+                          <div className="font-bold text-sm text-[#0F172A] flex items-center justify-between">
                             <span>{town.name}</span>
-                            <span className="text-[10px] font-mono text-[var(--color-ink-2)]">
-                              Depot
+                            <span className="text-[10px] font-mono text-[#059669] bg-[#ECFDF5] px-1.5 py-0.5 rounded">
+                              Door Pickup
                             </span>
                           </div>
-                          <p className="text-[11px] text-[var(--color-ink-2)] line-clamp-1">
-                            {town.pickupPoint}
+                          <p className="text-[11px] text-[#64748B] line-clamp-1">
+                            Home collection across {town.name}
                           </p>
-                          <div className="flex items-center gap-2 pt-1 border-t border-[var(--color-rule)] text-xs">
+                          <div className="flex items-center gap-2 pt-1 border-t border-[#E2E8F0] text-xs font-mono">
                             <Link
                               to={`/chickens/${town.id}`}
-                              className="text-[var(--color-accent)] hover:underline font-medium text-[11px]"
+                              className="text-[#059669] hover:underline font-semibold text-[11px]"
                             >
-                              Chickens ({town.name}) &rarr;
+                              Chickens &rarr;
                             </Link>
-                            <span className="text-[var(--color-rule)]">•</span>
+                            <span className="text-[#CBD5E1]">•</span>
                             <Link
                               to={`/turkeys/${town.id}`}
-                              className="text-[var(--color-ink)] hover:underline font-medium text-[11px]"
+                              className="text-[#0F172A] hover:underline font-semibold text-[11px]"
                             >
-                              Turkeys ({town.name}) &rarr;
+                              Turkeys &rarr;
                             </Link>
                           </div>
                         </div>
@@ -340,54 +351,48 @@ export default function Index({ onNavigate }: IndexProps) {
         </section>
 
         {/* Notices, Events & Resources Sections */}
-        <section className="grid lg:grid-cols-3 gap-8">
+        <section className="grid lg:grid-cols-3 gap-6">
           {/* News */}
-          <div className="border border-[var(--color-rule)] bg-[var(--color-paper)]">
-            <div className="p-6 border-b border-[var(--color-rule)] flex items-center gap-3">
-              <Newspaper className="w-5 h-5 text-[var(--color-ink-2)]" />
-              <h3 className="font-medium text-lg text-[var(--color-ink)]">Notices</h3>
+          <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs">
+            <div className="p-5 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
+              <Newspaper className="w-4 h-4 text-[#059669]" />
+              <h3 className="font-bold text-base text-[#0F172A]">Notices & Updates</h3>
             </div>
-            <div className="p-6 space-y-8">
+            <div className="p-6 space-y-6">
               {news.map((item) => (
                 <article key={item.id} className="space-y-2 group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono text-[var(--color-ink-2)]">{item.date}</span>
-                    <span className="text-xs font-mono text-[var(--color-accent)]">
-                      {item.category}
-                    </span>
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-[#64748B]">{item.date}</span>
+                    <span className="text-[#059669] font-semibold">{item.category}</span>
                   </div>
-                  <h4 className="font-medium text-base text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors leading-snug">
+                  <h4 className="font-bold text-sm text-[#0F172A] group-hover:text-[#059669] transition-colors leading-snug">
                     {item.title}
                   </h4>
-                  <p className="text-sm text-[var(--color-ink-2)] leading-relaxed">
-                    {item.summary}
-                  </p>
+                  <p className="text-xs text-[#64748B] leading-relaxed">{item.summary}</p>
                 </article>
               ))}
             </div>
           </div>
 
           {/* Events */}
-          <div className="border border-[var(--color-rule)] bg-[var(--color-paper)]">
-            <div className="p-6 border-b border-[var(--color-rule)] flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-[var(--color-ink-2)]" />
-              <h3 className="font-medium text-lg text-[var(--color-ink)]">Events</h3>
+          <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs">
+            <div className="p-5 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
+              <Calendar className="w-4 h-4 text-[#059669]" />
+              <h3 className="font-bold text-base text-[#0F172A]">Coordination Briefings</h3>
             </div>
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-4">
               {events.map((evt) => (
                 <div
                   key={evt.id}
-                  className="p-4 border border-[var(--color-rule)] hover:border-[var(--color-ink)] transition-colors space-y-3"
+                  className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] space-y-2"
                 >
-                  <div className="flex items-center justify-between text-xs font-mono text-[var(--color-ink-2)]">
+                  <div className="flex items-center justify-between text-[11px] font-mono text-[#64748B]">
                     <span>{evt.date}</span>
                     <span>{evt.time}</span>
                   </div>
-                  <h4 className="font-medium text-base text-[var(--color-ink)] leading-snug">
-                    {evt.title}
-                  </h4>
-                  <div className="text-xs font-mono text-[var(--color-ink-2)] flex items-center gap-2 pt-2 border-t border-[var(--color-rule)]">
-                    <MapPin className="w-4 h-4" />
+                  <h4 className="font-bold text-sm text-[#0F172A] leading-snug">{evt.title}</h4>
+                  <div className="text-[11px] font-mono text-[#64748B] flex items-center gap-1.5 pt-1">
+                    <MapPin className="w-3.5 h-3.5 text-[#059669]" />
                     <span>{evt.location}</span>
                   </div>
                 </div>
@@ -396,26 +401,26 @@ export default function Index({ onNavigate }: IndexProps) {
           </div>
 
           {/* Resources */}
-          <div className="border border-[var(--color-rule)] bg-[var(--color-paper)]">
-            <div className="p-6 border-b border-[var(--color-rule)] flex items-center gap-3">
-              <FileText className="w-5 h-5 text-[var(--color-ink-2)]" />
-              <h3 className="font-medium text-lg text-[var(--color-ink)]">Resources</h3>
+          <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs">
+            <div className="p-5 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
+              <FileText className="w-4 h-4 text-[#059669]" />
+              <h3 className="font-bold text-base text-[#0F172A]">Compliance Guides</h3>
             </div>
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-4">
               {resources.map((res, idx) => (
                 <div
                   key={idx}
-                  className="group p-4 border border-[var(--color-rule)] hover:border-[var(--color-ink)] transition-colors space-y-3"
+                  className="group p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-white hover:border-[#059669] transition-all space-y-2"
                 >
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-[var(--color-ink-2)]">{res.type}</span>
-                    <span className="text-[var(--color-accent)]">{res.size}</span>
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="text-[#64748B] font-semibold">{res.type}</span>
+                    <span className="text-[#059669] font-semibold">{res.size}</span>
                   </div>
-                  <div className="flex items-start justify-between gap-4">
-                    <h4 className="font-medium text-base text-[var(--color-ink)] leading-snug group-hover:text-[var(--color-accent)] transition-colors">
+                  <div className="flex items-start justify-between gap-3">
+                    <h4 className="font-bold text-xs text-[#0F172A] leading-snug group-hover:text-[#059669] transition-colors">
                       {res.title}
                     </h4>
-                    <Download className="w-5 h-5 text-[var(--color-ink-2)] shrink-0 group-hover:text-[var(--color-accent)] transition-colors" />
+                    <Download className="w-4 h-4 text-[#94A3B8] shrink-0 group-hover:text-[#059669] transition-colors" />
                   </div>
                 </div>
               ))}

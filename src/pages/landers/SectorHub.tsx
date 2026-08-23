@@ -2,6 +2,10 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
+/* Hallmark · macrostructure: Sector Hub Directory · Hero: Diptych Banner
+ * theme: Clean Minimal Modern Agricultural Trade SaaS
+ * paper: #F8FAFC · surface: #FFFFFF · ink: #0F172A · rule: #E2E8F0 · accent: #059669
+ */
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
@@ -73,7 +77,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
       {
         id: region.id,
         name: region.name,
-        pickupPoint: `${region.name} Central Outpost`,
+        pickupPoint: `${region.name} Area`,
         copy: region.seoCopy,
         activeCrews: region.activeCrews,
         regionName: region.name,
@@ -83,12 +87,12 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
   });
 
   return (
-    <div className="font-sans w-full pb-16 bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-[var(--color-paper)]">
+    <div className="font-sans w-full pb-16 bg-[#F8FAFC] text-[#0F172A] selection:bg-[#059669] selection:text-white antialiased">
       <Helmet>
         <title>{`${sectorName} Jobs & Regional Hubs | CatchingJobs.co.uk`}</title>
         <meta
           name="description"
-          content={`Professional UK ${sectorName} operative roles. Localized catching hubs, door-to-door transit, and guaranteed weekly payroll with Pullum Ltd.`}
+          content={`Professional UK ${sectorName} operative roles. Localized catching hubs, free door-to-door home pickup, and guaranteed weekly payroll with Pullum Ltd.`}
         />
         <meta property="og:title" content={`${sectorName} | CatchingJobs`} />
         <meta property="og:description" content={tenant.introCopy} />
@@ -96,39 +100,39 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
 
       {/* Hero Section */}
       <section
-        className="relative flex items-center bg-cover bg-center min-h-[40vh] sm:min-h-[45vh] border-b border-[var(--color-rule)]"
+        className="relative flex items-center bg-cover bg-center min-h-[40vh] sm:min-h-[45vh] border-b border-[#E2E8F0]"
         style={{
-          backgroundImage: `linear-gradient(to right, rgba(17, 24, 39, 0.95), rgba(17, 24, 39, 0.6)), url('${heroImage}')`,
+          backgroundImage: `linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.7)), url('${heroImage}')`,
         }}
       >
         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-14 relative z-10">
-          <div className="max-w-2xl space-y-6">
-            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-white bg-[var(--color-accent)] px-3 py-1 uppercase tracking-wider">
+          <div className="max-w-2xl space-y-5">
+            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-white bg-[#059669] px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
               <CheckCircle2 className="w-4 h-4" />
               {sectorName} Division
             </span>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display text-white leading-tight tracking-tight">
-              Start Your Career in <span className="text-[var(--color-accent)]">{sectorName}</span>.
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight">
+              Start Your Career in <span className="text-[#059669]">{sectorName}</span>.
             </h1>
-            <p className="text-base sm:text-lg text-white/90 leading-relaxed font-normal max-w-xl">
-              {tenant.introCopy} Regular schedules and guaranteed weekly payroll for dedicated
-              catching crews.
+            <p className="text-base sm:text-lg text-slate-200 leading-relaxed font-normal max-w-xl">
+              {tenant.introCopy} Regular night shift schedules, free door-to-door home collection,
+              and guaranteed weekly payroll for dedicated catching crews.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
               <a
                 href="#locations"
-                className="bg-[var(--color-accent)] hover:opacity-90 text-white font-medium py-3 px-6 text-xs uppercase tracking-wider transition-opacity flex items-center justify-center gap-2"
+                className="bg-[#059669] hover:bg-[#047857] text-white font-mono font-semibold py-3.5 px-6 text-xs uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-2 shadow-xs"
                 id="btn-apply-today-sector"
               >
-                <span>Select Your Local Town Depot</span>
+                <span>Select Your Local Area</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
 
               <a
                 href="tel:01522504311"
-                className="bg-transparent hover:bg-white/10 text-white border border-white/30 font-medium py-3 px-6 text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
+                className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-mono font-semibold py-3.5 px-6 text-xs uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-2"
                 id="btn-talk-to-us-sector"
               >
                 <Phone className="w-4 h-4" />
@@ -145,15 +149,15 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
         <div className="space-y-6 w-full" id="locations">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-2 max-w-2xl">
-              <span className="text-xs font-mono font-medium text-[var(--color-accent)] uppercase tracking-widest">
+              <span className="text-xs font-mono font-semibold text-[#059669] uppercase tracking-widest">
                 Active Operational Hubs
               </span>
-              <h2 className="text-3xl font-display text-[var(--color-ink)] leading-tight">
-                Local {sectorName} Corridors & Town Depots
+              <h2 className="text-3xl font-bold tracking-tight text-[#0F172A] leading-tight">
+                Local {sectorName} Corridors & Door-to-Door Areas
               </h2>
-              <p className="text-base text-[var(--color-ink-2)] font-normal leading-relaxed">
-                Select your nearest town depot to inspect local schedules, pickup points, and submit
-                your candidate triage for {industryName}.
+              <p className="text-base text-[#64748B] font-normal leading-relaxed">
+                Select your nearest town to inspect local schedules, free door-to-door home pickup
+                coverage, and submit your candidate triage for {industryName}.
               </p>
             </div>
           </div>
@@ -163,32 +167,32 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
               <Link
                 key={item.id}
                 to={`/${sectorSlug}/${item.id}`}
-                className="group bg-[var(--color-paper)] border border-[var(--color-rule)] hover:border-[var(--color-accent)] p-6 transition-all duration-200 block no-underline"
+                className="group bg-white rounded-2xl border border-[#E2E8F0] hover:border-[#059669] p-6 transition-all duration-200 block no-underline shadow-xs"
                 id={`dir-region-seo-${item.id}`}
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-[var(--color-paper-2)] flex items-center justify-center group-hover:bg-[var(--color-accent)] group-hover:text-[var(--color-paper)] transition-colors shrink-0">
-                      <MapPin className="w-5 h-5 text-[var(--color-accent)] group-hover:text-[var(--color-paper)]" />
+                    <div className="w-10 h-10 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center group-hover:bg-[#059669] group-hover:text-white transition-colors shrink-0">
+                      <MapPin className="w-5 h-5 text-[#059669] group-hover:text-white" />
                     </div>
                     <div className="space-y-1.5">
-                      <h3 className="font-semibold text-[var(--color-ink)] text-lg group-hover:text-[var(--color-accent)] transition-colors">
+                      <h3 className="font-bold text-[#0F172A] text-lg group-hover:text-[#059669] transition-colors">
                         {item.name} Catching Area
                       </h3>
-                      <p className="text-xs font-mono text-[var(--color-ink-2)]">
-                        Pickup: {item.pickupPoint}
+                      <p className="text-xs font-mono text-[#059669] flex items-center gap-1 font-medium">
+                        <Truck className="w-3.5 h-3.5" /> Door-to-door home pickup in {item.name}
                       </p>
-                      <p className="text-xs text-[var(--color-ink-2)] leading-relaxed max-w-xl line-clamp-2">
+                      <p className="text-xs text-[#64748B] leading-relaxed max-w-xl line-clamp-2">
                         {item.copy}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex flex-col items-start md:items-end gap-2 shrink-0 pl-14 md:pl-0">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-[var(--color-ink)] bg-[var(--color-paper-2)] px-2.5 py-1 border border-[var(--color-rule)]">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-[#0F172A] bg-[#F8FAFC] px-2.5 py-1 rounded-md border border-[#E2E8F0]">
                       {item.activeCrews} Active Crews
                     </span>
-                    <div className="flex items-center gap-1 text-xs font-medium text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors mt-1 uppercase tracking-wider">
+                    <div className="flex items-center gap-1 text-xs font-mono font-semibold text-[#0F172A] group-hover:text-[#059669] transition-colors mt-1 uppercase tracking-wider">
                       <span>View Town Hub</span>
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
@@ -199,41 +203,40 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
           </div>
         </div>
 
-        {/* Mascot Cockerel & Standards Banner */}
-        <section className="bg-[var(--color-ink)] text-[var(--color-paper)] p-8 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 w-full border border-[var(--color-rule)]">
-          <div className="w-16 h-16 bg-white/10 border border-white/20 flex items-center justify-center shrink-0 relative">
-            <span className="text-3xl">🐓</span>
-            <span className="absolute -top-2 -right-2 bg-[var(--color-accent)] text-white font-mono font-bold text-[8px] uppercase px-1.5 py-0.5 tracking-wider">
-              Mascot
+        {/* Standards Banner */}
+        <section className="bg-[#0F172A] text-white rounded-2xl p-8 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 w-full border border-slate-800 shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0 relative">
+            <span className="text-3xl">🐔</span>
+            <span className="absolute -top-2 -right-2 bg-[#059669] text-white font-mono font-bold text-[8px] uppercase px-1.5 py-0.5 rounded tracking-wider">
+              Welfare
             </span>
           </div>
 
           <div className="space-y-4 text-center md:text-left flex-1 relative z-10">
             <div>
-              <h3 className="text-xl md:text-2xl font-display text-white leading-tight">
-                Right place for professional catching work.
+              <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">
+                The premier UK network for professional catching work.
               </h3>
-              <p className="text-xs text-white/80 font-normal mt-1">
-                Join one of the UK’s most trusted Poultry Catching Companies,{' '}
-                <span className="italic opacity-80">(probably)</span>.
+              <p className="text-xs text-slate-300 font-normal mt-1">
+                Operated by Pullum Ltd · GLAA Licensed · Lantra Animal Welfare Certified.
               </p>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-white/15 text-left">
-              <div className="flex items-center gap-2 text-xs font-mono text-white/90">
-                <Sun className="w-4 h-4 text-[var(--color-accent)] shrink-0" />
+              <div className="flex items-center gap-2 text-xs font-mono text-slate-200">
+                <Sun className="w-4 h-4 text-[#059669] shrink-0" />
                 <span>New Catchers</span>
               </div>
-              <div className="flex items-center gap-2 text-xs font-mono text-white/90">
-                <Brain className="w-4 h-4 text-[var(--color-accent)] shrink-0" />
+              <div className="flex items-center gap-2 text-xs font-mono text-slate-200">
+                <Brain className="w-4 h-4 text-[#059669] shrink-0" />
                 <span>Experienced</span>
               </div>
-              <div className="flex items-center gap-2 text-xs font-mono text-white/90">
-                <Users className="w-4 h-4 text-[var(--color-accent)] shrink-0" />
+              <div className="flex items-center gap-2 text-xs font-mono text-slate-200">
+                <Users className="w-4 h-4 text-[#059669] shrink-0" />
                 <span>Full Crews</span>
               </div>
-              <div className="flex items-center gap-2 text-xs font-mono text-white/90">
-                <Rocket className="w-4 h-4 text-[var(--color-accent)] shrink-0" />
+              <div className="flex items-center gap-2 text-xs font-mono text-slate-200">
+                <Rocket className="w-4 h-4 text-[#059669] shrink-0" />
                 <span>Leaders</span>
               </div>
             </div>
@@ -244,79 +247,47 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
         <section className="space-y-6 pt-4 w-full">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-2 max-w-2xl">
-              <h2 className="text-2xl font-display text-[var(--color-ink)] leading-tight">
+              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A] leading-tight">
                 What We Offer Catchers
               </h2>
-              <p className="text-sm text-[var(--color-ink-2)] font-normal leading-relaxed">
-                A professional approach to agricultural catching, built on security, respect, and
-                career growth.
+              <p className="text-sm text-[#64748B] font-normal leading-relaxed">
+                We invest in our squads so you can do your job safely, comfortably, and with total
+                financial security.
               </p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] p-6 space-y-3">
-              <div className="flex items-center gap-2 pb-2 border-b border-[var(--color-rule)]">
-                <Coins className="w-5 h-5 text-[var(--color-accent)]" />
-                <h3 className="font-semibold text-[var(--color-ink)] text-base">
-                  Guaranteed Weekly Pay
-                </h3>
+            <div className="p-6 rounded-2xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+                <Truck className="w-5 h-5" />
               </div>
-              <p className="text-[var(--color-ink-2)] text-xs leading-relaxed">
-                Competitive rates paid on time, every single Friday, directly into your verified
-                bank account.
+              <h3 className="text-lg font-bold text-[#0F172A]">Free Door-to-Door Transit</h3>
+              <p className="text-xs text-[#64748B] leading-relaxed">
+                We pick you up directly from your front door in comfortable, heated minibuses and
+                return you home safely after the shift.
               </p>
             </div>
 
-            <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] p-6 space-y-3">
-              <div className="flex items-center gap-2 pb-2 border-b border-[var(--color-rule)]">
-                <Clock className="w-5 h-5 text-[var(--color-accent)]" />
-                <h3 className="font-semibold text-[var(--color-ink)] text-base">
-                  Flexible Shift Rosters
-                </h3>
+            <div className="p-6 rounded-2xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+                <Coins className="w-5 h-5" />
               </div>
-              <p className="text-[var(--color-ink-2)] text-xs leading-relaxed">
-                Choose structured shift patterns that align with your lifestyle. Consistent night
-                blocks available.
+              <h3 className="text-lg font-bold text-[#0F172A]">Weekly Friday Pay</h3>
+              <p className="text-xs text-[#64748B] leading-relaxed">
+                Reliable BACS deposits every single Friday. Clear payslips with accurate piece-rate
+                logs and holiday accrual.
               </p>
             </div>
 
-            <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] p-6 space-y-3">
-              <div className="flex items-center gap-2 pb-2 border-b border-[var(--color-rule)]">
-                <Handshake className="w-5 h-5 text-[var(--color-accent)]" />
-                <h3 className="font-semibold text-[var(--color-ink)] text-base">
-                  Supportive Crews
-                </h3>
+            <div className="p-6 rounded-2xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+                <Award className="w-5 h-5" />
               </div>
-              <p className="text-[var(--color-ink-2)] text-xs leading-relaxed">
-                Work alongside dedicated professionals. Clean minibus transport, safety equipment,
-                and experienced leaders.
-              </p>
-            </div>
-
-            <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] p-6 space-y-3">
-              <div className="flex items-center gap-2 pb-2 border-b border-[var(--color-rule)]">
-                <GraduationCap className="w-5 h-5 text-[var(--color-accent)]" />
-                <h3 className="font-semibold text-[var(--color-ink)] text-base">
-                  Lantra Welfare Training
-                </h3>
-              </div>
-              <p className="text-[var(--color-ink-2)] text-xs leading-relaxed">
-                We support your advancement with sponsored Lantra certification and humane handling
-                credentials.
-              </p>
-            </div>
-
-            <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] p-6 space-y-3 md:col-span-2">
-              <div className="flex items-center gap-2 pb-2 border-b border-[var(--color-rule)]">
-                <GitBranch className="w-5 h-5 text-[var(--color-accent)]" />
-                <h3 className="font-semibold text-[var(--color-ink)] text-base">
-                  Clear Career Progression
-                </h3>
-              </div>
-              <p className="text-[var(--color-ink-2)] text-xs leading-relaxed">
-                Clear pathways from catching operative to minibus driver, safety supervisor, or
-                regional crew leader. We actively invest in our long-term team members.
+              <h3 className="text-lg font-bold text-[#0F172A]">Sponsored Lantra Level 2</h3>
+              <p className="text-xs text-[#64748B] leading-relaxed">
+                Zero upfront fees for accredited poultry handling and bird welfare certificates to
+                advance your agricultural career.
               </p>
             </div>
           </div>

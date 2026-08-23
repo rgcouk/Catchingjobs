@@ -2,13 +2,14 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-/* Hallmark · macrostructure: Marquee Hero · theme: custom-terracotta
- * states: default, hover, focus
+/* Hallmark · macrostructure: Corporate Lander · Hero: Marquee
+ * theme: Clean Minimal Modern Agricultural Trade SaaS
+ * paper: #F8FAFC · surface: #FFFFFF · ink: #0F172A · rule: #E2E8F0 · accent: #059669
  */
 
 import React from 'react';
 import { Link } from 'react-router';
-
+import { Helmet } from 'react-helmet-async';
 import {
   ShieldCheck,
   ArrowRight,
@@ -23,6 +24,8 @@ import {
   Clock,
   Coins,
   Phone,
+  Truck,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface CorporateLanderProps {
@@ -31,82 +34,92 @@ interface CorporateLanderProps {
 
 export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
   return (
-    <div className="font-sans bg-[var(--color-paper)] text-[var(--color-ink)] min-h-screen">
-      {/* 1. Marquee Hero Section */}
-      <section className="px-4 py-24 sm:px-8 sm:py-32 border-b border-[var(--color-rule)]">
-        <div className="max-w-5xl mx-auto space-y-12">
-          <div className="space-y-6">
-            <span className="inline-block text-xs font-mono uppercase tracking-widest text-[var(--color-accent)] border border-[var(--color-accent)] px-3 py-1">
-              Pullum Ltd • Corporate Parent
+    <div className="font-sans bg-[#F8FAFC] text-[#0F172A] min-h-screen selection:bg-[#059669] selection:text-white antialiased">
+      <Helmet>
+        <title>Corporate Grower Services & Recruitment | Pullum Ltd</title>
+        <meta
+          name="description"
+          content="Pullum Ltd agricultural parent operations. Professional poultry catching crews, door-to-door transit logistics, and GLAA licensed farm services across the UK."
+        />
+      </Helmet>
+
+      {/* 1. Hero Section */}
+      <section className="px-4 py-16 sm:px-8 sm:py-24 border-b border-[#E2E8F0] bg-white">
+        <div className="max-w-5xl mx-auto space-y-8">
+          <div className="space-y-4">
+            <span className="inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-3 py-1 rounded-full">
+              <ShieldCheck className="w-3.5 h-3.5" /> Pullum Ltd • Corporate Parent & Recruitment
             </span>
-            <h1 className="text-5xl sm:text-7xl font-display font-medium tracking-tight leading-[1.1] max-w-4xl">
-              Ready to Start Your Career in Poultry Catching?
+            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-[#0F172A] leading-[1.12] max-w-4xl">
+              Professional Poultry Catching & Agricultural Crew Management
             </h1>
-            <p className="text-lg sm:text-xl text-[var(--color-ink-2)] max-w-2xl leading-relaxed">
+            <p className="text-base sm:text-lg text-[#64748B] max-w-2xl leading-relaxed font-normal">
               Pullum Ltd provides a professional approach to agricultural trade work, built on
-              security, respect, and growth. We are recruiting across the UK.
+              security, respect, and growth. We supply fully insured, Lantra-certified crews with
+              GPS-tracked door-to-door fleet transit.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start gap-6 pt-8">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
             <Link
               to="/register"
-              className="bg-[var(--color-accent)] hover:bg-[var(--color-ink)] text-[var(--color-paper)] px-8 py-4 text-sm font-medium tracking-wide uppercase transition-colors flex items-center gap-3"
+              className="bg-[#059669] hover:bg-[#047857] text-white px-6 py-3.5 rounded-lg text-xs font-mono font-semibold tracking-wider uppercase transition-colors flex items-center justify-center gap-2 shadow-xs"
             >
-              Apply Now
+              <span>Apply to Join Roster</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
             <a
               href="tel:01522504311"
-              className="bg-[var(--color-paper)] hover:bg-[var(--color-rule)] text-[var(--color-ink)] border border-[var(--color-ink)] px-8 py-4 text-sm font-medium tracking-wide uppercase transition-colors flex items-center gap-3"
+              className="bg-white hover:bg-[#F8FAFC] text-[#0F172A] border border-[#E2E8F0] px-6 py-3.5 rounded-lg text-xs font-mono font-semibold tracking-wider uppercase transition-colors flex items-center justify-center gap-2"
             >
               <Phone className="w-4 h-4" />
-              <span>Talk to Us</span>
+              <span>Talk to Recruitment (01522 504311)</span>
             </a>
           </div>
         </div>
       </section>
 
       {/* 2. Manifesto / Statement */}
-      <section className="px-4 py-20 sm:px-8 border-b border-[var(--color-rule)] bg-[var(--color-ink)] text-[var(--color-paper)]">
+      <section className="px-4 py-16 sm:px-8 border-b border-slate-800 bg-[#0F172A] text-white">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl sm:text-5xl font-display leading-tight">
+          <div className="space-y-4">
+            <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
               You're in the right place.
             </h2>
-            <p className="text-lg mt-6 text-[var(--color-paper-2)] opacity-80 leading-relaxed">
+            <p className="text-base text-slate-300 leading-relaxed font-normal">
               Join one of the UK's most dependable poultry catching operators. We accommodate intact
-              local crews with clean transport, industry-leading rates, and predictable schedules.
+              local crews with free door-to-door home collection, industry-leading rates, and
+              predictable weekly payroll.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-x-8 gap-y-12">
-            <div>
-              <Sun className="w-6 h-6 text-[var(--color-accent)] mb-4" />
-              <h4 className="font-medium font-display text-lg mb-2">New & Eager</h4>
-              <p className="text-sm opacity-70 leading-relaxed">
+          <div className="grid grid-cols-2 gap-6">
+            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+              <Sun className="w-5 h-5 text-[#059669]" />
+              <h4 className="font-bold text-sm text-white">New & Eager</h4>
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Full support, welfare training, and fast licensing.
               </p>
             </div>
-            <div>
-              <Brain className="w-6 h-6 text-[var(--color-accent)] mb-4" />
-              <h4 className="font-medium font-display text-lg mb-2">Experienced</h4>
-              <p className="text-sm opacity-70 leading-relaxed">
+            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+              <Brain className="w-5 h-5 text-[#059669]" />
+              <h4 className="font-bold text-sm text-white">Experienced</h4>
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Industry-leading rates and premium schedules.
               </p>
             </div>
-            <div>
-              <Users className="w-6 h-6 text-[var(--color-accent)] mb-4" />
-              <h4 className="font-medium font-display text-lg mb-2">Full Crews</h4>
-              <p className="text-sm opacity-70 leading-relaxed">
-                We accommodate intact local crews with clean transport.
+            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+              <Users className="w-5 h-5 text-[#059669]" />
+              <h4 className="font-bold text-sm text-white">Full Crews</h4>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                We accommodate intact crews with door-to-door transit.
               </p>
             </div>
-            <div>
-              <Rocket className="w-6 h-6 text-[var(--color-accent)] mb-4" />
-              <h4 className="font-medium font-display text-lg mb-2">Growing Fast</h4>
-              <p className="text-sm opacity-70 leading-relaxed">
-                Career progression into team lead or supervisory roles.
+            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+              <Rocket className="w-5 h-5 text-[#059669]" />
+              <h4 className="font-bold text-sm text-white">Growing Fast</h4>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Career progression into team lead roles.
               </p>
             </div>
           </div>
@@ -114,32 +127,37 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
       </section>
 
       {/* 3. We Offer (Bento/Grid) */}
-      <section className="px-4 py-24 sm:px-8 border-b border-[var(--color-rule)]">
-        <div className="max-w-5xl mx-auto">
-          <div className="mb-16">
-            <h2 className="text-3xl sm:text-4xl font-display mb-4">We Offer</h2>
-            <p className="text-lg text-[var(--color-ink-2)] max-w-xl">
+      <section className="px-4 py-16 sm:px-8 border-b border-[#E2E8F0]">
+        <div className="max-w-5xl mx-auto space-y-10">
+          <div className="space-y-2">
+            <span className="text-xs font-mono font-semibold uppercase text-[#059669]">
+              The Pullum Standard
+            </span>
+            <h2 className="text-3xl font-bold tracking-tight text-[#0F172A]">
+              What We Offer Catchers & Growers
+            </h2>
+            <p className="text-base text-[#64748B] max-w-xl">
               A professional approach to agricultural trade work, built on security, respect, and
               growth.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-px bg-[var(--color-rule)] border border-[var(--color-rule)]">
+          <div className="grid md:grid-cols-3 gap-4">
             {[
               {
                 icon: Coins,
                 title: 'Competitive Pay',
-                desc: 'We pay highly competitive, industry-leading rates. On time, every week, with transparent pay structures.',
+                desc: 'We pay highly competitive rates every single Friday with transparent digital payslips.',
               },
               {
-                icon: Clock,
-                title: 'Flexible Shifts',
-                desc: 'Choose shift schedules that align with your lifestyle. Multiple shift patterns available for local crews.',
+                icon: Truck,
+                title: 'Door-to-Door Transit',
+                desc: 'Clean, heated minibuses pick crew members up directly from their front doors and return them home safely.',
               },
               {
                 icon: Handshake,
                 title: 'Supportive Teams',
-                desc: 'Work alongside professionals who respect your contribution. Clean transport, safety gear, and supportive team members.',
+                desc: 'Work alongside professionals who respect your contribution. Full PPE and welfare oversight provided.',
               },
               {
                 icon: GraduationCap,
@@ -149,17 +167,19 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
               {
                 icon: GitBranch,
                 title: 'Career Progression',
-                desc: 'Clear pathways from catcher to driver or manager. We actively invest in your progression and support licensing goals.',
+                desc: 'Clear pathways from catcher to squad leader, transport operative, or regional coordinator.',
                 span: 2,
               },
             ].map((item, i) => (
               <div
                 key={i}
-                className={`bg-[var(--color-paper)] p-8 sm:p-12 hover:bg-[var(--color-paper-2)] transition-colors ${item.span ? 'md:col-span-2' : ''}`}
+                className={`bg-white rounded-2xl border border-[#E2E8F0] p-6 hover:border-[#059669] transition-all shadow-xs space-y-3 ${item.span ? 'md:col-span-2' : ''}`}
               >
-                <item.icon className="w-6 h-6 text-[var(--color-accent)] mb-6" />
-                <h3 className="font-display text-xl mb-3">{item.title}</h3>
-                <p className="text-sm text-[var(--color-ink-2)] leading-relaxed">{item.desc}</p>
+                <div className="w-10 h-10 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+                  <item.icon className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-lg text-[#0F172A]">{item.title}</h3>
+                <p className="text-xs text-[#64748B] leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -167,12 +187,14 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
       </section>
 
       {/* 4. Corporate Portal Hub */}
-      <section className="px-4 py-24 sm:px-8">
-        <div className="max-w-5xl mx-auto">
-          <div className="mb-12">
-            <h2 className="text-2xl font-display mb-2">Corporate Portal Hub</h2>
-            <p className="text-sm text-[var(--color-ink-2)]">
-              Access regional recruitment divisions, training, and live location hubs.
+      <section className="px-4 py-16 sm:px-8">
+        <div className="max-w-5xl mx-auto space-y-8">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              Corporate Routing Switchboard
+            </h2>
+            <p className="text-sm text-[#64748B]">
+              Access regional recruitment divisions and live location hubs.
             </p>
           </div>
 
@@ -180,19 +202,19 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
             {/* Switchboard */}
             <div
               onClick={() => onNavigate('root', '')}
-              className="group cursor-pointer border border-[var(--color-rule)] p-8 hover:border-[var(--color-ink)] transition-colors flex flex-col justify-between"
+              className="group cursor-pointer rounded-2xl bg-white border border-[#E2E8F0] p-6 hover:border-[#059669] transition-all shadow-xs flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 border border-[var(--color-rule)] flex items-center justify-center mb-6 text-[var(--color-ink)] group-hover:bg-[var(--color-ink)] group-hover:text-[var(--color-paper)] transition-colors">
-                  <Users className="w-4 h-4" />
+                <div className="w-10 h-10 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center mb-4 text-[#0F172A] group-hover:bg-[#059669] group-hover:text-white transition-colors">
+                  <Users className="w-5 h-5" />
                 </div>
-                <h3 className="font-display font-medium text-lg mb-3">Recruitment Switchboard</h3>
-                <p className="text-sm text-[var(--color-ink-2)] leading-relaxed mb-8">
+                <h3 className="font-bold text-base text-[#0F172A] mb-2">Recruitment Directory</h3>
+                <p className="text-xs text-[#64748B] leading-relaxed mb-6">
                   Check regional operational networks, county active numbers, compliance guides, and
                   current alerts.
                 </p>
               </div>
-              <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-[var(--color-accent)]">
+              <div className="flex items-center justify-between text-xs font-mono uppercase font-semibold text-[#059669]">
                 <span>CatchingJobs.co.uk</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -201,19 +223,20 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
             {/* Chicken */}
             <div
               onClick={() => onNavigate('chicken', '')}
-              className="group cursor-pointer border border-[var(--color-rule)] p-8 hover:border-[var(--color-ink)] transition-colors flex flex-col justify-between"
+              className="group cursor-pointer rounded-2xl bg-white border border-[#E2E8F0] p-6 hover:border-[#059669] transition-all shadow-xs flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 border border-[var(--color-rule)] flex items-center justify-center mb-6 font-mono text-xs group-hover:bg-[var(--color-ink)] group-hover:text-[var(--color-paper)] transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center mb-4 font-mono font-bold text-xs text-[#059669] group-hover:bg-[#059669] group-hover:text-white transition-colors">
                   CH
                 </div>
-                <h3 className="font-display font-medium text-lg mb-3">Chicken Broiler Division</h3>
-                <p className="text-sm text-[var(--color-ink-2)] leading-relaxed mb-8">
-                  Access specialized crew rosters, night shift rates, and Safety Culture
-                  integration.
+                <h3 className="font-bold text-base text-[#0F172A] mb-2">
+                  Chicken Broiler Division
+                </h3>
+                <p className="text-xs text-[#64748B] leading-relaxed mb-6">
+                  Access specialized crew rosters, night shift rates, and Animal Welfare standards.
                 </p>
               </div>
-              <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-[var(--color-accent)]">
+              <div className="flex items-center justify-between text-xs font-mono uppercase font-semibold text-[#059669]">
                 <span>chicken.catchingjobs</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -222,19 +245,19 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
             {/* Turkey */}
             <div
               onClick={() => onNavigate('turkey', '')}
-              className="group cursor-pointer border border-[var(--color-rule)] p-8 hover:border-[var(--color-ink)] transition-colors flex flex-col justify-between"
+              className="group cursor-pointer rounded-2xl bg-white border border-[#E2E8F0] p-6 hover:border-[#EA580C] transition-all shadow-xs flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 border border-[var(--color-rule)] flex items-center justify-center mb-6 font-mono text-xs group-hover:bg-[var(--color-ink)] group-hover:text-[var(--color-paper)] transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-[#FFF7ED] border border-[#FFEDD5] flex items-center justify-center mb-4 font-mono font-bold text-xs text-[#EA580C] group-hover:bg-[#EA580C] group-hover:text-white transition-colors">
                   TK
                 </div>
-                <h3 className="font-display font-medium text-lg mb-3">Turkey Loading Division</h3>
-                <p className="text-sm text-[var(--color-ink-2)] leading-relaxed mb-8">
+                <h3 className="font-bold text-base text-[#0F172A] mb-2">Turkey Loading Division</h3>
+                <p className="text-xs text-[#64748B] leading-relaxed mb-6">
                   Access heavy agricultural operational parameters and weight handling compliance
                   lists.
                 </p>
               </div>
-              <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-[var(--color-accent)]">
+              <div className="flex items-center justify-between text-xs font-mono uppercase font-semibold text-[#EA580C]">
                 <span>turkey.catchingjobs</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>

@@ -7,7 +7,16 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowRight, AlertCircle, RotateCcw, Loader2, Mail, Phone, User } from 'lucide-react';
+import {
+  ArrowRight,
+  AlertCircle,
+  RotateCcw,
+  Loader2,
+  Mail,
+  Phone,
+  User,
+  Truck,
+} from 'lucide-react';
 import { TownData } from '../../types';
 import PasswordlessOTPModal from './PasswordlessOTPModal';
 
@@ -68,7 +77,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
     setIsSubmitting(true);
 
     try {
-      // 1. Submit Draft Application to Backend (trying both /api/applications/draft and fallback /api/triage)
+      // 1. Submit Draft Application to Backend
       let res = await fetch('/api/applications/draft', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -142,21 +151,20 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
   return (
     <div
       data-testid="hero-triage-card"
-      className={`bg-[var(--color-paper)] text-[var(--color-ink)] border border-[var(--color-rule)] p-6 sm:p-7 w-full md:w-[380px] shrink-0 shadow-xl relative ${className}`}
+      className={`bg-white text-[#0F172A] rounded-2xl border border-[#E2E8F0] p-6 sm:p-7 w-full md:w-[380px] shrink-0 shadow-2xl relative ${className}`}
     >
       {/* Header */}
-      <div className="space-y-1.5 pb-4 border-b border-[var(--color-rule)]">
+      <div className="space-y-1.5 pb-4 border-b border-[#F1F5F9]">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--color-accent)] bg-[var(--color-paper-2)] px-2 py-0.5 border border-[var(--color-rule)]">
-            Fast-Track Triage
+          <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] px-2 py-0.5 rounded border border-[#A7F3D0]">
+            Fast-Track Onboarding
           </span>
-          <span className="text-xs font-mono text-[var(--color-ink-2)]">{town.name} Roster</span>
+          <span className="text-xs font-mono text-[#64748B]">{town.name} Roster</span>
         </div>
-        <h3 className="font-display text-2xl text-[var(--color-ink)] leading-tight">
-          Join {town.name} Crew
-        </h3>
-        <p className="text-xs text-[var(--color-ink-2)] leading-relaxed">
-          Door-to-door transit provided. Enter your details to start onboarding.
+        <h3 className="font-bold text-xl text-[#0F172A] leading-tight">Join {town.name} Crew</h3>
+        <p className="text-xs text-[#64748B] leading-relaxed flex items-center gap-1">
+          <Truck className="w-3.5 h-3.5 text-[#059669]" />
+          Free door-to-door home collection provided.
         </p>
       </div>
 
@@ -164,18 +172,15 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
       {isStopped ? (
         <div
           data-testid="triage-stoppage-banner"
-          className="mt-5 p-4 bg-[var(--color-paper-2)] border-l-2 border-[var(--color-accent)] space-y-3"
+          className="mt-5 p-4 bg-[#FFF7ED] rounded-xl border-l-4 border-[#EA580C] space-y-3"
         >
           <div className="flex items-start gap-2.5">
-            <AlertCircle className="w-5 h-5 text-[var(--color-accent)] shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-[#EA580C] shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <h4
-                data-testid="triage-rejection-msg"
-                className="text-sm font-semibold text-[var(--color-ink)]"
-              >
+              <h4 data-testid="triage-rejection-msg" className="text-sm font-bold text-[#0F172A]">
                 Right to Work in the UK is required
               </h4>
-              <p className="text-xs text-[var(--color-ink-2)] leading-relaxed">
+              <p className="text-xs text-[#64748B] leading-relaxed">
                 All agricultural poultry harvesting positions with Pullum Ltd legally require
                 verified UK Right to Work (UK/Irish passport, Settled/Pre-Settled status, or a valid
                 work visa). We cannot proceed without valid Right to Work. Thank you for your
@@ -187,15 +192,12 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
             <button
               type="button"
               onClick={handleResetStoppage}
-              className="text-xs font-mono font-medium text-[var(--color-ink)] hover:text-[var(--color-accent)] flex items-center gap-1.5 underline cursor-pointer"
+              className="text-xs font-mono font-semibold text-[#059669] hover:underline flex items-center gap-1.5 cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Change Answer
             </button>
-            <a
-              href="/"
-              className="text-xs font-mono text-[var(--color-ink-2)] hover:text-[var(--color-ink)]"
-            >
+            <a href="/" className="text-xs font-mono text-[#64748B] hover:text-[#0F172A]">
               National Hub
             </a>
           </div>
@@ -209,15 +211,15 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
           className="mt-5 space-y-4"
         >
           {submitError && (
-            <div className="p-2.5 text-xs text-red-600 bg-red-50 border border-red-200">
+            <div className="p-2.5 text-xs text-red-600 bg-red-50 rounded-lg border border-red-200">
               {submitError}
             </div>
           )}
 
           {/* Full Name */}
           <div className="space-y-1">
-            <label className="text-[11px] font-mono uppercase tracking-wider text-[var(--color-ink-2)] font-medium flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5 text-[var(--color-accent)]" />
+            <label className="text-[11px] font-mono uppercase tracking-wider text-[#64748B] font-semibold flex items-center gap-1.5">
+              <User className="w-3.5 h-3.5 text-[#059669]" />
               Full Name
             </label>
             <input
@@ -226,7 +228,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
               data-testid="triage-name"
               placeholder="e.g. Arthur King"
               {...register('name')}
-              className="w-full px-3 py-2 text-sm bg-[var(--color-paper-2)] border border-[var(--color-rule)] text-[var(--color-ink)] placeholder:text-[var(--color-ink-2)]/50 focus:outline-none focus:border-[var(--color-ink)] font-sans"
+              className="w-full px-3 py-2 text-sm rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#059669] font-sans"
             />
             {errors.name && (
               <p className="text-[11px] text-red-600 font-mono">{errors.name.message}</p>
@@ -235,8 +237,8 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
 
           {/* Phone Number */}
           <div className="space-y-1">
-            <label className="text-[11px] font-mono uppercase tracking-wider text-[var(--color-ink-2)] font-medium flex items-center gap-1.5">
-              <Phone className="w-3.5 h-3.5 text-[var(--color-accent)]" />
+            <label className="text-[11px] font-mono uppercase tracking-wider text-[#64748B] font-semibold flex items-center gap-1.5">
+              <Phone className="w-3.5 h-3.5 text-[#059669]" />
               UK Mobile Number
             </label>
             <input
@@ -245,7 +247,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
               data-testid="triage-phone"
               placeholder="07700 900123"
               {...register('phone')}
-              className="w-full px-3 py-2 text-sm bg-[var(--color-paper-2)] border border-[var(--color-rule)] text-[var(--color-ink)] placeholder:text-[var(--color-ink-2)]/50 focus:outline-none focus:border-[var(--color-ink)] font-mono"
+              className="w-full px-3 py-2 text-sm rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#059669] font-mono"
             />
             {errors.phone && (
               <p className="text-[11px] text-red-600 font-mono">{errors.phone.message}</p>
@@ -254,8 +256,8 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
 
           {/* Email Address */}
           <div className="space-y-1">
-            <label className="text-[11px] font-mono uppercase tracking-wider text-[var(--color-ink-2)] font-medium flex items-center gap-1.5">
-              <Mail className="w-3.5 h-3.5 text-[var(--color-accent)]" />
+            <label className="text-[11px] font-mono uppercase tracking-wider text-[#64748B] font-semibold flex items-center gap-1.5">
+              <Mail className="w-3.5 h-3.5 text-[#059669]" />
               Email Address (for Code)
             </label>
             <input
@@ -264,7 +266,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
               data-testid="triage-email"
               placeholder="name@example.co.uk"
               {...register('email')}
-              className="w-full px-3 py-2 text-sm bg-[var(--color-paper-2)] border border-[var(--color-rule)] text-[var(--color-ink)] placeholder:text-[var(--color-ink-2)]/50 focus:outline-none focus:border-[var(--color-ink)] font-sans"
+              className="w-full px-3 py-2 text-sm rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#059669] font-sans"
             />
             {errors.email && (
               <p className="text-[11px] text-red-600 font-mono">{errors.email.message}</p>
@@ -272,21 +274,21 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
           </div>
 
           {/* Right to Work Toggle */}
-          <div className="pt-2 border-t border-[var(--color-rule)] space-y-2">
+          <div className="pt-2 border-t border-[#F1F5F9] space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-[var(--color-ink)]">UK Right to Work?</span>
+              <span className="text-xs font-semibold text-[#0F172A]">UK Right to Work?</span>
               <div
                 data-testid="rtw-group"
-                className="flex items-center gap-1 bg-[var(--color-paper-2)] p-1 border border-[var(--color-rule)]"
+                className="flex items-center gap-1 bg-[#F8FAFC] p-1 rounded-lg border border-[#E2E8F0]"
               >
                 <button
                   type="button"
                   data-testid="rtw-yes"
                   onClick={() => setValue('hasRightToWork', true)}
-                  className={`px-2.5 py-1 text-xs font-mono uppercase transition-colors cursor-pointer ${
+                  className={`px-3 py-1 text-xs font-mono uppercase rounded-md transition-colors cursor-pointer ${
                     watchRtw === true
-                      ? 'bg-[var(--color-ink)] text-[var(--color-paper)] font-semibold'
-                      : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)]'
+                      ? 'bg-[#059669] text-white font-semibold shadow-xs'
+                      : 'text-[#64748B] hover:text-[#0F172A]'
                   }`}
                 >
                   Yes
@@ -298,10 +300,10 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
                     setValue('hasRightToWork', false);
                     setIsStopped(true);
                   }}
-                  className={`px-2.5 py-1 text-xs font-mono uppercase transition-colors cursor-pointer ${
+                  className={`px-3 py-1 text-xs font-mono uppercase rounded-md transition-colors cursor-pointer ${
                     watchRtw === false
-                      ? 'bg-[var(--color-accent)] text-[var(--color-paper)] font-semibold'
-                      : 'text-[var(--color-ink-2)] hover:text-[var(--color-ink)]'
+                      ? 'bg-[#EA580C] text-white font-semibold'
+                      : 'text-[#64748B] hover:text-[#0F172A]'
                   }`}
                 >
                   No
@@ -313,44 +315,42 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
             )}
           </div>
 
-          {/* Submit Action */}
+          {/* Submit Button */}
           <div className="pt-2">
             <button
               type="submit"
+              data-testid="triage-submit"
               disabled={isSubmitting}
-              id="btn-triage-submit"
-              data-testid="btn-triage-submit"
-              className="w-full bg-[var(--color-ink)] hover:bg-[var(--color-ink-2)] disabled:opacity-50 text-[var(--color-paper)] font-medium py-3 px-4 text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer shadow"
+              className="w-full bg-[#059669] hover:bg-[#047857] text-white font-mono font-semibold py-3 px-4 rounded-lg text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-[var(--color-accent)]" />
-                  <span>Checking Roster...</span>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Verifying Candidate...</span>
                 </>
               ) : (
                 <>
-                  <span>Fast-Track Application</span>
-                  <ArrowRight className="w-4 h-4 text-[var(--color-accent)]" />
+                  <span>Join {town.name} Roster</span>
+                  <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </div>
-
-          <p className="text-[10px] text-center text-[var(--color-ink-2)] font-mono leading-tight">
-            Passwordless instant verification via Email/SMS code.
-          </p>
         </form>
       )}
 
-      {/* Passwordless Clerk OTP Modal */}
-      {showOtpModal && (
-        <PasswordlessOTPModal
-          isOpen={showOtpModal}
-          onClose={() => setShowOtpModal(false)}
-          formData={watch()}
-          draftApplication={draftResult}
-        />
-      )}
+      {/* Clerk OTP Verification Modal */}
+      <PasswordlessOTPModal
+        isOpen={showOtpModal}
+        onClose={() => setShowOtpModal(false)}
+        email={watch('email')}
+        phone={watch('phone')}
+        name={watch('name')}
+        townName={town.name}
+        sectorId={sectorId}
+        draftId={draftResult?.id}
+        rosterRef={draftResult?.rosterRef}
+      />
     </div>
   );
 }

@@ -16,7 +16,7 @@ describe('Location & SSR Data Services', () => {
       const boston = lincs?.towns.find((t) => t.id === 'boston');
       expect(boston).toBeDefined();
       expect(boston?.name).toBe('Boston');
-      expect(boston?.pickupPoint).toContain('Boston Marketplace');
+      expect(boston?.pickupPoint).toContain('Door-to-door home pickup');
       expect(boston?.region.name).toBe('Lincolnshire');
     });
   });
@@ -30,7 +30,7 @@ describe('Location & SSR Data Services', () => {
       expect(data?.town?.name).toBe('Boston');
       expect(data?.town?.region.name).toBe('Lincolnshire');
       expect(data?.town?.region.activeCrews).toBe(14);
-      expect(data?.town?.pickupPoint).toMatch(/Marketplace|Market/);
+      expect(data?.town?.pickupPoint).toMatch(/Door-to-door/);
     });
 
     it('resolves valid turkey town slug with full town loader contract', () => {
@@ -39,7 +39,7 @@ describe('Location & SSR Data Services', () => {
       expect(data?.sector).toBe('turkey');
       expect(data?.town?.id).toBe('sleaford');
       expect(data?.town?.name).toBe('Sleaford');
-      expect(data?.town?.pickupPoint).toContain('Train Station Car Park');
+      expect(data?.town?.pickupPoint).toContain('Door-to-door home pickup');
       expect(data?.town?.region.name).toBe('Lincolnshire');
     });
 
