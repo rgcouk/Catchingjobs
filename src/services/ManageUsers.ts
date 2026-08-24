@@ -6,7 +6,61 @@ export class ManageUsers {
 
   async getUsers() {
     return this.prisma.user.findMany({
-      select: { id: true, email: true, role: true, createdAt: true, application: true },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+        applicationId: true,
+        application: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async updateUserRole(userId: string, role: string) {
+    const finalRole = role === 'ADMIN' ? 'ADMIN' : 'WORKER';
+
+    // Update in Clerk if API key configured
+    if (process.env.CLERK_SECRET_KEY) {
+      try {
+        const clerkClient = createClerkClient({
+          secretKey: process.env.CLERK_SECRET_KEY,
+        });
+        await clerkClient.users.updateUserMetadata(userId, {
+          publicMetadata: { role: finalRole },
+        });
+      } catch (err) {
+        console.warn(
+          'Could not update Clerk metadata directly (user might not be in Clerk yet):',
+          err,
+        );
+      }
+    }
+
+    // Update in Prisma
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { role: finalRole },
+      include: { application: true },
+    });
+  }
+
+  async deleteUser(userId: string) {
+    if (process.env.CLERK_SECRET_KEY) {
+      try {
+        const clerkClient = createClerkClient({
+          secretKey: process.env.CLERK_SECRET_KEY,
+        });
+        await clerkClient.users.deleteUser(userId);
+      } catch (err) {
+        console.warn('Could not delete user in Clerk:', err);
+      }
+    }
+
+    return this.prisma.user.delete({
+      where: { id: userId },
     });
   }
 

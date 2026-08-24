@@ -6,6 +6,11 @@ export class ManageJobPostings {
 
   async getJobPostings() {
     return this.prisma.jobPosting.findMany({
+      include: {
+        _count: {
+          select: { applications: true },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -18,6 +23,19 @@ export class ManageJobPostings {
 
     return this.prisma.jobPosting.create({
       data: body,
+    });
+  }
+
+  async updateJobPostingStatus(id: number, status: string) {
+    return this.prisma.jobPosting.update({
+      where: { id },
+      data: { status },
+    });
+  }
+
+  async deleteJobPosting(id: number) {
+    return this.prisma.jobPosting.delete({
+      where: { id },
     });
   }
 }

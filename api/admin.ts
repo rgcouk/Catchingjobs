@@ -128,6 +128,29 @@ app.post('/api/admin/job-postings', async (c) => {
   }
 });
 
+app.patch('/api/admin/job-postings/:id/status', async (c) => {
+  const service = new ManageJobPostings(getPrisma());
+  try {
+    const id = parseInt(c.req.param('id'), 10);
+    const { status } = await c.req.json();
+    const job = await service.updateJobPostingStatus(id, status);
+    return c.json(job);
+  } catch (error) {
+    return handleError(error, 'Failed to update job status', c);
+  }
+});
+
+app.delete('/api/admin/job-postings/:id', async (c) => {
+  const service = new ManageJobPostings(getPrisma());
+  try {
+    const id = parseInt(c.req.param('id'), 10);
+    await service.deleteJobPosting(id);
+    return new Response(null, { status: 204 });
+  } catch (error) {
+    return handleError(error, 'Failed to delete job posting', c);
+  }
+});
+
 app.get('/api/admin/users', async (c) => {
   const service = new ManageUsers(getPrisma());
   try {
@@ -135,6 +158,29 @@ app.get('/api/admin/users', async (c) => {
     return c.json(users);
   } catch (error) {
     return handleError(error, 'Failed to fetch users', c);
+  }
+});
+
+app.patch('/api/admin/users/:id/role', async (c) => {
+  const service = new ManageUsers(getPrisma());
+  try {
+    const id = c.req.param('id');
+    const { role } = await c.req.json();
+    const user = await service.updateUserRole(id, role);
+    return c.json(user);
+  } catch (error) {
+    return handleError(error, 'Failed to update user role', c);
+  }
+});
+
+app.delete('/api/admin/users/:id', async (c) => {
+  const service = new ManageUsers(getPrisma());
+  try {
+    const id = c.req.param('id');
+    await service.deleteUser(id);
+    return new Response(null, { status: 204 });
+  } catch (error) {
+    return handleError(error, 'Failed to delete user', c);
   }
 });
 
