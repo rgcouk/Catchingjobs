@@ -4,10 +4,12 @@
  */
 
 /* eslint-disable react-hooks/incompatible-library */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useUser, useAuth } from '@clerk/clerk-react';
+import { useNavigate, useSearchParams } from 'react-router';
 import {
   ArrowRight,
   AlertCircle,
@@ -17,6 +19,9 @@ import {
   Phone,
   User,
   Truck,
+  ShieldCheck,
+  CheckCircle2,
+  Sparkles,
 } from 'lucide-react';
 import { TownData } from '../../types';
 import PasswordlessOTPModal from './PasswordlessOTPModal';
@@ -42,6 +47,14 @@ interface HeroTriageFormProps {
 }
 
 export default function HeroTriageForm({ town, sectorId, className = '' }: HeroTriageFormProps) {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { user, isSignedIn, isLoaded: isUserLoaded } = useUser();
+  const { getToken } = useAuth();
+
+  const jobTitleParam = searchParams.get('jobTitle');
+  const jobIdParam = searchParams.get('jobId');
+
   const [isStopped, setIsStopped] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string>('');
@@ -63,6 +76,23 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
       hasRightToWork: true,
     },
   });
+
+  // Pre-fill form if employee is already logged in
+  useEffect(() => {
+    if (isUserLoaded && isSignedIn && user) {
+      const fullName =
+        user.fullName ||
+        `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+        user.username ||
+        '';
+      const userEmail = user.primaryEmailAddress?.emailAddress || '';
+      const userPhone = user.primaryPhoneNumber?.phoneNumber || '';
+
+      if (fullName) setValue('name', fullName);
+      if (userEmail) setValue('email', userEmail);
+      if (userPhone) setValue('phone', userPhone);
+    }
+  }, [isUserLoaded, isSignedIn, user, setValue]);
 
   const watchRtw = watch('hasRightToWork');
 
@@ -89,6 +119,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
           town: town.name,
           sector: sectorId,
           hasRightToWork: true,
+          jobPostingId: jobIdParam ? Number(jobIdParam) : null,
         }),
       });
 
@@ -103,6 +134,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
             town: town.name,
             sector: sectorId,
             hasRightToWork: true,
+            jobPostingId: jobIdParam ? Number(jobIdParam) : null,
           }),
         });
       }
@@ -134,7 +166,34 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
         );
       }
 
-      // 2. Open Clerk Passwordless OTP Modal
+      // IF USER IS ALREADY LOGGED IN: Fast-track link and navigate immediately to employee portal!
+      if (isSignedIn && user) {
+        try {
+          const token = await getToken();
+          await fetch('/api/triage/claim', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify({
+              rosterRef: createdApp.rosterRef,
+              email: values.email,
+              userId: user.id,
+            }),
+          });
+        } catch (claimErr) {
+          console.warn('Auto-claim linkage warning:', claimErr);
+        }
+
+        // Navigate directly to portal with applied status - NO OTP MODAL / NO LOGIN PROMPT
+        navigate(
+          `/employee?applied=true&ref=${createdApp.rosterRef}&town=${encodeURIComponent(town.name)}`,
+        );
+        return;
+      }
+
+      // 2. Otherwise open Clerk Passwordless OTP Modal for new/unauthenticated users
       setShowOtpModal(true);
     } catch (err: any) {
       console.error('Triage draft submission error:', err);
@@ -158,7 +217,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
       <div className="space-y-1.5 pb-4 border-b border-[#F1F5F9]">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] px-2 py-0.5 rounded border border-[#A7F3D0]">
-            Fast-Track Onboarding
+            {isSignedIn ? '1-Click Fast Apply' : 'Fast-Track Onboarding'}
           </span>
           <span className="text-xs font-mono text-[#64748B]">{town.name} Roster</span>
         </div>
@@ -167,6 +226,34 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
           <Truck className="w-3.5 h-3.5 text-[#059669]" />
           Free door-to-door home collection provided.
         </p>
+
+        {jobTitleParam && (
+          <div className="pt-2">
+            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[#0F172A] bg-[#F1F5F9] px-2.5 py-1 rounded-md border border-[#E2E8F0]">
+              <Sparkles className="w-3.5 h-3.5 text-[#059669]" />
+              Role: {jobTitleParam}
+            </span>
+          </div>
+        )}
+
+        {isSignedIn && user && (
+          <div className="pt-2">
+            <div className="p-2.5 bg-[#ECFDF5] border border-[#A7F3D0] rounded-lg flex items-center justify-between text-xs font-mono">
+              <div className="flex items-center gap-2 text-[#065F46]">
+                <ShieldCheck className="w-4 h-4 text-[#059669] shrink-0" />
+                <div className="truncate max-w-[200px]">
+                  <span className="font-semibold block truncate">
+                    {user.fullName || user.primaryEmailAddress?.emailAddress}
+                  </span>
+                  <span className="text-[10px] text-[#059669]">Logged In Employee</span>
+                </div>
+              </div>
+              <span className="text-[9px] font-bold bg-[#059669] text-white px-1.5 py-0.5 rounded uppercase">
+                Active
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Right to Work Stopped State Banner */}
@@ -327,11 +414,15 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Verifying Candidate...</span>
+                  <span>{isSignedIn ? 'Confirming Roster Slot...' : 'Verifying Candidate...'}</span>
                 </>
               ) : (
                 <>
-                  <span>Join {town.name} Roster</span>
+                  <span>
+                    {isSignedIn
+                      ? `1-Click Apply for ${town.name} Crew`
+                      : `Join ${town.name} Roster`}
+                  </span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}

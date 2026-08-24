@@ -421,7 +421,7 @@ export default function Index({ onNavigate }: IndexProps) {
           {/* Job Vacancy Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredLiveJobs.map((job) => {
-              const targetUrl = `/${job.sector === 'chicken' ? 'chickens' : 'turkeys'}/${job.townId}`;
+              const targetUrl = `/${job.sector === 'chicken' ? 'chickens' : 'turkeys'}/${job.townId}?jobId=${job.id}&jobTitle=${encodeURIComponent(job.title)}`;
               return (
                 <div
                   key={job.id}

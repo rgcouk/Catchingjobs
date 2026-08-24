@@ -45,19 +45,21 @@ app.post('/api/triage/claim', clerkMiddleware({
   secretKey: process.env.CLERK_SECRET_KEY,
 }), async (c) => {
   const auth = getAuth(c);
-  if (!auth?.userId) {
-    return c.json({ success: false, error: 'Unauthorized' }, 401);
+  const body = await c.req.json().catch(() => ({}));
+  const userId = auth?.userId || body.userId;
+
+  if (!userId) {
+    return c.json({ success: false, error: 'Unauthorized: User ID required' }, 401);
   }
 
   const service = new ManageApplications(getPrisma());
   try {
-    const body = await c.req.json();
     const { rosterRef, email } = body;
     if (!rosterRef) {
       return c.json({ success: false, error: 'Roster reference (rosterRef) is required' }, 400);
     }
 
-    const application = await service.linkUserToDraft(rosterRef, auth.userId, email);
+    const application = await service.linkUserToDraft(rosterRef, userId, email);
     return c.json({ success: true, application });
   } catch (error) {
     return handleError(error, 'Failed to link user to application', c);

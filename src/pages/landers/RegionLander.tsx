@@ -23,7 +23,7 @@ import {
   Coins,
   CheckCircle2,
 } from 'lucide-react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { Helmet } from 'react-helmet-async';
 
 import { TENANTS } from '../../data';
@@ -39,6 +39,7 @@ interface RegionLanderProps {
 }
 
 export default function RegionLander({ regionId, sectorId, onBackToSector }: RegionLanderProps) {
+  const [, setSearchParams] = useSearchParams();
   const { initialData } = useSSRData();
   const tenant = TENANTS[sectorId];
   const sectorTitle = sectorId === 'chicken' ? 'Chicken Catching' : 'Turkey Catching';
@@ -424,6 +425,7 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
 
                   <button
                     onClick={() => {
+                      setSearchParams({ jobId: String(job.id), jobTitle: job.title });
                       const formEl = document.getElementById('hero-triage-form');
                       if (formEl) {
                         formEl.scrollIntoView({ behavior: 'smooth' });
@@ -475,6 +477,12 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
 
                   <button
                     onClick={() => {
+                      setSearchParams({
+                        jobTitle:
+                          sectorId === 'chicken'
+                            ? `Senior Broiler Catcher (${town.name})`
+                            : `Commercial Turkey Operative (${town.name})`,
+                      });
                       const formEl = document.getElementById('hero-triage-form');
                       if (formEl) {
                         formEl.scrollIntoView({ behavior: 'smooth' });
@@ -523,6 +531,9 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
 
                   <button
                     onClick={() => {
+                      setSearchParams({
+                        jobTitle: `Poultry Crew Team Leader (${town.region.name})`,
+                      });
                       const formEl = document.getElementById('hero-triage-form');
                       if (formEl) {
                         formEl.scrollIntoView({ behavior: 'smooth' });

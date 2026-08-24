@@ -13,6 +13,7 @@ export interface CreateDraftApplicationInput {
   town: string;
   sector: 'chickens' | 'turkeys' | 'chicken' | 'turkey' | string;
   hasRightToWork: boolean;
+  jobPostingId?: number | null;
 }
 
 export interface ApplicationDTO {
@@ -158,6 +159,7 @@ export class ManageApplications {
         safetyTasksCompleted: false,
         declarationSigned: false,
         profileFormCompleted: false,
+        ...(input.jobPostingId ? { jobPostingId: Number(input.jobPostingId) } : {}),
       },
     });
 

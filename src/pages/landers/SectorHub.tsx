@@ -213,7 +213,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                   </div>
 
                   <Link
-                    to={`/${sectorSlug}/${job.townId}`}
+                    to={`/${sectorSlug}/${job.townId}?jobId=${job.id}&jobTitle=${encodeURIComponent(job.title)}`}
                     className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#059669] text-white font-mono text-xs font-semibold uppercase tracking-wider py-2.5 px-4 rounded-md transition-colors shadow-xs no-underline"
                   >
                     <span>Apply for {job.townName || job.townId}</span>
