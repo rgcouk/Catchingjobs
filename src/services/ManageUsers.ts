@@ -5,22 +5,86 @@ export class ManageUsers {
   constructor(private prisma: PrismaClient) {}
 
   async getUsers() {
-    return this.prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-        applicationId: true,
-        application: true,
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const [users, applications] = await Promise.all([
+      this.prisma.user.findMany({
+        include: {
+          application: {
+            include: { jobPosting: true },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.application.findMany({
+        include: {
+          user: true,
+          jobPosting: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+    ]);
+
+    // Map existing users by normalized email and ID
+    const userMap = new Map<string, any>();
+    const emailToUserMap = new Map<string, any>();
+
+    for (const u of users) {
+      userMap.set(u.id, { ...u, source: 'REGISTERED_USER' });
+      if (u.email) {
+        emailToUserMap.set(u.email.toLowerCase().trim(), u.id);
+      }
+    }
+
+    // Attach or create entries for all applications (including rejected, draft, new, approved, hired)
+    for (const app of applications) {
+      const normalizedEmail = (app.email || '').toLowerCase().trim();
+
+      // Check if already linked to a user via relation or email
+      if (app.user && userMap.has(app.user.id)) {
+        const u = userMap.get(app.user.id);
+        if (!u.application) {
+          u.application = app;
+          u.applicationId = app.id;
+        }
+        continue;
+      }
+
+      if (normalizedEmail && emailToUserMap.has(normalizedEmail)) {
+        const userId = emailToUserMap.get(normalizedEmail);
+        const u = userMap.get(userId);
+        if (u && !u.application) {
+          u.application = app;
+          u.applicationId = app.id;
+        }
+        continue;
+      }
+
+      // Candidate has an application but no user account (e.g. rejected before signup, guest applicant, or draft)
+      const syntheticId = `app_${app.id}`;
+      userMap.set(syntheticId, {
+        id: syntheticId,
+        email: app.email || `applicant-${app.rosterRef.toLowerCase()}@catchingjobs.co.uk`,
+        role: 'WORKER',
+        createdAt: app.createdAt,
+        updatedAt: app.updatedAt,
+        applicationId: app.id,
+        application: app,
+        source: 'APPLICANT',
+      });
+    }
+
+    // Return all unified CRM contacts sorted newest first
+    return Array.from(userMap.values()).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
   }
 
   async updateUserRole(userId: string, role: string) {
     const finalRole = role === 'ADMIN' ? 'ADMIN' : 'WORKER';
+
+    if (userId.startsWith('app_')) {
+      // Synthetic applicant record
+      return { id: userId, role: finalRole };
+    }
 
     // Update in Clerk if API key configured
     if (process.env.CLERK_SECRET_KEY) {
@@ -48,6 +112,13 @@ export class ManageUsers {
   }
 
   async deleteUser(userId: string) {
+    if (userId.startsWith('app_')) {
+      const appId = parseInt(userId.replace('app_', ''), 10);
+      return this.prisma.application.delete({
+        where: { id: appId },
+      });
+    }
+
     if (process.env.CLERK_SECRET_KEY) {
       try {
         const clerkClient = createClerkClient({

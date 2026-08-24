@@ -40,6 +40,11 @@ import {
   Calendar,
   Car,
   CheckCircle2,
+  Copy,
+  Send,
+  Megaphone,
+  MessageCircle,
+  UserX,
 } from 'lucide-react';
 import type { Application, User, JobPosting } from '@prisma/client';
 import { useAuth } from '@clerk/clerk-react';
@@ -177,8 +182,21 @@ const AdminDashboard = () => {
   const [userSearch, setUserSearch] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState<'ALL' | 'ADMIN' | 'WORKER'>('ALL');
   const [userStatusFilter, setUserStatusFilter] = useState<
-    'ALL' | 'VERIFIED' | 'PENDING' | 'NO_APP'
+    | 'ALL'
+    | 'REJECTED'
+    | 'DRAFT'
+    | 'NEW'
+    | 'REVIEWING'
+    | 'APPROVED'
+    | 'HIRED'
+    | 'VERIFIED'
+    | 'PENDING'
+    | 'NO_APP'
   >('ALL');
+  const [crmSectorFilter, setCrmSectorFilter] = useState<'ALL' | 'chicken' | 'turkey'>('ALL');
+  const [crmCampaignTemplate, setCrmCampaignTemplate] = useState<
+    'reengage' | 'urgent' | 'peak' | 'rtw'
+  >('reengage');
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<'WORKER' | 'ADMIN'>('WORKER');
@@ -580,6 +598,32 @@ const AdminDashboard = () => {
     return `mailto:?subject=Pullum Ltd Recruitment - ${name}&body=${encodeURIComponent(text)}`;
   };
 
+  const getDirectMailLink = (email: string, name: string, text: string) => {
+    return `mailto:${encodeURIComponent(email)}?subject=Pullum Ltd Harvesting Squad Opportunities - ${name}&body=${encodeURIComponent(text)}`;
+  };
+
+  const getCampaignMessage = (
+    templateKey: 'reengage' | 'urgent' | 'peak' | 'rtw',
+    candidate: any,
+  ) => {
+    const name = candidate?.name || candidate?.email?.split('@')[0] || 'Operative';
+    const town = candidate?.town || 'your local hub';
+    const sectorName = candidate?.sector === 'turkey' ? 'Turkey Harvesting' : 'Broiler Catching';
+
+    switch (templateKey) {
+      case 'reengage':
+        return `Hi ${name}, Pullum Ltd has immediate start poultry harvesting vacancies near ${town} with guaranteed Friday weekly pay (£750-£950/wk) and door-to-door minibus collection. Are you available for active squad placement? Reply to re-join.`;
+      case 'urgent':
+        return `Urgent shift notification for ${name}: Immediate squad openings for ${sectorName} in ${town}. Minibus pickup provided from your door. Contact Pullum Ltd to claim your shift.`;
+      case 'peak':
+        return `Peak season harvesting bonus rates are now active for ${sectorName} teams in ${town}! Earn up to £1,100+/week with weekly pay. Reply to secure your spot.`;
+      case 'rtw':
+        return `Hi ${name}, Pullum Ltd recruitment team. We'd love to get you deployed with a squad near ${town}. Please reply with your Right to Work share code/document to complete your onboarding.`;
+      default:
+        return `Hi ${name}, Pullum Ltd recruitment team here regarding harvesting opportunities in ${town}.`;
+    }
+  };
+
   // CSV Exporters
   const exportApplicantsCSV = () => {
     const headers = [
@@ -632,23 +676,34 @@ const AdminDashboard = () => {
     toast.success('Applicants CSV exported');
   };
 
-  const exportUsersCSV = () => {
+  const exportUsersCSV = (userListToExport?: typeof users) => {
+    const list = userListToExport || users;
     const headers = [
-      'User ID',
+      'Contact ID',
+      'Name',
       'Email',
+      'Phone',
       'Role',
-      'Linked Application',
+      'Application Status',
+      'Roster Ref',
       'Sector',
-      'Town',
-      'Created At',
+      'Town Hub',
+      'Right to Work',
+      'Profile Completed',
+      'Registered Date',
     ];
-    const rows = users.map((u) => [
+    const rows = list.map((u) => [
       u.id,
+      `"${u.application?.name || ''}"`,
       u.email,
+      `"${u.application?.phone || ''}"`,
       u.role,
+      u.application?.status || 'NO_APP',
       u.application ? u.application.rosterRef : 'None',
       u.application?.sector || '',
       `"${u.application?.town || ''}"`,
+      u.application?.hasRightToWork ? 'Yes' : 'No',
+      u.application?.profileFormCompleted ? 'Yes' : 'No',
       new Date(u.createdAt).toISOString(),
     ]);
 
@@ -660,12 +715,27 @@ const AdminDashboard = () => {
     link.setAttribute('href', encodedUri);
     link.setAttribute(
       'download',
-      `catchingjobs-users-crm-${new Date().toISOString().slice(0, 10)}.csv`,
+      `catchingjobs-marketing-crm-${new Date().toISOString().slice(0, 10)}.csv`,
     );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    toast.success('Users CRM CSV exported');
+    toast.success(`Exported ${list.length} CRM marketing contacts to CSV`);
+  };
+
+  const copyMarketingEmails = (userList: typeof users) => {
+    const validEmails = userList
+      .map((u) => u.email)
+      .filter((email) => email && !email.includes('placeholder') && email.includes('@'));
+    const uniqueEmails = Array.from(new Set(validEmails));
+
+    if (uniqueEmails.length === 0) {
+      toast.error('No valid emails found in current filter');
+      return;
+    }
+
+    navigator.clipboard.writeText(uniqueEmails.join(', '));
+    toast.success(`Copied ${uniqueEmails.length} email addresses for BCC broadcast`);
   };
 
   const exportLocationsCSV = () => {
@@ -978,7 +1048,10 @@ const AdminDashboard = () => {
             u.email.toLowerCase().includes(searchLower) ||
             u.id.toLowerCase().includes(searchLower) ||
             (u.application?.name && u.application.name.toLowerCase().includes(searchLower)) ||
-            (u.application?.town && u.application.town.toLowerCase().includes(searchLower));
+            (u.application?.town && u.application.town.toLowerCase().includes(searchLower)) ||
+            (u.application?.phone && u.application.phone.toLowerCase().includes(searchLower)) ||
+            (u.application?.rosterRef &&
+              u.application.rosterRef.toLowerCase().includes(searchLower));
 
           const matchesRole =
             activeTab === 'workers'
@@ -987,8 +1060,24 @@ const AdminDashboard = () => {
                 ? u.role === 'ADMIN'
                 : userRoleFilter === 'ALL' || u.role === userRoleFilter;
 
+          const matchesSector =
+            crmSectorFilter === 'ALL' ||
+            (u.application && u.application.sector === crmSectorFilter);
+
           let matchesStatus = true;
-          if (userStatusFilter === 'VERIFIED') {
+          if (userStatusFilter === 'REJECTED') {
+            matchesStatus = u.application?.status === 'REJECTED';
+          } else if (userStatusFilter === 'DRAFT') {
+            matchesStatus = u.application?.status === 'Draft';
+          } else if (userStatusFilter === 'NEW') {
+            matchesStatus = u.application?.status === 'NEW';
+          } else if (userStatusFilter === 'REVIEWING') {
+            matchesStatus = u.application?.status === 'REVIEWING';
+          } else if (userStatusFilter === 'APPROVED') {
+            matchesStatus = u.application?.status === 'APPROVED';
+          } else if (userStatusFilter === 'HIRED') {
+            matchesStatus = u.application?.status === 'HIRED';
+          } else if (userStatusFilter === 'VERIFIED') {
             matchesStatus = !!u.application?.profileFormCompleted;
           } else if (userStatusFilter === 'PENDING') {
             matchesStatus = !!u.application && !u.application.profileFormCompleted;
@@ -996,36 +1085,50 @@ const AdminDashboard = () => {
             matchesStatus = !u.application;
           }
 
-          return matchesSearch && matchesRole && matchesStatus;
+          return matchesSearch && matchesRole && matchesSector && matchesStatus;
         });
 
         const verifiedCount = users.filter((u) => u.application?.profileFormCompleted).length;
         const workerCount = users.filter((u) => u.role === 'WORKER').length;
         const adminCount = users.filter((u) => u.role === 'ADMIN').length;
+        const rejectedCount = users.filter((u) => u.application?.status === 'REJECTED').length;
+        const draftCount = users.filter((u) => u.application?.status === 'Draft').length;
+        const hiredCount = users.filter((u) => u.application?.status === 'HIRED').length;
+        const reMarketingPoolCount = rejectedCount + draftCount;
 
         return (
           <div className="p-4 md:p-8 space-y-6 w-full">
-            {/* Header & Stats Banner */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            {/* Header & Marketing Broadcast Actions */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="space-y-1">
                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
                   <Users className="w-7 h-7 text-primary" />
-                  Users & Operatives CRM
+                  Candidate & Operatives CRM
                 </h1>
                 <p className="text-muted-foreground text-xs sm:text-sm">
-                  Manage all registered system users, staff roles, and linked crew compliance
-                  profiles.
+                  Complete candidate database and registered workers. Run targeted SMS & Email
+                  marketing campaigns across all past applicants (including rejected candidates).
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={exportUsersCSV}
+                  onClick={() => copyMarketingEmails(filteredUsers)}
+                  className="text-xs shrink-0"
+                  title="Copy email addresses of all contacts in current filter for BCC marketing blast"
+                >
+                  <Copy className="w-3.5 h-3.5 mr-1.5 text-primary" />
+                  Broadcast Email (Copy BCC)
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => exportUsersCSV(filteredUsers)}
                   className="text-xs shrink-0"
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
-                  Export CSV
+                  Export Marketing CSV
                 </Button>
                 <Button
                   size="sm"
@@ -1039,26 +1142,53 @@ const AdminDashboard = () => {
             </div>
 
             {/* CRM KPI Metric Strips */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               <div
                 className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                onClick={() => setActiveTab('users')}
+                onClick={() => {
+                  setUserStatusFilter('ALL');
+                  setUserRoleFilter('ALL');
+                  setCrmSectorFilter('ALL');
+                }}
               >
                 <span className="text-xs font-mono text-muted-foreground block uppercase">
-                  Total Accounts
+                  Total Contacts
                 </span>
                 <span className="text-2xl font-bold text-foreground">{users.length}</span>
               </div>
               <div
                 className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                onClick={() => setActiveTab('workers')}
+                onClick={() => {
+                  setUserStatusFilter('HIRED');
+                }}
               >
                 <span className="text-xs font-mono text-muted-foreground block uppercase">
-                  Field Operatives
+                  Active Crew (Hired)
                 </span>
-                <span className="text-2xl font-bold text-emerald-600">{workerCount}</span>
+                <span className="text-2xl font-bold text-emerald-600">{hiredCount}</span>
               </div>
-              <div className="bg-card border border-border p-3.5 rounded-lg">
+              <div
+                className="bg-card border border-rose-200 bg-rose-50/40 p-3.5 rounded-lg cursor-pointer hover:border-rose-400 transition-colors"
+                onClick={() => {
+                  setUserStatusFilter('REJECTED');
+                }}
+              >
+                <span className="text-xs font-mono text-rose-700 block uppercase font-semibold">
+                  Re-Market Pool
+                </span>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-2xl font-bold text-rose-700">{rejectedCount}</span>
+                  <span className="text-[11px] text-rose-600 font-mono">
+                    ({reMarketingPoolCount} inc drafts)
+                  </span>
+                </div>
+              </div>
+              <div
+                className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => {
+                  setUserStatusFilter('VERIFIED');
+                }}
+              >
                 <span className="text-xs font-mono text-muted-foreground block uppercase">
                   Induction Verified
                 </span>
@@ -1066,62 +1196,142 @@ const AdminDashboard = () => {
               </div>
               <div
                 className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                onClick={() => setActiveTab('admins')}
+                onClick={() => {
+                  setActiveTab('admins');
+                  setUserRoleFilter('ADMIN');
+                }}
               >
                 <span className="text-xs font-mono text-muted-foreground block uppercase">
-                  Admins / Managers
+                  Admins / Staff
                 </span>
                 <span className="text-2xl font-bold text-purple-600">{adminCount}</span>
               </div>
             </div>
 
-            {/* Search & Filter Bar */}
-            <div className="bg-card border border-border p-3.5 rounded-lg flex flex-col md:flex-row items-center gap-3 shadow-xs">
-              <div className="relative flex-1 w-full">
-                <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
-                <Input
-                  placeholder="Search users by email, name, town, or user ID..."
-                  value={userSearch}
-                  onChange={(e) => setUserSearch(e.target.value)}
-                  className="pl-9 text-xs"
-                />
+            {/* Campaign Template & Filter Bar */}
+            <div className="bg-card border border-border p-3.5 rounded-lg space-y-3 shadow-xs">
+              {/* Campaign Template Selector */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-border text-xs">
+                <div className="flex items-center gap-2">
+                  <Megaphone className="w-4 h-4 text-primary shrink-0" />
+                  <span className="font-semibold text-foreground">Active Marketing Template:</span>
+                  <Select
+                    value={crmCampaignTemplate}
+                    onValueChange={(val: any) => setCrmCampaignTemplate(val)}
+                  >
+                    <SelectTrigger className="h-7 text-xs w-[280px]">
+                      <SelectValue placeholder="Campaign Template" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="reengage">
+                        Re-Engagement (Past/Rejected Applicants)
+                      </SelectItem>
+                      <SelectItem value="urgent">Urgent Shift Alert (Immediate Start)</SelectItem>
+                      <SelectItem value="peak">Peak Season Turkey Bonus Rates</SelectItem>
+                      <SelectItem value="rtw">Right to Work & Induction Follow-up</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="text-[11px] font-mono text-muted-foreground italic truncate max-w-xl">
+                  &quot;
+                  {crmCampaignTemplate === 'reengage'
+                    ? 'Pullum Ltd has immediate start poultry harvesting vacancies near {town} with guaranteed Friday pay (£750-£950/wk)...'
+                    : crmCampaignTemplate === 'urgent'
+                      ? 'Urgent shift notification: Immediate squad openings with free door-to-door minibus pickup...'
+                      : crmCampaignTemplate === 'peak'
+                        ? 'Peak season harvesting bonus rates are active now! Earn up to £1,100+/wk...'
+                        : 'Please reply with your Right to Work share code/document to complete onboarding...'}
+                  &quot;
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 w-full md:w-auto">
-                <Select
-                  value={
-                    activeTab === 'workers'
-                      ? 'WORKER'
-                      : activeTab === 'admins'
-                        ? 'ADMIN'
-                        : userRoleFilter
-                  }
-                  onValueChange={(val: any) => setUserRoleFilter(val)}
-                >
-                  <SelectTrigger className="text-xs w-full md:w-[130px]">
-                    <SelectValue placeholder="Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ALL">All Roles</SelectItem>
-                    <SelectItem value="ADMIN">Admins</SelectItem>
-                    <SelectItem value="WORKER">Workers</SelectItem>
-                  </SelectContent>
-                </Select>
+              {/* Filters */}
+              <div className="flex flex-col md:flex-row items-center gap-3">
+                <div className="relative flex-1 w-full">
+                  <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
+                  <Input
+                    placeholder="Search candidate name, email, phone, town, or roster ref..."
+                    value={userSearch}
+                    onChange={(e) => setUserSearch(e.target.value)}
+                    className="pl-9 text-xs"
+                  />
+                </div>
 
-                <Select
-                  value={userStatusFilter}
-                  onValueChange={(val: any) => setUserStatusFilter(val)}
-                >
-                  <SelectTrigger className="text-xs w-full md:w-[160px]">
-                    <SelectValue placeholder="Onboarding" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ALL">All Statuses</SelectItem>
-                    <SelectItem value="VERIFIED">Induction Verified</SelectItem>
-                    <SelectItem value="PENDING">Onboarding Pending</SelectItem>
-                    <SelectItem value="NO_APP">No Application</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                  <Select
+                    value={
+                      activeTab === 'workers'
+                        ? 'WORKER'
+                        : activeTab === 'admins'
+                          ? 'ADMIN'
+                          : userRoleFilter
+                    }
+                    onValueChange={(val: any) => setUserRoleFilter(val)}
+                  >
+                    <SelectTrigger className="text-xs w-full md:w-[120px]">
+                      <SelectValue placeholder="Role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All Roles</SelectItem>
+                      <SelectItem value="ADMIN">Admins</SelectItem>
+                      <SelectItem value="WORKER">Workers</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select
+                    value={userStatusFilter}
+                    onValueChange={(val: any) => setUserStatusFilter(val)}
+                  >
+                    <SelectTrigger className="text-xs w-full md:w-[190px]">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All Statuses ({users.length})</SelectItem>
+                      <SelectItem value="REJECTED">Rejected Pool ({rejectedCount})</SelectItem>
+                      <SelectItem value="DRAFT">Draft Incomplete ({draftCount})</SelectItem>
+                      <SelectItem value="NEW">New Leads</SelectItem>
+                      <SelectItem value="REVIEWING">In Review</SelectItem>
+                      <SelectItem value="APPROVED">Approved Squad</SelectItem>
+                      <SelectItem value="HIRED">Hired (Active Crew)</SelectItem>
+                      <SelectItem value="VERIFIED">Induction Verified</SelectItem>
+                      <SelectItem value="PENDING">Onboarding Pending</SelectItem>
+                      <SelectItem value="NO_APP">Registered Only</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select
+                    value={crmSectorFilter}
+                    onValueChange={(val: any) => setCrmSectorFilter(val)}
+                  >
+                    <SelectTrigger className="text-xs w-full md:w-[130px]">
+                      <SelectValue placeholder="Sector" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All Sectors</SelectItem>
+                      <SelectItem value="chicken">Chickens</SelectItem>
+                      <SelectItem value="turkey">Turkeys</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {(userSearch ||
+                    userStatusFilter !== 'ALL' ||
+                    userRoleFilter !== 'ALL' ||
+                    crmSectorFilter !== 'ALL') && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setUserSearch('');
+                        setUserStatusFilter('ALL');
+                        setUserRoleFilter('ALL');
+                        setCrmSectorFilter('ALL');
+                      }}
+                      className="text-xs text-muted-foreground hover:text-foreground h-8 px-2"
+                    >
+                      Clear
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -1130,24 +1340,34 @@ const AdminDashboard = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>User / Operative</TableHead>
+                    <TableHead>Candidate / Contact</TableHead>
+                    <TableHead>Phone / Mobile</TableHead>
                     <TableHead>Role</TableHead>
-                    <TableHead>Linked Profile</TableHead>
+                    <TableHead>Status & Compliance</TableHead>
                     <TableHead>Location Hub</TableHead>
                     <TableHead>Registered</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="text-right">Marketing & Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredUsers.map((u) => {
                     const app = u.application;
                     const isSelected = selectedUser?.id === u.id;
+                    const campaignMsg = getCampaignMessage(crmCampaignTemplate, {
+                      name: app?.name || u.email.split('@')[0],
+                      town: app?.town,
+                      sector: app?.sector,
+                      email: u.email,
+                    });
+                    const candidatePhone = app?.phone || '';
+                    const isRejected = app?.status === 'REJECTED';
+
                     return (
                       <TableRow
                         key={u.id}
                         className={`cursor-pointer transition-colors ${
                           isSelected ? 'bg-accent/50' : 'hover:bg-muted/50'
-                        }`}
+                        } ${isRejected ? 'bg-rose-50/20' : ''}`}
                         onClick={() => setSelectedUser(u)}
                       >
                         <TableCell className="py-3.5">
@@ -1156,9 +1376,11 @@ const AdminDashboard = () => {
                               className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0 ${
                                 u.role === 'ADMIN'
                                   ? 'bg-purple-600'
-                                  : app?.profileFormCompleted
-                                    ? 'bg-emerald-600'
-                                    : 'bg-slate-700'
+                                  : isRejected
+                                    ? 'bg-rose-600'
+                                    : app?.profileFormCompleted
+                                      ? 'bg-emerald-600'
+                                      : 'bg-slate-700'
                               }`}
                             >
                               {(app?.name || u.email).charAt(0).toUpperCase()}
@@ -1174,12 +1396,36 @@ const AdminDashboard = () => {
                                     Staff
                                   </Badge>
                                 )}
+                                {u.source === 'APPLICANT' && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-[9px] py-0 px-1 font-mono text-muted-foreground"
+                                  >
+                                    Lead
+                                  </Badge>
+                                )}
                               </div>
-                              <div className="text-xs text-muted-foreground font-mono">
+                              <div className="text-xs text-muted-foreground font-mono truncate max-w-[200px]">
                                 {u.email}
                               </div>
                             </div>
                           </div>
+                        </TableCell>
+
+                        <TableCell className="text-xs font-mono">
+                          {candidatePhone ? (
+                            <a
+                              href={`tel:${candidatePhone}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="text-foreground hover:text-primary transition-colors flex items-center gap-1"
+                              title="Click to dial"
+                            >
+                              <PhoneCall className="w-3 h-3 text-muted-foreground" />
+                              <span>{candidatePhone}</span>
+                            </a>
+                          ) : (
+                            <span className="text-muted-foreground">-</span>
+                          )}
                         </TableCell>
 
                         <TableCell>
@@ -1202,38 +1448,59 @@ const AdminDashboard = () => {
                         <TableCell>
                           {app ? (
                             <div className="space-y-1">
-                              <div className="flex items-center gap-1.5">
+                              <div className="flex items-center gap-1.5 flex-wrap">
                                 <Badge
-                                  variant={app.profileFormCompleted ? 'default' : 'outline'}
-                                  className="text-[10px] uppercase font-mono"
+                                  className={`text-[10px] uppercase font-mono border ${
+                                    app.status === 'REJECTED'
+                                      ? 'bg-rose-100 text-rose-800 border-rose-200 hover:bg-rose-200'
+                                      : app.status === 'Draft'
+                                        ? 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
+                                        : app.status === 'HIRED'
+                                          ? 'bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-200'
+                                          : app.status === 'APPROVED'
+                                            ? 'bg-emerald-100 text-emerald-800 border-emerald-200 hover:bg-emerald-200'
+                                            : app.status === 'REVIEWING'
+                                              ? 'bg-amber-100 text-amber-800 border-amber-200 hover:bg-amber-200'
+                                              : 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200'
+                                  }`}
                                 >
-                                  {app.profileFormCompleted ? (
-                                    <span className="flex items-center gap-1">
-                                      <ShieldCheck className="w-3 h-3" /> Verified
-                                    </span>
-                                  ) : (
-                                    <span className="flex items-center gap-1">
-                                      <Clock className="w-3 h-3" /> Incomplete
-                                    </span>
-                                  )}
+                                  {app.status || 'NEW'}
                                 </Badge>
-                                <span className="text-[11px] font-mono text-muted-foreground">
-                                  {app.rosterRef}
-                                </span>
+                                {app.profileFormCompleted ? (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] font-mono text-emerald-600 border-emerald-300 bg-emerald-50"
+                                  >
+                                    <ShieldCheck className="w-2.5 h-2.5 mr-1 inline" /> Verified
+                                  </Badge>
+                                ) : (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] font-mono text-muted-foreground"
+                                  >
+                                    Incomplete
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="text-[10px] font-mono text-muted-foreground">
+                                Ref: {app.rosterRef}
                               </div>
                             </div>
                           ) : (
                             <span className="text-xs text-muted-foreground italic">
-                              No linked application
+                              No application record
                             </span>
                           )}
                         </TableCell>
 
                         <TableCell className="text-xs text-muted-foreground">
                           {app ? (
-                            <span>
-                              {app.town} ({app.sector})
-                            </span>
+                            <div className="space-y-0.5">
+                              <span className="font-semibold text-foreground block">
+                                {app.town}
+                              </span>
+                              <span className="text-[11px] font-mono capitalize">{app.sector}</span>
+                            </div>
                           ) : (
                             <span>-</span>
                           )}
@@ -1248,20 +1515,57 @@ const AdminDashboard = () => {
                             className="flex items-center justify-end gap-1"
                             onClick={(e) => e.stopPropagation()}
                           >
+                            {/* Direct Email with Campaign Template */}
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-8 w-8 p-0"
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-primary"
+                              title={`Email candidate using active template: ${crmCampaignTemplate}`}
+                              onClick={() => {
+                                const mailUrl = getDirectMailLink(
+                                  u.email,
+                                  app?.name || u.email.split('@')[0],
+                                  campaignMsg,
+                                );
+                                window.open(mailUrl, '_blank');
+                              }}
+                            >
+                              <Mail className="w-4 h-4" />
+                            </Button>
+
+                            {/* Direct SMS / WhatsApp with Campaign Template */}
+                            {candidatePhone && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-muted-foreground hover:text-emerald-600"
+                                title="Send WhatsApp / SMS with active campaign message"
+                                onClick={() => {
+                                  const waUrl = getWhatsAppLink(candidatePhone, campaignMsg);
+                                  window.open(waUrl, '_blank');
+                                }}
+                              >
+                                <MessageSquare className="w-4 h-4" />
+                              </Button>
+                            )}
+
+                            {/* Inspect Full Profile */}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
                               title="Inspect CRM Profile"
                               onClick={() => setSelectedUser(u)}
                             >
-                              <Eye className="w-4 h-4 text-primary" />
+                              <Eye className="w-4 h-4" />
                             </Button>
+
+                            {/* Delete User */}
                             <Button
                               variant="ghost"
                               size="sm"
                               className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                              title="Delete User"
+                              title="Delete Contact"
                               onClick={() =>
                                 setDeleteConfirm({
                                   type: 'user',
@@ -1279,8 +1583,14 @@ const AdminDashboard = () => {
                   })}
                   {filteredUsers.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
-                        No users found matching current filters.
+                      <TableCell
+                        colSpan={7}
+                        className="text-center py-12 text-muted-foreground space-y-1"
+                      >
+                        <p className="font-semibold text-sm">No candidate records found.</p>
+                        <p className="text-xs text-muted-foreground">
+                          Try broadening your search or resetting status and role filters.
+                        </p>
                       </TableCell>
                     </TableRow>
                   )}
@@ -3027,53 +3337,171 @@ const AdminDashboard = () => {
 
           {selectedUser && (
             <div className="space-y-4 mt-2 text-xs">
-              <div className="bg-muted/40 p-4 rounded-xl border border-border flex items-center justify-between">
-                <span className="font-semibold text-xs text-foreground">User System Role</span>
-                <Select
-                  value={selectedUser.role}
-                  onValueChange={(role) => handleUpdateUserRole(selectedUser.id, role)}
-                >
-                  <SelectTrigger className="h-7 text-xs w-[130px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="WORKER">Field Worker</SelectItem>
-                    <SelectItem value="ADMIN">Administrator</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-muted/40 p-3 rounded-xl border border-border flex items-center justify-between">
+                  <span className="font-semibold text-xs text-foreground">User System Role</span>
+                  <Select
+                    value={selectedUser.role}
+                    onValueChange={(role) => handleUpdateUserRole(selectedUser.id, role)}
+                  >
+                    <SelectTrigger className="h-7 text-xs w-[130px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="WORKER">Field Worker</SelectItem>
+                      <SelectItem value="ADMIN">Administrator</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {selectedUser.application && (
+                  <div className="bg-muted/40 p-3 rounded-xl border border-border flex items-center justify-between">
+                    <span className="font-semibold text-xs text-foreground">
+                      Application Status
+                    </span>
+                    <Select
+                      value={selectedUser.application.status || 'NEW'}
+                      onValueChange={async (newStatus) => {
+                        if (selectedUser.application) {
+                          await updateApplicationStatus(selectedUser.application.id, newStatus);
+                          setSelectedUser({
+                            ...selectedUser,
+                            application: { ...selectedUser.application, status: newStatus },
+                          });
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="h-7 text-xs w-[140px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="NEW">NEW Lead</SelectItem>
+                        <SelectItem value="REVIEWING">In Review</SelectItem>
+                        <SelectItem value="APPROVED">Approved</SelectItem>
+                        <SelectItem value="HIRED">Hired (Active)</SelectItem>
+                        <SelectItem value="REJECTED">Rejected (Re-Market)</SelectItem>
+                        <SelectItem value="Draft">Draft Incomplete</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
 
               {selectedUser.application ? (
-                <div className="grid grid-cols-2 gap-3 bg-muted/30 p-4 rounded-xl border border-border">
-                  <div>
-                    <span className="text-muted-foreground block text-[10px] uppercase">
-                      Roster Ref
-                    </span>
-                    <span className="font-mono font-bold text-foreground">
-                      {selectedUser.application.rosterRef}
-                    </span>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-muted/30 p-4 rounded-xl border border-border">
+                    <div>
+                      <span className="text-muted-foreground block text-[10px] uppercase">
+                        Roster Ref
+                      </span>
+                      <span className="font-mono font-bold text-foreground">
+                        {selectedUser.application.rosterRef}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[10px] uppercase">
+                        Location Depot
+                      </span>
+                      <span className="font-bold text-foreground">
+                        {selectedUser.application.town} ({selectedUser.application.sector})
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[10px] uppercase">
+                        Right to Work
+                      </span>
+                      <span
+                        className={`font-semibold ${selectedUser.application.hasRightToWork ? 'text-emerald-600' : 'text-rose-600'}`}
+                      >
+                        {selectedUser.application.hasRightToWork
+                          ? 'Verified UK RTW'
+                          : 'Pending Share Code'}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[10px] uppercase">
+                        Phone
+                      </span>
+                      <span className="font-mono font-medium text-foreground">
+                        {selectedUser.application.phone || '-'}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-muted-foreground block text-[10px] uppercase">
-                      Town Hub
-                    </span>
-                    <span className="font-bold text-foreground">
-                      {selectedUser.application.town} ({selectedUser.application.sector})
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block text-[10px] uppercase">
-                      Right to Work
-                    </span>
-                    <span className="font-semibold text-emerald-600">
-                      {selectedUser.application.hasRightToWork ? 'Verified' : 'Pending'}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block text-[10px] uppercase">Phone</span>
-                    <span className="font-mono font-medium text-foreground">
-                      {selectedUser.application.phone || '-'}
-                    </span>
+
+                  {/* Direct Marketing & Messaging Section in Modal */}
+                  <div className="space-y-3 p-4 bg-muted/20 rounded-xl border border-border">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-bold text-xs text-foreground flex items-center gap-1.5">
+                        <Megaphone className="w-3.5 h-3.5 text-primary" />
+                        Direct Outreach & Re-Engagement
+                      </h4>
+                      <span className="text-[10px] font-mono text-muted-foreground">
+                        Template: {crmCampaignTemplate}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {selectedUser.application.phone && (
+                        <Button
+                          size="sm"
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8"
+                          onClick={() => {
+                            const msg = getCampaignMessage(crmCampaignTemplate, {
+                              name:
+                                selectedUser.application?.name || selectedUser.email.split('@')[0],
+                              town: selectedUser.application?.town,
+                              sector: selectedUser.application?.sector,
+                              email: selectedUser.email,
+                            });
+                            window.open(
+                              getWhatsAppLink(selectedUser.application!.phone, msg),
+                              '_blank',
+                            );
+                          }}
+                        >
+                          <Smartphone className="w-3.5 h-3.5 mr-1.5" />
+                          Send WhatsApp / SMS Blast
+                        </Button>
+                      )}
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-8"
+                        onClick={() => {
+                          const msg = getCampaignMessage(crmCampaignTemplate, {
+                            name:
+                              selectedUser.application?.name || selectedUser.email.split('@')[0],
+                            town: selectedUser.application?.town,
+                            sector: selectedUser.application?.sector,
+                            email: selectedUser.email,
+                          });
+                          const mailUrl = getDirectMailLink(
+                            selectedUser.email,
+                            selectedUser.application?.name || selectedUser.email.split('@')[0],
+                            msg,
+                          );
+                          window.open(mailUrl, '_blank');
+                        }}
+                      >
+                        <Mail className="w-3.5 h-3.5 mr-1.5 text-primary" />
+                        Send Campaign Email
+                      </Button>
+
+                      {selectedUser.application.phone && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-xs h-8"
+                          onClick={() => {
+                            window.location.href = `tel:${selectedUser.application!.phone}`;
+                          }}
+                        >
+                          <PhoneCall className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
+                          Call Number
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ) : (
