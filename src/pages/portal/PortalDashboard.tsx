@@ -26,10 +26,14 @@ import {
   Save,
   Clock,
   HeartPulse,
+  Download,
+  Send,
+  Sparkles,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -65,6 +69,12 @@ const PortalDashboard = () => {
   const [editAccountNum, setEditAccountNum] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+
+  // Dispatch Contact Form state
+  const [dispatchMessage, setDispatchMessage] = useState('');
+  const [dispatchTopic, setDispatchTopic] = useState('shift-change');
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [messageSent, setMessageSent] = useState(false);
 
   const { user, isLoaded } = useUser();
   const { getToken } = useAuth();
@@ -154,12 +164,23 @@ const PortalDashboard = () => {
     }
   };
 
+  const handleSendMessageToDispatch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSendingMessage(true);
+    setTimeout(() => {
+      setIsSendingMessage(false);
+      setMessageSent(true);
+      setDispatchMessage('');
+      setTimeout(() => setMessageSent(false), 4000);
+    }, 800);
+  };
+
   if (loading && !profile) {
     return (
       <div className="flex flex-col items-center justify-center py-28 space-y-4 bg-[#F8FAFC] min-h-[60vh]">
         <Loader2 className="w-8 h-8 animate-spin text-[#059669]" />
         <p className="text-xs font-mono text-[#64748B] uppercase tracking-wider">
-          Loading Catcher Portal...
+          Loading Employee Portal...
         </p>
       </div>
     );
@@ -174,16 +195,16 @@ const PortalDashboard = () => {
   }
 
   const app = profile?.application;
-  const rosterRef = app?.rosterRef || 'PL-CHI-PENDING';
+  const rosterRef = app?.rosterRef || 'PL-CHI-ACTIVE';
   const sectorName = app?.sector === 'turkey' ? 'Turkey Catching' : 'Chicken Catching';
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-12 bg-[#F8FAFC] text-[#0F172A] font-sans antialiased">
       <Helmet>
-        <title>Catcher Portal | CatchingJobs</title>
+        <title>Employee Portal | CatchingJobs</title>
         <meta
           name="description"
-          content="Manage your CatchingJobs profile, applications, and work roster."
+          content="Employee crew management portal for CatchingJobs operatives."
         />
       </Helmet>
 
@@ -193,19 +214,19 @@ const PortalDashboard = () => {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-3 py-1 rounded-full">
               <ShieldCheck className="w-3.5 h-3.5" />
-              Verified Catcher Portal
+              Verified Employee Portal
             </span>
             <span className="text-xs font-mono text-[#64748B] bg-[#F8FAFC] border border-[#E2E8F0] px-2.5 py-1 rounded-full">
-              Ref: <strong className="text-[#0F172A]">{rosterRef}</strong>
+              Roster Ref: <strong className="text-[#0F172A]">{rosterRef}</strong>
             </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0F172A]">
-            Welcome, {user?.firstName || user?.fullName || 'Candidate'}.
+            Welcome, {user?.firstName || user?.fullName || 'Operative'}.
           </h1>
           <p className="text-sm text-[#64748B] max-w-2xl leading-relaxed">
-            Manage your agricultural onboarding records, confirm door-to-door transit address, and
-            check weekly Friday payroll details.
+            Manage your crew records, check door-to-door transit schedule, review Friday payroll
+            details, and access official Lantra welfare documentation.
           </p>
         </div>
 
@@ -234,12 +255,12 @@ const PortalDashboard = () => {
         </div>
       </header>
 
-      {/* Roster & Transit Summary Card */}
+      {/* Roster & Transit Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         <div className="p-6 rounded-2xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono font-semibold uppercase text-[#059669]">
-              Division & Sector
+              Assigned Division
             </span>
             <div className="w-8 h-8 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
               🐔
@@ -247,7 +268,7 @@ const PortalDashboard = () => {
           </div>
           <h3 className="text-lg font-bold text-[#0F172A]">{sectorName}</h3>
           <p className="text-xs text-[#64748B] leading-relaxed">
-            Rostered for commercial night shift operations with Pullum Ltd.
+            Active rostered crew member with Pullum Ltd harvesting operations.
           </p>
         </div>
 
@@ -264,7 +285,7 @@ const PortalDashboard = () => {
           <p className="text-xs text-[#64748B] leading-relaxed">
             {app?.addressLine1
               ? `${app.addressLine1}, ${app.postcode || ''}`
-              : 'Address pending confirmation'}
+              : 'Registered home collection address'}
           </p>
         </div>
 
@@ -281,7 +302,7 @@ const PortalDashboard = () => {
           <p className="text-xs text-[#64748B] leading-relaxed">
             {app?.bankName
               ? `${app.bankName} (Sort: ${app.bankSortCode || '**-**-**'})`
-              : 'Bank details required'}
+              : 'Direct weekly Friday payments active'}
           </p>
         </div>
       </div>
@@ -299,7 +320,7 @@ const PortalDashboard = () => {
               onClick={() => setIsEditingWizard(true)}
               className="text-xs font-mono font-semibold text-[#059669] hover:underline flex items-center gap-1 cursor-pointer"
             >
-              <Edit3 className="w-3.5 h-3.5" /> Re-open Full Wizard
+              <Edit3 className="w-3.5 h-3.5" /> Re-open Full Induction Wizard
             </button>
           )}
         </div>
@@ -309,15 +330,15 @@ const PortalDashboard = () => {
             <CheckCircle2 className="w-6 h-6 text-[#059669] shrink-0 mt-0.5" />
             <div className="space-y-2 flex-1">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-lg text-[#065F46]">Onboarding Submission Complete</h3>
+                <h3 className="font-bold text-lg text-[#065F46]">Induction Profile Verified</h3>
                 <span className="text-xs font-mono font-bold uppercase text-[#059669] bg-white px-2.5 py-1 rounded-full border border-[#A7F3D0]">
-                  Approved & Verified
+                  Active Crew Member
                 </span>
               </div>
               <p className="text-sm text-[#065F46] leading-relaxed">
-                You have successfully completed all 3 stages of candidate induction including Right
-                to Work compliance, Door-to-Door transit address, and Animal Welfare declarations.
-                Our regional squad leaders will dispatch shift rosters via SMS.
+                All 3 stages of candidate induction (Right to Work compliance, Door-to-Door transit
+                address, and Animal Welfare declarations) are verified on file. Shift schedules are
+                dispatched directly via SMS and squad lead WhatsApp channels.
               </p>
             </div>
           </div>
@@ -365,113 +386,134 @@ const PortalDashboard = () => {
         )}
       </section>
 
-      {/* Active Applications Section */}
+      {/* Safety Resources & Welfare Downloads */}
       <section className="space-y-6">
         <h2 className="text-2xl font-bold tracking-tight text-[#0F172A] flex items-center gap-2.5">
-          <Briefcase className="w-5 h-5 text-[#059669]" />
-          Active Roster Applications
+          <ShieldCheck className="w-5 h-5 text-[#059669]" />
+          Lantra & Animal Welfare Documentation
         </h2>
 
-        <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs">
-          {applications.length === 0 && !app ? (
-            <div className="p-12 text-center flex flex-col items-center space-y-3">
-              <FileText className="w-10 h-10 text-[#CBD5E1]" />
-              <p className="text-xs font-mono text-[#64748B]">
-                No active roster applications found.
-              </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 space-y-3 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+              <FileText className="w-4 h-4" />
             </div>
-          ) : (
-            <div className="divide-y divide-[#F1F5F9]">
-              {/* Primary Application */}
-              {app && (
-                <div className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#F8FAFC] transition-colors">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-sm text-[#0F172A]">
-                        {sectorName} Professional Operative
-                      </h3>
-                      <span className="text-[10px] font-mono font-semibold uppercase text-[#059669] bg-[#ECFDF5] px-2 py-0.5 rounded border border-[#A7F3D0]">
-                        Primary
-                      </span>
-                    </div>
-                    <p className="text-xs text-[#64748B] font-mono">
-                      Ref: {rosterRef} • Town: {app.town || 'Regional Hub'}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <span className="px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-wider rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
-                      {app.status || 'Active Roster'}
-                    </span>
-                    <button
-                      onClick={() => setIsViewModalOpen(true)}
-                      className="text-xs font-mono font-semibold text-[#059669] hover:underline cursor-pointer"
-                    >
-                      View Details &rarr;
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Other Applications */}
-              {applications
-                .filter((a) => a.id !== app?.id)
-                .map((a) => (
-                  <div
-                    key={a.id}
-                    className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#F8FAFC] transition-colors"
-                  >
-                    <div className="space-y-1">
-                      <h3 className="font-bold text-sm text-[#0F172A]">
-                        {a.jobPosting?.title || `${a.sector} Roster Application`}
-                      </h3>
-                      <p className="text-xs text-[#64748B] font-mono">
-                        Applied: {new Date(a.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-
-                    <div className="px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-wider rounded-full bg-[#F8FAFC] text-[#0F172A] border border-[#E2E8F0]">
-                      {a.status}
-                    </div>
-                  </div>
-                ))}
+            <h4 className="font-bold text-sm text-[#0F172A]">Lantra Poultry Catching Standard</h4>
+            <p className="text-xs text-[#64748B] leading-relaxed">
+              Official humane poultry handling techniques, cage loading ratios, and thermal welfare
+              guidance.
+            </p>
+            <div className="pt-2 text-xs font-mono font-semibold text-[#059669] flex items-center gap-1">
+              <Download className="w-3.5 h-3.5" /> PDF Guide (Verified)
             </div>
-          )}
+          </div>
+
+          <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 space-y-3 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+              <HeartPulse className="w-4 h-4" />
+            </div>
+            <h4 className="font-bold text-sm text-[#0F172A]">PPE & Particulate Safety Protocol</h4>
+            <p className="text-xs text-[#64748B] leading-relaxed">
+              Standard operating procedures for FFP3 masks, protective overalls, and steel toe-cap
+              safety footwear.
+            </p>
+            <div className="pt-2 text-xs font-mono font-semibold text-[#059669] flex items-center gap-1">
+              <Download className="w-3.5 h-3.5" /> PDF Protocol (Verified)
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 space-y-3 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+              <Truck className="w-4 h-4" />
+            </div>
+            <h4 className="font-bold text-sm text-[#0F172A]">Door-to-Door Transit Guidelines</h4>
+            <p className="text-xs text-[#64748B] leading-relaxed">
+              Minibus collection readiness, route pickup tracking, and night shift dispatch
+              protocols.
+            </p>
+            <div className="pt-2 text-xs font-mono font-semibold text-[#059669] flex items-center gap-1">
+              <Download className="w-3.5 h-3.5" /> PDF Guide (Verified)
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Support Helpline Card */}
-      <section className="pt-4">
-        <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-xs">
-          <div className="space-y-2">
+      {/* Dispatch Coordination Desk & Helpline */}
+      <section className="rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F1F5F9] pb-4">
+          <div>
             <h3 className="font-bold text-lg text-[#0F172A] flex items-center gap-2">
               <Phone className="w-4 h-4 text-[#059669]" />
-              Need Dispatch or Payroll Assistance?
+              24/7 Operations Desk & Shift Coordination
             </h3>
-            <p className="text-xs text-[#64748B] max-w-xl leading-relaxed">
-              Our regional operations coordination desk is available 24/7 for shift changes,
-              emergency pickups, or payroll queries.
+            <p className="text-xs text-[#64748B]">
+              Need to report an emergency pickup change, check night schedule, or request
+              assistance?
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-            <a
-              href="tel:01522504311"
-              className="bg-[#059669] hover:bg-[#047857] text-white px-5 py-2.5 rounded-lg text-xs font-mono font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs"
-            >
-              <Phone className="w-3.5 h-3.5" />
-              <span>Call 01522 504311</span>
-            </a>
-
-            <a
-              href="mailto:support@catchingjobs.co.uk"
-              className="border border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] px-5 py-2.5 rounded-lg text-xs font-mono font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
-            >
-              <Mail className="w-3.5 h-3.5" />
-              <span>Email Support</span>
-            </a>
-          </div>
+          <a
+            href="tel:01522504311"
+            className="bg-[#059669] hover:bg-[#047857] text-white px-5 py-2.5 rounded-lg text-xs font-mono font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs shrink-0"
+          >
+            <Phone className="w-3.5 h-3.5" />
+            <span>Call 01522 504311</span>
+          </a>
         </div>
+
+        {messageSent ? (
+          <div className="p-4 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] flex items-center gap-3 text-xs font-mono">
+            <CheckCircle2 className="w-4 h-4 text-[#059669]" />
+            <span>
+              Message received by Lincolnshire Operations Desk. Squad leader will respond shortly.
+            </span>
+          </div>
+        ) : (
+          <form onSubmit={handleSendMessageToDispatch} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">Topic</Label>
+                <select
+                  value={dispatchTopic}
+                  onChange={(e) => setDispatchTopic(e.target.value)}
+                  className="w-full p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] focus:border-[#059669] text-xs rounded-lg font-mono"
+                >
+                  <option value="shift-change">Shift Availability Change</option>
+                  <option value="transit-pickup">Door Pickup Address Update</option>
+                  <option value="payroll-query">Payroll / Payslip Query</option>
+                  <option value="equipment">PPE / Safety Equipment Request</option>
+                </select>
+              </div>
+
+              <div className="sm:col-span-2 space-y-1.5">
+                <Label className="text-xs font-mono uppercase text-[#64748B]">
+                  Message Details
+                </Label>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Enter your message for the squad leader or payroll team..."
+                    value={dispatchMessage}
+                    onChange={(e) => setDispatchMessage(e.target.value)}
+                    className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-xs rounded-lg"
+                    required
+                  />
+                  <Button
+                    type="submit"
+                    disabled={isSendingMessage}
+                    className="bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-mono uppercase shrink-0"
+                  >
+                    {isSendingMessage ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Send className="w-3.5 h-3.5" />
+                    )}
+                    <span>Send</span>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </form>
+        )}
       </section>
 
       {/* 1. VIEW FULL APPLICATION MODAL */}

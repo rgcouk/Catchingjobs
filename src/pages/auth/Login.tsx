@@ -36,7 +36,7 @@ export default function Login() {
 
   useEffect(() => {
     if (authLoaded && isSignedIn) {
-      navigate('/portal', { replace: true });
+      navigate('/employee', { replace: true });
     }
   }, [authLoaded, isSignedIn, navigate]);
 

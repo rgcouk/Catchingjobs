@@ -316,8 +316,8 @@ function App() {
   const activeTab =
     path === '/corporate'
       ? 'corporate'
-      : path === '/portal'
-        ? 'portal'
+      : path === '/employee'
+        ? 'employee'
         : path.startsWith('/chickens')
           ? 'chicken'
           : path.startsWith('/turkeys')
@@ -397,10 +397,10 @@ function App() {
             <SignedIn>
               <div className="flex items-center gap-3">
                 <Link
-                  to="/portal"
+                  to="/employee"
                   className="bg-[#059669] hover:bg-[#047857] text-white px-3.5 py-1.5 rounded-lg font-mono font-semibold text-xs uppercase tracking-wider transition-colors shadow-xs flex items-center gap-1.5"
                 >
-                  My Portal
+                  Employee Portal
                 </Link>
                 <UserButton afterSignOutUrl="/" />
               </div>
@@ -486,15 +486,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/portal"
-                element={
-                  <CatcherPortal
-                    applications={applications}
-                    onUpdateProfile={handleUpdateProfile}
-                  />
-                }
-              />
+              <Route path="/portal" element={<Navigate to="/employee" replace />} />
               <Route
                 path="/chickens"
                 element={

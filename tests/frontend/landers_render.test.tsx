@@ -190,7 +190,7 @@ describe('Public Lander Page Components Render Integrity', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Verified Catcher Portal/i)).toBeDefined();
+      expect(screen.getByText(/Verified Employee Portal/i)).toBeDefined();
     });
     expect(screen.getByText(/View Application/i)).toBeDefined();
     expect(screen.getByText(/Edit Details/i)).toBeDefined();

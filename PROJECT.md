@@ -3,7 +3,7 @@
 ## Architecture
 - **Frontend Architecture**: React 19 + React Router v7 with SSR server entry point.
   - Public Landers (`/`, `/corporate`, `/chickens`, `/turkeys`, `/:sector/:town`): Hallmark anti-AI-slop design system with OKLCH tokens (`--color-paper`, `--color-ink`, `--color-rule`, `--color-accent`), utilitarian messaging ("door-to-door pickup", "friendly teams", no hourly pay/times quotes), and high-end geometric/fluid vector illustrations.
-  - Dashboards, Auth & Portals (`/admin`, `/user-portal`, `/portal`, `/login`, `/register`, `/wizard`): `shadcn/ui` components (`@/components/ui/`) with standard CSS variables (`--background`, `--foreground`, `--card`, `--sidebar`).
+  - Dashboards, Auth & Employee Portals (`/admin`, `/employee`, `/login`, `/register`, `/wizard`): `shadcn/ui` components (`@/components/ui/`) with standard CSS variables (`--background`, `--foreground`, `--card`, `--sidebar`).
 - **Backend Architecture**: Hono serverless functions under `/api/*` deployed via Vercel rewrites.
   - Business logic encapsulated in Use-Case Services (`src/services/`) throwing Domain Exceptions (`src/services/exceptions.ts`).
   - Transport adapters in `/api/` map Domain Exceptions to standard HTTP status codes.
