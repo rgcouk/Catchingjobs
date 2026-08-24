@@ -77,6 +77,23 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
               <span>Talk to Recruitment (01522 504311)</span>
             </a>
           </div>
+
+          {/* Corporate Operations & Fleet Facility Banner */}
+          <div className="relative aspect-[16/9] md:aspect-[21/9] rounded-2xl overflow-hidden border border-[#E2E8F0] shadow-xs">
+            <img
+              src="/images/corporate-logistics.jpg"
+              alt="Pullum Ltd Agricultural Fleet Logistics & Dispatch Facility"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-xs p-3.5 rounded-xl border border-white/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
+              <span className="font-bold text-[#0F172A] flex items-center gap-2">
+                <Truck className="w-4 h-4 text-[#059669]" />
+                Pullum Ltd National Fleet & Route Coordination Center
+              </span>
+              <span className="text-[#64748B]">Lincolnshire HQ • 24/7 Operations</span>
+            </div>
+          </div>
         </div>
       </section>
 

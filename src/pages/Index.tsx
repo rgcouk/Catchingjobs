@@ -152,12 +152,12 @@ export default function Index({ onNavigate }: IndexProps) {
 
             <div className="relative aspect-square lg:aspect-[4/3] rounded-2xl bg-[#F8FAFC] overflow-hidden border border-[#E2E8F0] shadow-xs">
               <img
-                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=2500"
-                alt="Poultry catching operations"
+                src="/images/homepage-hero.jpg"
+                alt="Poultry catching operations and crew transit minibus"
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-xs p-3 rounded-xl border border-white/50 text-xs font-mono text-[#0F172A] flex items-center justify-between">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-xs p-3 rounded-xl border border-white/50 text-xs font-mono text-[#0F172A] flex items-center justify-between shadow-xs">
                 <span className="font-semibold flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
                   Live UK Roster
@@ -192,8 +192,8 @@ export default function Index({ onNavigate }: IndexProps) {
             >
               <div className="relative h-60 overflow-hidden border-b border-[#E2E8F0]">
                 <img
-                  src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800"
-                  alt="Chicken Catching"
+                  src="/images/chicken-sector-hero.jpg"
+                  alt="Chicken Catching Modern Facility"
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-xs border border-[#E2E8F0] px-3 py-1 rounded-full text-xs font-mono font-semibold uppercase text-[#059669]">
@@ -224,8 +224,8 @@ export default function Index({ onNavigate }: IndexProps) {
             >
               <div className="relative h-60 overflow-hidden border-b border-[#E2E8F0]">
                 <img
-                  src="https://images.unsplash.com/photo-1550684376-efcbd6e3f031?auto=format&fit=crop&q=80&w=800"
-                  alt="Turkey Catching"
+                  src="/images/turkey-sector-hero.jpg"
+                  alt="Turkey Catching Estate"
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-xs border border-[#E2E8F0] px-3 py-1 rounded-full text-xs font-mono font-semibold uppercase text-[#EA580C]">
@@ -249,6 +249,55 @@ export default function Index({ onNavigate }: IndexProps) {
                 </div>
               </div>
             </Link>
+          </div>
+        </section>
+
+        {/* Door-to-Door Transit Fleet Highlight Banner */}
+        <section className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs grid lg:grid-cols-2">
+          <div className="p-8 sm:p-12 flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-3 py-1 rounded-full">
+                <Truck className="w-3.5 h-3.5" />
+                GPS-Tracked Transit Service
+              </span>
+              <h2 className="text-3xl font-bold tracking-tight text-[#0F172A] leading-tight">
+                Door-to-Door Home Pickup Across Every Corridor.
+              </h2>
+              <p className="text-sm text-[#64748B] leading-relaxed">
+                Catchingjobs provides heated, modern minibus transport direct from your front door.
+                No bus stations, no cold morning depot waits. Our dispatch coordinators pick up each
+                crew member directly at their registered address before every night run.
+              </p>
+            </div>
+
+            <div className="space-y-3 pt-4 border-t border-[#F1F5F9] text-xs font-mono text-[#0F172A]">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#059669]" />
+                <span>Heated passenger minibuses with dedicated drivers</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#059669]" />
+                <span>Direct return drop-off to your front door at shift end</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#059669]" />
+                <span>Zero travel cost or fuel deduction from your Friday payroll</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative min-h-[300px] lg:min-h-full border-t lg:border-t-0 lg:border-l border-[#E2E8F0] overflow-hidden">
+            <img
+              src="/images/door-pickup-fleet.jpg"
+              alt="Door-to-door home pickup passenger transit fleet"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-xs p-3 rounded-xl border border-white/20 text-xs font-mono text-white flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-[#059669]" /> Direct Home Collection
+              </span>
+              <span className="text-slate-300">Free of Charge</span>
+            </div>
           </div>
         </section>
 
