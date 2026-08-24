@@ -986,563 +986,295 @@ const AdminDashboard = () => {
         const adminCount = users.filter((u) => u.role === 'ADMIN').length;
 
         return (
-          <div className="flex h-full w-full">
-            {/* Main CRM User Table */}
-            <div
-              className={`flex-1 flex flex-col min-w-0 overflow-y-auto ${
-                selectedUser ? 'hidden lg:flex' : 'flex'
-              }`}
-            >
-              <div className="p-4 md:p-8 space-y-6">
-                {/* Header & Stats Banner */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
-                      <Users className="w-7 h-7 text-primary" />
-                      Users & Operatives CRM
-                    </h1>
-                    <p className="text-muted-foreground text-xs sm:text-sm">
-                      Manage all registered system users, staff roles, and linked crew compliance
-                      profiles.
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={exportUsersCSV}
-                      className="text-xs shrink-0"
-                    >
-                      <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
-                      Export CSV
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => setIsInviteModalOpen(true)}
-                      className="bg-primary text-primary-foreground text-xs shrink-0"
-                    >
-                      <UserPlus className="w-3.5 h-3.5 mr-1.5" />
-                      Invite Staff
-                    </Button>
-                  </div>
-                </div>
-
-                {/* CRM KPI Metric Strips */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div
-                    className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => setActiveTab('users')}
-                  >
-                    <span className="text-xs font-mono text-muted-foreground block uppercase">
-                      Total Accounts
-                    </span>
-                    <span className="text-2xl font-bold text-foreground">{users.length}</span>
-                  </div>
-                  <div
-                    className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => setActiveTab('workers')}
-                  >
-                    <span className="text-xs font-mono text-muted-foreground block uppercase">
-                      Field Operatives
-                    </span>
-                    <span className="text-2xl font-bold text-emerald-600">{workerCount}</span>
-                  </div>
-                  <div className="bg-card border border-border p-3.5 rounded-lg">
-                    <span className="text-xs font-mono text-muted-foreground block uppercase">
-                      Induction Verified
-                    </span>
-                    <span className="text-2xl font-bold text-primary">{verifiedCount}</span>
-                  </div>
-                  <div
-                    className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => setActiveTab('admins')}
-                  >
-                    <span className="text-xs font-mono text-muted-foreground block uppercase">
-                      Admins / Managers
-                    </span>
-                    <span className="text-2xl font-bold text-purple-600">{adminCount}</span>
-                  </div>
-                </div>
-
-                {/* Search & Filter Bar */}
-                <div className="bg-card border border-border p-3.5 rounded-lg flex flex-col md:flex-row items-center gap-3 shadow-xs">
-                  <div className="relative flex-1 w-full">
-                    <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
-                    <Input
-                      placeholder="Search users by email, name, town, or user ID..."
-                      value={userSearch}
-                      onChange={(e) => setUserSearch(e.target.value)}
-                      className="pl-9 text-xs"
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-2 w-full md:w-auto">
-                    <Select
-                      value={
-                        activeTab === 'workers'
-                          ? 'WORKER'
-                          : activeTab === 'admins'
-                            ? 'ADMIN'
-                            : userRoleFilter
-                      }
-                      onValueChange={(val: any) => setUserRoleFilter(val)}
-                    >
-                      <SelectTrigger className="text-xs w-full md:w-[130px]">
-                        <SelectValue placeholder="Role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ALL">All Roles</SelectItem>
-                        <SelectItem value="ADMIN">Admins</SelectItem>
-                        <SelectItem value="WORKER">Workers</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <Select
-                      value={userStatusFilter}
-                      onValueChange={(val: any) => setUserStatusFilter(val)}
-                    >
-                      <SelectTrigger className="text-xs w-full md:w-[160px]">
-                        <SelectValue placeholder="Onboarding" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ALL">All Statuses</SelectItem>
-                        <SelectItem value="VERIFIED">Induction Verified</SelectItem>
-                        <SelectItem value="PENDING">Onboarding Pending</SelectItem>
-                        <SelectItem value="NO_APP">No Application</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* CRM Directory Table */}
-                <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col shadow-xs">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>User / Operative</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Linked Profile</TableHead>
-                        <TableHead>Location Hub</TableHead>
-                        <TableHead>Registered</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredUsers.map((u) => {
-                        const app = u.application;
-                        const isSelected = selectedUser?.id === u.id;
-                        return (
-                          <TableRow
-                            key={u.id}
-                            className={`cursor-pointer transition-colors ${
-                              isSelected ? 'bg-accent/50' : 'hover:bg-muted/50'
-                            }`}
-                            onClick={() => setSelectedUser(u)}
-                          >
-                            <TableCell className="py-3.5">
-                              <div className="flex items-center gap-3">
-                                <div
-                                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0 ${
-                                    u.role === 'ADMIN'
-                                      ? 'bg-purple-600'
-                                      : app?.profileFormCompleted
-                                        ? 'bg-emerald-600'
-                                        : 'bg-slate-700'
-                                  }`}
-                                >
-                                  {(app?.name || u.email).charAt(0).toUpperCase()}
-                                </div>
-                                <div className="space-y-0.5">
-                                  <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
-                                    <span>{app?.name || u.email.split('@')[0]}</span>
-                                    {u.role === 'ADMIN' && (
-                                      <Badge
-                                        variant="outline"
-                                        className="text-[10px] py-0 px-1 font-mono"
-                                      >
-                                        Staff
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground font-mono">
-                                    {u.email}
-                                  </div>
-                                </div>
-                              </div>
-                            </TableCell>
-
-                            <TableCell>
-                              <div onClick={(e) => e.stopPropagation()}>
-                                <Select
-                                  value={u.role}
-                                  onValueChange={(newRole) => handleUpdateUserRole(u.id, newRole)}
-                                >
-                                  <SelectTrigger className="h-7 text-xs w-[105px]">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="WORKER">Worker</SelectItem>
-                                    <SelectItem value="ADMIN">Admin</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                            </TableCell>
-
-                            <TableCell>
-                              {app ? (
-                                <div className="space-y-1">
-                                  <div className="flex items-center gap-1.5">
-                                    <Badge
-                                      variant={app.profileFormCompleted ? 'default' : 'outline'}
-                                      className="text-[10px] uppercase font-mono"
-                                    >
-                                      {app.profileFormCompleted ? (
-                                        <span className="flex items-center gap-1">
-                                          <ShieldCheck className="w-3 h-3" /> Verified
-                                        </span>
-                                      ) : (
-                                        <span className="flex items-center gap-1">
-                                          <Clock className="w-3 h-3" /> Incomplete
-                                        </span>
-                                      )}
-                                    </Badge>
-                                    <span className="text-[11px] font-mono text-muted-foreground">
-                                      {app.rosterRef}
-                                    </span>
-                                  </div>
-                                </div>
-                              ) : (
-                                <span className="text-xs text-muted-foreground italic">
-                                  No linked application
-                                </span>
-                              )}
-                            </TableCell>
-
-                            <TableCell className="text-xs text-muted-foreground">
-                              {app ? (
-                                <span>
-                                  {app.town} ({app.sector})
-                                </span>
-                              ) : (
-                                <span>-</span>
-                              )}
-                            </TableCell>
-
-                            <TableCell className="text-xs text-muted-foreground font-mono">
-                              {new Date(u.createdAt).toLocaleDateString()}
-                            </TableCell>
-
-                            <TableCell className="text-right">
-                              <div
-                                className="flex items-center justify-end gap-1"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0"
-                                  title="Inspect CRM Profile"
-                                  onClick={() => setSelectedUser(u)}
-                                >
-                                  <Eye className="w-4 h-4 text-primary" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                                  title="Delete User"
-                                  onClick={() =>
-                                    setDeleteConfirm({
-                                      type: 'user',
-                                      id: u.id,
-                                      title: u.email,
-                                    })
-                                  }
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                      {filteredUsers.length === 0 && (
-                        <TableRow>
-                          <TableCell
-                            colSpan={6}
-                            className="text-center py-10 text-muted-foreground"
-                          >
-                            No users found matching current filters.
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
+          <div className="p-4 md:p-8 space-y-6 w-full">
+            {/* Header & Stats Banner */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
+                  <Users className="w-7 h-7 text-primary" />
+                  Users & Operatives CRM
+                </h1>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Manage all registered system users, staff roles, and linked crew compliance
+                  profiles.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={exportUsersCSV}
+                  className="text-xs shrink-0"
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
+                  Export CSV
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => setIsInviteModalOpen(true)}
+                  className="bg-primary text-primary-foreground text-xs shrink-0"
+                >
+                  <UserPlus className="w-3.5 h-3.5 mr-1.5" />
+                  Invite Staff
+                </Button>
               </div>
             </div>
 
-            {/* User CRM Side Inspector Drawer */}
-            {selectedUser && (
-              <div className="w-full lg:w-[480px] border-l border-border bg-card flex flex-col shrink-0 h-full overflow-y-auto shadow-lg">
-                <div className="p-6 border-b border-border flex justify-between items-start sticky top-0 bg-card z-10">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-xl font-bold text-foreground">
-                        {selectedUser.application?.name || selectedUser.email.split('@')[0]}
-                      </h2>
-                      <Badge
-                        variant={selectedUser.role === 'ADMIN' ? 'default' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {selectedUser.role}
-                      </Badge>
-                    </div>
-                    <p className="text-xs font-mono text-muted-foreground">{selectedUser.email}</p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedUser(null)}
-                    className="text-muted-foreground"
-                  >
-                    <X className="w-5 h-5" />
-                  </Button>
-                </div>
-
-                <div className="p-6 space-y-6 flex-1 text-xs">
-                  {/* Role Switcher & System Meta */}
-                  <div className="bg-muted/40 p-4 rounded-lg border border-border space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-xs text-foreground">Account Role</span>
-                      <Select
-                        value={selectedUser.role}
-                        onValueChange={(role) => handleUpdateUserRole(selectedUser.id, role)}
-                      >
-                        <SelectTrigger className="h-7 text-xs w-[120px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="WORKER">Field Worker</SelectItem>
-                          <SelectItem value="ADMIN">Administrator</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-muted-foreground border-t border-border pt-2">
-                      <div>
-                        <span>User ID: </span>
-                        <span className="text-foreground truncate block">{selectedUser.id}</span>
-                      </div>
-                      <div>
-                        <span>Member Since: </span>
-                        <span className="text-foreground">
-                          {new Date(selectedUser.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Linked Application Compliance Data */}
-                  {selectedUser.application ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
-                          <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                          Compliance & Induction Profile
-                        </h3>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-7 text-[11px]"
-                          onClick={() => {
-                            setSelectedApp(selectedUser.application as any);
-                            setActiveTab('applicants');
-                          }}
-                        >
-                          View in Applicants
-                        </Button>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3 bg-muted/30 p-3.5 rounded-lg border border-border">
-                        <div>
-                          <span className="text-muted-foreground block text-[10px] uppercase">
-                            Roster Ref
-                          </span>
-                          <span className="font-mono font-bold text-foreground">
-                            {selectedUser.application.rosterRef}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground block text-[10px] uppercase">
-                            Assigned Sector
-                          </span>
-                          <span className="font-bold text-foreground capitalize">
-                            {selectedUser.application.sector}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground block text-[10px] uppercase">
-                            Mobile Phone
-                          </span>
-                          <span className="font-mono font-bold text-foreground">
-                            {selectedUser.application.phone || '-'}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground block text-[10px] uppercase">
-                            Town Hub
-                          </span>
-                          <span className="font-bold text-foreground">
-                            {selectedUser.application.town}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground block text-[10px] uppercase">
-                            Right to Work UK
-                          </span>
-                          <span className="font-semibold text-emerald-600">
-                            {selectedUser.application.hasRightToWork ? 'Verified' : 'Pending'}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground block text-[10px] uppercase">
-                            Driving License
-                          </span>
-                          <span className="font-semibold text-foreground">
-                            {selectedUser.application.hasDrivingLicense ? 'Yes' : 'No'}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* BACS Wages & Home Address */}
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-xs text-foreground">Transit & Payroll</h4>
-                        <div className="bg-muted/30 p-3 rounded-lg border border-border space-y-1.5 text-[11px]">
-                          <div>
-                            <span className="text-muted-foreground">Home Pickup: </span>
-                            <span className="font-medium text-foreground">
-                              {selectedUser.application.addressLine1
-                                ? `${selectedUser.application.addressLine1}, ${selectedUser.application.postcode}`
-                                : 'Address not entered'}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground">BACS Payroll: </span>
-                            <span className="font-mono font-medium text-foreground">
-                              {selectedUser.application.bankName
-                                ? `${selectedUser.application.bankName} (Sort: ${selectedUser.application.bankSortCode})`
-                                : 'Bank details pending'}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground">Emergency Contact: </span>
-                            <span className="font-medium text-foreground">
-                              {selectedUser.application.emergencyName
-                                ? `${selectedUser.application.emergencyName} (${selectedUser.application.emergencyPhone})`
-                                : 'None on file'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-4 rounded-lg bg-muted/30 border border-dashed border-border text-center space-y-2">
-                      <p className="text-muted-foreground">
-                        This user has registered an account but has not yet linked an employment
-                        application form.
-                      </p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs"
-                        onClick={() => applyTemplate('welcome', selectedUser)}
-                      >
-                        Send Welcome Message
-                      </Button>
-                    </div>
-                  )}
-
-                  {/* Direct Outreach & Quick Message Box */}
-                  <div className="pt-4 border-t border-border space-y-3">
-                    <h4 className="text-xs font-semibold text-foreground">
-                      Direct Operative Outreach
-                    </h4>
-                    <div className="flex flex-wrap gap-1.5">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-[11px] h-7"
-                        onClick={() =>
-                          applyTemplate('interview', selectedUser.application || selectedUser)
-                        }
-                      >
-                        Interview
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-[11px] h-7"
-                        onClick={() =>
-                          applyTemplate('documents', selectedUser.application || selectedUser)
-                        }
-                      >
-                        Docs Check
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-[11px] h-7"
-                        onClick={() =>
-                          applyTemplate('shift', selectedUser.application || selectedUser)
-                        }
-                      >
-                        Shift Alert
-                      </Button>
-                    </div>
-
-                    <Textarea
-                      value={customMsgText}
-                      onChange={(e) => setCustomMsgText(e.target.value)}
-                      placeholder="Type a message or select a pre-filled template..."
-                      className="text-xs min-h-[90px]"
-                    />
-
-                    <div className="flex gap-2">
-                      <Button
-                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs"
-                        disabled={!customMsgText || !selectedUser.application?.phone}
-                        onClick={() =>
-                          window.open(
-                            getWhatsAppLink(selectedUser.application!.phone, customMsgText),
-                            '_blank',
-                          )
-                        }
-                      >
-                        <Smartphone className="w-3.5 h-3.5 mr-1.5" />
-                        WhatsApp
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="flex-1 text-xs"
-                        disabled={!customMsgText}
-                        onClick={() =>
-                          window.open(getMailLink(selectedUser.email, customMsgText), '_blank')
-                        }
-                      >
-                        <Mail className="w-3.5 h-3.5 mr-1.5" />
-                        Email
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+            {/* CRM KPI Metric Strips */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div
+                className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('users')}
+              >
+                <span className="text-xs font-mono text-muted-foreground block uppercase">
+                  Total Accounts
+                </span>
+                <span className="text-2xl font-bold text-foreground">{users.length}</span>
               </div>
-            )}
+              <div
+                className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('workers')}
+              >
+                <span className="text-xs font-mono text-muted-foreground block uppercase">
+                  Field Operatives
+                </span>
+                <span className="text-2xl font-bold text-emerald-600">{workerCount}</span>
+              </div>
+              <div className="bg-card border border-border p-3.5 rounded-lg">
+                <span className="text-xs font-mono text-muted-foreground block uppercase">
+                  Induction Verified
+                </span>
+                <span className="text-2xl font-bold text-primary">{verifiedCount}</span>
+              </div>
+              <div
+                className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('admins')}
+              >
+                <span className="text-xs font-mono text-muted-foreground block uppercase">
+                  Admins / Managers
+                </span>
+                <span className="text-2xl font-bold text-purple-600">{adminCount}</span>
+              </div>
+            </div>
+
+            {/* Search & Filter Bar */}
+            <div className="bg-card border border-border p-3.5 rounded-lg flex flex-col md:flex-row items-center gap-3 shadow-xs">
+              <div className="relative flex-1 w-full">
+                <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
+                <Input
+                  placeholder="Search users by email, name, town, or user ID..."
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  className="pl-9 text-xs"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 w-full md:w-auto">
+                <Select
+                  value={
+                    activeTab === 'workers'
+                      ? 'WORKER'
+                      : activeTab === 'admins'
+                        ? 'ADMIN'
+                        : userRoleFilter
+                  }
+                  onValueChange={(val: any) => setUserRoleFilter(val)}
+                >
+                  <SelectTrigger className="text-xs w-full md:w-[130px]">
+                    <SelectValue placeholder="Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All Roles</SelectItem>
+                    <SelectItem value="ADMIN">Admins</SelectItem>
+                    <SelectItem value="WORKER">Workers</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={userStatusFilter}
+                  onValueChange={(val: any) => setUserStatusFilter(val)}
+                >
+                  <SelectTrigger className="text-xs w-full md:w-[160px]">
+                    <SelectValue placeholder="Onboarding" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All Statuses</SelectItem>
+                    <SelectItem value="VERIFIED">Induction Verified</SelectItem>
+                    <SelectItem value="PENDING">Onboarding Pending</SelectItem>
+                    <SelectItem value="NO_APP">No Application</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* CRM Directory Table */}
+            <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col shadow-xs">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>User / Operative</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Linked Profile</TableHead>
+                    <TableHead>Location Hub</TableHead>
+                    <TableHead>Registered</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredUsers.map((u) => {
+                    const app = u.application;
+                    const isSelected = selectedUser?.id === u.id;
+                    return (
+                      <TableRow
+                        key={u.id}
+                        className={`cursor-pointer transition-colors ${
+                          isSelected ? 'bg-accent/50' : 'hover:bg-muted/50'
+                        }`}
+                        onClick={() => setSelectedUser(u)}
+                      >
+                        <TableCell className="py-3.5">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0 ${
+                                u.role === 'ADMIN'
+                                  ? 'bg-purple-600'
+                                  : app?.profileFormCompleted
+                                    ? 'bg-emerald-600'
+                                    : 'bg-slate-700'
+                              }`}
+                            >
+                              {(app?.name || u.email).charAt(0).toUpperCase()}
+                            </div>
+                            <div className="space-y-0.5">
+                              <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
+                                <span>{app?.name || u.email.split('@')[0]}</span>
+                                {u.role === 'ADMIN' && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] py-0 px-1 font-mono"
+                                  >
+                                    Staff
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="text-xs text-muted-foreground font-mono">
+                                {u.email}
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+
+                        <TableCell>
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <Select
+                              value={u.role}
+                              onValueChange={(newRole) => handleUpdateUserRole(u.id, newRole)}
+                            >
+                              <SelectTrigger className="h-7 text-xs w-[105px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="WORKER">Worker</SelectItem>
+                                <SelectItem value="ADMIN">Admin</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </TableCell>
+
+                        <TableCell>
+                          {app ? (
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-1.5">
+                                <Badge
+                                  variant={app.profileFormCompleted ? 'default' : 'outline'}
+                                  className="text-[10px] uppercase font-mono"
+                                >
+                                  {app.profileFormCompleted ? (
+                                    <span className="flex items-center gap-1">
+                                      <ShieldCheck className="w-3 h-3" /> Verified
+                                    </span>
+                                  ) : (
+                                    <span className="flex items-center gap-1">
+                                      <Clock className="w-3 h-3" /> Incomplete
+                                    </span>
+                                  )}
+                                </Badge>
+                                <span className="text-[11px] font-mono text-muted-foreground">
+                                  {app.rosterRef}
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground italic">
+                              No linked application
+                            </span>
+                          )}
+                        </TableCell>
+
+                        <TableCell className="text-xs text-muted-foreground">
+                          {app ? (
+                            <span>
+                              {app.town} ({app.sector})
+                            </span>
+                          ) : (
+                            <span>-</span>
+                          )}
+                        </TableCell>
+
+                        <TableCell className="text-xs text-muted-foreground font-mono">
+                          {new Date(u.createdAt).toLocaleDateString()}
+                        </TableCell>
+
+                        <TableCell className="text-right">
+                          <div
+                            className="flex items-center justify-end gap-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0"
+                              title="Inspect CRM Profile"
+                              onClick={() => setSelectedUser(u)}
+                            >
+                              <Eye className="w-4 h-4 text-primary" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                              title="Delete User"
+                              onClick={() =>
+                                setDeleteConfirm({
+                                  type: 'user',
+                                  id: u.id,
+                                  title: u.email,
+                                })
+                              }
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                  {filteredUsers.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                        No users found matching current filters.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         );
       }
 
       /* =========================================================================
-         3. APPLICANTS & KANBAN PIPELINE (with /admin/applicants, /admin/kanban, /admin/reviewing, /admin/hired, /admin/rejected)
+         3. APPLICANTS & KANBAN PIPELINE (Full Width)
       ========================================================================= */
       case 'kanban':
       case 'all':
@@ -1572,632 +1304,342 @@ const AdminDashboard = () => {
         });
 
         return (
-          <div className="flex h-full w-full">
-            {/* Main Table / Kanban Area */}
-            <div
-              className={`flex-1 flex flex-col min-w-0 overflow-y-auto ${
-                selectedApp ? 'hidden lg:flex' : 'flex'
-              }`}
-            >
-              <div className="p-4 md:p-8 space-y-6">
-                {/* Header & View Controls */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
-                      <Briefcase className="w-7 h-7 text-primary" />
-                      Applicants Pipeline
-                    </h1>
-                    <p className="text-muted-foreground text-xs sm:text-sm">
-                      Track candidate progress from initial intake through compliance vetting and
-                      hiring.
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={exportApplicantsCSV}
-                      className="text-xs shrink-0"
-                    >
-                      <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
-                      Export CSV
-                    </Button>
-                    <div className="flex rounded-lg border border-border p-0.5 bg-muted/30 shrink-0">
-                      <Button
-                        size="sm"
-                        variant={!isKanban ? 'default' : 'ghost'}
-                        className="h-7 text-xs px-2.5"
-                        onClick={() => {
-                          setApplicantViewMode('table');
-                          if (activeTab === 'kanban') setActiveTab('applicants');
-                        }}
-                      >
-                        <ListFilter className="w-3.5 h-3.5 mr-1" />
-                        Table
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant={isKanban ? 'default' : 'ghost'}
-                        className="h-7 text-xs px-2.5"
-                        onClick={() => {
-                          setApplicantViewMode('kanban');
-                          setActiveTab('kanban');
-                        }}
-                      >
-                        <Columns3 className="w-3.5 h-3.5 mr-1" />
-                        Kanban
-                      </Button>
-                    </div>
-                  </div>
+          <div className="p-4 md:p-8 space-y-6 w-full">
+            {/* Header & View Controls */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
+                  <Briefcase className="w-7 h-7 text-primary" />
+                  Applicants Pipeline
+                </h1>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Track candidate progress from initial intake through compliance vetting and
+                  hiring.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={exportApplicantsCSV}
+                  className="text-xs shrink-0"
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
+                  Export CSV
+                </Button>
+                <div className="flex rounded-lg border border-border p-0.5 bg-muted/30 shrink-0">
+                  <Button
+                    size="sm"
+                    variant={!isKanban ? 'default' : 'ghost'}
+                    className="h-7 text-xs px-2.5"
+                    onClick={() => {
+                      setApplicantViewMode('table');
+                      if (activeTab === 'kanban') setActiveTab('applicants');
+                    }}
+                  >
+                    <ListFilter className="w-3.5 h-3.5 mr-1" />
+                    Table
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={isKanban ? 'default' : 'ghost'}
+                    className="h-7 text-xs px-2.5"
+                    onClick={() => {
+                      setApplicantViewMode('kanban');
+                      setActiveTab('kanban');
+                    }}
+                  >
+                    <Columns3 className="w-3.5 h-3.5 mr-1" />
+                    Kanban
+                  </Button>
                 </div>
-
-                {/* Pipeline KPI Metric Strips */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div
-                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => setActiveTab('applicants')}
-                  >
-                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
-                      New Intake
-                    </span>
-                    <span className="text-xl font-bold text-blue-600">
-                      {applications.filter((a) => (a.status || 'NEW') === 'NEW').length}
-                    </span>
-                  </div>
-                  <div
-                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => setActiveTab('reviewing')}
-                  >
-                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
-                      Under Review
-                    </span>
-                    <span className="text-xl font-bold text-amber-600">
-                      {applications.filter((a) => a.status === 'REVIEWING').length}
-                    </span>
-                  </div>
-                  <div
-                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => setActiveTab('hired')}
-                  >
-                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
-                      Hired / Rostered
-                    </span>
-                    <span className="text-xl font-bold text-emerald-600">
-                      {applications.filter((a) => a.status === 'HIRED').length}
-                    </span>
-                  </div>
-                  <div
-                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => setActiveTab('rejected')}
-                  >
-                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
-                      Rejected
-                    </span>
-                    <span className="text-xl font-bold text-rose-600">
-                      {applications.filter((a) => a.status === 'REJECTED').length}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Search & Multi-filter */}
-                <div className="bg-card border border-border p-3.5 rounded-lg flex flex-col sm:flex-row items-center gap-3 shadow-xs">
-                  <div className="relative flex-1 w-full">
-                    <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
-                    <Input
-                      placeholder="Search candidates by name, phone, town, or roster ref..."
-                      value={applicantSearch}
-                      onChange={(e) => setApplicantSearch(e.target.value)}
-                      className="pl-9 text-xs"
-                    />
-                  </div>
-
-                  <Select
-                    value={applicantSectorFilter}
-                    onValueChange={(val: any) => setApplicantSectorFilter(val)}
-                  >
-                    <SelectTrigger className="text-xs w-full sm:w-[170px]">
-                      <SelectValue placeholder="Sector" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ALL">All Sectors</SelectItem>
-                      <SelectItem value="chicken">Chicken Catching</SelectItem>
-                      <SelectItem value="turkey">Turkey Squads</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Body: Kanban or Table */}
-                {isKanban ? (
-                  <div className="pt-1">
-                    <KanbanBoard
-                      columns={[
-                        { id: 'NEW', title: 'New Intake' },
-                        { id: 'REVIEWING', title: 'Under Review' },
-                        { id: 'HIRED', title: 'Hired / Rostered' },
-                        { id: 'REJECTED', title: 'Rejected' },
-                      ]}
-                      tasks={filteredApps.map((app) => ({
-                        id: String(app.id),
-                        title: app.name || 'Anonymous Applicant',
-                        subtitle: `${app.sector?.toUpperCase()} • ${app.town || 'Unassigned'}`,
-                        date: new Date(app.createdAt).toLocaleDateString(),
-                        statusId: app.status || 'NEW',
-                        name: app.name || undefined,
-                        email: app.email || undefined,
-                        phone: app.phone || undefined,
-                        sector: app.sector,
-                        town: app.town,
-                        rosterRef: app.rosterRef,
-                        hasRightToWork: app.hasRightToWork,
-                        hasDrivingLicense: app.hasDrivingLicense,
-                        profileFormCompleted: app.profileFormCompleted,
-                        contacted: app.contacted,
-                        safetyResourcesSent: app.safetyResourcesSent,
-                        safetyTasksCompleted: app.safetyTasksCompleted,
-                        rawApplication: app,
-                      }))}
-                      onTaskStatusChange={(taskId, newStatusId) =>
-                        updateApplicationStatus(Number(taskId), newStatusId)
-                      }
-                      onTaskSelect={(task) => {
-                        const app =
-                          task.rawApplication || filteredApps.find((a) => a.id === Number(task.id));
-                        if (app) setSelectedApp(app);
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <ErrorBoundary>
-                    <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col shadow-xs">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Candidate</TableHead>
-                            <TableHead>Sector</TableHead>
-                            <TableHead>Town Hub</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Compliance</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {filteredApps.map((app) => {
-                            const isSelected = selectedApp?.id === app.id;
-                            return (
-                              <TableRow
-                                key={app.id}
-                                className={`cursor-pointer transition-colors ${
-                                  isSelected ? 'bg-accent/50' : 'hover:bg-muted/50'
-                                }`}
-                                onClick={() => setSelectedApp(app)}
-                              >
-                                <TableCell className="py-3.5">
-                                  <div className="flex items-center gap-3">
-                                    <div
-                                      className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
-                                        app.sector === 'chicken'
-                                          ? 'bg-amber-100 text-amber-800'
-                                          : 'bg-blue-100 text-blue-800'
-                                      }`}
-                                    >
-                                      {(app.name || 'A').charAt(0).toUpperCase()}
-                                    </div>
-                                    <div className="space-y-0.5">
-                                      <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
-                                        <span>{app.name || 'Anonymous Applicant'}</span>
-                                      </div>
-                                      <div className="text-xs text-muted-foreground font-mono">
-                                        {app.email || app.phone || 'No direct contact'}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </TableCell>
-
-                                <TableCell>
-                                  <Badge
-                                    variant="outline"
-                                    className="text-[10px] uppercase font-mono"
-                                  >
-                                    {app.sector}
-                                  </Badge>
-                                </TableCell>
-
-                                <TableCell className="text-xs text-muted-foreground">
-                                  {app.town || '-'}
-                                </TableCell>
-
-                                <TableCell>
-                                  <div onClick={(e) => e.stopPropagation()}>
-                                    <Select
-                                      value={app.status || 'NEW'}
-                                      onValueChange={(val) => updateApplicationStatus(app.id, val)}
-                                    >
-                                      <SelectTrigger className="h-7 text-xs w-[125px]">
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="NEW">New Intake</SelectItem>
-                                        <SelectItem value="REVIEWING">Under Review</SelectItem>
-                                        <SelectItem value="HIRED">Hired</SelectItem>
-                                        <SelectItem value="REJECTED">Rejected</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                </TableCell>
-
-                                <TableCell>
-                                  <div className="flex items-center gap-1.5">
-                                    {app.hasRightToWork ? (
-                                      <Badge
-                                        variant="outline"
-                                        className="text-[9px] py-0 px-1.5 bg-emerald-50 text-emerald-700 border-emerald-200 font-mono flex items-center gap-1"
-                                      >
-                                        <ShieldCheck className="w-2.5 h-2.5" /> RTW
-                                      </Badge>
-                                    ) : (
-                                      <Badge
-                                        variant="outline"
-                                        className="text-[9px] py-0 px-1.5 text-muted-foreground font-mono"
-                                      >
-                                        RTW Pending
-                                      </Badge>
-                                    )}
-
-                                    {app.profileFormCompleted && (
-                                      <Badge
-                                        variant="outline"
-                                        className="text-[9px] py-0 px-1.5 bg-blue-50 text-blue-700 border-blue-200 font-mono flex items-center gap-1"
-                                      >
-                                        <CheckCircle2 className="w-2.5 h-2.5" /> Induction
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </TableCell>
-
-                                <TableCell className="text-xs text-muted-foreground font-mono">
-                                  {new Date(app.createdAt).toLocaleDateString()}
-                                </TableCell>
-
-                                <TableCell className="text-right">
-                                  <div
-                                    className="flex items-center justify-end gap-1"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    {app.phone && (
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700"
-                                        title="WhatsApp Candidate"
-                                        onClick={() =>
-                                          window.open(
-                                            getWhatsAppLink(
-                                              app.phone,
-                                              `Hi ${app.name || 'Operative'}, Pullum Ltd recruitment team here regarding your application.`,
-                                            ),
-                                            '_blank',
-                                          )
-                                        }
-                                      >
-                                        <Smartphone className="w-4 h-4" />
-                                      </Button>
-                                    )}
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-8 w-8 p-0"
-                                      title="Inspect Candidate"
-                                      onClick={() => setSelectedApp(app)}
-                                    >
-                                      <Eye className="w-4 h-4 text-primary" />
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                          {filteredApps.length === 0 && (
-                            <TableRow>
-                              <TableCell
-                                colSpan={7}
-                                className="text-center py-10 text-muted-foreground"
-                              >
-                                No applications found in this view.
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </ErrorBoundary>
-                )}
               </div>
             </div>
 
-            {/* Applicant Side Inspector Drawer */}
-            {selectedApp && (
-              <div className="w-full lg:w-[480px] border-l border-border bg-card flex flex-col shrink-0 h-full overflow-y-auto shadow-lg">
-                <div className="p-6 border-b border-border flex justify-between items-start sticky top-0 bg-card z-10">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-xl font-bold text-foreground">
-                        {selectedApp.name || 'Anonymous Applicant'}
-                      </h2>
-                      <Badge
-                        variant={
-                          selectedApp.status === 'HIRED'
-                            ? 'default'
-                            : selectedApp.status === 'REJECTED'
-                              ? 'destructive'
-                              : 'secondary'
-                        }
-                        className="text-xs font-mono"
-                      >
-                        {selectedApp.status || 'NEW'}
-                      </Badge>
-                    </div>
-                    <p className="text-xs font-mono text-muted-foreground">
-                      Ref: {selectedApp.rosterRef} • {selectedApp.sector}
-                    </p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedApp(null);
-                      setCustomMsgText('');
-                    }}
-                    className="text-muted-foreground"
-                  >
-                    <X className="w-5 h-5" />
-                  </Button>
-                </div>
-
-                <div className="p-6 space-y-6 flex-1 text-xs">
-                  {/* Status & Decision Actions */}
-                  <div className="bg-muted/40 p-4 rounded-lg border border-border space-y-3">
-                    <span className="font-semibold text-xs text-foreground block">
-                      Pipeline Action & Decision
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedApp.status !== 'REVIEWING' && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-8 text-xs flex-1"
-                          onClick={() => updateApplicationStatus(selectedApp.id, 'REVIEWING')}
-                        >
-                          Mark Under Review
-                        </Button>
-                      )}
-                      {selectedApp.status !== 'HIRED' && (
-                        <Button
-                          size="sm"
-                          className="h-8 text-xs flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
-                          onClick={() => updateApplicationStatus(selectedApp.id, 'HIRED')}
-                        >
-                          <Check className="w-3.5 h-3.5 mr-1" /> Hire Candidate
-                        </Button>
-                      )}
-                      {selectedApp.status !== 'REJECTED' && (
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          className="h-8 text-xs flex-1"
-                          onClick={() => updateApplicationStatus(selectedApp.id, 'REJECTED')}
-                        >
-                          Reject
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Candidate Compliance Summary */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
-                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                        Compliance & Vetting Record
-                      </h3>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-7 text-[11px]"
-                        onClick={() => setIsViewAppOpen(true)}
-                      >
-                        Full Record Modal
-                      </Button>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 bg-muted/30 p-3.5 rounded-lg border border-border">
-                      <div>
-                        <span className="text-muted-foreground block text-[10px] uppercase">
-                          Email
-                        </span>
-                        <span className="font-medium text-foreground truncate block">
-                          {selectedApp.email || '-'}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground block text-[10px] uppercase">
-                          Phone
-                        </span>
-                        <span className="font-mono font-medium text-foreground">
-                          {selectedApp.phone || '-'}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground block text-[10px] uppercase">
-                          Town Hub
-                        </span>
-                        <span className="font-medium text-foreground">{selectedApp.town}</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground block text-[10px] uppercase">
-                          Right to Work UK
-                        </span>
-                        <span className="font-semibold text-emerald-600">
-                          {selectedApp.hasRightToWork ? 'Verified' : 'Pending'}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground block text-[10px] uppercase">
-                          Driving License
-                        </span>
-                        <span className="font-medium text-foreground">
-                          {selectedApp.hasDrivingLicense ? 'Yes' : 'No'}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground block text-[10px] uppercase">
-                          Fit to Lift 15-20kg
-                        </span>
-                        <span className="font-medium text-foreground">
-                          {selectedApp.isFitToLift ? 'Yes' : 'No'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Workflow Checklist Steps */}
-                  <div className="space-y-3 pt-3 border-t border-border">
-                    <h3 className="text-xs font-semibold text-foreground">Workflow Steps</h3>
-
-                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 border border-border">
-                      <div className="flex items-center gap-2">
-                        {selectedApp.contacted ? (
-                          <Badge
-                            variant="outline"
-                            className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-mono"
-                          >
-                            <Check className="w-3 h-3 mr-0.5" /> Contacted
-                          </Badge>
-                        ) : (
-                          <Badge
-                            variant="outline"
-                            className="bg-amber-50 text-amber-700 border-amber-200 text-[10px] font-mono"
-                          >
-                            Pending Contact
-                          </Badge>
-                        )}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 text-xs"
-                        onClick={() =>
-                          patchApplicationField(selectedApp.id, 'contacted', !selectedApp.contacted)
-                        }
-                      >
-                        {selectedApp.contacted ? 'Undo' : 'Mark Done'}
-                      </Button>
-                    </div>
-
-                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 border border-border">
-                      <div className="flex items-center gap-2">
-                        {selectedApp.safetyResourcesSent ? (
-                          <Badge
-                            variant="outline"
-                            className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-mono"
-                          >
-                            <CheckCircle className="w-3 h-3 mr-0.5" /> Full App Sent
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="text-[10px] font-mono">
-                            App Not Sent
-                          </Badge>
-                        )}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 text-xs"
-                        onClick={() =>
-                          patchApplicationField(
-                            selectedApp.id,
-                            'safetyResourcesSent',
-                            !selectedApp.safetyResourcesSent,
-                          )
-                        }
-                      >
-                        {selectedApp.safetyResourcesSent ? 'Undo' : 'Send Induction Form'}
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Direct Outreach */}
-                  <div className="pt-4 border-t border-border space-y-3">
-                    <h4 className="text-xs font-semibold text-foreground">
-                      Direct Candidate Outreach
-                    </h4>
-                    <div className="flex flex-wrap gap-1.5">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-[11px] h-7"
-                        onClick={() => applyTemplate('interview', selectedApp)}
-                      >
-                        Interview
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-[11px] h-7"
-                        onClick={() => applyTemplate('documents', selectedApp)}
-                      >
-                        Docs Check
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-[11px] h-7"
-                        onClick={() => applyTemplate('shift', selectedApp)}
-                      >
-                        Shift Alert
-                      </Button>
-                    </div>
-
-                    <Textarea
-                      value={customMsgText}
-                      onChange={(e) => setCustomMsgText(e.target.value)}
-                      placeholder="Type a message or select a pre-filled template..."
-                      className="text-xs min-h-[90px]"
-                    />
-
-                    <div className="flex gap-2">
-                      <Button
-                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs"
-                        disabled={!customMsgText || !selectedApp.phone}
-                        onClick={() =>
-                          window.open(getWhatsAppLink(selectedApp.phone, customMsgText), '_blank')
-                        }
-                      >
-                        <Smartphone className="w-3.5 h-3.5 mr-1.5" />
-                        WhatsApp
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="flex-1 text-xs"
-                        disabled={!customMsgText || !selectedApp.email}
-                        onClick={() =>
-                          window.open(getMailLink(selectedApp.email, customMsgText), '_blank')
-                        }
-                      >
-                        <Mail className="w-3.5 h-3.5 mr-1.5" />
-                        Email
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+            {/* Pipeline KPI Metric Strips */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div
+                className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('applicants')}
+              >
+                <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                  New Intake
+                </span>
+                <span className="text-xl font-bold text-blue-600">
+                  {applications.filter((a) => (a.status || 'NEW') === 'NEW').length}
+                </span>
               </div>
+              <div
+                className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('reviewing')}
+              >
+                <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                  Under Review
+                </span>
+                <span className="text-xl font-bold text-amber-600">
+                  {applications.filter((a) => a.status === 'REVIEWING').length}
+                </span>
+              </div>
+              <div
+                className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('hired')}
+              >
+                <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                  Hired / Rostered
+                </span>
+                <span className="text-xl font-bold text-emerald-600">
+                  {applications.filter((a) => a.status === 'HIRED').length}
+                </span>
+              </div>
+              <div
+                className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('rejected')}
+              >
+                <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                  Rejected
+                </span>
+                <span className="text-xl font-bold text-rose-600">
+                  {applications.filter((a) => a.status === 'REJECTED').length}
+                </span>
+              </div>
+            </div>
+
+            {/* Search & Multi-filter */}
+            <div className="bg-card border border-border p-3.5 rounded-lg flex flex-col sm:flex-row items-center gap-3 shadow-xs">
+              <div className="relative flex-1 w-full">
+                <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
+                <Input
+                  placeholder="Search candidates by name, phone, town, or roster ref..."
+                  value={applicantSearch}
+                  onChange={(e) => setApplicantSearch(e.target.value)}
+                  className="pl-9 text-xs"
+                />
+              </div>
+
+              <Select
+                value={applicantSectorFilter}
+                onValueChange={(val: any) => setApplicantSectorFilter(val)}
+              >
+                <SelectTrigger className="text-xs w-full sm:w-[170px]">
+                  <SelectValue placeholder="Sector" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All Sectors</SelectItem>
+                  <SelectItem value="chicken">Chicken Catching</SelectItem>
+                  <SelectItem value="turkey">Turkey Squads</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Body: Kanban or Table */}
+            {isKanban ? (
+              <div className="pt-1">
+                <KanbanBoard
+                  columns={[
+                    { id: 'NEW', title: 'New Intake' },
+                    { id: 'REVIEWING', title: 'Under Review' },
+                    { id: 'HIRED', title: 'Hired / Rostered' },
+                    { id: 'REJECTED', title: 'Rejected' },
+                  ]}
+                  tasks={filteredApps.map((app) => ({
+                    id: String(app.id),
+                    title: app.name || 'Anonymous Applicant',
+                    subtitle: `${app.sector?.toUpperCase()} • ${app.town || 'Unassigned'}`,
+                    date: new Date(app.createdAt).toLocaleDateString(),
+                    statusId: app.status || 'NEW',
+                    name: app.name || undefined,
+                    email: app.email || undefined,
+                    phone: app.phone || undefined,
+                    sector: app.sector,
+                    town: app.town,
+                    rosterRef: app.rosterRef,
+                    hasRightToWork: app.hasRightToWork,
+                    hasDrivingLicense: app.hasDrivingLicense,
+                    profileFormCompleted: app.profileFormCompleted,
+                    contacted: app.contacted,
+                    safetyResourcesSent: app.safetyResourcesSent,
+                    safetyTasksCompleted: app.safetyTasksCompleted,
+                    rawApplication: app,
+                  }))}
+                  onTaskStatusChange={(taskId, newStatusId) =>
+                    updateApplicationStatus(Number(taskId), newStatusId)
+                  }
+                  onTaskSelect={(task) => {
+                    const app =
+                      task.rawApplication || filteredApps.find((a) => a.id === Number(task.id));
+                    if (app) setSelectedApp(app);
+                  }}
+                />
+              </div>
+            ) : (
+              <ErrorBoundary>
+                <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col shadow-xs">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Candidate</TableHead>
+                        <TableHead>Sector</TableHead>
+                        <TableHead>Town Hub</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Compliance</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredApps.map((app) => {
+                        const isSelected = selectedApp?.id === app.id;
+                        return (
+                          <TableRow
+                            key={app.id}
+                            className={`cursor-pointer transition-colors ${
+                              isSelected ? 'bg-accent/50' : 'hover:bg-muted/50'
+                            }`}
+                            onClick={() => setSelectedApp(app)}
+                          >
+                            <TableCell className="py-3.5">
+                              <div className="flex items-center gap-3">
+                                <div
+                                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
+                                    app.sector === 'chicken'
+                                      ? 'bg-amber-100 text-amber-800'
+                                      : 'bg-blue-100 text-blue-800'
+                                  }`}
+                                >
+                                  {(app.name || 'A').charAt(0).toUpperCase()}
+                                </div>
+                                <div className="space-y-0.5">
+                                  <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
+                                    <span>{app.name || 'Anonymous Applicant'}</span>
+                                  </div>
+                                  <div className="text-xs text-muted-foreground font-mono">
+                                    {app.email || app.phone || 'No direct contact'}
+                                  </div>
+                                </div>
+                              </div>
+                            </TableCell>
+
+                            <TableCell>
+                              <Badge variant="outline" className="text-[10px] uppercase font-mono">
+                                {app.sector}
+                              </Badge>
+                            </TableCell>
+
+                            <TableCell className="text-xs text-muted-foreground">
+                              {app.town || '-'}
+                            </TableCell>
+
+                            <TableCell>
+                              <div onClick={(e) => e.stopPropagation()}>
+                                <Select
+                                  value={app.status || 'NEW'}
+                                  onValueChange={(val) => updateApplicationStatus(app.id, val)}
+                                >
+                                  <SelectTrigger className="h-7 text-xs w-[125px]">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="NEW">New Intake</SelectItem>
+                                    <SelectItem value="REVIEWING">Under Review</SelectItem>
+                                    <SelectItem value="HIRED">Hired</SelectItem>
+                                    <SelectItem value="REJECTED">Rejected</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </TableCell>
+
+                            <TableCell>
+                              <div className="flex items-center gap-1.5">
+                                {app.hasRightToWork ? (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[9px] py-0 px-1.5 bg-emerald-50 text-emerald-700 border-emerald-200 font-mono flex items-center gap-1"
+                                  >
+                                    <ShieldCheck className="w-2.5 h-2.5" /> RTW
+                                  </Badge>
+                                ) : (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[9px] py-0 px-1.5 text-muted-foreground font-mono"
+                                  >
+                                    RTW Pending
+                                  </Badge>
+                                )}
+
+                                {app.profileFormCompleted && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[9px] py-0 px-1.5 bg-blue-50 text-blue-700 border-blue-200 font-mono flex items-center gap-1"
+                                  >
+                                    <CheckCircle2 className="w-2.5 h-2.5" /> Induction
+                                  </Badge>
+                                )}
+                              </div>
+                            </TableCell>
+
+                            <TableCell className="text-xs text-muted-foreground font-mono">
+                              {new Date(app.createdAt).toLocaleDateString()}
+                            </TableCell>
+
+                            <TableCell className="text-right">
+                              <div
+                                className="flex items-center justify-end gap-1"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {app.phone && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700"
+                                    title="WhatsApp Candidate"
+                                    onClick={() =>
+                                      window.open(
+                                        getWhatsAppLink(
+                                          app.phone,
+                                          `Hi ${app.name || 'Operative'}, Pullum Ltd recruitment team here regarding your application.`,
+                                        ),
+                                        '_blank',
+                                      )
+                                    }
+                                  >
+                                    <Smartphone className="w-4 h-4" />
+                                  </Button>
+                                )}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0"
+                                  title="Inspect Candidate"
+                                  onClick={() => setSelectedApp(app)}
+                                >
+                                  <Eye className="w-4 h-4 text-primary" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                      {filteredApps.length === 0 && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={7}
+                            className="text-center py-10 text-muted-foreground"
+                          >
+                            No applications found in this view.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </ErrorBoundary>
             )}
           </div>
         );
       }
 
       /* =========================================================================
-         4. LOCATIONS & CORRIDORS SUITE (with /admin/locations, /admin/regions, /admin/towns, /admin/corridors)
+         4. LOCATIONS & CORRIDORS SUITE (Full Width)
       ========================================================================= */
       case 'locations':
       case 'regions':
@@ -2244,734 +1686,565 @@ const AdminDashboard = () => {
         });
 
         return (
-          <div className="flex h-full w-full">
-            {/* Main Locations Management View */}
-            <div
-              className={`flex-1 flex flex-col min-w-0 overflow-y-auto ${
-                selectedLocationDetail ? 'hidden lg:flex' : 'flex'
-              }`}
-            >
-              <div className="p-4 md:p-8 space-y-6">
-                {/* Header & Primary Actions */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
-                      <MapPin className="w-7 h-7 text-primary" />
-                      Locations & Transport Corridors
-                    </h1>
-                    <p className="text-muted-foreground text-xs sm:text-sm">
-                      Manage UK poultry operational hubs, regional SEO landing copy, and squad
-                      minibus pickup corridors.
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={exportLocationsCSV}
-                      className="text-xs shrink-0"
-                    >
-                      <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
-                      Export CSV
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        setEditingLocationData(null);
-                        setLocationModalType('region');
-                        setIsLocationModalOpen(true);
-                      }}
-                      className="text-xs shrink-0"
-                    >
-                      <Building2 className="w-3.5 h-3.5 mr-1.5 text-purple-600" />+ Add Region
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        setEditingLocationData(null);
-                        setLocationModalType('town');
-                        setIsLocationModalOpen(true);
-                      }}
-                      className="bg-primary text-primary-foreground text-xs shrink-0"
-                    >
-                      <Plus className="w-3.5 h-3.5 mr-1.5" />+ Add Town Depot
-                    </Button>
-                  </div>
-                </div>
+          <div className="p-4 md:p-8 space-y-6 w-full">
+            {/* Header & Primary Actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
+                  <MapPin className="w-7 h-7 text-primary" />
+                  Locations & Transport Corridors
+                </h1>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Manage UK poultry operational hubs, regional SEO landing copy, and squad minibus
+                  pickup corridors.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={exportLocationsCSV}
+                  className="text-xs shrink-0"
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
+                  Export CSV
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setEditingLocationData(null);
+                    setLocationModalType('region');
+                    setIsLocationModalOpen(true);
+                  }}
+                  className="text-xs shrink-0"
+                >
+                  <Building2 className="w-3.5 h-3.5 mr-1.5 text-purple-600" />+ Add Region
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setEditingLocationData(null);
+                    setLocationModalType('town');
+                    setIsLocationModalOpen(true);
+                  }}
+                  className="bg-primary text-primary-foreground text-xs shrink-0"
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1.5" />+ Add Town Depot
+                </Button>
+              </div>
+            </div>
 
-                {/* KPI Metric Strips */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div
-                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => setActiveTab('regions')}
-                  >
-                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
-                      Operational Regions
-                    </span>
-                    <span className="text-2xl font-bold text-purple-600">{locations.length}</span>
-                  </div>
-                  <div
-                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => setActiveTab('towns')}
-                  >
-                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
-                      Town Depots
-                    </span>
-                    <span className="text-2xl font-bold text-primary">{allTowns.length}</span>
-                  </div>
-                  <div
-                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => setActiveTab('corridors')}
-                  >
-                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
-                      Transit Corridors
-                    </span>
-                    <span className="text-2xl font-bold text-emerald-600">
-                      {allTowns.filter((t) => !!t.pickupPoint).length} Pickup Points
-                    </span>
-                  </div>
-                  <div
-                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => setActiveTab('jobs')}
-                  >
-                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
-                      Linked Vacancies
-                    </span>
-                    <span className="text-2xl font-bold text-amber-600">
-                      {jobs.filter((j) => j.status === 'ACTIVE').length} Active
-                    </span>
-                  </div>
-                </div>
+            {/* KPI Metric Strips */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div
+                className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('regions')}
+              >
+                <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                  Operational Regions
+                </span>
+                <span className="text-2xl font-bold text-purple-600">{locations.length}</span>
+              </div>
+              <div
+                className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('towns')}
+              >
+                <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                  Town Depots
+                </span>
+                <span className="text-2xl font-bold text-primary">{allTowns.length}</span>
+              </div>
+              <div
+                className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('corridors')}
+              >
+                <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                  Transit Corridors
+                </span>
+                <span className="text-2xl font-bold text-emerald-600">
+                  {allTowns.filter((t) => !t.pickupPoint).length} Pickup Points
+                </span>
+              </div>
+              <div
+                className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('jobs')}
+              >
+                <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                  Linked Vacancies
+                </span>
+                <span className="text-2xl font-bold text-amber-600">
+                  {jobs.filter((j) => j.status === 'ACTIVE').length} Active
+                </span>
+              </div>
+            </div>
 
-                {/* Sub-view switcher tabs */}
-                <div className="flex border-b border-border gap-6 text-sm font-medium">
-                  <button
-                    onClick={() => setActiveTab('locations')}
-                    className={`pb-2 border-b-2 transition-colors cursor-pointer ${
-                      activeSubView === 'all'
-                        ? 'border-primary text-primary font-semibold'
-                        : 'border-transparent text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    Overview Directory
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('regions')}
-                    className={`pb-2 border-b-2 transition-colors cursor-pointer ${
-                      activeSubView === 'regions'
-                        ? 'border-primary text-primary font-semibold'
-                        : 'border-transparent text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    Regions & Hubs ({locations.length})
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('towns')}
-                    className={`pb-2 border-b-2 transition-colors cursor-pointer ${
-                      activeSubView === 'towns'
-                        ? 'border-primary text-primary font-semibold'
-                        : 'border-transparent text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    Town Depots ({allTowns.length})
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('corridors')}
-                    className={`pb-2 border-b-2 transition-colors cursor-pointer ${
-                      activeSubView === 'corridors'
-                        ? 'border-primary text-primary font-semibold'
-                        : 'border-transparent text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    Transit Network
-                  </button>
-                </div>
+            {/* Sub-view switcher tabs */}
+            <div className="flex border-b border-border gap-6 text-sm font-medium overflow-x-auto">
+              <button
+                onClick={() => setActiveTab('locations')}
+                className={`pb-2 border-b-2 transition-colors cursor-pointer shrink-0 ${
+                  activeSubView === 'all'
+                    ? 'border-primary text-primary font-semibold'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Overview Directory
+              </button>
+              <button
+                onClick={() => setActiveTab('regions')}
+                className={`pb-2 border-b-2 transition-colors cursor-pointer shrink-0 ${
+                  activeSubView === 'regions'
+                    ? 'border-primary text-primary font-semibold'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Regions & Hubs ({locations.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('towns')}
+                className={`pb-2 border-b-2 transition-colors cursor-pointer shrink-0 ${
+                  activeSubView === 'towns'
+                    ? 'border-primary text-primary font-semibold'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Town Depots ({allTowns.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('corridors')}
+                className={`pb-2 border-b-2 transition-colors cursor-pointer shrink-0 ${
+                  activeSubView === 'corridors'
+                    ? 'border-primary text-primary font-semibold'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Transit Network
+              </button>
+            </div>
 
-                {/* Search & Region Filter Bar */}
-                <div className="bg-card border border-border p-3.5 rounded-lg flex flex-col sm:flex-row items-center gap-3 shadow-xs">
-                  <div className="relative flex-1 w-full">
-                    <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
-                    <Input
-                      placeholder="Search regions, towns, pickup points, or surrounding corridors..."
-                      value={locationSearch}
-                      onChange={(e) => setLocationSearch(e.target.value)}
-                      className="pl-9 text-xs"
-                    />
-                  </div>
+            {/* Search & Region Filter Bar */}
+            <div className="bg-card border border-border p-3.5 rounded-lg flex flex-col sm:flex-row items-center gap-3 shadow-xs">
+              <div className="relative flex-1 w-full">
+                <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
+                <Input
+                  placeholder="Search regions, towns, pickup points, or surrounding corridors..."
+                  value={locationSearch}
+                  onChange={(e) => setLocationSearch(e.target.value)}
+                  className="pl-9 text-xs"
+                />
+              </div>
 
-                  <Select
-                    value={locationRegionFilter}
-                    onValueChange={(val) => setLocationRegionFilter(val)}
-                  >
-                    <SelectTrigger className="text-xs w-full sm:w-[190px]">
-                      <SelectValue placeholder="Filter Region" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ALL">All Regions</SelectItem>
-                      {locations.map((r) => (
-                        <SelectItem key={r.id} value={r.id}>
-                          {r.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <Select
+                value={locationRegionFilter}
+                onValueChange={(val) => setLocationRegionFilter(val)}
+              >
+                <SelectTrigger className="text-xs w-full sm:w-[190px]">
+                  <SelectValue placeholder="Filter Region" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All Regions</SelectItem>
+                  {locations.map((r) => (
+                    <SelectItem key={r.id} value={r.id}>
+                      {r.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-                {/* VIEW 1: REGIONS & HUBS DIRECTORY */}
-                {(activeSubView === 'all' || activeSubView === 'regions') && (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {filteredRegions.map((region) => {
-                        const regionJobs = jobs.filter((j) =>
-                          (region.towns || []).some((t: any) => t.id === j.townId),
-                        );
-                        const regionApps = applications.filter((a) =>
-                          (region.towns || []).some(
-                            (t: any) =>
-                              t.name.toLowerCase() === (a.town || '').toLowerCase() ||
-                              t.id === a.town,
-                          ),
-                        );
+            {/* VIEW 1: REGIONS & HUBS DIRECTORY */}
+            {(activeSubView === 'all' || activeSubView === 'regions') && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filteredRegions.map((region) => {
+                    const regionJobs = jobs.filter((j) =>
+                      (region.towns || []).some((t: any) => t.id === j.townId),
+                    );
+                    const regionApps = applications.filter((a) =>
+                      (region.towns || []).some(
+                        (t: any) =>
+                          t.name.toLowerCase() === (a.town || '').toLowerCase() || t.id === a.town,
+                      ),
+                    );
 
-                        return (
-                          <Card
-                            key={region.id}
-                            className="overflow-hidden hover:border-primary/50 transition-colors shadow-xs"
-                          >
-                            <CardHeader className="p-4 bg-muted/20 border-b border-border flex flex-row items-start justify-between pb-3">
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-2">
-                                  <CardTitle className="text-base font-bold text-foreground">
-                                    {region.name}
-                                  </CardTitle>
-                                  {region.county && (
-                                    <Badge variant="outline" className="text-[10px] font-mono">
-                                      {region.county}
-                                    </Badge>
-                                  )}
-                                </div>
-                                <p className="text-xs font-mono text-muted-foreground">
-                                  Slug: {region.id}
-                                </p>
-                              </div>
+                    return (
+                      <Card
+                        key={region.id}
+                        className="overflow-hidden hover:border-primary/50 transition-colors shadow-xs"
+                      >
+                        <CardHeader className="p-4 bg-muted/20 border-b border-border flex flex-row items-start justify-between pb-3">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <CardTitle className="text-base font-bold text-foreground">
+                                {region.name}
+                              </CardTitle>
+                              {region.county && (
+                                <Badge variant="outline" className="text-[10px] font-mono">
+                                  {region.county}
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-xs font-mono text-muted-foreground">
+                              Slug: {region.id}
+                            </p>
+                          </div>
 
-                              <div className="flex items-center gap-1">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0"
-                                  title="Inspect Region"
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0"
+                              title="Inspect Region"
+                              onClick={() =>
+                                setSelectedLocationDetail({ type: 'region', data: region })
+                              }
+                            >
+                              <Eye className="w-3.5 h-3.5 text-primary" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0"
+                              title="Edit Region"
+                              onClick={() => {
+                                setEditingLocationData({ type: 'region', ...region });
+                                setLocationModalType('region');
+                                setIsLocationModalOpen(true);
+                              }}
+                            >
+                              <Edit className="w-3.5 h-3.5 text-muted-foreground" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+                              title="Delete Region"
+                              onClick={() =>
+                                setDeleteConfirm({
+                                  type: 'location',
+                                  id: region.id,
+                                  title: region.name,
+                                  subType: 'region',
+                                })
+                              }
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        </CardHeader>
+
+                        <CardContent className="p-4 space-y-3 text-xs">
+                          {/* Region Stats */}
+                          <div className="grid grid-cols-3 gap-2 p-2 rounded-lg bg-muted/40 text-center font-mono">
+                            <div>
+                              <span className="text-[10px] text-muted-foreground block">Towns</span>
+                              <span className="font-bold text-foreground">
+                                {region.towns?.length || 0}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-muted-foreground block">
+                                Active Jobs
+                              </span>
+                              <span className="font-bold text-emerald-600">
+                                {regionJobs.length}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-muted-foreground block">
+                                Catchers
+                              </span>
+                              <span className="font-bold text-primary">{regionApps.length}</span>
+                            </div>
+                          </div>
+
+                          {/* Towns List in this Region */}
+                          <div>
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-[11px] font-semibold text-muted-foreground uppercase">
+                                Managed Town Depots
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-5 text-[10px] text-primary p-0"
+                                onClick={() => {
+                                  setEditingLocationData({ regionId: region.id });
+                                  setLocationModalType('town');
+                                  setIsLocationModalOpen(true);
+                                }}
+                              >
+                                + Add Town
+                              </Button>
+                            </div>
+
+                            <div className="flex flex-wrap gap-1.5">
+                              {(region.towns || []).map((town: any) => (
+                                <Badge
+                                  key={town.id}
+                                  variant="secondary"
+                                  className="flex items-center gap-1.5 py-1 px-2.5 text-xs group cursor-pointer hover:bg-primary/10 transition-colors"
                                   onClick={() =>
-                                    setSelectedLocationDetail({ type: 'region', data: region })
-                                  }
-                                >
-                                  <Eye className="w-3.5 h-3.5 text-primary" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0"
-                                  title="Edit Region"
-                                  onClick={() => {
-                                    setEditingLocationData({ type: 'region', ...region });
-                                    setLocationModalType('region');
-                                    setIsLocationModalOpen(true);
-                                  }}
-                                >
-                                  <Edit className="w-3.5 h-3.5 text-muted-foreground" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
-                                  title="Delete Region"
-                                  onClick={() =>
-                                    setDeleteConfirm({
-                                      type: 'location',
-                                      id: region.id,
-                                      title: region.name,
-                                      subType: 'region',
+                                    setSelectedLocationDetail({
+                                      type: 'town',
+                                      data: town,
+                                      parentRegion: region,
                                     })
                                   }
                                 >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </Button>
-                              </div>
-                            </CardHeader>
-
-                            <CardContent className="p-4 space-y-3 text-xs">
-                              {/* Region Stats */}
-                              <div className="grid grid-cols-3 gap-2 p-2 rounded-lg bg-muted/40 text-center font-mono">
-                                <div>
-                                  <span className="text-[10px] text-muted-foreground block">
-                                    Towns
-                                  </span>
-                                  <span className="font-bold text-foreground">
-                                    {region.towns?.length || 0}
-                                  </span>
-                                </div>
-                                <div>
-                                  <span className="text-[10px] text-muted-foreground block">
-                                    Active Jobs
-                                  </span>
-                                  <span className="font-bold text-emerald-600">
-                                    {regionJobs.length}
-                                  </span>
-                                </div>
-                                <div>
-                                  <span className="text-[10px] text-muted-foreground block">
-                                    Catchers
-                                  </span>
-                                  <span className="font-bold text-primary">
-                                    {regionApps.length}
-                                  </span>
-                                </div>
-                              </div>
-
-                              {/* Towns List in this Region */}
-                              <div>
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className="text-[11px] font-semibold text-muted-foreground uppercase">
-                                    Managed Town Depots
-                                  </span>
+                                  <span>{town.name}</span>
                                   <Button
                                     variant="ghost"
-                                    size="sm"
-                                    className="h-5 text-[10px] text-primary p-0"
-                                    onClick={() => {
-                                      setEditingLocationData({ regionId: region.id });
+                                    size="icon"
+                                    className="h-4 w-4 p-0 opacity-40 group-hover:opacity-100 transition-opacity"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setEditingLocationData({
+                                        type: 'town',
+                                        ...town,
+                                        regionId: region.id,
+                                      });
                                       setLocationModalType('town');
                                       setIsLocationModalOpen(true);
                                     }}
                                   >
-                                    + Add Town
+                                    <Edit className="w-2.5 h-2.5" />
                                   </Button>
-                                </div>
-
-                                <div className="flex flex-wrap gap-1.5">
-                                  {(region.towns || []).map((town: any) => (
-                                    <Badge
-                                      key={town.id}
-                                      variant="secondary"
-                                      className="flex items-center gap-1.5 py-1 px-2.5 text-xs group cursor-pointer hover:bg-primary/10 transition-colors"
-                                      onClick={() =>
-                                        setSelectedLocationDetail({
-                                          type: 'town',
-                                          data: town,
-                                          parentRegion: region,
-                                        })
-                                      }
-                                    >
-                                      <span>{town.name}</span>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-4 w-4 p-0 opacity-40 group-hover:opacity-100 transition-opacity"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setEditingLocationData({
-                                            type: 'town',
-                                            ...town,
-                                            regionId: region.id,
-                                          });
-                                          setLocationModalType('town');
-                                          setIsLocationModalOpen(true);
-                                        }}
-                                      >
-                                        <Edit className="w-2.5 h-2.5" />
-                                      </Button>
-                                    </Badge>
-                                  ))}
-                                  {(!region.towns || region.towns.length === 0) && (
-                                    <span className="text-xs text-muted-foreground italic">
-                                      No town depots configured
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* SEO Markdown summary chip */}
-                              {region.seoCopy && (
-                                <div className="pt-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
-                                  <span className="flex items-center gap-1">
-                                    <Sparkles className="w-3 h-3 text-amber-500" /> SEO Copy
-                                    Configured
-                                  </span>
-                                  <a
-                                    href={`/chickens/${region.id}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="text-primary hover:underline flex items-center gap-0.5"
-                                  >
-                                    View Lander <ArrowUpRight className="w-3 h-3" />
-                                  </a>
-                                </div>
+                                </Badge>
+                              ))}
+                              {(!region.towns || region.towns.length === 0) && (
+                                <span className="text-xs text-muted-foreground italic">
+                                  No town depots configured
+                                </span>
                               )}
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* VIEW 2: DEDICATED TOWN DEPOTS TABLE */}
-                {(activeSubView === 'all' || activeSubView === 'towns') && (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-primary" />
-                        All Town Depots & Minibus Corridors
-                      </h2>
-                    </div>
-
-                    <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col shadow-xs">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Town Depot</TableHead>
-                            <TableHead>Parent Region</TableHead>
-                            <TableHead>Minibus Pickup Point</TableHead>
-                            <TableHead>Catchment Areas</TableHead>
-                            <TableHead>Active Jobs</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {filteredTowns.map((town) => {
-                            const townJobs = jobs.filter((j) => j.townId === town.id);
-                            return (
-                              <TableRow
-                                key={town.id}
-                                className="cursor-pointer hover:bg-muted/50 transition-colors"
-                                onClick={() =>
-                                  setSelectedLocationDetail({
-                                    type: 'town',
-                                    data: town,
-                                    parentRegion: {
-                                      id: town.parentRegionId,
-                                      name: town.parentRegionName,
-                                    },
-                                  })
-                                }
-                              >
-                                <TableCell className="font-semibold text-sm">
-                                  <div>{town.name}</div>
-                                  <div className="text-[10px] font-mono text-muted-foreground font-normal">
-                                    {town.id}
-                                  </div>
-                                </TableCell>
-
-                                <TableCell>
-                                  <Badge variant="outline" className="text-xs font-mono">
-                                    {town.parentRegionName}
-                                  </Badge>
-                                </TableCell>
-
-                                <TableCell className="text-xs text-muted-foreground">
-                                  {town.pickupPoint ? (
-                                    <span className="flex items-center gap-1 text-foreground">
-                                      <Bus className="w-3 h-3 text-emerald-600 shrink-0" />
-                                      {town.pickupPoint}
-                                    </span>
-                                  ) : (
-                                    <span className="italic text-muted-foreground">
-                                      None specified
-                                    </span>
-                                  )}
-                                </TableCell>
-
-                                <TableCell className="text-xs text-muted-foreground max-w-[220px] truncate">
-                                  {town.surrounding || '-'}
-                                </TableCell>
-
-                                <TableCell>
-                                  <Badge
-                                    variant={townJobs.length > 0 ? 'default' : 'secondary'}
-                                    className="text-xs font-mono"
-                                  >
-                                    {townJobs.length} Open
-                                  </Badge>
-                                </TableCell>
-
-                                <TableCell className="text-right">
-                                  <div
-                                    className="flex items-center justify-end gap-1"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-8 w-8 p-0"
-                                      title="Inspect Depot"
-                                      onClick={() =>
-                                        setSelectedLocationDetail({
-                                          type: 'town',
-                                          data: town,
-                                          parentRegion: {
-                                            id: town.parentRegionId,
-                                            name: town.parentRegionName,
-                                          },
-                                        })
-                                      }
-                                    >
-                                      <Eye className="w-4 h-4 text-primary" />
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-8 w-8 p-0"
-                                      title="Edit Town"
-                                      onClick={() => {
-                                        setEditingLocationData({
-                                          type: 'town',
-                                          ...town,
-                                          regionId: town.parentRegionId,
-                                        });
-                                        setLocationModalType('town');
-                                        setIsLocationModalOpen(true);
-                                      }}
-                                    >
-                                      <Edit className="w-4 h-4 text-muted-foreground" />
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                                      title="Delete Town"
-                                      onClick={() =>
-                                        setDeleteConfirm({
-                                          type: 'location',
-                                          id: town.id,
-                                          title: town.name,
-                                          subType: 'town',
-                                        })
-                                      }
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                          {filteredTowns.length === 0 && (
-                            <TableRow>
-                              <TableCell
-                                colSpan={6}
-                                className="text-center py-10 text-muted-foreground"
-                              >
-                                No town depots match current search filters.
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </div>
-                )}
-
-                {/* VIEW 3: TRANSIT CORRIDORS & MINIBUS NETWORK */}
-                {activeSubView === 'corridors' && (
-                  <div className="space-y-4">
-                    <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 dark:bg-emerald-950/20 flex items-start gap-3">
-                      <Bus className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                      <div className="space-y-1 text-xs">
-                        <h3 className="font-bold text-foreground">
-                          Door-to-Door Poultry Transit Network
-                        </h3>
-                        <p className="text-muted-foreground">
-                          Pullum Ltd operates company minibus transport across all key broiler &
-                          turkey corridors. Catchers are collected from their home address or
-                          registered town depot pickup points.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {allTowns.map((town) => (
-                        <Card key={town.id} className="p-4 space-y-2.5">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-bold text-sm text-foreground">{town.name} Depot</h4>
-                            <Badge variant="outline" className="text-[10px] font-mono">
-                              {town.parentRegionName}
-                            </Badge>
-                          </div>
-
-                          <div className="space-y-1.5 text-xs text-muted-foreground bg-muted/30 p-2.5 rounded-lg border border-border">
-                            <div className="flex items-start gap-1.5">
-                              <MapPin className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-                              <div>
-                                <span className="font-semibold text-foreground block">
-                                  Pickup Point:
-                                </span>
-                                <span>{town.pickupPoint || 'Central Transport Depot'}</span>
-                              </div>
                             </div>
-                            {town.surrounding && (
-                              <div className="pt-1 text-[11px]">
-                                <span className="font-medium text-foreground">
-                                  Corridor Stops:{' '}
-                                </span>
-                                <span>{town.surrounding}</span>
-                              </div>
-                            )}
                           </div>
-                        </Card>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
 
-            {/* Location Inspector Side Drawer */}
-            {selectedLocationDetail && (
-              <div className="w-full lg:w-[480px] border-l border-border bg-card flex flex-col shrink-0 h-full overflow-y-auto shadow-lg">
-                <div className="p-6 border-b border-border flex justify-between items-start sticky top-0 bg-card z-10">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-xl font-bold text-foreground">
-                        {selectedLocationDetail.data.name}
-                      </h2>
-                      <Badge variant="outline" className="text-xs uppercase font-mono">
-                        {selectedLocationDetail.type}
-                      </Badge>
-                    </div>
-                    <p className="text-xs font-mono text-muted-foreground">
-                      Slug: {selectedLocationDetail.data.id}
-                      {selectedLocationDetail.parentRegion &&
-                        ` • Part of ${selectedLocationDetail.parentRegion.name}`}
-                    </p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedLocationDetail(null)}
-                    className="text-muted-foreground"
-                  >
-                    <X className="w-5 h-5" />
-                  </Button>
+                          {/* SEO Markdown summary chip */}
+                          {region.seoCopy && (
+                            <div className="pt-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
+                              <span className="flex items-center gap-1">
+                                <Sparkles className="w-3 h-3 text-amber-500" /> SEO Copy Configured
+                              </span>
+                              <a
+                                href={`/chickens/${region.id}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-primary hover:underline flex items-center gap-0.5"
+                              >
+                                View Lander <ArrowUpRight className="w-3 h-3" />
+                              </a>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 2: DEDICATED TOWN DEPOTS TABLE */}
+            {(activeSubView === 'all' || activeSubView === 'towns') && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-primary" />
+                    All Town Depots & Minibus Corridors
+                  </h2>
                 </div>
 
-                <div className="p-6 space-y-6 flex-1 text-xs">
-                  {/* Transport & Location Profile */}
-                  <div className="bg-muted/40 p-4 rounded-lg border border-border space-y-3">
-                    <h3 className="font-bold text-xs text-foreground">Hub Details & Transit</h3>
-                    <div className="space-y-2 text-[11px]">
-                      <div>
-                        <span className="text-muted-foreground block text-[10px] uppercase">
-                          Pickup Point Depot
-                        </span>
-                        <span className="font-medium text-foreground">
-                          {selectedLocationDetail.data.pickupPoint ||
-                            'Standard Home Collection / Depot'}
-                        </span>
-                      </div>
-                      {selectedLocationDetail.data.surrounding && (
-                        <div>
-                          <span className="text-muted-foreground block text-[10px] uppercase">
-                            Surrounding Catchment Areas
-                          </span>
-                          <span className="font-medium text-foreground">
-                            {selectedLocationDetail.data.surrounding}
-                          </span>
-                        </div>
-                      )}
-                      {selectedLocationDetail.data.phoneNumber && (
-                        <div>
-                          <span className="text-muted-foreground block text-[10px] uppercase">
-                            Transit Contact Phone
-                          </span>
-                          <span className="font-mono font-medium text-foreground">
-                            {selectedLocationDetail.data.phoneNumber}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Connected Vacancies */}
-                  <div className="space-y-3">
-                    <h3 className="font-bold text-xs text-foreground flex items-center justify-between">
-                      <span>Live Roles in this Hub</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 text-[10px] text-primary p-0"
-                        onClick={() => {
-                          setIsJobModalOpen(true);
-                        }}
-                      >
-                        + Post Role
-                      </Button>
-                    </h3>
-
-                    <div className="space-y-2">
-                      {jobs
-                        .filter(
-                          (j) =>
-                            j.townId === selectedLocationDetail.data.id ||
-                            (selectedLocationDetail.type === 'region' &&
-                              (selectedLocationDetail.data.towns || []).some(
-                                (t: any) => t.id === j.townId,
-                              )),
-                        )
-                        .map((job) => (
-                          <div
-                            key={job.id}
-                            className="p-3 rounded-lg border border-border bg-muted/20 flex items-center justify-between"
+                <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col shadow-xs">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Town Depot</TableHead>
+                        <TableHead>Parent Region</TableHead>
+                        <TableHead>Minibus Pickup Point</TableHead>
+                        <TableHead>Catchment Areas</TableHead>
+                        <TableHead>Active Jobs</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredTowns.map((town) => {
+                        const townJobs = jobs.filter((j) => j.townId === town.id);
+                        return (
+                          <TableRow
+                            key={town.id}
+                            className="cursor-pointer hover:bg-muted/50 transition-colors"
+                            onClick={() =>
+                              setSelectedLocationDetail({
+                                type: 'town',
+                                data: town,
+                                parentRegion: {
+                                  id: town.parentRegionId,
+                                  name: town.parentRegionName,
+                                },
+                              })
+                            }
                           >
-                            <div>
-                              <p className="font-semibold text-foreground text-xs">{job.title}</p>
-                              <p className="text-[10px] text-muted-foreground font-mono">
-                                {job.payRate} • {job.sector}
-                              </p>
-                            </div>
-                            <Badge variant="outline" className="text-[10px] font-mono">
-                              {job._count?.applications || 0} Inquiries
-                            </Badge>
+                            <TableCell className="font-semibold text-sm">
+                              <div>{town.name}</div>
+                              <div className="text-[10px] font-mono text-muted-foreground font-normal">
+                                {town.id}
+                              </div>
+                            </TableCell>
+
+                            <TableCell>
+                              <Badge variant="outline" className="text-xs font-mono">
+                                {town.parentRegionName}
+                              </Badge>
+                            </TableCell>
+
+                            <TableCell className="text-xs text-muted-foreground">
+                              {town.pickupPoint ? (
+                                <span className="flex items-center gap-1 text-foreground">
+                                  <Bus className="w-3 h-3 text-emerald-600 shrink-0" />
+                                  {town.pickupPoint}
+                                </span>
+                              ) : (
+                                <span className="italic text-muted-foreground">None specified</span>
+                              )}
+                            </TableCell>
+
+                            <TableCell className="text-xs text-muted-foreground max-w-[220px] truncate">
+                              {town.surrounding || '-'}
+                            </TableCell>
+
+                            <TableCell>
+                              <Badge
+                                variant={townJobs.length > 0 ? 'default' : 'secondary'}
+                                className="text-xs font-mono"
+                              >
+                                {townJobs.length} Open
+                              </Badge>
+                            </TableCell>
+
+                            <TableCell className="text-right">
+                              <div
+                                className="flex items-center justify-end gap-1"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0"
+                                  title="Inspect Depot"
+                                  onClick={() =>
+                                    setSelectedLocationDetail({
+                                      type: 'town',
+                                      data: town,
+                                      parentRegion: {
+                                        id: town.parentRegionId,
+                                        name: town.parentRegionName,
+                                      },
+                                    })
+                                  }
+                                >
+                                  <Eye className="w-4 h-4 text-primary" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0"
+                                  title="Edit Town"
+                                  onClick={() => {
+                                    setEditingLocationData({
+                                      type: 'town',
+                                      ...town,
+                                      regionId: town.parentRegionId,
+                                    });
+                                    setLocationModalType('town');
+                                    setIsLocationModalOpen(true);
+                                  }}
+                                >
+                                  <Edit className="w-4 h-4 text-muted-foreground" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                                  title="Delete Town"
+                                  onClick={() =>
+                                    setDeleteConfirm({
+                                      type: 'location',
+                                      id: town.id,
+                                      title: town.name,
+                                      subType: 'town',
+                                    })
+                                  }
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                      {filteredTowns.length === 0 && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={6}
+                            className="text-center py-10 text-muted-foreground"
+                          >
+                            No town depots match current search filters.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 3: TRANSIT CORRIDORS & MINIBUS NETWORK */}
+            {activeSubView === 'corridors' && (
+              <div className="space-y-4">
+                <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 dark:bg-emerald-950/20 flex items-start gap-3">
+                  <Bus className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div className="space-y-1 text-xs">
+                    <h3 className="font-bold text-foreground">
+                      Door-to-Door Poultry Transit Network
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Pullum Ltd operates company minibus transport across all key broiler & turkey
+                      corridors. Catchers are collected from their home address or registered town
+                      depot pickup points.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {allTowns.map((town) => (
+                    <Card key={town.id} className="p-4 space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-bold text-sm text-foreground">{town.name} Depot</h4>
+                        <Badge variant="outline" className="text-[10px] font-mono">
+                          {town.parentRegionName}
+                        </Badge>
+                      </div>
+
+                      <div className="space-y-1.5 text-xs text-muted-foreground bg-muted/30 p-2.5 rounded-lg border border-border">
+                        <div className="flex items-start gap-1.5">
+                          <MapPin className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                          <div>
+                            <span className="font-semibold text-foreground block">
+                              Pickup Point:
+                            </span>
+                            <span>{town.pickupPoint || 'Central Transport Depot'}</span>
                           </div>
-                        ))}
-                    </div>
-                  </div>
-
-                  {/* Public SEO Copy & Lander Link */}
-                  <div className="pt-4 border-t border-border space-y-3">
-                    <h3 className="font-bold text-xs text-foreground">SEO Public Landing Page</h3>
-                    <div className="p-3 rounded-lg border border-border bg-muted/30 flex items-center justify-between">
-                      <span className="font-mono text-[11px] text-muted-foreground">
-                        /chickens/{selectedLocationDetail.data.id}
-                      </span>
-                      <a
-                        href={`/chickens/${selectedLocationDetail.data.id}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-primary hover:underline font-semibold flex items-center gap-1"
-                      >
-                        Open Lander <ArrowUpRight className="w-3.5 h-3.5" />
-                      </a>
-                    </div>
-
-                    <div className="flex gap-2 pt-2">
-                      <Button
-                        className="flex-1 text-xs"
-                        variant="outline"
-                        onClick={() => {
-                          setEditingLocationData({
-                            type: selectedLocationDetail.type,
-                            ...selectedLocationDetail.data,
-                            regionId: selectedLocationDetail.parentRegion?.id,
-                          });
-                          setLocationModalType(selectedLocationDetail.type);
-                          setIsLocationModalOpen(true);
-                        }}
-                      >
-                        <Edit className="w-3.5 h-3.5 mr-1.5" /> Edit Location Details
-                      </Button>
-                    </div>
-                  </div>
+                        </div>
+                        {town.surrounding && (
+                          <div className="pt-1 text-[11px]">
+                            <span className="font-medium text-foreground">Corridor Stops: </span>
+                            <span>{town.surrounding}</span>
+                          </div>
+                        )}
+                      </div>
+                    </Card>
+                  ))}
                 </div>
               </div>
             )}
@@ -3002,7 +2275,7 @@ const AdminDashboard = () => {
         });
 
         return (
-          <div className="p-4 md:p-8 space-y-6">
+          <div className="p-4 md:p-8 space-y-6 w-full">
             {/* Header & Post Job Button */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
@@ -3286,8 +2559,479 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="h-full flex-1">
+    <div className="h-full flex-1 w-full">
       {renderContent()}
+
+      {/* Location Details Modal */}
+      <Dialog
+        open={!!selectedLocationDetail}
+        onOpenChange={(open) => !open && setSelectedLocationDetail(null)}
+      >
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <DialogTitle className="text-xl font-bold">
+                {selectedLocationDetail?.data.name}
+              </DialogTitle>
+              <Badge variant="outline" className="text-xs uppercase font-mono">
+                {selectedLocationDetail?.type}
+              </Badge>
+            </div>
+            <DialogDescription className="font-mono text-xs">
+              Slug: {selectedLocationDetail?.data.id}
+              {selectedLocationDetail?.parentRegion &&
+                ` • Part of ${selectedLocationDetail.parentRegion.name}`}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedLocationDetail && (
+            <div className="space-y-5 mt-2 text-xs">
+              {/* Hub Details & Transit */}
+              <div className="bg-muted/40 p-4 rounded-xl border border-border space-y-3">
+                <h3 className="font-bold text-xs text-foreground flex items-center gap-2">
+                  <Bus className="w-4 h-4 text-emerald-600" />
+                  Minibus Pickup & Catchment Corridor
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase">
+                      Designated Pickup Point Depot
+                    </span>
+                    <span className="font-semibold text-foreground">
+                      {selectedLocationDetail.data.pickupPoint || 'Central Transport Depot'}
+                    </span>
+                  </div>
+                  {selectedLocationDetail.data.phoneNumber && (
+                    <div>
+                      <span className="text-muted-foreground block text-[10px] uppercase">
+                        Transit Coordinator
+                      </span>
+                      <span className="font-mono font-semibold text-foreground">
+                        {selectedLocationDetail.data.phoneNumber}
+                      </span>
+                    </div>
+                  )}
+                  {selectedLocationDetail.data.surrounding && (
+                    <div className="sm:col-span-2">
+                      <span className="text-muted-foreground block text-[10px] uppercase">
+                        Surrounding Catchment Towns & Villages
+                      </span>
+                      <span className="font-medium text-foreground">
+                        {selectedLocationDetail.data.surrounding}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Live Roles */}
+              <div className="space-y-3">
+                <h3 className="font-bold text-xs text-foreground flex items-center justify-between">
+                  <span>Live Harvesting Roles Connected</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 text-[10px] text-primary p-0"
+                    onClick={() => {
+                      setSelectedLocationDetail(null);
+                      setIsJobModalOpen(true);
+                    }}
+                  >
+                    + Post Role
+                  </Button>
+                </h3>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {jobs
+                    .filter(
+                      (j) =>
+                        j.townId === selectedLocationDetail.data.id ||
+                        (selectedLocationDetail.type === 'region' &&
+                          (selectedLocationDetail.data.towns || []).some(
+                            (t: any) => t.id === j.townId,
+                          )),
+                    )
+                    .map((job) => (
+                      <div
+                        key={job.id}
+                        className="p-3 rounded-lg border border-border bg-muted/20 flex items-center justify-between"
+                      >
+                        <div>
+                          <p className="font-semibold text-foreground text-xs">{job.title}</p>
+                          <p className="text-[10px] text-muted-foreground font-mono">
+                            {job.payRate} • {job.sector}
+                          </p>
+                        </div>
+                        <Badge variant="outline" className="text-[10px] font-mono">
+                          {job._count?.applications || 0} Inquiries
+                        </Badge>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              {/* SEO Landing Page */}
+              <div className="p-3.5 rounded-xl border border-border bg-muted/30 flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] text-muted-foreground uppercase font-mono block">
+                    Public Search Engine Lander
+                  </span>
+                  <span className="font-mono text-xs font-semibold text-foreground">
+                    /chickens/{selectedLocationDetail.data.id}
+                  </span>
+                </div>
+                <a
+                  href={`/chickens/${selectedLocationDetail.data.id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded-md hover:bg-primary/90 font-medium flex items-center gap-1.5"
+                >
+                  Open Lander <ArrowUpRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 mt-4">
+            <Button variant="outline" size="sm" onClick={() => setSelectedLocationDetail(null)}>
+              Close
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                if (selectedLocationDetail) {
+                  setEditingLocationData({
+                    type: selectedLocationDetail.type,
+                    ...selectedLocationDetail.data,
+                    regionId: selectedLocationDetail.parentRegion?.id,
+                  });
+                  setLocationModalType(selectedLocationDetail.type);
+                  setSelectedLocationDetail(null);
+                  setIsLocationModalOpen(true);
+                }
+              }}
+            >
+              <Edit className="w-3.5 h-3.5 mr-1.5" /> Edit Location
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Applicant Inspection Modal */}
+      <Dialog
+        open={!!selectedApp}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedApp(null);
+            setCustomMsgText('');
+          }
+        }}
+      >
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-2.5">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
+                  selectedApp?.sector === 'chicken'
+                    ? 'bg-amber-100 text-amber-800'
+                    : 'bg-blue-100 text-blue-800'
+                }`}
+              >
+                {(selectedApp?.name || 'A').charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <DialogTitle className="text-xl font-bold">
+                  {selectedApp?.name || 'Anonymous Applicant'}
+                </DialogTitle>
+                <DialogDescription className="font-mono text-xs">
+                  Ref: {selectedApp?.rosterRef} • {selectedApp?.sector} Catching •{' '}
+                  {selectedApp?.town}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          {selectedApp && (
+            <div className="space-y-5 mt-2 text-xs">
+              {/* Decision & Stage Buttons */}
+              <div className="bg-muted/40 p-4 rounded-xl border border-border space-y-2">
+                <span className="font-semibold text-xs text-foreground block">
+                  Pipeline Stage & Decision
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant={selectedApp.status === 'REVIEWING' ? 'default' : 'outline'}
+                    className="h-8 text-xs flex-1"
+                    onClick={() => updateApplicationStatus(selectedApp.id, 'REVIEWING')}
+                  >
+                    Mark Under Review
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="h-8 text-xs flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+                    onClick={() => updateApplicationStatus(selectedApp.id, 'HIRED')}
+                  >
+                    <Check className="w-3.5 h-3.5 mr-1" /> Hire / Deploy
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    className="h-8 text-xs flex-1"
+                    onClick={() => updateApplicationStatus(selectedApp.id, 'REJECTED')}
+                  >
+                    Reject
+                  </Button>
+                </div>
+              </div>
+
+              {/* 2-column compliance and contact data */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3 bg-muted/30 p-4 rounded-xl border border-border">
+                  <h4 className="font-bold text-xs text-foreground flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                    Compliance & Vetting
+                  </h4>
+                  <div className="space-y-2 text-[11px]">
+                    <div>
+                      <span className="text-muted-foreground block text-[10px] uppercase">
+                        Right to Work UK
+                      </span>
+                      <span className="font-semibold text-emerald-600">
+                        {selectedApp.hasRightToWork ? 'Verified' : 'Pending Share Code'}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[10px] uppercase">
+                        Driving License
+                      </span>
+                      <span className="font-medium text-foreground">
+                        {selectedApp.hasDrivingLicense ? 'Yes (Can drive squad minibus)' : 'No'}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[10px] uppercase">
+                        Fit to Lift 15-20kg
+                      </span>
+                      <span className="font-medium text-foreground">
+                        {selectedApp.isFitToLift ? 'Yes' : 'No'}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[10px] uppercase">
+                        Town Hub
+                      </span>
+                      <span className="font-medium text-foreground">{selectedApp.town}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 bg-muted/30 p-4 rounded-xl border border-border">
+                  <h4 className="font-bold text-xs text-foreground flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                    Workflow Steps
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2 rounded-lg bg-background border border-border">
+                      <span>Contacted</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 text-xs"
+                        onClick={() =>
+                          patchApplicationField(selectedApp.id, 'contacted', !selectedApp.contacted)
+                        }
+                      >
+                        {selectedApp.contacted ? (
+                          <span className="text-emerald-600 font-bold">Done</span>
+                        ) : (
+                          'Mark Done'
+                        )}
+                      </Button>
+                    </div>
+                    <div className="flex items-center justify-between p-2 rounded-lg bg-background border border-border">
+                      <span>Induction Form Sent</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 text-xs"
+                        onClick={() =>
+                          patchApplicationField(
+                            selectedApp.id,
+                            'safetyResourcesSent',
+                            !selectedApp.safetyResourcesSent,
+                          )
+                        }
+                      >
+                        {selectedApp.safetyResourcesSent ? (
+                          <span className="text-emerald-600 font-bold">Sent</span>
+                        ) : (
+                          'Send Form'
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Direct Candidate Outreach */}
+              <div className="pt-2 space-y-3">
+                <h4 className="font-bold text-xs text-foreground">Direct Outreach</h4>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 text-xs"
+                    onClick={() => applyTemplate('interview', selectedApp)}
+                  >
+                    Interview Template
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 text-xs"
+                    onClick={() => applyTemplate('documents', selectedApp)}
+                  >
+                    Docs Check Template
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 text-xs"
+                    onClick={() => applyTemplate('shift', selectedApp)}
+                  >
+                    Shift Alert Template
+                  </Button>
+                </div>
+                <Textarea
+                  value={customMsgText}
+                  onChange={(e) => setCustomMsgText(e.target.value)}
+                  placeholder="Type a message or select a pre-filled template..."
+                  className="text-xs min-h-[80px]"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs"
+                    disabled={!customMsgText || !selectedApp.phone}
+                    onClick={() =>
+                      window.open(getWhatsAppLink(selectedApp.phone, customMsgText), '_blank')
+                    }
+                  >
+                    <Smartphone className="w-3.5 h-3.5 mr-1.5" />
+                    WhatsApp
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1 text-xs"
+                    disabled={!customMsgText || !selectedApp.email}
+                    onClick={() =>
+                      window.open(getMailLink(selectedApp.email, customMsgText), '_blank')
+                    }
+                  >
+                    <Mail className="w-3.5 h-3.5 mr-1.5" />
+                    Email
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 mt-4">
+            <Button variant="outline" size="sm" onClick={() => setSelectedApp(null)}>
+              Close
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => setIsViewAppOpen(true)}>
+              Full Record
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* User CRM Inspection Modal */}
+      <Dialog open={!!selectedUser} onOpenChange={(open) => !open && setSelectedUser(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <DialogTitle className="text-xl font-bold">
+                {selectedUser?.application?.name || selectedUser?.email.split('@')[0]}
+              </DialogTitle>
+              <Badge
+                variant={selectedUser?.role === 'ADMIN' ? 'default' : 'secondary'}
+                className="text-xs"
+              >
+                {selectedUser?.role}
+              </Badge>
+            </div>
+            <DialogDescription className="font-mono text-xs">
+              {selectedUser?.email} • ID: {selectedUser?.id}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedUser && (
+            <div className="space-y-4 mt-2 text-xs">
+              <div className="bg-muted/40 p-4 rounded-xl border border-border flex items-center justify-between">
+                <span className="font-semibold text-xs text-foreground">User System Role</span>
+                <Select
+                  value={selectedUser.role}
+                  onValueChange={(role) => handleUpdateUserRole(selectedUser.id, role)}
+                >
+                  <SelectTrigger className="h-7 text-xs w-[130px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="WORKER">Field Worker</SelectItem>
+                    <SelectItem value="ADMIN">Administrator</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {selectedUser.application ? (
+                <div className="grid grid-cols-2 gap-3 bg-muted/30 p-4 rounded-xl border border-border">
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase">
+                      Roster Ref
+                    </span>
+                    <span className="font-mono font-bold text-foreground">
+                      {selectedUser.application.rosterRef}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase">
+                      Town Hub
+                    </span>
+                    <span className="font-bold text-foreground">
+                      {selectedUser.application.town} ({selectedUser.application.sector})
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase">
+                      Right to Work
+                    </span>
+                    <span className="font-semibold text-emerald-600">
+                      {selectedUser.application.hasRightToWork ? 'Verified' : 'Pending'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase">Phone</span>
+                    <span className="font-mono font-medium text-foreground">
+                      {selectedUser.application.phone || '-'}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 rounded-xl bg-muted/30 border border-dashed border-border text-center">
+                  <p className="text-muted-foreground">No linked application profile.</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter className="mt-4">
+            <Button variant="outline" size="sm" onClick={() => setSelectedUser(null)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Add / Edit Location Dialog */}
       <Dialog open={isLocationModalOpen} onOpenChange={setIsLocationModalOpen}>
@@ -3312,7 +3056,7 @@ const AdminDashboard = () => {
                 size="sm"
                 variant={locationModalType === 'region' ? 'default' : 'ghost'}
                 className="h-7 text-xs flex-1"
-                disabled={!!editingLocationData}
+                disabled={!editingLocationData}
                 onClick={() => setLocationModalType('region')}
               >
                 Region
@@ -3322,7 +3066,7 @@ const AdminDashboard = () => {
                 size="sm"
                 variant={locationModalType === 'town' ? 'default' : 'ghost'}
                 className="h-7 text-xs flex-1"
-                disabled={!!editingLocationData}
+                disabled={!editingLocationData}
                 onClick={() => setLocationModalType('town')}
               >
                 Town Depot
@@ -3337,7 +3081,7 @@ const AdminDashboard = () => {
                 required
                 defaultValue={editingLocationData?.id || ''}
                 placeholder={locationModalType === 'region' ? 'e.g. norfolk' : 'e.g. attleborough'}
-                disabled={!!editingLocationData?.id}
+                disabled={!editingLocationData?.id}
                 className="text-xs"
               />
             </div>
@@ -3708,7 +3452,7 @@ const AdminDashboard = () => {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+      <Dialog open={!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
