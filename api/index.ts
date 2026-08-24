@@ -12,6 +12,7 @@ import { app as uploadApp } from './upload.js';
 import { app as clerkWebhookApp } from './webhook-clerk.js';
 import { app as intakeWebhookApp } from './webhook-intake.js';
 import { app as triageApp } from './triage.js';
+import { app as jobsApp } from './jobs.js';
 
 const app = new Hono();
 
@@ -20,6 +21,7 @@ app.use('*', cors());
 // Mount routes
 app.route('/', pingApp);
 app.route('/', locationsApp);
+app.route('/', jobsApp);
 app.route('/', applicationsApp);
 app.route('/', triageApp);
 app.route('/', adminApp);

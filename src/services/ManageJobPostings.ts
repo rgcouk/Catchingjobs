@@ -26,10 +26,45 @@ export class ManageJobPostings {
     });
   }
 
+  async updateJobPosting(id: number, data: any) {
+    return this.prisma.jobPosting.update({
+      where: { id },
+      data: {
+        ...(data.title !== undefined && { title: data.title }),
+        ...(data.description !== undefined && { description: data.description }),
+        ...(data.payRate !== undefined && { payRate: data.payRate }),
+        ...(data.sector !== undefined && { sector: data.sector }),
+        ...(data.townId !== undefined && { townId: data.townId }),
+        ...(data.status !== undefined && { status: data.status }),
+      },
+      include: {
+        _count: {
+          select: { applications: true },
+        },
+      },
+    });
+  }
+
+  async getJobPostingById(id: number) {
+    return this.prisma.jobPosting.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { applications: true },
+        },
+      },
+    });
+  }
+
   async updateJobPostingStatus(id: number, status: string) {
     return this.prisma.jobPosting.update({
       where: { id },
       data: { status },
+      include: {
+        _count: {
+          select: { applications: true },
+        },
+      },
     });
   }
 

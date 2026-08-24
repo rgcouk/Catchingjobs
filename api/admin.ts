@@ -128,6 +128,30 @@ app.post('/api/admin/job-postings', async (c) => {
   }
 });
 
+app.put('/api/admin/job-postings/:id', async (c) => {
+  const service = new ManageJobPostings(getPrisma());
+  try {
+    const id = parseInt(c.req.param('id'), 10);
+    const body = await c.req.json();
+    const job = await service.updateJobPosting(id, body);
+    return c.json(job);
+  } catch (error) {
+    return handleError(error, 'Failed to update job posting', c);
+  }
+});
+
+app.patch('/api/admin/job-postings/:id', async (c) => {
+  const service = new ManageJobPostings(getPrisma());
+  try {
+    const id = parseInt(c.req.param('id'), 10);
+    const body = await c.req.json();
+    const job = await service.updateJobPosting(id, body);
+    return c.json(job);
+  } catch (error) {
+    return handleError(error, 'Failed to update job posting', c);
+  }
+});
+
 app.patch('/api/admin/job-postings/:id/status', async (c) => {
   const service = new ManageJobPostings(getPrisma());
   try {

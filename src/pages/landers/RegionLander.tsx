@@ -72,6 +72,25 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
     return !town && !isNotFound;
   });
 
+  const [hubJobs, setHubJobs] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch(`/api/jobs?sector=${sectorId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const matching = data.filter(
+            (j) =>
+              j.townId?.toLowerCase() === regionId.toLowerCase() ||
+              j.regionId?.toLowerCase() === town?.region?.id?.toLowerCase() ||
+              j.regionName?.toLowerCase() === town?.region?.name?.toLowerCase(),
+          );
+          setHubJobs(matching);
+        }
+      })
+      .catch((err) => console.warn('Could not fetch hub vacancies:', err));
+  }, [regionId, sectorId, town]);
+
   useEffect(() => {
     const syncResolved = resolveTown(sectorId, regionId);
     if (syncResolved && syncResolved.town) {
@@ -351,6 +370,174 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
                 {town.surrounding || `${town.name} and surrounding agricultural corridors`}
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* Live Vacancies in Town & Region Section */}
+        <section className="space-y-6" id="open-roles">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E2E8F0] pb-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[#059669] uppercase tracking-wider">
+                <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
+                Active Local Roster
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+                Open Harvesting Vacancies in {town.name} & {town.region.name}
+              </h2>
+            </div>
+            <span className="text-xs font-mono text-[#64748B]">
+              Guaranteed Friday Pay • Direct Minibus Pickup
+            </span>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {hubJobs.length > 0 ? (
+              hubJobs.map((job) => (
+                <div
+                  key={job.id}
+                  className="bg-white rounded-xl border border-[#E2E8F0] hover:border-[#059669] transition-all p-6 flex flex-col justify-between space-y-4 shadow-xs"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
+                        {job.sector === 'chicken' ? 'Broiler Squad' : 'Turkey Squad'}
+                      </span>
+                      <span className="text-xs font-mono font-bold text-[#059669]">
+                        {job.payRate}
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-[#0F172A]">{job.title}</h3>
+                    <p className="text-xs text-[#64748B] leading-relaxed">{job.description}</p>
+
+                    <div className="space-y-1.5 pt-2 text-xs font-mono text-[#64748B]">
+                      <div className="flex items-center gap-1.5 text-[#0F172A]">
+                        <MapPin className="w-3.5 h-3.5 text-[#059669]" />
+                        <span>Transit Hub: {job.pickupPoint || town.pickupPoint}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Truck className="w-3.5 h-3.5 text-[#059669]" />
+                        <span>Door-to-Door Pickup: Included</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      const formEl = document.getElementById('hero-triage-form');
+                      if (formEl) {
+                        formEl.scrollIntoView({ behavior: 'smooth' });
+                        const nameInput = formEl.querySelector('input');
+                        if (nameInput) nameInput.focus();
+                      }
+                    }}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#059669] text-white font-mono text-xs font-semibold uppercase tracking-wider py-2.5 px-4 rounded-md transition-colors cursor-pointer shadow-xs"
+                  >
+                    <span>Apply for this {town.name} Role</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="bg-white rounded-xl border border-[#E2E8F0] hover:border-[#059669] transition-all p-6 flex flex-col justify-between space-y-4 shadow-xs">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
+                        {sectorId === 'chicken' ? 'Broiler Squad' : 'Turkey Squad'}
+                      </span>
+                      <span className="text-xs font-mono font-bold text-[#059669]">
+                        £750 - £950 / week
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-[#0F172A]">
+                      {sectorId === 'chicken'
+                        ? `Senior Broiler Catcher (${town.name})`
+                        : `Commercial Turkey Operative (${town.name})`}
+                    </h3>
+                    <p className="text-xs text-[#64748B] leading-relaxed">
+                      Night shift harvesting squad operations with free door-to-door minibus
+                      collection in {town.name}. Full training and PPE provided.
+                    </p>
+
+                    <div className="space-y-1.5 pt-2 text-xs font-mono text-[#64748B]">
+                      <div className="flex items-center gap-1.5 text-[#0F172A]">
+                        <MapPin className="w-3.5 h-3.5 text-[#059669]" />
+                        <span>Transit Hub: {town.pickupPoint}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Coins className="w-3.5 h-3.5 text-[#059669]" />
+                        <span>Weekly Friday payroll into your bank account</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      const formEl = document.getElementById('hero-triage-form');
+                      if (formEl) {
+                        formEl.scrollIntoView({ behavior: 'smooth' });
+                        const nameInput = formEl.querySelector('input');
+                        if (nameInput) nameInput.focus();
+                      }
+                    }}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#059669] text-white font-mono text-xs font-semibold uppercase tracking-wider py-2.5 px-4 rounded-md transition-colors cursor-pointer shadow-xs"
+                  >
+                    <span>Apply for this {town.name} Role</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="bg-white rounded-xl border border-[#E2E8F0] hover:border-[#059669] transition-all p-6 flex flex-col justify-between space-y-4 shadow-xs">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200">
+                        Squad Leadership
+                      </span>
+                      <span className="text-xs font-mono font-bold text-[#059669]">
+                        £1,050 - £1,300 / week
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-[#0F172A]">
+                      Poultry Crew Team Leader ({town.region.name})
+                    </h3>
+                    <p className="text-xs text-[#64748B] leading-relaxed">
+                      Lead an active team of 6-8 operatives covering facilities around {town.name}{' '}
+                      and {town.region.name}. Vehicle coordination and welfare compliance
+                      management.
+                    </p>
+
+                    <div className="space-y-1.5 pt-2 text-xs font-mono text-[#64748B]">
+                      <div className="flex items-center gap-1.5 text-[#0F172A]">
+                        <MapPin className="w-3.5 h-3.5 text-[#059669]" />
+                        <span>Transit Hub: {town.name} & Surrounding Area</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Truck className="w-3.5 h-3.5 text-[#059669]" />
+                        <span>Squad vehicle coordination allowance</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      const formEl = document.getElementById('hero-triage-form');
+                      if (formEl) {
+                        formEl.scrollIntoView({ behavior: 'smooth' });
+                        const nameInput = formEl.querySelector('input');
+                        if (nameInput) nameInput.focus();
+                      }
+                    }}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#059669] text-white font-mono text-xs font-semibold uppercase tracking-wider py-2.5 px-4 rounded-md transition-colors cursor-pointer shadow-xs"
+                  >
+                    <span>Apply for Leadership Role</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </section>
 

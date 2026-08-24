@@ -21,6 +21,14 @@
       "destination": "/api/locations.ts"
     },
     {
+      "source": "/api/jobs",
+      "destination": "/api/jobs.ts"
+    },
+    {
+      "source": "/api/jobs/(.*)",
+      "destination": "/api/jobs.ts"
+    },
+    {
       "source": "/api/applications",
       "destination": "/api/applications.ts"
     },

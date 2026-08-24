@@ -198,6 +198,7 @@ const AdminDashboard = () => {
 
   // Job Posting States
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
+  const [editingJobData, setEditingJobData] = useState<any | null>(null);
   const [jobSearch, setJobSearch] = useState('');
 
   // General Delete Confirmation Modal
@@ -497,19 +498,36 @@ const AdminDashboard = () => {
   const onJobSubmit = async (data: JobFormValues) => {
     try {
       const token = await getToken();
-      const res = await fetch('/api/admin/job-postings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ ...data, status: 'ACTIVE' }),
-      });
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || 'Failed to create job');
+      if (editingJobData) {
+        const res = await fetch(`/api/admin/job-postings/${editingJobData.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to update job');
+        }
+        jobForm.reset();
+        setEditingJobData(null);
+        setIsJobModalOpen(false);
+        await fetchData();
+        toast.success('Job vacancy updated successfully');
+      } else {
+        const res = await fetch('/api/admin/job-postings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ ...data, status: 'ACTIVE' }),
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to create job');
+        }
+        jobForm.reset();
+        setIsJobModalOpen(false);
+        await fetchData();
+        toast.success('Job posted successfully');
       }
-      jobForm.reset();
-      setIsJobModalOpen(false);
-      await fetchData();
-      toast.success('Job posted successfully');
     } catch (err: any) {
       toast.error(err.message || 'An error occurred');
     }
@@ -2425,6 +2443,25 @@ const AdminDashboard = () => {
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 p-0"
+                            title="Edit Job"
+                            onClick={() => {
+                              setEditingJobData(job);
+                              jobForm.reset({
+                                title: job.title,
+                                description: job.description,
+                                payRate: job.payRate,
+                                sector: job.sector,
+                                townId: job.townId,
+                              });
+                              setIsJobModalOpen(true);
+                            }}
+                          >
+                            <Edit className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" />
+                          </Button>
+                          <Button
                             variant="outline"
                             size="sm"
                             className="h-7 text-xs"
@@ -2661,9 +2698,31 @@ const AdminDashboard = () => {
                             {job.payRate} • {job.sector}
                           </p>
                         </div>
-                        <Badge variant="outline" className="text-[10px] font-mono">
-                          {job._count?.applications || 0} Inquiries
-                        </Badge>
+                        <div className="flex items-center gap-1.5">
+                          <Badge variant="outline" className="text-[10px] font-mono">
+                            {job._count?.applications || 0} Inquiries
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+                            title="Edit Vacancy"
+                            onClick={() => {
+                              setEditingJobData(job);
+                              jobForm.reset({
+                                title: job.title,
+                                description: job.description,
+                                payRate: job.payRate,
+                                sector: job.sector,
+                                townId: job.townId,
+                              });
+                              setSelectedLocationDetail(null);
+                              setIsJobModalOpen(true);
+                            }}
+                          >
+                            <Edit className="w-3 h-3" />
+                          </Button>
+                        </div>
                       </div>
                     ))}
                 </div>
@@ -3191,13 +3250,30 @@ const AdminDashboard = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Post Job Modal Dialog */}
-      <Dialog open={isJobModalOpen} onOpenChange={setIsJobModalOpen}>
+      {/* Post / Edit Job Modal Dialog */}
+      <Dialog
+        open={isJobModalOpen}
+        onOpenChange={(open) => {
+          setIsJobModalOpen(open);
+          if (!open) {
+            setEditingJobData(null);
+            jobForm.reset({
+              title: '',
+              description: '',
+              payRate: '',
+              sector: 'chicken',
+              townId: allTowns[0]?.id || 'boston',
+            });
+          }
+        }}
+      >
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Post a Job Vacancy</DialogTitle>
+            <DialogTitle>{editingJobData ? 'Edit Job Vacancy' : 'Post a Job Vacancy'}</DialogTitle>
             <DialogDescription>
-              Create a live poultry harvesting role across chicken or turkey squads.
+              {editingJobData
+                ? 'Update role compensation, shift details, and localized transport hub.'
+                : 'Create a live poultry harvesting role across chicken or turkey squads.'}
             </DialogDescription>
           </DialogHeader>
 
@@ -3237,7 +3313,7 @@ const AdminDashboard = () => {
                 name="sector"
                 control={jobForm.control}
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value || 'chicken'}>
                     <SelectTrigger id="sector" className="text-xs">
                       <SelectValue placeholder="Select Sector..." />
                     </SelectTrigger>
@@ -3256,7 +3332,7 @@ const AdminDashboard = () => {
                 name="townId"
                 control={jobForm.control}
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value || allTowns[0]?.id}>
                     <SelectTrigger id="townId" className="text-xs">
                       <SelectValue placeholder="Select Town Depot..." />
                     </SelectTrigger>
@@ -3277,12 +3353,15 @@ const AdminDashboard = () => {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setIsJobModalOpen(false)}
+                onClick={() => {
+                  setIsJobModalOpen(false);
+                  setEditingJobData(null);
+                }}
               >
                 Cancel
               </Button>
               <Button type="submit" size="sm">
-                Publish Vacancy
+                {editingJobData ? 'Save Changes' : 'Publish Vacancy'}
               </Button>
             </DialogFooter>
           </form>

@@ -41,6 +41,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
   const tenant = TENANTS[sectorId];
   // Initialize synchronously with static data so SSR server render contains full location lists
   const [regions, setRegions] = useState<any[]>(() => getAllRegionsWithTowns());
+  const [sectorJobs, setSectorJobs] = useState<any[]>([]);
 
   useEffect(() => {
     fetch('/api/locations')
@@ -51,7 +52,16 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
       .catch((err) => {
         console.warn('Could not refresh locations via API:', err);
       });
-  }, []);
+
+    fetch(`/api/jobs?sector=${sectorId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) setSectorJobs(data);
+      })
+      .catch((err) => {
+        console.warn('Could not refresh sector jobs via API:', err);
+      });
+  }, [sectorId]);
 
   const sectorSlug = sectorId === 'chicken' ? 'chickens' : 'turkeys';
   const sectorName = sectorId === 'chicken' ? 'Chicken Catching' : 'Turkey Catching';
@@ -146,6 +156,75 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
 
       {/* Main Content Wrapper */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+        {/* Live Vacancies in Sector */}
+        {sectorJobs.length > 0 && (
+          <div className="space-y-6 w-full" id="live-roles">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E2E8F0] pb-4">
+              <div className="space-y-2 max-w-2xl">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#ECFDF5] border border-[#A7F3D0] rounded-md text-xs font-mono font-semibold text-[#065F46] uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
+                  <span>Immediate Start Dates</span>
+                </div>
+                <h2 className="text-3xl font-bold tracking-tight text-[#0F172A] leading-tight">
+                  Live {sectorName} Vacancies
+                </h2>
+                <p className="text-sm text-[#64748B] font-normal leading-relaxed">
+                  Join active harvest squads with guaranteed Friday payroll and door-to-door home
+                  collection.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {sectorJobs.map((job) => (
+                <div
+                  key={job.id}
+                  className="bg-white rounded-xl border border-[#E2E8F0] hover:border-[#059669] p-6 flex flex-col justify-between space-y-4 shadow-xs transition-all"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
+                        {job.sector === 'chicken' ? 'Broiler Squad' : 'Turkey Squad'}
+                      </span>
+                      <span className="text-xs font-mono font-bold text-[#059669]">
+                        {job.payRate}
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-[#0F172A]">{job.title}</h3>
+                    <p className="text-xs text-[#64748B] leading-relaxed line-clamp-2">
+                      {job.description}
+                    </p>
+
+                    <div className="space-y-1.5 pt-2 text-xs font-mono text-[#64748B]">
+                      <div className="flex items-center gap-1.5 text-[#0F172A]">
+                        <MapPin className="w-3.5 h-3.5 text-[#059669]" />
+                        <span>
+                          {job.townName || job.townId} Hub • {job.regionName || job.county || 'UK'}
+                        </span>
+                      </div>
+                      {job.pickupPoint && (
+                        <div className="flex items-center gap-1.5 text-[11px]">
+                          <Truck className="w-3.5 h-3.5 text-[#059669]" />
+                          <span>Pickup: {job.pickupPoint}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <Link
+                    to={`/${sectorSlug}/${job.townId}`}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#059669] text-white font-mono text-xs font-semibold uppercase tracking-wider py-2.5 px-4 rounded-md transition-colors shadow-xs no-underline"
+                  >
+                    <span>Apply for {job.townName || job.townId}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Operational Recruiting Locations (THE FUNNEL) */}
         <div className="space-y-6 w-full" id="locations">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">

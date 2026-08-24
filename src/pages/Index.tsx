@@ -3,7 +3,7 @@
  * paper: #F8FAFC · surface: #FFFFFF · ink: #0F172A · rule: #E2E8F0 · accent: #059669
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -30,7 +30,121 @@ interface IndexProps {
   onNavigate?: (subdomain: 'root' | 'chicken' | 'turkey' | 'corporate', regionId: string) => void;
 }
 
+const STATIC_DEFAULT_JOBS = [
+  {
+    id: 1,
+    title: 'Night Shift Broiler Catcher',
+    sector: 'chicken',
+    townId: 'boston',
+    townName: 'Boston',
+    regionName: 'Lincolnshire',
+    pickupPoint: 'Boston Railway Station, Station Approach',
+    description:
+      'Operating in modern broiler houses. Night shifts with guaranteed door-to-door home pickup. Consistent 45-50 hrs weekly with Friday payroll.',
+    payRate: '£15.50 - £18.50/hr',
+    status: 'ACTIVE',
+  },
+  {
+    id: 2,
+    title: 'Poultry Harvest Crew Leader',
+    sector: 'chicken',
+    townId: 'lincoln',
+    townName: 'Lincoln',
+    regionName: 'Lincolnshire',
+    pickupPoint: 'Lincoln Central Transit Depot',
+    description:
+      'Lead a squad of 6-8 professional catchers. Animal welfare compliance, squad vehicle transit coordination, and shift logging.',
+    payRate: '£19.00 - £23.00/hr',
+    status: 'ACTIVE',
+  },
+  {
+    id: 3,
+    title: 'Commercial Turkey Loading Operative',
+    sector: 'turkey',
+    townId: 'sleaford',
+    townName: 'Sleaford',
+    regionName: 'Lincolnshire',
+    pickupPoint: 'Sleaford Market Square Outpost',
+    description:
+      'Heavy agricultural turkey loading and welfare handling. Full manual handling training provided, weekly wages direct into your account.',
+    payRate: '£16.00 - £19.50/hr',
+    status: 'ACTIVE',
+  },
+  {
+    id: 4,
+    title: 'Broiler Harvesting Squad Operative',
+    sector: 'chicken',
+    townId: 'attleborough',
+    townName: 'Attleborough',
+    regionName: 'Norfolk',
+    pickupPoint: 'Attleborough High Street Transport Stop',
+    description:
+      'Night shift harvesting across Norfolk grower contracts. Heated minibus transport direct from your front door.',
+    payRate: '£15.00 - £18.00/hr',
+    status: 'ACTIVE',
+  },
+  {
+    id: 5,
+    title: 'Agricultural Catching Specialist',
+    sector: 'chicken',
+    townId: 'hull',
+    townName: 'Hull',
+    regionName: 'Yorkshire',
+    pickupPoint: 'Hull Interchange Hub',
+    description:
+      'Fast-growing Yorkshire squad operations. Stable long-term contract with premium overtime opportunities.',
+    payRate: '£15.50 - £18.50/hr',
+    status: 'ACTIVE',
+  },
+  {
+    id: 6,
+    title: 'Turkey Squad Driver & Catcher',
+    sector: 'turkey',
+    townId: 'thetford',
+    townName: 'Thetford',
+    regionName: 'Norfolk',
+    pickupPoint: 'Thetford Bus Interchange',
+    description:
+      'Clean UK driving license preferred. Drive company minibus and participate in harvest squad operations. Vehicle allowance bonus.',
+    payRate: '£17.00 - £21.00/hr',
+    status: 'ACTIVE',
+  },
+  {
+    id: 7,
+    title: 'Harvesting Operative - West Midlands',
+    sector: 'chicken',
+    townId: 'shrewsbury',
+    townName: 'Shrewsbury',
+    regionName: 'Shropshire',
+    pickupPoint: 'Shrewsbury Abbey Foregate Depot',
+    description:
+      'Broiler chicken catching crews covering Shropshire and Welsh border facilities. Full PPE and door-to-door transit.',
+    payRate: '£15.25 - £18.00/hr',
+    status: 'ACTIVE',
+  },
+];
+
 export default function Index({ onNavigate }: IndexProps) {
+  const [liveJobs, setLiveJobs] = useState<any[]>(STATIC_DEFAULT_JOBS);
+  const [jobFilterSector, setJobFilterSector] = useState<'ALL' | 'chicken' | 'turkey'>('ALL');
+
+  useEffect(() => {
+    fetch('/api/jobs')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setLiveJobs(data);
+        }
+      })
+      .catch((err) => {
+        console.warn('Live jobs fetch warning, using static catalog:', err);
+      });
+  }, []);
+
+  const filteredLiveJobs = liveJobs.filter((job) => {
+    if (jobFilterSector !== 'ALL' && job.sector !== jobFilterSector) return false;
+    return true;
+  });
   const news = [
     {
       id: 'news-1',
@@ -250,6 +364,145 @@ export default function Index({ onNavigate }: IndexProps) {
               </div>
             </Link>
           </div>
+        </section>
+
+        {/* Live Harvesting Vacancies Section */}
+        <section className="space-y-8" id="vacancies">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="max-w-2xl space-y-2">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#ECFDF5] border border-[#A7F3D0] rounded-md text-xs font-mono font-semibold text-[#065F46] uppercase tracking-wider">
+                <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
+                <span>Live Openings Across UK Corridors</span>
+              </div>
+              <h2 className="text-3xl font-bold tracking-tight text-[#0F172A]">
+                Current Poultry Harvesting Vacancies
+              </h2>
+              <p className="text-sm text-[#64748B] leading-relaxed">
+                Guaranteed weekly Friday pay, free door-to-door home pickup, and immediate start
+                dates across all active UK catching squads.
+              </p>
+            </div>
+
+            {/* Quick Filter Controls */}
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => setJobFilterSector('ALL')}
+                className={`px-3 py-1.5 text-xs font-mono rounded-md border transition-colors cursor-pointer ${
+                  jobFilterSector === 'ALL'
+                    ? 'bg-[#0F172A] text-white border-[#0F172A] font-semibold'
+                    : 'bg-white text-[#64748B] border-[#E2E8F0] hover:border-[#0F172A]'
+                }`}
+              >
+                All Roles ({liveJobs.length})
+              </button>
+              <button
+                onClick={() => setJobFilterSector('chicken')}
+                className={`px-3 py-1.5 text-xs font-mono rounded-md border transition-colors cursor-pointer ${
+                  jobFilterSector === 'chicken'
+                    ? 'bg-[#059669] text-white border-[#059669] font-semibold'
+                    : 'bg-white text-[#64748B] border-[#E2E8F0] hover:border-[#059669]'
+                }`}
+              >
+                Chicken ({liveJobs.filter((j) => j.sector === 'chicken').length})
+              </button>
+              <button
+                onClick={() => setJobFilterSector('turkey')}
+                className={`px-3 py-1.5 text-xs font-mono rounded-md border transition-colors cursor-pointer ${
+                  jobFilterSector === 'turkey'
+                    ? 'bg-[#EA580C] text-white border-[#EA580C] font-semibold'
+                    : 'bg-white text-[#64748B] border-[#E2E8F0] hover:border-[#EA580C]'
+                }`}
+              >
+                Turkey ({liveJobs.filter((j) => j.sector === 'turkey').length})
+              </button>
+            </div>
+          </div>
+
+          {/* Job Vacancy Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredLiveJobs.map((job) => {
+              const targetUrl = `/${job.sector === 'chicken' ? 'chickens' : 'turkeys'}/${job.townId}`;
+              return (
+                <div
+                  key={job.id}
+                  className="bg-white rounded-xl border border-[#E2E8F0] hover:border-[#059669] transition-all p-6 flex flex-col justify-between space-y-5 shadow-xs group"
+                >
+                  <div className="space-y-3.5">
+                    {/* Header tags */}
+                    <div className="flex items-center justify-between">
+                      <span
+                        className={`text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md border ${
+                          job.sector === 'chicken'
+                            ? 'bg-amber-50 text-amber-800 border-amber-200'
+                            : 'bg-teal-50 text-teal-800 border-teal-200'
+                        }`}
+                      >
+                        {job.sector === 'chicken' ? 'Broiler Catching' : 'Turkey Harvesting'}
+                      </span>
+                      <span className="text-[11px] font-mono text-[#059669] font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Immediate Start
+                      </span>
+                    </div>
+
+                    {/* Job Title */}
+                    <h3 className="text-lg font-bold text-[#0F172A] group-hover:text-[#059669] transition-colors leading-snug">
+                      {job.title}
+                    </h3>
+
+                    {/* Location & Pay Details */}
+                    <div className="space-y-2 text-xs text-[#64748B] font-mono bg-[#F8FAFC] p-3 rounded-lg border border-[#E2E8F0]">
+                      <div className="flex items-center gap-2 text-[#0F172A] font-semibold">
+                        <MapPin className="w-3.5 h-3.5 text-[#059669] shrink-0" />
+                        <span>
+                          {job.townName || job.townId} Hub • {job.regionName || job.county || 'UK'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[#059669] font-bold">
+                        <Coins className="w-3.5 h-3.5 shrink-0" />
+                        <span>{job.payRate} • Weekly Friday Pay</span>
+                      </div>
+                      {job.pickupPoint && (
+                        <div className="flex items-start gap-2 pt-1 border-t border-[#E2E8F0]/60 text-[11px] text-[#64748B]">
+                          <Truck className="w-3.5 h-3.5 text-[#059669] shrink-0 mt-0.5" />
+                          <span>Pickup: {job.pickupPoint}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Description excerpt */}
+                    <p className="text-xs text-[#64748B] line-clamp-2 leading-relaxed">
+                      {job.description}
+                    </p>
+                  </div>
+
+                  {/* Apply CTA Button */}
+                  <div className="pt-3 border-t border-[#F1F5F9] flex items-center justify-between">
+                    <Link
+                      to={targetUrl}
+                      className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#059669] text-white font-mono text-xs font-semibold uppercase tracking-wider py-2.5 px-4 rounded-md transition-colors shadow-xs"
+                    >
+                      <span>Apply & Reserve Pickup</span>
+                      <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {filteredLiveJobs.length === 0 && (
+            <div className="p-8 rounded-xl bg-white border border-[#E2E8F0] text-center space-y-2">
+              <p className="text-sm font-mono text-[#64748B]">
+                No live vacancies currently listed in this category.
+              </p>
+              <button
+                onClick={() => setJobFilterSector('ALL')}
+                className="text-xs font-mono font-semibold text-[#059669] hover:underline cursor-pointer"
+              >
+                View all available vacancies
+              </button>
+            </div>
+          )}
         </section>
 
         {/* Door-to-Door Transit Fleet Highlight Banner */}
