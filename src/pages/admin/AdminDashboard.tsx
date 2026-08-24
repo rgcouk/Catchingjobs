@@ -13,6 +13,7 @@ import {
   TrendingDown,
   Users,
 } from 'lucide-react';
+import type { Application, User, JobPosting } from '@prisma/client';
 import { useAuth } from '@clerk/clerk-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
 import ReactMarkdown from 'react-markdown';
@@ -124,17 +125,19 @@ const AdminDashboard = () => {
   const { activeTab } = useAppShell();
   const { getToken } = useAuth();
 
-  const [applications, setApplications] = useState<any[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
   const [totalApps, setTotalApps] = useState(0);
   const [appSkip, setAppSkip] = useState(0);
-  const [locations, setLocations] = useState<any[]>([]);
-  const [jobs, setJobs] = useState<any[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
+  const [locations, setLocations] = useState<any[]>([]); // Mixed towns and regions
+  const [jobs, setJobs] = useState<JobPosting[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedApp, setSelectedApp] = useState<any | null>(null);
+  const [selectedApp, setSelectedApp] = useState<
+    (Application & { jobPosting?: JobPosting | null }) | null
+  >(null);
   const [customMsgText, setCustomMsgText] = useState('');
 
   const [isEditingLocation, setIsEditingLocation] = useState(false);
@@ -198,7 +201,7 @@ const AdminDashboard = () => {
     fetchData();
   }, [fetchData]);
 
-  const updateApplicationStatus = async (id: string, status: string) => {
+  const updateApplicationStatus = async (id: number, status: string) => {
     try {
       const token = await getToken();
       const res = await fetch(`/api/admin/applications/${id}`, {
@@ -214,8 +217,9 @@ const AdminDashboard = () => {
       if (selectedApp && selectedApp.id === id) {
         setSelectedApp({ ...selectedApp, status });
       }
+      toast.success('Status updated successfully');
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -235,8 +239,9 @@ const AdminDashboard = () => {
       if (selectedApp && selectedApp.id === id) {
         setSelectedApp({ ...selectedApp, [field]: value });
       }
+      toast.success(`${field} updated successfully`);
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -268,13 +273,21 @@ const AdminDashboard = () => {
       setIsEditingLocation(false);
       setEditingLocationData(null);
       await fetchData();
+      toast.success(`Location ${isEditingLocation ? 'updated' : 'created'} successfully`);
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
-  const deleteLocation = async (type: string, id: string) => {
-    if (!window.confirm(`Are you sure you want to delete this ${type}?`)) return;
+  const [deleteConfirm, setDeleteConfirm] = useState<{ type: string; id: string } | null>(null);
+
+  const confirmDeleteLocation = (type: string, id: string) => {
+    setDeleteConfirm({ type, id });
+  };
+
+  const executeDeleteLocation = async () => {
+    if (!deleteConfirm) return;
+    const { type, id } = deleteConfirm;
     try {
       const token = await getToken();
       const res = await fetch(`/api/admin/locations/${type}/${id}`, {
@@ -283,8 +296,11 @@ const AdminDashboard = () => {
       });
       if (!res.ok) throw new Error('Failed to delete location');
       await fetchData();
+      toast.success('Location deleted successfully');
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
+    } finally {
+      setDeleteConfirm(null);
     }
   };
 
@@ -1201,7 +1217,7 @@ const AdminDashboard = () => {
                                   variant="ghost"
                                   size="sm"
                                   className="h-8 w-8 p-0"
-                                  onClick={() => deleteLocation('region', region.id)}
+                                  onClick={() => confirmDeleteLocation('region', region.id)}
                                 >
                                   <Trash2 className="w-4 h-4 text-destructive" />
                                 </Button>
@@ -1234,7 +1250,7 @@ const AdminDashboard = () => {
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    onClick={() => deleteLocation('town', town.id)}
+                                    onClick={() => confirmDeleteLocation('town', town.id)}
                                   >
                                     <Trash2 className="w-3 h-3 text-destructive hover:text-destructive" />
                                   </Button>
@@ -1600,6 +1616,26 @@ const AdminDashboard = () => {
           <DialogFooter className="mt-6 border-t border-border pt-4">
             <Button variant="outline" onClick={() => setIsViewAppOpen(false)}>
               Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you sure?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete the {deleteConfirm?.type}.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteConfirm(null)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={executeDeleteLocation}>
+              Delete
             </Button>
           </DialogFooter>
         </DialogContent>

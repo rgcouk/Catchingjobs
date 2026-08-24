@@ -80,33 +80,33 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-[#F8FAFC] text-[#0F172A] selection:bg-[#059669] selection:text-white antialiased">
+    <div className="min-h-screen flex flex-col md:flex-row bg-card text-card-foreground selection:bg-primary selection:text-white antialiased">
       <Helmet>
         <title>Sign In | CatchingJobs</title>
         <meta name="description" content="Sign in to your CatchingJobs catcher portal account." />
       </Helmet>
 
       {/* Left Column - Brand Showcase */}
-      <div className="flex flex-col justify-between flex-1 p-8 md:p-14 lg:p-20 bg-[#0F172A] text-white border-b md:border-b-0 md:border-r border-slate-800">
+      <div className="flex flex-col justify-between flex-1 p-8 md:p-14 lg:p-20 bg-slate-900 text-white border-b md:border-b-0 md:border-r border-slate-800">
         <div className="space-y-8 max-w-lg">
           {/* Logo */}
           <Link to="/" className="inline-flex items-center gap-2 group no-underline">
-            <div className="bg-white w-8 h-8 rounded-lg flex items-center justify-center text-[#0F172A] font-bold text-xs">
+            <div className="bg-white w-8 h-8 rounded-lg flex items-center justify-center text-card-foreground font-bold text-xs">
               CJ
             </div>
             <span className="font-bold text-xl tracking-tight text-white">
-              Catching<span className="text-[#059669]">jobs</span>
+              Catching<span className="text-primary">jobs</span>
             </span>
           </Link>
 
           <div className="space-y-3 pt-4">
-            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-white/10 px-2.5 py-0.5 rounded-md border border-white/15">
+            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-primary bg-white/10 px-2.5 py-0.5 rounded-md border border-white/15">
               <ShieldCheck className="w-3.5 h-3.5" /> Pullum Ltd · GLAA Licensed Operative Hub
             </span>
           </div>
 
           <div className="space-y-4">
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white leading-tight">
+            <h1 className="text-muted-foregroundxl sm:text-muted-foregroundxl font-bold tracking-tight text-white leading-tight">
               Sign in to manage your catching roster.
             </h1>
             <p className="text-sm text-slate-300 leading-relaxed font-normal">
@@ -117,7 +117,7 @@ export default function Login() {
 
           <div className="space-y-4 pt-4 border-t border-white/10 text-xs text-slate-300">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
+              <div className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center text-primary shrink-0 border border-white/10">
                 <Truck className="w-4 h-4" />
               </div>
               <div>
@@ -127,7 +127,7 @@ export default function Login() {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
+              <div className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center text-primary shrink-0 border border-white/10">
                 <Coins className="w-4 h-4" />
               </div>
               <div>
@@ -137,7 +137,7 @@ export default function Login() {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
+              <div className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center text-primary shrink-0 border border-white/10">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div>
@@ -158,10 +158,12 @@ export default function Login() {
 
       {/* Right Column: High-Contrast Auth Card */}
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-md bg-white rounded-xl border border-[#E2E8F0] p-8 shadow-xs space-y-6">
+        <div className="w-full max-w-md bg-white rounded-xl border border-border p-8 shadow-xs space-y-6">
           <div className="space-y-2 text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">Candidate Log In</h2>
-            <p className="text-xs text-[#64748B]">
+            <h2 className="text-2xl font-bold tracking-tight text-card-foreground">
+              Candidate Log In
+            </h2>
+            <p className="text-xs text-muted-foreground">
               Enter your registered email address and password to sign in.
             </p>
           </div>
@@ -179,7 +181,7 @@ export default function Login() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-mono uppercase text-[#64748B]">
+                    <FormLabel className="text-xs font-mono uppercase text-muted-foreground">
                       Email Address
                     </FormLabel>
                     <FormControl>
@@ -187,7 +189,7 @@ export default function Login() {
                         type="email"
                         placeholder="you@example.com"
                         {...field}
-                        className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-md"
+                        className="bg-card border-border focus:border-primary text-sm rounded-md"
                       />
                     </FormControl>
                     <FormMessage className="text-xs text-red-600" />
@@ -201,7 +203,7 @@ export default function Login() {
                 render={({ field }) => (
                   <FormItem>
                     <div className="flex items-center justify-between">
-                      <FormLabel className="text-xs font-mono uppercase text-[#64748B]">
+                      <FormLabel className="text-xs font-mono uppercase text-muted-foreground">
                         Password
                       </FormLabel>
                     </div>
@@ -210,7 +212,7 @@ export default function Login() {
                         type="password"
                         placeholder="••••••••"
                         {...field}
-                        className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-md"
+                        className="bg-card border-border focus:border-primary text-sm rounded-md"
                       />
                     </FormControl>
                     <FormMessage className="text-xs text-red-600" />
@@ -221,7 +223,7 @@ export default function Login() {
               <Button
                 type="submit"
                 disabled={form.formState.isSubmitting}
-                className="w-full bg-[#059669] hover:bg-[#047857] text-white font-mono font-semibold text-xs uppercase tracking-wider py-3 rounded-md shadow-xs cursor-pointer transition-colors"
+                className="w-full bg-primary hover:bg-primary/90 text-white font-mono font-semibold text-xs uppercase tracking-wider py-3 rounded-md shadow-xs cursor-pointer transition-colors"
               >
                 {form.formState.isSubmitting ? (
                   <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -235,8 +237,8 @@ export default function Login() {
           </Form>
 
           <div className="relative flex items-center justify-center">
-            <div className="border-t border-[#E2E8F0] w-full" />
-            <span className="bg-white px-2 text-[11px] font-mono uppercase text-[#64748B] absolute">
+            <div className="border-t border-border w-full" />
+            <span className="bg-white px-2 text-[11px] font-mono uppercase text-muted-foreground absolute">
               Or continue with
             </span>
           </div>
@@ -244,7 +246,7 @@ export default function Login() {
           <Button
             variant="outline"
             type="button"
-            className="w-full border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] font-mono text-xs uppercase tracking-wider py-2.5 rounded-md cursor-pointer"
+            className="w-full border-border hover:bg-card text-card-foreground font-mono text-xs uppercase tracking-wider py-2.5 rounded-md cursor-pointer"
             onClick={handleGoogleSignIn}
             disabled={!isLoaded}
           >
@@ -252,9 +254,9 @@ export default function Login() {
             Google Single Sign-On
           </Button>
 
-          <div className="text-center text-xs text-[#64748B] pt-2">
+          <div className="text-center text-xs text-muted-foreground pt-2">
             Don't have an account?{' '}
-            <Link to="/register" className="font-semibold text-[#059669] hover:underline">
+            <Link to="/register" className="font-semibold text-primary hover:underline">
               Apply to join roster
             </Link>
           </div>

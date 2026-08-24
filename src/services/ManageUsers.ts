@@ -17,10 +17,10 @@ export class ManageUsers {
     });
 
     let clerkUser;
-    
+
     // Check if user already exists in Clerk
     const userList = await clerkClient.users.getUserList({ emailAddress: [email] });
-    
+
     if (userList.data && userList.data.length > 0) {
       clerkUser = userList.data[0];
     } else {

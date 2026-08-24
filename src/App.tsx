@@ -144,8 +144,6 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-
-
   const handleNavigate = (
     sub: 'root' | 'chicken' | 'turkey' | 'corporate' | 'portal',
     reg: string,
@@ -159,8 +157,6 @@ function App() {
     navigate(target);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-
 
   const path = location.pathname;
   const pathParts = path.split('/');
@@ -262,8 +258,6 @@ function App() {
         </nav>
       )}
 
-
-
       <main
         className={`flex-1 w-full flex flex-col lg:flex-row relative ${!isAppRoute ? 'pt-16' : ''}`}
       >
@@ -335,8 +329,6 @@ function App() {
             </Routes>
           </ErrorBoundary>
         </div>
-
-
       </main>
 
       {!isAppRoute && (
