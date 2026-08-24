@@ -445,9 +445,9 @@ function App() {
       </AnimatePresence>
 
       <main
-        className={`flex-1 w-full flex flex-col lg:flex-row relative ${!isAppRoute ? 'pt-24' : ''}`}
+        className={`flex-1 w-full flex flex-col lg:flex-row relative ${!isAppRoute ? 'pt-16' : ''}`}
       >
-        <div className="flex-1 space-y-6">
+        <div className="flex-1">
           <ErrorBoundary>
             <Routes>
               <Route path="/" element={<Index onNavigate={handleNavigate} />} />
