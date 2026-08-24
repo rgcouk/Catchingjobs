@@ -256,6 +256,42 @@ const AdminDashboard = () => {
   const [testEmailRecipient, setTestEmailRecipient] = useState('');
   const [isSendingTestEmail, setIsSendingTestEmail] = useState(false);
 
+  // Global memoized filtered users for CRM & Email Composer
+  const filteredUsers = useMemo(() => {
+    return users.filter((u) => {
+      const searchLower = userSearch.toLowerCase();
+      const matchesSearch =
+        u.email.toLowerCase().includes(searchLower) ||
+        u.id.toLowerCase().includes(searchLower) ||
+        (u.application?.name && u.application.name.toLowerCase().includes(searchLower)) ||
+        (u.application?.town && u.application.town.toLowerCase().includes(searchLower)) ||
+        (u.application?.phone && u.application.phone.toLowerCase().includes(searchLower)) ||
+        (u.application?.rosterRef && u.application.rosterRef.toLowerCase().includes(searchLower));
+
+      const matchesRole =
+        activeTab === 'workers'
+          ? u.role === 'WORKER'
+          : activeTab === 'admins'
+            ? u.role === 'ADMIN'
+            : userRoleFilter === 'ALL' || u.role === userRoleFilter;
+
+      const appStatus = u.application?.status || (u.application ? 'NEW' : 'NO_APP');
+      const matchesStatus =
+        userStatusFilter === 'ALL'
+          ? true
+          : userStatusFilter === 'NO_APP'
+            ? !u.application
+            : appStatus === userStatusFilter;
+
+      const matchesSector =
+        crmSectorFilter === 'ALL'
+          ? true
+          : u.application?.sector?.toLowerCase() === crmSectorFilter.toLowerCase();
+
+      return matchesSearch && matchesRole && matchesStatus && matchesSector;
+    });
+  }, [users, userSearch, activeTab, userRoleFilter, userStatusFilter, crmSectorFilter]);
+
   const loadApplications = useCallback(
     async (skip = 0, isLoadMore = false) => {
       try {
