@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { useSignIn } from '@clerk/clerk-react';
+import React, { useState, useEffect } from 'react';
+import { useSignIn, useAuth } from '@clerk/clerk-react';
 import { useNavigate, Link } from 'react-router';
 import { FcGoogle } from 'react-icons/fc';
 import { z } from 'zod';
@@ -30,8 +30,15 @@ const loginSchema = z.object({
 
 export default function Login() {
   const { isLoaded, signIn, setActive } = useSignIn();
+  const { isSignedIn, isLoaded: authLoaded } = useAuth();
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authLoaded && isSignedIn) {
+      navigate('/portal', { replace: true });
+    }
+  }, [authLoaded, isSignedIn, navigate]);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),

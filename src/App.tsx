@@ -387,19 +387,24 @@ function App() {
                 <Lock className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Log In</span>
               </button>
+              <Link
+                to="/register"
+                className="bg-[#059669] hover:bg-[#047857] text-white px-4 py-2 rounded-lg font-mono font-semibold text-xs uppercase tracking-wider transition-colors shadow-xs cursor-pointer"
+              >
+                Apply Now
+              </Link>
             </SignedOut>
             <SignedIn>
-              <div className="flex items-center gap-3 px-2">
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/portal"
+                  className="bg-[#059669] hover:bg-[#047857] text-white px-3.5 py-1.5 rounded-lg font-mono font-semibold text-xs uppercase tracking-wider transition-colors shadow-xs flex items-center gap-1.5"
+                >
+                  My Portal
+                </Link>
                 <UserButton afterSignOutUrl="/" />
               </div>
             </SignedIn>
-
-            <Link
-              to="/register"
-              className="bg-[#059669] hover:bg-[#047857] text-white px-4 py-2 rounded-lg font-mono font-semibold text-xs uppercase tracking-wider transition-colors shadow-xs cursor-pointer"
-            >
-              Apply Now
-            </Link>
           </div>
         </nav>
       )}
