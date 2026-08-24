@@ -199,7 +199,7 @@ const PortalDashboard = () => {
   const sectorName = app?.sector === 'turkey' ? 'Turkey Catching' : 'Chicken Catching';
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-12 bg-[#F8FAFC] text-[#0F172A] font-sans antialiased">
+    <div className="flex w-full min-h-[calc(100vh-64px)] bg-[#F8FAFC]">
       <Helmet>
         <title>Employee Portal | CatchingJobs</title>
         <meta
@@ -208,6 +208,35 @@ const PortalDashboard = () => {
         />
       </Helmet>
 
+      {/* Simple Minimal Sidebar */}
+      <aside className="hidden md:flex flex-col w-64 border-r border-slate-200 bg-white px-4 py-10 shrink-0">
+        <div className="mb-6 px-3">
+          <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-[#94A3B8]">
+            Employee Menu
+          </h2>
+        </div>
+        <nav className="flex-1 space-y-1.5">
+          <Button variant="ghost" className="w-full justify-start text-[#059669] bg-[#ECFDF5] hover:bg-[#D1FAE5] hover:text-[#059669] font-medium text-sm rounded-lg">
+            <User className="w-4 h-4 mr-3" />
+            Dashboard
+          </Button>
+          <Button variant="ghost" className="w-full justify-start text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 font-medium text-sm rounded-lg">
+            <Calendar className="w-4 h-4 mr-3" />
+            Schedule
+          </Button>
+          <Button variant="ghost" className="w-full justify-start text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 font-medium text-sm rounded-lg">
+            <FileText className="w-4 h-4 mr-3" />
+            Documents
+          </Button>
+          <Button variant="ghost" className="w-full justify-start text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 font-medium text-sm rounded-lg">
+            <HelpCircle className="w-4 h-4 mr-3" />
+            Support
+          </Button>
+        </nav>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-12 text-[#0F172A] font-sans antialiased">
       {/* Header Banner */}
       <header className="rounded-xl border border-[#E2E8F0] bg-white p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-3">
@@ -816,6 +845,7 @@ const PortalDashboard = () => {
           )}
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   );
 };

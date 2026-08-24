@@ -119,13 +119,15 @@ const adminNavItems: NavItem[] = [
   {
     id: 'applicants',
     label: 'Applicants',
-    icon: Users,
+    icon: ClipboardList,
     children: [
       { id: 'all', label: 'All Applicants' },
+      { id: 'kanban', label: 'Kanban Board' },
       { id: 'hired', label: 'Hired' },
       { id: 'rejected', label: 'Rejected' },
     ],
   },
+  { id: 'users', label: 'Users CRM', icon: Users },
   { id: 'locations', label: 'Locations', icon: MapPin },
   { id: 'jobs', label: 'Job Postings', icon: Briefcase },
   { id: 'settings', label: 'Settings', icon: Settings },
@@ -178,7 +180,6 @@ function App() {
     lowerPath.startsWith('/admin') ||
     lowerPath.startsWith('/login') ||
     lowerPath.startsWith('/register') ||
-    lowerPath.startsWith('/employee') ||
     lowerPath === '/sso-callback';
 
   return (
