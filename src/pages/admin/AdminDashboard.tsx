@@ -3452,7 +3452,7 @@ const AdminDashboard = () => {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+      <Dialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
