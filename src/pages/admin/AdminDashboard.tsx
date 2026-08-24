@@ -175,27 +175,25 @@ const AdminDashboard = () => {
       const token = await getToken();
       const headers = { Authorization: `Bearer ${token}` };
 
-      if (['dashboard', 'all', 'hired', 'rejected', 'kanban', 'applicants'].includes(activeTab)) {
-        await loadApplications(0, false);
-      } else if (activeTab === 'locations') {
-        const res = await fetch('/api/admin/locations', { headers });
-        if (!res.ok) throw new Error('Failed to fetch locations');
-        setLocations(await res.json());
-      } else if (activeTab === 'jobs') {
-        const res = await fetch('/api/admin/job-postings', { headers });
-        if (!res.ok) throw new Error('Failed to fetch jobs');
-        setJobs(await res.json());
-      } else if (activeTab === 'settings') {
-        const res = await fetch('/api/admin/users', { headers });
-        if (!res.ok) throw new Error('Failed to fetch users');
-        setUsers(await res.json());
-      }
+      // We load all core data concurrently so that all tabs have the necessary relational data (like towns for jobs)
+      const [locationsRes, jobsRes, usersRes] = await Promise.all([
+        fetch('/api/admin/locations', { headers }),
+        fetch('/api/admin/job-postings', { headers }),
+        fetch('/api/admin/users', { headers }),
+      ]);
+
+      if (locationsRes.ok) setLocations(await locationsRes.json());
+      if (jobsRes.ok) setJobs(await jobsRes.json());
+      if (usersRes.ok) setUsers(await usersRes.json());
+
+      // Applications are large, we can just load the first page
+      await loadApplications(0, false);
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [activeTab, getToken, loadApplications]);
+  }, [getToken, loadApplications]);
 
   useEffect(() => {
     fetchData();
@@ -304,7 +302,7 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleEditLocation = (type: string, id: string, locationData: any) => {
+  const handleEditLocation = (type: string, id: string, locationData) => {
     setIsEditingLocation(true);
     setEditingLocationData({ type, id, ...locationData });
     // This will populate the form on the left side
@@ -413,7 +411,7 @@ const AdminDashboard = () => {
                     <CardHeader className="relative">
                       <CardDescription>Active Jobs</CardDescription>
                       <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
-                        {jobs.filter((j: any) => j.status === 'ACTIVE').length}
+                        {jobs.filter((j) => j.status === 'ACTIVE').length}
                       </CardTitle>
                       <div className="absolute right-4 top-4">
                         <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
@@ -469,7 +467,7 @@ const AdminDashboard = () => {
                 </div>
 
                 <div className="px-4 lg:px-6">
-                  <ChartAreaInteractive />
+                  <ChartAreaInteractive applications={applications} />
                 </div>
 
                 <div className="px-4 lg:px-6">
@@ -480,7 +478,7 @@ const AdminDashboard = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-8">
-                        {applications.slice(0, 5).map((app: any) => (
+                        {applications.slice(0, 5).map((app) => (
                           <div key={app.id} className="flex items-center">
                             <div className="ml-4 space-y-1">
                               <p className="text-sm font-medium leading-none">
@@ -540,16 +538,16 @@ const AdminDashboard = () => {
                       { id: 'HIRED', title: 'HIRED' },
                       { id: 'REJECTED', title: 'REJECTED' },
                     ]}
-                    tasks={filteredApps.map((app: any) => ({
-                      id: app.id,
+                    tasks={filteredApps.map((app) => ({
+                      id: String(app.id),
                       title: app.name,
                       subtitle: `${app.sector} - ${app.town}`,
                       date: new Date(app.createdAt).toLocaleDateString(),
                       statusId: app.status || 'NEW',
                     }))}
-                    onTaskStatusChange={updateApplicationStatus}
+                    onTaskStatusChange={(taskId, newStatusId) => updateApplicationStatus(Number(taskId), newStatusId)}
                     onTaskSelect={(task) => {
-                      const app = filteredApps.find((a: any) => a.id === task.id);
+                      const app = filteredApps.find((a) => a.id === Number(task.id));
                       if (app) setSelectedApp(app);
                     }}
                   />
