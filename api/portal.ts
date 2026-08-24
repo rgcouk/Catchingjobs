@@ -2,18 +2,12 @@ import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
 import { getPrisma } from '../server/db.js';
+import { emailService } from '../src/services/EmailService.js';
 
 type Variables = {
   userId: string;
 };
 const app = new Hono<{ Variables: Variables }>();
-
-// Theoretical email function for application submission receipts and alerts
-async function sendApplicationEmail(applicationData: any) {
-  console.log(`[Email Service] Mock sending application receipt to applicant: ${applicationData.email}`);
-  console.log(`[Email Service] Mock sending new application alert to admin team for: ${applicationData.rosterRef}`);
-  // TODO: Wire up actual Resend/SendGrid API here later.
-}
 
 app.use('/api/portal/*', clerkMiddleware({
   publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,
@@ -150,9 +144,26 @@ app.patch('/api/portal/onboarding', async (c) => {
       });
     }
 
-    // Theoretical email trigger
+    // Real Resend email triggers for applicant confirmation and admin alert
     try {
-      await sendApplicationEmail(application);
+      if (application.email) {
+        await emailService.sendApplicationReceipt({
+          name: application.name,
+          email: application.email,
+          rosterRef: application.rosterRef,
+          town: application.town,
+          sector: application.sector,
+        });
+      }
+      await emailService.sendAdminNewApplicationAlert({
+        id: application.id,
+        rosterRef: application.rosterRef,
+        name: application.name,
+        email: application.email,
+        phone: application.phone,
+        town: application.town,
+        sector: application.sector,
+      });
     } catch (err) {
       console.error('Error sending application emails:', err);
     }

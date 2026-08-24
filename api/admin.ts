@@ -6,6 +6,7 @@ import { ManageLocations } from '../src/services/ManageLocations.js';
 import { ManageApplications } from '../src/services/ManageApplications.js';
 import { ManageJobPostings } from '../src/services/ManageJobPostings.js';
 import { ManageUsers } from '../src/services/ManageUsers.js';
+import { emailService } from '../src/services/EmailService.js';
 import { DomainError } from '../src/services/exceptions.js';
 
 const app = new Hono();
@@ -99,7 +100,23 @@ app.patch('/api/admin/applications/:id', async (c) => {
   try {
     const { id } = c.req.param();
     const body = await c.req.json();
+    const prevApp = await service.getApplication(parseInt(id, 10)).catch(() => null);
     const application = await service.updateApplication(parseInt(id, 10), body);
+
+    // If status changed, send notification email
+    if (body.status && prevApp && prevApp.status !== body.status && application.email) {
+      emailService.sendStatusChangeEmail(
+        {
+          name: application.name,
+          email: application.email,
+          rosterRef: application.rosterRef,
+          town: application.town,
+          sector: application.sector,
+        },
+        body.status,
+      ).catch((err) => console.error('Error sending status change email:', err));
+    }
+
     return c.json(application);
   } catch (error) {
     return handleError(error, 'Failed to update application', c);
@@ -213,9 +230,48 @@ app.post('/api/admin/invite', async (c) => {
   try {
     const { email, role } = await c.req.json();
     const user = await service.inviteUser(email, role);
+
+    // Send branded invitation email
+    emailService.sendStaffInvitation(email, role || 'WORKER')
+      .catch((err) => console.error('Error sending staff invitation email:', err));
+
     return c.json({ success: true, user }, 201);
   } catch (error) {
     return handleError(error, 'Failed to invite user', c);
+  }
+});
+
+app.post('/api/admin/broadcast-email', async (c) => {
+  try {
+    const body = await c.req.json();
+    const { candidates, template, customSubject, customBody } = body;
+
+    if (!Array.isArray(candidates) || candidates.length === 0) {
+      return c.json({ error: 'No recipients provided' }, 400);
+    }
+
+    const results = await Promise.all(
+      candidates.map(async (candidate: any) => {
+        return emailService.sendCampaignEmail({
+          name: candidate.name,
+          email: candidate.email,
+          town: candidate.town,
+          sector: candidate.sector,
+          template: template || 'reengage',
+          customSubject,
+          customBody,
+        });
+      }),
+    );
+
+    const successCount = results.filter((r) => r.success).length;
+    return c.json({
+      success: true,
+      total: candidates.length,
+      sent: successCount,
+    });
+  } catch (error) {
+    return handleError(error, 'Failed to broadcast campaign emails', c);
   }
 });
 

@@ -738,6 +738,49 @@ const AdminDashboard = () => {
     toast.success(`Copied ${uniqueEmails.length} email addresses for BCC broadcast`);
   };
 
+  const [isBroadcasting, setIsBroadcasting] = useState(false);
+  const sendBroadcastEmail = async (userList: typeof users) => {
+    const validCandidates = userList
+      .filter((u) => u.email && !u.email.includes('placeholder') && u.email.includes('@'))
+      .map((u) => ({
+        name: u.application?.name || u.email.split('@')[0],
+        email: u.email,
+        town: u.application?.town || 'your area',
+        sector: u.application?.sector || 'chicken',
+      }));
+
+    if (validCandidates.length === 0) {
+      toast.error('No valid email recipients in current filter');
+      return;
+    }
+
+    setIsBroadcasting(true);
+    try {
+      const token = await getToken();
+      const res = await fetch('/api/admin/broadcast-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          candidates: validCandidates,
+          template: crmCampaignTemplate,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Broadcast request failed');
+      const data = await res.json();
+      toast.success(
+        `Dispatched campaign "${crmCampaignTemplate}" to ${data.sent} candidates via Resend`,
+      );
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to dispatch broadcast');
+    } finally {
+      setIsBroadcasting(false);
+    }
+  };
+
   const exportLocationsCSV = () => {
     const headers = ['Type', 'ID Slug', 'Name', 'Parent Region', 'Pickup Point', 'Surrounding'];
     const rows: string[][] = [];
@@ -1112,6 +1155,19 @@ const AdminDashboard = () => {
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <Button
+                  variant="default"
+                  size="sm"
+                  disabled={isBroadcasting}
+                  onClick={() => sendBroadcastEmail(filteredUsers)}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs shrink-0 font-medium"
+                  title="Directly send active campaign email via Resend to all contacts in current filter"
+                >
+                  <Send className="w-3.5 h-3.5 mr-1.5" />
+                  {isBroadcasting
+                    ? 'Sending Campaign...'
+                    : `Send Campaign via Resend (${filteredUsers.filter((u) => u.email && !u.email.includes('placeholder')).length})`}
+                </Button>
+                <Button
                   variant="outline"
                   size="sm"
                   onClick={() => copyMarketingEmails(filteredUsers)}
@@ -1119,7 +1175,7 @@ const AdminDashboard = () => {
                   title="Copy email addresses of all contacts in current filter for BCC marketing blast"
                 >
                   <Copy className="w-3.5 h-3.5 mr-1.5 text-primary" />
-                  Broadcast Email (Copy BCC)
+                  Copy BCC List
                 </Button>
                 <Button
                   variant="outline"

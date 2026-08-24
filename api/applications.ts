@@ -3,6 +3,7 @@ import { handle } from 'hono/vercel';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
 import { getPrisma } from '../server/db.js';
 import { ManageApplications } from '../src/services/ManageApplications.js';
+import { emailService } from '../src/services/EmailService.js';
 import { DomainError } from '../src/services/exceptions.js';
 import { requireAdmin } from './middleware/auth.js';
 
@@ -97,6 +98,27 @@ app.post('/api/applications/submit', async (c) => {
   const service = new ManageApplications(getPrisma());
   try {
     const application = await service.submitMyDraftApplication(auth.userId);
+
+    // Trigger confirmation receipt and admin notification
+    if (application.email) {
+      emailService.sendApplicationReceipt({
+        name: application.name,
+        email: application.email,
+        rosterRef: application.rosterRef,
+        town: application.town,
+        sector: application.sector,
+      }).catch((err) => console.error('Error sending application receipt:', err));
+    }
+    emailService.sendAdminNewApplicationAlert({
+      id: application.id,
+      rosterRef: application.rosterRef,
+      name: application.name,
+      email: application.email,
+      phone: application.phone,
+      town: application.town,
+      sector: application.sector,
+    }).catch((err) => console.error('Error sending admin alert:', err));
+
     return c.json({ success: true, application });
   } catch (error) {
     return handleError(error, 'Failed to submit application', c);
