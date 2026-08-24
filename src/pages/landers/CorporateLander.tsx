@@ -47,7 +47,7 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
       <section className="px-4 py-16 sm:px-8 sm:py-24 border-b border-[#E2E8F0] bg-white">
         <div className="max-w-5xl mx-auto space-y-8">
           <div className="space-y-4">
-            <span className="inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-3 py-1 rounded-full">
+            <span className="inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 rounded-md">
               <ShieldCheck className="w-3.5 h-3.5" /> Pullum Ltd • Corporate Parent & Recruitment
             </span>
             <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-[#0F172A] leading-[1.12] max-w-4xl">
@@ -63,7 +63,7 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
             <Link
               to="/register"
-              className="bg-[#059669] hover:bg-[#047857] text-white px-6 py-3.5 rounded-lg text-xs font-mono font-semibold tracking-wider uppercase transition-colors flex items-center justify-center gap-2 shadow-xs"
+              className="bg-[#059669] hover:bg-[#047857] text-white px-5 py-3 rounded-md text-xs font-mono font-semibold tracking-wider uppercase transition-colors flex items-center justify-center gap-2 shadow-xs"
             >
               <span>Apply to Join Roster</span>
               <ArrowRight className="w-4 h-4" />
@@ -71,7 +71,7 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
 
             <a
               href="tel:01522504311"
-              className="bg-white hover:bg-[#F8FAFC] text-[#0F172A] border border-[#E2E8F0] px-6 py-3.5 rounded-lg text-xs font-mono font-semibold tracking-wider uppercase transition-colors flex items-center justify-center gap-2"
+              className="bg-white hover:bg-[#F8FAFC] text-[#0F172A] border border-[#E2E8F0] px-5 py-3 rounded-md text-xs font-mono font-semibold tracking-wider uppercase transition-colors flex items-center justify-center gap-2"
             >
               <Phone className="w-4 h-4" />
               <span>Talk to Recruitment (01522 504311)</span>
@@ -79,14 +79,14 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
           </div>
 
           {/* Corporate Operations & Fleet Facility Banner */}
-          <div className="relative aspect-[16/9] md:aspect-[21/9] rounded-2xl overflow-hidden border border-[#E2E8F0] shadow-xs">
+          <div className="relative aspect-[16/9] md:aspect-[21/9] rounded-xl overflow-hidden border border-[#E2E8F0] shadow-xs">
             <img
               src="/images/corporate-logistics.jpg"
               alt="Pullum Ltd Agricultural Fleet Logistics & Dispatch Facility"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-xs p-3.5 rounded-xl border border-white/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
+            <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-xs p-3.5 rounded-lg border border-white/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
               <span className="font-bold text-[#0F172A] flex items-center gap-2">
                 <Truck className="w-4 h-4 text-[#059669]" />
                 Pullum Ltd National Fleet & Route Coordination Center
@@ -111,28 +111,28 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-6">
-            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+            <div className="p-4 rounded-lg bg-white/5 border border-white/10 space-y-2">
               <Sun className="w-5 h-5 text-[#059669]" />
               <h4 className="font-bold text-sm text-white">New & Eager</h4>
               <p className="text-xs text-slate-300 leading-relaxed">
                 Full support, welfare training, and fast licensing.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+            <div className="p-4 rounded-lg bg-white/5 border border-white/10 space-y-2">
               <Brain className="w-5 h-5 text-[#059669]" />
               <h4 className="font-bold text-sm text-white">Experienced</h4>
               <p className="text-xs text-slate-300 leading-relaxed">
                 Industry-leading rates and premium schedules.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+            <div className="p-4 rounded-lg bg-white/5 border border-white/10 space-y-2">
               <Users className="w-5 h-5 text-[#059669]" />
               <h4 className="font-bold text-sm text-white">Full Crews</h4>
               <p className="text-xs text-slate-300 leading-relaxed">
                 We accommodate intact crews with door-to-door transit.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+            <div className="p-4 rounded-lg bg-white/5 border border-white/10 space-y-2">
               <Rocket className="w-5 h-5 text-[#059669]" />
               <h4 className="font-bold text-sm text-white">Growing Fast</h4>
               <p className="text-xs text-slate-300 leading-relaxed">
@@ -190,10 +190,10 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
             ].map((item, i) => (
               <div
                 key={i}
-                className={`bg-white rounded-2xl border border-[#E2E8F0] p-6 hover:border-[#059669] transition-all shadow-xs space-y-3 ${item.span ? 'md:col-span-2' : ''}`}
+                className={`bg-white rounded-xl border border-[#E2E8F0] p-6 hover:border-[#059669] transition-all shadow-xs space-y-3 ${item.span ? 'md:col-span-2' : ''}`}
               >
-                <div className="w-10 h-10 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
-                  <item.icon className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+                  <item.icon className="w-4 h-4" />
                 </div>
                 <h3 className="font-bold text-lg text-[#0F172A]">{item.title}</h3>
                 <p className="text-xs text-[#64748B] leading-relaxed">{item.desc}</p>
@@ -219,10 +219,10 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
             {/* Switchboard */}
             <div
               onClick={() => onNavigate('root', '')}
-              className="group cursor-pointer rounded-2xl bg-white border border-[#E2E8F0] p-6 hover:border-[#059669] transition-all shadow-xs flex flex-col justify-between"
+              className="group cursor-pointer rounded-xl bg-white border border-[#E2E8F0] p-6 hover:border-[#059669] transition-all shadow-xs flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center mb-4 text-[#0F172A] group-hover:bg-[#059669] group-hover:text-white transition-colors">
+                <div className="w-9 h-9 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center mb-4 text-[#0F172A] group-hover:bg-[#059669] group-hover:text-white transition-colors">
                   <Users className="w-5 h-5" />
                 </div>
                 <h3 className="font-bold text-base text-[#0F172A] mb-2">Recruitment Directory</h3>
@@ -240,10 +240,10 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
             {/* Chicken */}
             <div
               onClick={() => onNavigate('chicken', '')}
-              className="group cursor-pointer rounded-2xl bg-white border border-[#E2E8F0] p-6 hover:border-[#059669] transition-all shadow-xs flex flex-col justify-between"
+              className="group cursor-pointer rounded-xl bg-white border border-[#E2E8F0] p-6 hover:border-[#059669] transition-all shadow-xs flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center mb-4 font-mono font-bold text-xs text-[#059669] group-hover:bg-[#059669] group-hover:text-white transition-colors">
+                <div className="w-9 h-9 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center mb-4 font-mono font-bold text-xs text-[#059669] group-hover:bg-[#059669] group-hover:text-white transition-colors">
                   CH
                 </div>
                 <h3 className="font-bold text-base text-[#0F172A] mb-2">
@@ -262,10 +262,10 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
             {/* Turkey */}
             <div
               onClick={() => onNavigate('turkey', '')}
-              className="group cursor-pointer rounded-2xl bg-white border border-[#E2E8F0] p-6 hover:border-[#EA580C] transition-all shadow-xs flex flex-col justify-between"
+              className="group cursor-pointer rounded-xl bg-white border border-[#E2E8F0] p-6 hover:border-[#EA580C] transition-all shadow-xs flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 rounded-xl bg-[#FFF7ED] border border-[#FFEDD5] flex items-center justify-center mb-4 font-mono font-bold text-xs text-[#EA580C] group-hover:bg-[#EA580C] group-hover:text-white transition-colors">
+                <div className="w-9 h-9 rounded-lg bg-[#FFF7ED] border border-[#FFEDD5] flex items-center justify-center mb-4 font-mono font-bold text-xs text-[#EA580C] group-hover:bg-[#EA580C] group-hover:text-white transition-colors">
                   TK
                 </div>
                 <h3 className="font-bold text-base text-[#0F172A] mb-2">Turkey Loading Division</h3>

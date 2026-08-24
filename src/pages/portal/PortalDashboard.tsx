@@ -209,14 +209,14 @@ const PortalDashboard = () => {
       </Helmet>
 
       {/* Header Banner */}
-      <header className="rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <header className="rounded-xl border border-[#E2E8F0] bg-white p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-3 py-1 rounded-full">
+            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 rounded-md">
               <ShieldCheck className="w-3.5 h-3.5" />
               Verified Employee Portal
             </span>
-            <span className="text-xs font-mono text-[#64748B] bg-[#F8FAFC] border border-[#E2E8F0] px-2.5 py-1 rounded-full">
+            <span className="text-xs font-mono text-[#64748B] bg-[#F8FAFC] border border-[#E2E8F0] px-2.5 py-0.5 rounded-md">
               Roster Ref: <strong className="text-[#0F172A]">{rosterRef}</strong>
             </span>
           </div>
@@ -236,7 +236,7 @@ const PortalDashboard = () => {
               <Button
                 variant="outline"
                 onClick={() => setIsViewModalOpen(true)}
-                className="border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] font-mono text-xs uppercase tracking-wider rounded-lg flex items-center gap-1.5 cursor-pointer"
+                className="border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] font-mono text-xs uppercase tracking-wider rounded-md flex items-center gap-1.5 cursor-pointer"
               >
                 <Eye className="w-3.5 h-3.5 text-[#059669]" />
                 <span>View Application</span>
@@ -245,7 +245,7 @@ const PortalDashboard = () => {
               <Button
                 variant="outline"
                 onClick={() => setIsEditModalOpen(true)}
-                className="border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] font-mono text-xs uppercase tracking-wider rounded-lg flex items-center gap-1.5 cursor-pointer"
+                className="border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] font-mono text-xs uppercase tracking-wider rounded-md flex items-center gap-1.5 cursor-pointer"
               >
                 <Edit3 className="w-3.5 h-3.5 text-[#059669]" />
                 <span>Edit Details</span>
@@ -257,7 +257,7 @@ const PortalDashboard = () => {
 
       {/* Roster & Transit Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-        <div className="p-6 rounded-2xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
+        <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono font-semibold uppercase text-[#059669]">
               Assigned Division
@@ -272,7 +272,7 @@ const PortalDashboard = () => {
           </p>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
+        <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono font-semibold uppercase text-[#059669]">
               Door-to-Door Transit
@@ -289,7 +289,7 @@ const PortalDashboard = () => {
           </p>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
+        <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono font-semibold uppercase text-[#059669]">
               Weekly Payroll
@@ -326,12 +326,12 @@ const PortalDashboard = () => {
         </div>
 
         {app?.profileFormCompleted && !isEditingWizard ? (
-          <div className="rounded-2xl border border-[#A7F3D0] bg-[#ECFDF5] p-6 sm:p-8 flex items-start gap-4 shadow-xs">
+          <div className="rounded-xl border border-[#A7F3D0] bg-[#ECFDF5] p-6 sm:p-8 flex items-start gap-4 shadow-xs">
             <CheckCircle2 className="w-6 h-6 text-[#059669] shrink-0 mt-0.5" />
             <div className="space-y-2 flex-1">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-lg text-[#065F46]">Induction Profile Verified</h3>
-                <span className="text-xs font-mono font-bold uppercase text-[#059669] bg-white px-2.5 py-1 rounded-full border border-[#A7F3D0]">
+                <span className="text-xs font-mono font-bold uppercase text-[#059669] bg-white px-2.5 py-0.5 rounded-md border border-[#A7F3D0]">
                   Active Crew Member
                 </span>
               </div>
@@ -345,7 +345,7 @@ const PortalDashboard = () => {
         ) : (
           <div className="space-y-4">
             {isEditingWizard && (
-              <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-[#E2E8F0]">
+              <div className="flex items-center justify-between bg-white p-4 rounded-lg border border-[#E2E8F0]">
                 <span className="text-xs font-mono font-semibold text-[#0F172A]">
                   Editing full 3-step application wizard
                 </span>
@@ -394,8 +394,8 @@ const PortalDashboard = () => {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 space-y-3 shadow-xs">
-            <div className="w-9 h-9 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+          <div className="rounded-xl border border-[#E2E8F0] bg-white p-6 space-y-3 shadow-xs">
+            <div className="w-8 h-8 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
               <FileText className="w-4 h-4" />
             </div>
             <h4 className="font-bold text-sm text-[#0F172A]">Lantra Poultry Catching Standard</h4>
@@ -408,8 +408,8 @@ const PortalDashboard = () => {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 space-y-3 shadow-xs">
-            <div className="w-9 h-9 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+          <div className="rounded-xl border border-[#E2E8F0] bg-white p-6 space-y-3 shadow-xs">
+            <div className="w-8 h-8 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
               <HeartPulse className="w-4 h-4" />
             </div>
             <h4 className="font-bold text-sm text-[#0F172A]">PPE & Particulate Safety Protocol</h4>
@@ -422,8 +422,8 @@ const PortalDashboard = () => {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 space-y-3 shadow-xs">
-            <div className="w-9 h-9 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+          <div className="rounded-xl border border-[#E2E8F0] bg-white p-6 space-y-3 shadow-xs">
+            <div className="w-8 h-8 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
               <Truck className="w-4 h-4" />
             </div>
             <h4 className="font-bold text-sm text-[#0F172A]">Door-to-Door Transit Guidelines</h4>
@@ -439,7 +439,7 @@ const PortalDashboard = () => {
       </section>
 
       {/* Dispatch Coordination Desk & Helpline */}
-      <section className="rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8 space-y-6 shadow-xs">
+      <section className="rounded-xl border border-[#E2E8F0] bg-white p-6 sm:p-8 space-y-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F1F5F9] pb-4">
           <div>
             <h3 className="font-bold text-lg text-[#0F172A] flex items-center gap-2">
@@ -454,7 +454,7 @@ const PortalDashboard = () => {
 
           <a
             href="tel:01522504311"
-            className="bg-[#059669] hover:bg-[#047857] text-white px-5 py-2.5 rounded-lg text-xs font-mono font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs shrink-0"
+            className="bg-[#059669] hover:bg-[#047857] text-white px-5 py-2.5 rounded-md text-xs font-mono font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs shrink-0"
           >
             <Phone className="w-3.5 h-3.5" />
             <span>Call 01522 504311</span>
@@ -462,7 +462,7 @@ const PortalDashboard = () => {
         </div>
 
         {messageSent ? (
-          <div className="p-4 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] flex items-center gap-3 text-xs font-mono">
+          <div className="p-4 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] flex items-center gap-3 text-xs font-mono">
             <CheckCircle2 className="w-4 h-4 text-[#059669]" />
             <span>
               Message received by Lincolnshire Operations Desk. Squad leader will respond shortly.
@@ -476,7 +476,7 @@ const PortalDashboard = () => {
                 <select
                   value={dispatchTopic}
                   onChange={(e) => setDispatchTopic(e.target.value)}
-                  className="w-full p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] focus:border-[#059669] text-xs rounded-lg font-mono"
+                  className="w-full p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] focus:border-[#059669] text-xs rounded-md font-mono"
                 >
                   <option value="shift-change">Shift Availability Change</option>
                   <option value="transit-pickup">Door Pickup Address Update</option>
@@ -494,13 +494,13 @@ const PortalDashboard = () => {
                     placeholder="Enter your message for the squad leader or payroll team..."
                     value={dispatchMessage}
                     onChange={(e) => setDispatchMessage(e.target.value)}
-                    className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-xs rounded-lg"
+                    className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-xs rounded-md"
                     required
                   />
                   <Button
                     type="submit"
                     disabled={isSendingMessage}
-                    className="bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-mono uppercase shrink-0"
+                    className="bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-mono uppercase shrink-0 rounded-md"
                   >
                     {isSendingMessage ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -518,10 +518,10 @@ const PortalDashboard = () => {
 
       {/* 1. VIEW FULL APPLICATION MODAL */}
       <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
-        <DialogContent className="max-w-2xl bg-white rounded-2xl border border-[#E2E8F0] p-6 sm:p-8 max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl bg-white rounded-xl border border-[#E2E8F0] p-6 sm:p-8 max-h-[85vh] overflow-y-auto">
           <DialogHeader className="space-y-2 border-b border-[#F1F5F9] pb-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-semibold uppercase text-[#059669] bg-[#ECFDF5] px-2.5 py-0.5 rounded-full border border-[#A7F3D0]">
+              <span className="text-xs font-mono font-semibold uppercase text-[#059669] bg-[#ECFDF5] px-2.5 py-0.5 rounded-md border border-[#A7F3D0]">
                 Roster File: {rosterRef}
               </span>
               <span className="text-xs font-mono text-[#64748B]">{sectorName}</span>
@@ -540,7 +540,7 @@ const PortalDashboard = () => {
               <h4 className="font-bold text-sm text-[#0F172A] uppercase font-mono text-[#059669]">
                 1. Personal & Contact Information
               </h4>
-              <div className="grid grid-cols-2 gap-3 p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+              <div className="grid grid-cols-2 gap-3 p-4 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
                 <div>
                   <span className="text-[#64748B] block">Full Name:</span>
                   <span className="font-semibold text-[#0F172A]">
@@ -583,7 +583,7 @@ const PortalDashboard = () => {
               <h4 className="font-bold text-sm text-[#0F172A] uppercase font-mono text-[#059669]">
                 2. Door-to-Door Home Pickup Address
               </h4>
-              <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
+              <div className="p-4 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
                 <p className="font-semibold text-[#0F172A]">
                   {app?.addressLine1 || 'Address not entered'}
                 </p>
@@ -601,7 +601,7 @@ const PortalDashboard = () => {
               <h4 className="font-bold text-sm text-[#0F172A] uppercase font-mono text-[#059669]">
                 3. Emergency Contact & Friday Payroll
               </h4>
-              <div className="grid grid-cols-2 gap-3 p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+              <div className="grid grid-cols-2 gap-3 p-4 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
                 <div>
                   <span className="text-[#64748B] block">Emergency Name:</span>
                   <span className="font-semibold text-[#0F172A]">{app?.emergencyName || '-'}</span>
@@ -642,7 +642,7 @@ const PortalDashboard = () => {
               <h4 className="font-bold text-sm text-[#0F172A] uppercase font-mono text-[#059669]">
                 4. Qualifications & Welfare Declarations
               </h4>
-              <div className="grid grid-cols-2 gap-3 p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+              <div className="grid grid-cols-2 gap-3 p-4 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
                 <div>
                   <span className="text-[#64748B] block">Driving License:</span>
                   <span className="font-semibold text-[#0F172A]">
@@ -671,7 +671,7 @@ const PortalDashboard = () => {
             <Button
               variant="outline"
               onClick={() => setIsViewModalOpen(false)}
-              className="border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] text-xs font-mono uppercase"
+              className="border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] text-xs font-mono uppercase rounded-md"
             >
               Close
             </Button>
@@ -680,7 +680,7 @@ const PortalDashboard = () => {
                 setIsViewModalOpen(false);
                 setIsEditModalOpen(true);
               }}
-              className="bg-[#059669] hover:bg-[#047857] text-white text-xs font-mono uppercase"
+              className="bg-[#059669] hover:bg-[#047857] text-white text-xs font-mono uppercase rounded-md"
             >
               Edit Information
             </Button>
@@ -690,7 +690,7 @@ const PortalDashboard = () => {
 
       {/* 2. QUICK EDIT APPLICATION MODAL */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-lg bg-white rounded-2xl border border-[#E2E8F0] p-6 sm:p-8">
+        <DialogContent className="max-w-lg bg-white rounded-xl border border-[#E2E8F0] p-6 sm:p-8">
           <DialogHeader className="space-y-2 border-b border-[#F1F5F9] pb-4">
             <DialogTitle className="text-xl font-bold text-[#0F172A]">
               Update Application Details
@@ -712,7 +712,7 @@ const PortalDashboard = () => {
                 <Input
                   value={editPhone}
                   onChange={(e) => setEditPhone(e.target.value)}
-                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-lg font-mono"
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-md font-mono"
                   required
                 />
               </div>
@@ -724,7 +724,7 @@ const PortalDashboard = () => {
                 <Input
                   value={editAddress}
                   onChange={(e) => setEditAddress(e.target.value)}
-                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-lg"
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-md"
                   required
                 />
               </div>
@@ -734,7 +734,7 @@ const PortalDashboard = () => {
                 <Input
                   value={editPostcode}
                   onChange={(e) => setEditPostcode(e.target.value)}
-                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-lg font-mono uppercase"
+                  className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-md font-mono uppercase"
                   required
                 />
               </div>

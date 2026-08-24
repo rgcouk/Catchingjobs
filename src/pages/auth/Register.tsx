@@ -139,7 +139,7 @@ export default function Register() {
           </Link>
 
           <div className="space-y-3 pt-4">
-            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-white/10 px-3 py-1 rounded-full border border-white/15">
+            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-white/10 px-2.5 py-0.5 rounded-md border border-white/15">
               <ShieldCheck className="w-3.5 h-3.5" />
               Direct Recruitment
             </span>
@@ -154,7 +154,7 @@ export default function Register() {
 
           <div className="space-y-4 pt-6 border-t border-white/15 text-xs font-mono">
             <div className="flex items-center gap-3 text-slate-200">
-              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
+              <div className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
                 <Truck className="w-4 h-4" />
               </div>
               <div>
@@ -166,7 +166,7 @@ export default function Register() {
             </div>
 
             <div className="flex items-center gap-3 text-slate-200">
-              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
+              <div className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
                 <Coins className="w-4 h-4" />
               </div>
               <div>
@@ -176,7 +176,7 @@ export default function Register() {
             </div>
 
             <div className="flex items-center gap-3 text-slate-200">
-              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
+              <div className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div>
@@ -199,7 +199,7 @@ export default function Register() {
 
       {/* Left Column - Auth Card */}
       <div className="flex items-center justify-center flex-1 p-6 sm:p-12 lg:p-16">
-        <div className="w-full max-w-md bg-white rounded-2xl border border-[#E2E8F0] p-8 shadow-xs space-y-6">
+        <div className="w-full max-w-md bg-white rounded-xl border border-[#E2E8F0] p-8 shadow-xs space-y-6">
           <div className="space-y-2 text-center">
             <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
               {pendingVerification ? 'Verify Your Email' : 'Create Account'}
@@ -212,7 +212,7 @@ export default function Register() {
           </div>
 
           {error && (
-            <div className="p-3 text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg">
+            <div className="p-3 text-xs text-red-700 bg-red-50 border border-red-200 rounded-md">
               {error}
             </div>
           )}
@@ -232,7 +232,7 @@ export default function Register() {
                         <FormControl>
                           <Input
                             placeholder="Arthur"
-                            className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-lg"
+                            className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-md"
                             {...field}
                           />
                         </FormControl>
@@ -251,7 +251,7 @@ export default function Register() {
                         <FormControl>
                           <Input
                             placeholder="King"
-                            className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-lg"
+                            className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-md"
                             {...field}
                           />
                         </FormControl>
@@ -272,7 +272,7 @@ export default function Register() {
                       <FormControl>
                         <Input
                           placeholder="name@example.co.uk"
-                          className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-lg"
+                          className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-md"
                           {...field}
                         />
                       </FormControl>
@@ -293,7 +293,7 @@ export default function Register() {
                         <Input
                           type="password"
                           placeholder="••••••••"
-                          className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-lg"
+                          className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-md"
                           {...field}
                         />
                       </FormControl>
@@ -304,7 +304,7 @@ export default function Register() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-[#059669] hover:bg-[#047857] text-white font-mono font-semibold text-xs uppercase tracking-wider py-3 rounded-lg shadow-xs cursor-pointer transition-colors"
+                  className="w-full bg-[#059669] hover:bg-[#047857] text-white font-mono font-semibold text-xs uppercase tracking-wider py-3 rounded-md shadow-xs cursor-pointer transition-colors"
                   disabled={!isLoaded || form.formState.isSubmitting}
                 >
                   {form.formState.isSubmitting ? (
@@ -332,7 +332,7 @@ export default function Register() {
                       <FormControl>
                         <Input
                           placeholder="123456"
-                          className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-center tracking-widest font-mono text-lg rounded-lg"
+                          className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-center tracking-widest font-mono text-lg rounded-md"
                           maxLength={6}
                           {...field}
                         />
@@ -344,7 +344,7 @@ export default function Register() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-[#059669] hover:bg-[#047857] text-white font-mono font-semibold text-xs uppercase tracking-wider py-3 rounded-lg shadow-xs cursor-pointer transition-colors"
+                  className="w-full bg-[#059669] hover:bg-[#047857] text-white font-mono font-semibold text-xs uppercase tracking-wider py-3 rounded-md shadow-xs cursor-pointer transition-colors"
                   disabled={!isLoaded || verifyForm.formState.isSubmitting}
                 >
                   {verifyForm.formState.isSubmitting ? (
@@ -374,7 +374,7 @@ export default function Register() {
               <Button
                 variant="outline"
                 type="button"
-                className="w-full border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] font-mono text-xs uppercase tracking-wider py-2.5 rounded-lg cursor-pointer"
+                className="w-full border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] font-mono text-xs uppercase tracking-wider py-2.5 rounded-md cursor-pointer"
                 onClick={handleGoogleSignUp}
                 disabled={!isLoaded}
               >

@@ -278,7 +278,7 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
                 Back to {tenant.title}
               </button>
 
-              <div className="inline-flex items-center gap-2 text-xs font-mono font-medium text-white bg-white/10 px-3 py-1 rounded-full border border-white/20 uppercase tracking-wider mx-auto md:mx-0">
+              <div className="inline-flex items-center gap-2 text-xs font-mono font-medium text-white bg-white/10 px-2.5 py-0.5 rounded-md border border-white/20 uppercase tracking-wider mx-auto md:mx-0">
                 <MapPin className="w-3.5 h-3.5 text-[#059669]" />
                 <span>
                   {town.name} Catching Area • {town.region.name}
@@ -318,9 +318,9 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
 
       {/* Transit & Door-to-Door Pickup Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
-        <section className="rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8 space-y-4 shadow-xs">
+        <section className="rounded-xl border border-[#E2E8F0] bg-white p-6 sm:p-8 space-y-4 shadow-xs">
           <div className="flex items-center gap-3 border-b border-[#F1F5F9] pb-4">
-            <div className="p-2.5 rounded-xl bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+            <div className="p-2.5 rounded-lg bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
               <Truck className="w-5 h-5" />
             </div>
             <div>
@@ -364,7 +364,7 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
             {testimonials.map((t, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-2xl border border-[#E2E8F0] p-6 flex flex-col justify-between space-y-4 relative shadow-xs"
+                className="bg-white rounded-xl border border-[#E2E8F0] p-6 flex flex-col justify-between space-y-4 relative shadow-xs"
               >
                 <Quote className="absolute top-4 right-4 w-8 h-8 text-[#F1F5F9] pointer-events-none" />
                 <p className="text-sm text-[#64748B] leading-relaxed italic pr-6">"{t.quote}"</p>

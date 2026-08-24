@@ -100,53 +100,49 @@ export default function Login() {
           </Link>
 
           <div className="space-y-3 pt-4">
-            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-white/10 px-3 py-1 rounded-full border border-white/15">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Catcher & Staff Portal
+            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-white/10 px-2.5 py-0.5 rounded-md border border-white/15">
+              <ShieldCheck className="w-3.5 h-3.5" /> Pullum Ltd · GLAA Licensed Operative Hub
             </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
-              Welcome back to your shift roster.
+          </div>
+
+          <div className="space-y-4">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white leading-tight">
+              Sign in to manage your catching roster.
             </h1>
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
-              Sign in to manage your CatchingJobs profile, view scheduled night runs, check
-              payslips, and update your weekly availability.
+            <p className="text-sm text-slate-300 leading-relaxed font-normal">
+              Access your door-to-door transit schedule, verify weekly Friday payroll details, and
+              receive direct shift updates.
             </p>
           </div>
 
-          <div className="space-y-4 pt-6 border-t border-white/15 text-xs font-mono">
-            <div className="flex items-center gap-3 text-slate-200">
-              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
+          <div className="space-y-4 pt-4 border-t border-white/10 text-xs text-slate-300">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
                 <Truck className="w-4 h-4" />
               </div>
               <div>
-                <p className="font-semibold text-white">Free Door-to-Door Transit</p>
-                <p className="text-slate-400 font-sans text-xs">
-                  Direct pickup from your front door.
-                </p>
+                <strong className="text-white block font-medium">Free Door-to-Door Pickup</strong>
+                <span>Direct home collection across all UK catching corridors.</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 text-slate-200">
-              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
                 <Coins className="w-4 h-4" />
               </div>
               <div>
-                <p className="font-semibold text-white">Guaranteed Friday Pay</p>
-                <p className="text-slate-400 font-sans text-xs">
-                  Direct BACS transfer every Friday.
-                </p>
+                <strong className="text-white block font-medium">Guaranteed Friday Pay</strong>
+                <span>BACS transfers deposited every Friday without deduction.</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 text-slate-200">
-              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center text-[#059669] shrink-0 border border-white/10">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div>
-                <p className="font-semibold text-white">GLAA Licensed & Lantra Approved</p>
-                <p className="text-slate-400 font-sans text-xs">
-                  Highest safety and welfare benchmarks.
-                </p>
+                <strong className="text-white block font-medium">Full Welfare Oversight</strong>
+                <span>GLAA compliant, Lantra bird welfare safety certified.</span>
               </div>
             </div>
           </div>
@@ -160,18 +156,18 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Right Column - Auth Card */}
-      <div className="flex items-center justify-center flex-1 p-6 sm:p-12 lg:p-16">
-        <div className="w-full max-w-md bg-white rounded-2xl border border-[#E2E8F0] p-8 shadow-xs space-y-6">
+      {/* Right Column: High-Contrast Auth Card */}
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+        <div className="w-full max-w-md bg-white rounded-xl border border-[#E2E8F0] p-8 shadow-xs space-y-6">
           <div className="space-y-2 text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">Sign In</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">Candidate Log In</h2>
             <p className="text-xs text-[#64748B]">
-              Enter your verified email and password to log in.
+              Enter your registered email address and password to sign in.
             </p>
           </div>
 
           {error && (
-            <div className="p-3 text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg">
+            <div className="p-3 text-xs text-red-700 bg-red-50 border border-red-200 rounded-md">
               {error}
             </div>
           )}
@@ -183,70 +179,72 @@ export default function Login() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-mono uppercase tracking-wider text-[#64748B] font-semibold">
+                    <FormLabel className="text-xs font-mono uppercase text-[#64748B]">
                       Email Address
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="name@example.co.uk"
-                        className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-lg"
+                        type="email"
+                        placeholder="you@example.com"
                         {...field}
+                        className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-md"
                       />
                     </FormControl>
-                    <FormMessage className="text-xs text-red-600 font-mono" />
+                    <FormMessage className="text-xs text-red-600" />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-mono uppercase tracking-wider text-[#64748B] font-semibold">
-                      Password
-                    </FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel className="text-xs font-mono uppercase text-[#64748B]">
+                        Password
+                      </FormLabel>
+                    </div>
                     <FormControl>
                       <Input
                         type="password"
                         placeholder="••••••••"
-                        className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-lg"
                         {...field}
+                        className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-sm rounded-md"
                       />
                     </FormControl>
-                    <FormMessage className="text-xs text-red-600 font-mono" />
+                    <FormMessage className="text-xs text-red-600" />
                   </FormItem>
                 )}
               />
+
               <Button
                 type="submit"
-                className="w-full bg-[#059669] hover:bg-[#047857] text-white font-mono font-semibold text-xs uppercase tracking-wider py-3 rounded-lg shadow-xs cursor-pointer transition-colors"
-                disabled={!isLoaded || form.formState.isSubmitting}
+                disabled={form.formState.isSubmitting}
+                className="w-full bg-[#059669] hover:bg-[#047857] text-white font-mono font-semibold text-xs uppercase tracking-wider py-3 rounded-md shadow-xs cursor-pointer transition-colors"
               >
                 {form.formState.isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
-                  </>
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
                 ) : (
-                  'Sign In'
+                  <span className="flex items-center justify-center gap-1.5">
+                    Log In <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
                 )}
               </Button>
             </form>
           </Form>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-[#E2E8F0]" />
-            </div>
-            <div className="relative flex justify-center text-xs font-mono uppercase">
-              <span className="bg-white px-2 text-[#94A3B8]">Or continue with</span>
-            </div>
+          <div className="relative flex items-center justify-center">
+            <div className="border-t border-[#E2E8F0] w-full" />
+            <span className="bg-white px-2 text-[11px] font-mono uppercase text-[#64748B] absolute">
+              Or continue with
+            </span>
           </div>
 
           <Button
             variant="outline"
             type="button"
-            className="w-full border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] font-mono text-xs uppercase tracking-wider py-2.5 rounded-lg cursor-pointer"
+            className="w-full border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] font-mono text-xs uppercase tracking-wider py-2.5 rounded-md cursor-pointer"
             onClick={handleGoogleSignIn}
             disabled={!isLoaded}
           >

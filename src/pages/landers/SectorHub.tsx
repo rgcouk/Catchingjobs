@@ -108,7 +108,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
       >
         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-14 relative z-10">
           <div className="max-w-2xl space-y-5">
-            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-white bg-[#059669] px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
+            <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-white bg-[#059669] px-2.5 py-1 rounded-md uppercase tracking-wider shadow-xs">
               <CheckCircle2 className="w-4 h-4" />
               {sectorName} Division
             </span>
@@ -124,7 +124,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
               <a
                 href="#locations"
-                className="bg-[#059669] hover:bg-[#047857] text-white font-mono font-semibold py-3.5 px-6 text-xs uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-2 shadow-xs"
+                className="bg-[#059669] hover:bg-[#047857] text-white font-mono font-semibold py-3 px-5 text-xs uppercase tracking-wider rounded-md transition-colors flex items-center justify-center gap-2 shadow-xs"
                 id="btn-apply-today-sector"
               >
                 <span>Select Your Local Area</span>
@@ -133,7 +133,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
 
               <a
                 href="tel:01522504311"
-                className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-mono font-semibold py-3.5 px-6 text-xs uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-mono font-semibold py-3 px-5 text-xs uppercase tracking-wider rounded-md transition-colors flex items-center justify-center gap-2"
                 id="btn-talk-to-us-sector"
               >
                 <Phone className="w-4 h-4" />
@@ -168,13 +168,13 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
               <Link
                 key={item.id}
                 to={`/${sectorSlug}/${item.id}`}
-                className="group bg-white rounded-2xl border border-[#E2E8F0] hover:border-[#059669] p-6 transition-all duration-200 block no-underline shadow-xs"
+                className="group bg-white rounded-xl border border-[#E2E8F0] hover:border-[#059669] p-6 transition-all duration-200 block no-underline shadow-xs"
                 id={`dir-region-seo-${item.id}`}
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center group-hover:bg-[#059669] group-hover:text-white transition-colors shrink-0">
-                      <MapPin className="w-5 h-5 text-[#059669] group-hover:text-white" />
+                    <div className="w-9 h-9 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center group-hover:bg-[#059669] group-hover:text-white transition-colors shrink-0">
+                      <MapPin className="w-4 h-4 text-[#059669] group-hover:text-white" />
                     </div>
                     <div className="space-y-1.5">
                       <h3 className="font-bold text-[#0F172A] text-lg group-hover:text-[#059669] transition-colors">
@@ -205,9 +205,9 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
         </div>
 
         {/* Standards Banner */}
-        <section className="bg-[#0F172A] text-white rounded-2xl p-8 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 w-full border border-slate-800 shadow-sm">
-          <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0 relative">
-            <span className="text-3xl">🐔</span>
+        <section className="bg-[#0F172A] text-white rounded-xl p-8 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 w-full border border-slate-800 shadow-sm">
+          <div className="w-14 h-14 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0 relative">
+            <span className="text-2xl">🐔</span>
             <span className="absolute -top-2 -right-2 bg-[#059669] text-white font-mono font-bold text-[8px] uppercase px-1.5 py-0.5 rounded tracking-wider">
               Welfare
             </span>
@@ -259,9 +259,9 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-2xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
-              <div className="w-10 h-10 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
-                <Truck className="w-5 h-5" />
+            <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
+              <div className="w-9 h-9 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+                <Truck className="w-4 h-4" />
               </div>
               <h3 className="text-lg font-bold text-[#0F172A]">Free Door-to-Door Transit</h3>
               <p className="text-xs text-[#64748B] leading-relaxed">
@@ -270,9 +270,9 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
-              <div className="w-10 h-10 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
-                <Coins className="w-5 h-5" />
+            <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
+              <div className="w-9 h-9 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+                <Coins className="w-4 h-4" />
               </div>
               <h3 className="text-lg font-bold text-[#0F172A]">Weekly Friday Pay</h3>
               <p className="text-xs text-[#64748B] leading-relaxed">
@@ -281,9 +281,9 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
-              <div className="w-10 h-10 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
-                <Award className="w-5 h-5" />
+            <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
+              <div className="w-9 h-9 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+                <Award className="w-4 h-4" />
               </div>
               <h3 className="text-lg font-bold text-[#0F172A]">Sponsored Lantra Level 2</h3>
               <p className="text-xs text-[#64748B] leading-relaxed">

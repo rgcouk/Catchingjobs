@@ -104,7 +104,7 @@ export default function Index({ onNavigate }: IndexProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#ECFDF5] border border-[#A7F3D0] rounded-full text-xs font-mono font-medium text-[#065F46]">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#ECFDF5] border border-[#A7F3D0] rounded-md text-xs font-mono font-medium text-[#065F46]">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" />
                 <span>UK's #1 Rated Poultry Catching Operator · GLAA Licensed</span>
               </div>
@@ -123,14 +123,14 @@ export default function Index({ onNavigate }: IndexProps) {
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <Link
                   to="/chickens"
-                  className="inline-flex items-center justify-center gap-2 bg-[#059669] hover:bg-[#047857] text-white font-mono text-xs font-semibold uppercase tracking-wider px-6 py-3.5 rounded-lg transition-colors shadow-xs"
+                  className="inline-flex items-center justify-center gap-2 bg-[#059669] hover:bg-[#047857] text-white font-mono text-xs font-semibold uppercase tracking-wider px-6 py-3.5 rounded-md transition-colors shadow-xs"
                 >
                   <span>Explore Chicken Catching</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   to="/turkeys"
-                  className="inline-flex items-center justify-center gap-2 border border-[#E2E8F0] hover:border-[#0F172A] bg-white text-[#0F172A] font-mono text-xs font-semibold uppercase tracking-wider px-6 py-3.5 rounded-lg transition-colors"
+                  className="inline-flex items-center justify-center gap-2 border border-[#E2E8F0] hover:border-[#0F172A] bg-white text-[#0F172A] font-mono text-xs font-semibold uppercase tracking-wider px-6 py-3.5 rounded-md transition-colors"
                 >
                   <span>Explore Turkey Catching</span>
                   <ArrowRight className="w-4 h-4" />
@@ -150,14 +150,14 @@ export default function Index({ onNavigate }: IndexProps) {
               </div>
             </div>
 
-            <div className="relative aspect-square lg:aspect-[4/3] rounded-2xl bg-[#F8FAFC] overflow-hidden border border-[#E2E8F0] shadow-xs">
+            <div className="relative aspect-square lg:aspect-[4/3] rounded-xl bg-[#F8FAFC] overflow-hidden border border-[#E2E8F0] shadow-xs">
               <img
                 src="/images/homepage-hero.jpg"
                 alt="Poultry catching operations and crew transit minibus"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-xs p-3 rounded-xl border border-white/50 text-xs font-mono text-[#0F172A] flex items-center justify-between shadow-xs">
+              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-xs p-3 rounded-lg border border-white/50 text-xs font-mono text-[#0F172A] flex items-center justify-between shadow-xs">
                 <span className="font-semibold flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
                   Live UK Roster
@@ -188,7 +188,7 @@ export default function Index({ onNavigate }: IndexProps) {
           <div className="grid md:grid-cols-2 gap-8">
             <Link
               to="/chickens"
-              className="group flex flex-col h-full rounded-2xl border border-[#E2E8F0] hover:border-[#059669] transition-all bg-white overflow-hidden shadow-xs no-underline"
+              className="group flex flex-col h-full rounded-xl border border-[#E2E8F0] hover:border-[#059669] transition-all bg-white overflow-hidden shadow-xs no-underline"
             >
               <div className="relative h-60 overflow-hidden border-b border-[#E2E8F0]">
                 <img
@@ -196,7 +196,7 @@ export default function Index({ onNavigate }: IndexProps) {
                   alt="Chicken Catching Modern Facility"
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-xs border border-[#E2E8F0] px-3 py-1 rounded-full text-xs font-mono font-semibold uppercase text-[#059669]">
+                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-xs border border-[#E2E8F0] px-2.5 py-1 rounded-md text-xs font-mono font-semibold uppercase text-[#059669]">
                   Active Corridors
                 </div>
               </div>
@@ -220,7 +220,7 @@ export default function Index({ onNavigate }: IndexProps) {
 
             <Link
               to="/turkeys"
-              className="group flex flex-col h-full rounded-2xl border border-[#E2E8F0] hover:border-[#059669] transition-all bg-white overflow-hidden shadow-xs no-underline"
+              className="group flex flex-col h-full rounded-xl border border-[#E2E8F0] hover:border-[#059669] transition-all bg-white overflow-hidden shadow-xs no-underline"
             >
               <div className="relative h-60 overflow-hidden border-b border-[#E2E8F0]">
                 <img
@@ -228,7 +228,7 @@ export default function Index({ onNavigate }: IndexProps) {
                   alt="Turkey Catching Estate"
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-xs border border-[#E2E8F0] px-3 py-1 rounded-full text-xs font-mono font-semibold uppercase text-[#EA580C]">
+                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-xs border border-[#E2E8F0] px-2.5 py-1 rounded-md text-xs font-mono font-semibold uppercase text-[#EA580C]">
                   Seasonal & Year-Round
                 </div>
               </div>
@@ -253,10 +253,10 @@ export default function Index({ onNavigate }: IndexProps) {
         </section>
 
         {/* Door-to-Door Transit Fleet Highlight Banner */}
-        <section className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs grid lg:grid-cols-2">
+        <section className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs grid lg:grid-cols-2">
           <div className="p-8 sm:p-12 flex flex-col justify-between space-y-6">
             <div className="space-y-4">
-              <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-3 py-1 rounded-full">
+              <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-1 rounded-md">
                 <Truck className="w-3.5 h-3.5" />
                 GPS-Tracked Transit Service
               </span>
@@ -292,7 +292,7 @@ export default function Index({ onNavigate }: IndexProps) {
               alt="Door-to-door home pickup passenger transit fleet"
               className="absolute inset-0 w-full h-full object-cover"
             />
-            <div className="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-xs p-3 rounded-xl border border-white/20 text-xs font-mono text-white flex items-center justify-between">
+            <div className="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-xs p-3 rounded-lg border border-white/20 text-xs font-mono text-white flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-[#059669]" /> Direct Home Collection
               </span>
@@ -320,12 +320,12 @@ export default function Index({ onNavigate }: IndexProps) {
             {REGIONS.map((region) => (
               <div
                 key={region.id}
-                className="rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8 space-y-6 shadow-xs"
+                className="rounded-xl border border-[#E2E8F0] bg-white p-6 sm:p-8 space-y-6 shadow-xs"
                 id={`region-section-${region.id}`}
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#F1F5F9] pb-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-3 bg-[#F8FAFC] text-[#059669] rounded-xl border border-[#E2E8F0] shrink-0">
+                    <div className="p-2.5 bg-[#F8FAFC] text-[#059669] rounded-lg border border-[#E2E8F0] shrink-0">
                       <MapPin className="w-5 h-5" />
                     </div>
                     <div>
@@ -337,7 +337,7 @@ export default function Index({ onNavigate }: IndexProps) {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-[#0F172A] bg-[#F8FAFC] px-3 py-1 rounded-md border border-[#E2E8F0]">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-[#0F172A] bg-[#F8FAFC] px-2.5 py-1 rounded-md border border-[#E2E8F0]">
                       <Users className="w-3.5 h-3.5 text-[#059669]" />
                       {region.activeCrews} Active Crews
                     </span>
@@ -363,7 +363,7 @@ export default function Index({ onNavigate }: IndexProps) {
                       {region.towns.map((town) => (
                         <div
                           key={town.id}
-                          className="rounded-xl border border-[#E2E8F0] p-3.5 bg-[#F8FAFC] hover:bg-white hover:border-[#0F172A] transition-all space-y-2"
+                          className="rounded-lg border border-[#E2E8F0] p-3 bg-[#F8FAFC] hover:bg-white hover:border-[#0F172A] transition-all space-y-2"
                         >
                           <div className="font-bold text-sm text-[#0F172A] flex items-center justify-between">
                             <span>{town.name}</span>
@@ -402,8 +402,8 @@ export default function Index({ onNavigate }: IndexProps) {
         {/* Notices, Events & Resources Sections */}
         <section className="grid lg:grid-cols-3 gap-6">
           {/* News */}
-          <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs">
-            <div className="p-5 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
+          <div className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs">
+            <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
               <Newspaper className="w-4 h-4 text-[#059669]" />
               <h3 className="font-bold text-base text-[#0F172A]">Notices & Updates</h3>
             </div>
@@ -424,8 +424,8 @@ export default function Index({ onNavigate }: IndexProps) {
           </div>
 
           {/* Events */}
-          <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs">
-            <div className="p-5 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
+          <div className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs">
+            <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
               <Calendar className="w-4 h-4 text-[#059669]" />
               <h3 className="font-bold text-base text-[#0F172A]">Coordination Briefings</h3>
             </div>
@@ -433,7 +433,7 @@ export default function Index({ onNavigate }: IndexProps) {
               {events.map((evt) => (
                 <div
                   key={evt.id}
-                  className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] space-y-2"
+                  className="p-3.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] space-y-2"
                 >
                   <div className="flex items-center justify-between text-[11px] font-mono text-[#64748B]">
                     <span>{evt.date}</span>
@@ -450,8 +450,8 @@ export default function Index({ onNavigate }: IndexProps) {
           </div>
 
           {/* Resources */}
-          <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs">
-            <div className="p-5 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
+          <div className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs">
+            <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
               <FileText className="w-4 h-4 text-[#059669]" />
               <h3 className="font-bold text-base text-[#0F172A]">Compliance Guides</h3>
             </div>
@@ -459,7 +459,7 @@ export default function Index({ onNavigate }: IndexProps) {
               {resources.map((res, idx) => (
                 <div
                   key={idx}
-                  className="group p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-white hover:border-[#059669] transition-all space-y-2"
+                  className="group p-3.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-white hover:border-[#059669] transition-all space-y-2"
                 >
                   <div className="flex items-center justify-between text-[11px] font-mono">
                     <span className="text-[#64748B] font-semibold">{res.type}</span>

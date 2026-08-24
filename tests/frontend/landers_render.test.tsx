@@ -114,8 +114,8 @@ describe('Public Lander Page Components Render Integrity', () => {
         </MemoryRouter>
       </HelmetProvider>,
     );
-    expect(screen.getAllByText(/Welcome back/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Sign In/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/manage your catching roster/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Log In/i).length).toBeGreaterThan(0);
     expect(container.innerHTML).not.toBe('');
   });
 
