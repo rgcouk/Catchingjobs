@@ -1,52 +1,81 @@
-# Catchingjobs Domain Glossary
+# Catchingjobs Domain Glossary & Architecture Context
 
-A recruitment platform connecting poultry workers with jobs via localized SEO hubs and a secure onboarding portal.
+Catchingjobs is a UK national recruitment and operations platform connecting professional agricultural harvesting workers with broiler and turkey catching squads via localized SEO hubs, real-time vacancy boards, automated compliance triage, and an authenticated employee portal managed by Pullum Ltd.
 
-## Architecture
+---
 
-**Route Loaders**:
-Functions that fetch data at the network boundary before a React component mounts, serving as the translation layer between API payloads and UI interfaces.
+## Architecture & System Design
 
-**Use-Case Services**:
-Deep modules in the backend that encapsulate business logic (e.g., `ProcessApplication`), isolating it from the HTTP layer.
+### 1. Framework & Rendering Engine
+- **Vite + React (TypeScript)** with SSR server entry point (`src/entry.server.tsx`) ensuring search engines receive pre-rendered HTML before client-side hydration.
+- **Route Loaders & SSR Context**: Data fetched at the network boundary feeds synchronous initial state to prevent layout shift and guarantee complete metadata rendering.
 
-**Domain Exceptions**:
-Custom errors thrown by the service layer (e.g., `ApplicationNotFoundError`) that are agnostic to the transport layer.
+### 2. Backend Architecture (Hono on Edge / Serverless)
+- Independent Hono sub-routers under `api/*` (`api/ping.ts`, `api/locations.ts`, `api/jobs.ts`, `api/applications.ts`, `api/triage.ts`, `api/admin.ts`, `api/portal.ts`, `api/upload.ts`, `api/webhook-clerk.ts`, `api/webhook-intake.ts`) mounted on `api/index.ts` and configured for Vercel serverless functions via `vercel.json` rewrites.
+- **Use-Case Services**: Deep modules in `src/services/` (`ManageApplications`, `ManageJobPostings`, `ManageLocations`, `ManageUsers`) that isolate domain rules from transport adapters.
+- **Domain Exceptions**: Strongly typed errors in `src/services/exceptions.ts` (`DomainError`, `RightToWorkRequiredError`, `ApplicationNotFoundError`, `ValidationError`, `ForbiddenError`, `DuplicateResourceError`).
 
-## Components
+### 3. Database Layer
+- **PostgreSQL via Prisma ORM** (`prisma/schema.prisma`) with `@prisma/adapter-pg` connection pooling.
+- Core entities: `Application`, `User`, `Region`, `Town`, `JobPosting`, `Resource`.
 
-**Kanban Column / Task**:
-Strongly typed interfaces defining the UI requirements for rendering the Kanban board, strictly decoupled from the backend Application database model.
+---
 
-## Domain Entities
+## Domain Entities & Terminology
 
-**Application**:
-The core database record representing a candidate's submission. A Draft Application is created instantly upon a user passing triage and creating a Clerk account. Admins only review fully submitted applications.
-_Avoid_: Lead, Profile, Half-finished Lead
+### 1. Job Vacancy (`JobPosting`)
+- Represents an active harvesting role in a designated sector (`chicken` | `turkey`) tied to a localized town depot (`townId`).
+- Includes pay rate (e.g. `£15.50 - £18.50/hr`, `£750 - £950/week`), description, shift details, and status (`ACTIVE` | `PAUSED`).
+- Fully manageable in the Admin Portal (`/admin/jobs`) and queryable publicly via `GET /api/jobs`.
 
-**Automated Triage**:
-The instant validation step on public landing pages (e.g., checking Right to Work). Passing this step immediately triggers passwordless Clerk account creation so the user can complete the Full Application in the same session.
-_Avoid_: Manual Review, Lead Capture Form
+### 2. Candidate Application (`Application`)
+- The primary compliance and operational record representing a worker's application.
+- Lifecycle: `Draft` → `NEW` → `REVIEWING` → `APPROVED` → `HIRED` / `REJECTED`.
+- Contains Right to Work status, driving license, NI number, emergency contact, banking details, medical/lifting fitness declarations, and linked user reference (`user User?`).
 
-**Passwordless Auth**:
-Workers authenticate exclusively via passwordless magic links and OTPs provided by Clerk. Email OTP is the primary method for reliability (works on Wi-Fi), with SMS OTP as a fallback for users without reliable data plans.
-_Avoid_: Passwords, Social Login for Workers
+### 3. Automated Triage
+- Above-the-fold instant validation on town landing pages verifying UK Right to Work before collecting candidate information.
+- Rejection State: Users without Right to Work are politely gated with legal guidance.
+- Guest Flow: Creates a `Draft` application and triggers Clerk passwordless Email OTP verification.
+- **Logged-In Employee Flow (1-Click Fast Apply)**: Automatically pre-populates verified candidate information, bypasses the OTP modal, immediately claims the application with `/api/triage/claim`, and navigates directly to `/employee?applied=true`.
 
-## Landing Page Rules
+### 4. Authentication Architecture
+- Managed via Clerk with custom JWT verification and Prisma synchronization (`User` model).
+- Workers utilize passwordless OTP (Email primary, SMS fallback) or Google OAuth SSO.
+- Role-based authorization (`ADMIN` vs `WORKER`) enforced on both API and client routes.
 
-**Primary Hook**:
-The marketing copy must emphasize "Door-to-door pickup" and "Friendly teams". It must NEVER mention specific pay rates or work times.
+---
 
-**Intake Form Placement**:
-To maximize conversion, the Triage/Intake form must be placed directly above the fold in the Hero section, not hidden behind an "Apply Now" button.
+## UI & Design Systems
 
-**Imagery**:
-Landing pages will use flat, clean illustrations inspired by high-end, smooth vector animation aesthetics (e.g., fluid, conceptual, or geometric styles like 'Earth Exponential'). Avoid generic photography, real photos of poultry catching, or generic "Corporate Memphis" human characters.
+### 1. Public Marketing & Landing Pages (Hallmark Anti-AI-Slop)
+- **Scope**: `/`, `/corporate`, `/chickens`, `/turkeys`, and `/:sector/:town` localized hubs.
+- **Design Tokens**: OKLCH palette (`--color-paper`, `--color-ink`, `--color-rule`, `--color-accent`) with crisp typography and high-contrast badges.
+- **Core Value Propositions**: Free door-to-door home collection in heated minibuses, guaranteed Friday weekly pay, GLAA licensing, and supportive crew culture.
+- **Imagery**: Professional agricultural transit fleet, modern bio-secure facility photography, and high-end geometric accents.
 
-**Index Page Strategy**:
-The root homepage (`/`) acts exclusively as a "National Hub" showcasing both sectors (Chickens and Turkeys). It does not contain an intake form. Its primary call-to-action is routing users to a specific local town page where the intake form lives.
+### 2. Dashboards, Auth & Employee Portals (shadcn/ui)
+- **Scope**: Admin Dashboard (`/admin/*`), Employee Portal (`/employee`), Login (`/login`), Register (`/register`), and Intake Wizard (`/wizard`).
+- **Standard**: Official shadcn/ui components (`@/components/ui/`) using semantic variables (`--background`, `--foreground`, `--card`, `--sidebar`).
+- **Admin Layout**: 100% full-width content area with controlled sidebar submenus (`NavMain.tsx`) and center responsive Dialog modals for deep inspectors (Locations, Applicants, Users CRM, Job Editor).
 
-## Content Management
+---
 
-**SEO Hub Customization**:
-Local SEO pages (e.g. `/chickens/boston`) are fully data-driven. Admins must have a rich, customizable editor (like a Markdown or block editor) within the Admin Panel to manage and tweak the content for every Town page without requiring developer intervention or code changes.
+## Public Routing & SEO Strategy
+
+1. **National Hub (`/`)**:
+   - Hero diptych with GLAA licensing and transit guarantees.
+   - Live Harvest Vacancies interactive feed with sector/region filters and deep linking (`?jobId=...&jobTitle=...`).
+   - Specialized Division cards (`/chickens`, `/turkeys`) and GPS-tracked home pickup fleet showcase.
+   - National regional routing directory.
+
+2. **Sector Hubs (`/chickens`, `/turkeys`)**:
+   - Division-specific hero and live vacancies directory.
+   - Flat directory of all active regional corridors and town depots.
+
+3. **Town SEO Landers (`/chickens/:town`, `/turkeys/:town`)**:
+   - Above-the-fold Hero Triage Form with localized pickup depot name and 1-Click Apply for logged-in users.
+   - JSON-LD `JobPosting` schema for Google Jobs indexing.
+   - Town localized Markdown SEO copy (editable in Admin CMS).
+   - Live vacancies for that specific town depot and local catcher testimonials.
+
