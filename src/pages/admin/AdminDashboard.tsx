@@ -1420,6 +1420,551 @@ const AdminDashboard = () => {
       }
 
       /* =========================================================================
+         3. APPLICANTS & KANBAN PIPELINE
+      ========================================================================= */
+      case 'kanban':
+      case 'all':
+      case 'hired':
+      case 'rejected':
+      case 'applicants': {
+        const isKanban = activeTab === 'kanban' || applicantViewMode === 'kanban';
+
+        const filteredApps = applications.filter((app) => {
+          if (activeTab === 'hired' && app.status !== 'HIRED') return false;
+          if (activeTab === 'rejected' && app.status !== 'REJECTED') return false;
+          if (applicantSectorFilter !== 'ALL' && app.sector !== applicantSectorFilter) return false;
+
+          if (applicantSearch) {
+            const q = applicantSearch.toLowerCase();
+            const matches =
+              (app.name && app.name.toLowerCase().includes(q)) ||
+              (app.email && app.email.toLowerCase().includes(q)) ||
+              (app.phone && app.phone.includes(q)) ||
+              (app.town && app.town.toLowerCase().includes(q)) ||
+              (app.rosterRef && app.rosterRef.toLowerCase().includes(q));
+            if (!matches) return false;
+          }
+          return true;
+        });
+
+        return (
+          <div className="flex h-full w-full">
+            {/* Main Table / Kanban Area */}
+            <div
+              className={`flex-1 flex flex-col min-w-0 overflow-y-auto ${
+                selectedApp ? 'hidden lg:flex' : 'flex'
+              }`}
+            >
+              <div className="p-4 md:p-8 space-y-6">
+                {/* Header & View Controls */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
+                      <Briefcase className="w-7 h-7 text-primary" />
+                      Applicants Pipeline
+                    </h1>
+                    <p className="text-muted-foreground mt-1 text-sm">
+                      Track candidate progress from initial intake through compliance vetting and
+                      hiring.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={exportApplicantsCSV}
+                      className="text-xs"
+                    >
+                      <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
+                      Export CSV
+                    </Button>
+                    <div className="flex rounded-lg border border-border p-0.5 bg-muted/30">
+                      <Button
+                        size="sm"
+                        variant={!isKanban ? 'default' : 'ghost'}
+                        className="h-7 text-xs px-2.5"
+                        onClick={() => {
+                          setApplicantViewMode('table');
+                          if (activeTab === 'kanban') setActiveTab('applicants');
+                        }}
+                      >
+                        <ListFilter className="w-3.5 h-3.5 mr-1" />
+                        Table
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={isKanban ? 'default' : 'ghost'}
+                        className="h-7 text-xs px-2.5"
+                        onClick={() => {
+                          setApplicantViewMode('kanban');
+                          setActiveTab('kanban');
+                        }}
+                      >
+                        <Columns3 className="w-3.5 h-3.5 mr-1" />
+                        Kanban
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Search & Multi-filter */}
+                <div className="bg-card border border-border p-4 rounded-lg flex flex-col sm:flex-row items-center gap-3 shadow-xs">
+                  <div className="relative flex-1 w-full">
+                    <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
+                    <Input
+                      placeholder="Search candidates by name, phone, town, or roster ref..."
+                      value={applicantSearch}
+                      onChange={(e) => setApplicantSearch(e.target.value)}
+                      className="pl-9 text-xs"
+                    />
+                  </div>
+
+                  <Select
+                    value={applicantSectorFilter}
+                    onValueChange={(val: any) => setApplicantSectorFilter(val)}
+                  >
+                    <SelectTrigger className="text-xs w-full sm:w-[160px]">
+                      <SelectValue placeholder="Sector" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All Sectors</SelectItem>
+                      <SelectItem value="chicken">Chicken Catching</SelectItem>
+                      <SelectItem value="turkey">Turkey Squads</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Body: Kanban or Table */}
+                {isKanban ? (
+                  <div className="pt-2">
+                    <KanbanBoard
+                      columns={[
+                        { id: 'NEW', title: 'NEW INTAKE' },
+                        { id: 'REVIEWING', title: 'UNDER REVIEW' },
+                        { id: 'HIRED', title: 'HIRED / ROSTERED' },
+                        { id: 'REJECTED', title: 'REJECTED' },
+                      ]}
+                      tasks={filteredApps.map((app) => ({
+                        id: String(app.id),
+                        title: app.name || 'Anonymous Applicant',
+                        subtitle: `${app.sector?.toUpperCase()} • ${app.town || 'Unassigned'}`,
+                        date: new Date(app.createdAt).toLocaleDateString(),
+                        statusId: app.status || 'NEW',
+                      }))}
+                      onTaskStatusChange={(taskId, newStatusId) =>
+                        updateApplicationStatus(Number(taskId), newStatusId)
+                      }
+                      onTaskSelect={(task) => {
+                        const app = filteredApps.find((a) => a.id === Number(task.id));
+                        if (app) setSelectedApp(app);
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <ErrorBoundary>
+                    <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col shadow-xs">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Candidate</TableHead>
+                            <TableHead>Sector</TableHead>
+                            <TableHead>Town Hub</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Compliance</TableHead>
+                            <TableHead>Date</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredApps.map((app) => {
+                            const isSelected = selectedApp?.id === app.id;
+                            return (
+                              <TableRow
+                                key={app.id}
+                                className={`cursor-pointer transition-colors ${
+                                  isSelected ? 'bg-accent/50' : 'hover:bg-muted/50'
+                                }`}
+                                onClick={() => setSelectedApp(app)}
+                              >
+                                <TableCell className="py-3.5">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center shrink-0">
+                                      {(app.name || 'A').charAt(0).toUpperCase()}
+                                    </div>
+                                    <div className="space-y-0.5">
+                                      <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
+                                        <span>{app.name || 'Anonymous Applicant'}</span>
+                                      </div>
+                                      <div className="text-xs text-muted-foreground font-mono">
+                                        {app.email || app.phone || 'No direct contact'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </TableCell>
+
+                                <TableCell>
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] uppercase font-mono"
+                                  >
+                                    {app.sector}
+                                  </Badge>
+                                </TableCell>
+
+                                <TableCell className="text-xs text-muted-foreground">
+                                  {app.town || '-'}
+                                </TableCell>
+
+                                <TableCell>
+                                  <Badge
+                                    variant={
+                                      app.status === 'HIRED'
+                                        ? 'default'
+                                        : app.status === 'REJECTED'
+                                          ? 'destructive'
+                                          : 'secondary'
+                                    }
+                                    className="text-xs font-mono"
+                                  >
+                                    {app.status || 'NEW'}
+                                  </Badge>
+                                </TableCell>
+
+                                <TableCell>
+                                  {app.profileFormCompleted ? (
+                                    <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
+                                      <ShieldCheck className="w-3.5 h-3.5" /> Complete
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                                      <Clock className="w-3.5 h-3.5" /> Pending
+                                    </span>
+                                  )}
+                                </TableCell>
+
+                                <TableCell className="text-xs text-muted-foreground font-mono">
+                                  {new Date(app.createdAt).toLocaleDateString()}
+                                </TableCell>
+
+                                <TableCell className="text-right">
+                                  <div
+                                    className="flex items-center justify-end gap-1"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-8 w-8 p-0"
+                                      title="Inspect Candidate"
+                                      onClick={() => setSelectedApp(app)}
+                                    >
+                                      <Eye className="w-4 h-4 text-primary" />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                          {filteredApps.length === 0 && (
+                            <TableRow>
+                              <TableCell
+                                colSpan={7}
+                                className="text-center py-10 text-muted-foreground"
+                              >
+                                No applications found.
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </ErrorBoundary>
+                )}
+              </div>
+            </div>
+
+            {/* Applicant Side Inspector Drawer */}
+            {selectedApp && (
+              <div className="w-full lg:w-[480px] border-l border-border bg-card flex flex-col shrink-0 h-full overflow-y-auto shadow-lg">
+                <div className="p-6 border-b border-border flex justify-between items-start sticky top-0 bg-card z-10">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-bold text-foreground">
+                        {selectedApp.name || 'Anonymous Applicant'}
+                      </h2>
+                      <Badge
+                        variant={
+                          selectedApp.status === 'HIRED'
+                            ? 'default'
+                            : selectedApp.status === 'REJECTED'
+                              ? 'destructive'
+                              : 'secondary'
+                        }
+                        className="text-xs font-mono"
+                      >
+                        {selectedApp.status || 'NEW'}
+                      </Badge>
+                    </div>
+                    <p className="text-xs font-mono text-muted-foreground">
+                      Ref: {selectedApp.rosterRef} • {selectedApp.sector}
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedApp(null);
+                      setCustomMsgText('');
+                    }}
+                    className="text-muted-foreground"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
+
+                <div className="p-6 space-y-6 flex-1 text-xs">
+                  {/* Status & Decision Actions */}
+                  <div className="bg-muted/40 p-4 rounded-lg border border-border space-y-3">
+                    <span className="font-semibold text-xs text-foreground block">
+                      Pipeline Action & Decision
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedApp.status !== 'REVIEWING' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 text-xs flex-1"
+                          onClick={() => updateApplicationStatus(selectedApp.id, 'REVIEWING')}
+                        >
+                          Mark Under Review
+                        </Button>
+                      )}
+                      {selectedApp.status !== 'HIRED' && (
+                        <Button
+                          size="sm"
+                          className="h-8 text-xs flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+                          onClick={() => updateApplicationStatus(selectedApp.id, 'HIRED')}
+                        >
+                          <Check className="w-3.5 h-3.5 mr-1" /> Hire Candidate
+                        </Button>
+                      )}
+                      {selectedApp.status !== 'REJECTED' && (
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="h-8 text-xs flex-1"
+                          onClick={() => updateApplicationStatus(selectedApp.id, 'REJECTED')}
+                        >
+                          Reject
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Candidate Compliance Summary */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        Compliance & Vetting Record
+                      </h3>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-[11px]"
+                        onClick={() => setIsViewAppOpen(true)}
+                      >
+                        Full Record Modal
+                      </Button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 bg-muted/30 p-3.5 rounded-lg border border-border">
+                      <div>
+                        <span className="text-muted-foreground block text-[10px] uppercase">
+                          Email
+                        </span>
+                        <span className="font-medium text-foreground truncate block">
+                          {selectedApp.email || '-'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground block text-[10px] uppercase">
+                          Phone
+                        </span>
+                        <span className="font-mono font-medium text-foreground">
+                          {selectedApp.phone || '-'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground block text-[10px] uppercase">
+                          Town Hub
+                        </span>
+                        <span className="font-medium text-foreground">{selectedApp.town}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground block text-[10px] uppercase">
+                          Right to Work UK
+                        </span>
+                        <span className="font-semibold text-emerald-600">
+                          {selectedApp.hasRightToWork ? 'Verified' : 'Pending'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground block text-[10px] uppercase">
+                          Driving License
+                        </span>
+                        <span className="font-medium text-foreground">
+                          {selectedApp.hasDrivingLicense ? 'Yes' : 'No'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground block text-[10px] uppercase">
+                          Fit to Lift 15-20kg
+                        </span>
+                        <span className="font-medium text-foreground">
+                          {selectedApp.isFitToLift ? 'Yes' : 'No'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Workflow Checklist Steps */}
+                  <div className="space-y-3 pt-3 border-t border-border">
+                    <h3 className="text-xs font-semibold text-foreground">Workflow Steps</h3>
+
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 border border-border">
+                      <div className="flex items-center gap-2">
+                        {selectedApp.contacted ? (
+                          <Badge
+                            variant="outline"
+                            className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-mono"
+                          >
+                            <Check className="w-3 h-3 mr-0.5" /> Contacted
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="outline"
+                            className="bg-amber-50 text-amber-700 border-amber-200 text-[10px] font-mono"
+                          >
+                            Pending Contact
+                          </Badge>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 text-xs"
+                        onClick={() =>
+                          patchApplicationField(selectedApp.id, 'contacted', !selectedApp.contacted)
+                        }
+                      >
+                        {selectedApp.contacted ? 'Undo' : 'Mark Done'}
+                      </Button>
+                    </div>
+
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 border border-border">
+                      <div className="flex items-center gap-2">
+                        {selectedApp.safetyResourcesSent ? (
+                          <Badge
+                            variant="outline"
+                            className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-mono"
+                          >
+                            <CheckCircle className="w-3 h-3 mr-0.5" /> Full App Sent
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-[10px] font-mono">
+                            App Not Sent
+                          </Badge>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 text-xs"
+                        onClick={() =>
+                          patchApplicationField(
+                            selectedApp.id,
+                            'safetyResourcesSent',
+                            !selectedApp.safetyResourcesSent,
+                          )
+                        }
+                      >
+                        {selectedApp.safetyResourcesSent ? 'Undo' : 'Send Induction Form'}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Direct Outreach */}
+                  <div className="pt-4 border-t border-border space-y-3">
+                    <h4 className="text-xs font-semibold text-foreground">
+                      Direct Candidate Outreach
+                    </h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-[11px] h-7"
+                        onClick={() => applyTemplate('interview', selectedApp)}
+                      >
+                        Interview
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-[11px] h-7"
+                        onClick={() => applyTemplate('documents', selectedApp)}
+                      >
+                        Docs Check
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-[11px] h-7"
+                        onClick={() => applyTemplate('shift', selectedApp)}
+                      >
+                        Shift Alert
+                      </Button>
+                    </div>
+
+                    <Textarea
+                      value={customMsgText}
+                      onChange={(e) => setCustomMsgText(e.target.value)}
+                      placeholder="Type a message or select a pre-filled template..."
+                      className="text-xs min-h-[90px]"
+                    />
+
+                    <div className="flex gap-2">
+                      <Button
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs"
+                        disabled={!customMsgText || !selectedApp.phone}
+                        onClick={() =>
+                          window.open(getWhatsAppLink(selectedApp.phone, customMsgText), '_blank')
+                        }
+                      >
+                        <Smartphone className="w-3.5 h-3.5 mr-1.5" />
+                        WhatsApp
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="flex-1 text-xs"
+                        disabled={!customMsgText || !selectedApp.email}
+                        onClick={() =>
+                          window.open(getMailLink(selectedApp.email, customMsgText), '_blank')
+                        }
+                      >
+                        <Mail className="w-3.5 h-3.5 mr-1.5" />
+                        Email
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      /* =========================================================================
          4. LOCATION & CORRIDOR MANAGER
       ========================================================================= */
       case 'locations':

@@ -1,5 +1,6 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import { useUser, useAuth } from '@clerk/clerk-react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { SiteHeader } from '@/components/layout/site-header';
@@ -46,8 +47,31 @@ export default function AppShell({
   userType = 'admin',
 }: AppShellProps) {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState(defaultTab);
   const [isMobile, setIsMobile] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { tab } = useParams<{ tab?: string }>();
+
+  const [internalActiveTab, setInternalActiveTab] = useState(defaultTab);
+
+  const activeTab =
+    userType === 'admin'
+      ? tab ||
+        (location.pathname.startsWith('/admin/')
+          ? location.pathname.replace('/admin/', '').split('/')[0]
+          : defaultTab)
+      : internalActiveTab;
+
+  const setActiveTab = React.useCallback(
+    (tabId: string) => {
+      if (userType === 'admin') {
+        navigate(`/admin/${tabId}`);
+      } else {
+        setInternalActiveTab(tabId);
+      }
+    },
+    [navigate, userType],
+  );
 
   const { user } = useUser();
   const { getToken } = useAuth();
@@ -107,7 +131,7 @@ export default function AppShell({
         isSubscribed = false;
       };
     }
-  }, [userType, user, getToken, activeTab]);
+  }, [userType, user, getToken, activeTab, setActiveTab]);
 
   const displayedNavItems =
     userType === 'portal'
@@ -116,7 +140,11 @@ export default function AppShell({
         : navItems.filter((i) => i.id !== 'onboarding')
       : navItems;
 
-  const currentTab = displayedNavItems.find((item) => item.id === activeTab);
+  const currentTab =
+    displayedNavItems.find((item) => item.id === activeTab) ||
+    displayedNavItems
+      .flatMap((item) => item.children || [])
+      .find((child) => child.id === activeTab);
 
   return (
     <AppShellContext.Provider
@@ -134,7 +162,7 @@ export default function AppShell({
         <AppSidebar
           navItems={displayedNavItems.map((item) => ({
             title: item.label,
-            url: '#',
+            url: item.href || (userType === 'admin' ? `/admin/${item.id}` : '#'),
             icon: item.icon as React.ElementType,
             isActive:
               activeTab === item.id ||
@@ -143,7 +171,7 @@ export default function AppShell({
             items: item.children
               ? item.children.map((child) => ({
                   title: child.label,
-                  url: '#',
+                  url: child.href || (userType === 'admin' ? `/admin/${child.id}` : '#'),
                   isActive: activeTab === child.id,
                   onClick: () => setActiveTab(child.id),
                 }))

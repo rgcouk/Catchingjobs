@@ -115,22 +115,23 @@ function RegionRoute({
 }
 
 const adminNavItems: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/admin/dashboard' },
   {
     id: 'applicants',
     label: 'Applicants',
     icon: ClipboardList,
+    href: '/admin/applicants',
     children: [
-      { id: 'all', label: 'All Applicants' },
-      { id: 'kanban', label: 'Kanban Board' },
-      { id: 'hired', label: 'Hired' },
-      { id: 'rejected', label: 'Rejected' },
+      { id: 'all', label: 'All Applicants', href: '/admin/applicants' },
+      { id: 'kanban', label: 'Kanban Board', href: '/admin/kanban' },
+      { id: 'hired', label: 'Hired', href: '/admin/hired' },
+      { id: 'rejected', label: 'Rejected', href: '/admin/rejected' },
     ],
   },
-  { id: 'users', label: 'Users CRM', icon: Users },
-  { id: 'locations', label: 'Locations', icon: MapPin },
-  { id: 'jobs', label: 'Job Postings', icon: Briefcase },
-  { id: 'settings', label: 'Settings', icon: Settings },
+  { id: 'users', label: 'Users CRM', icon: Users, href: '/admin/users' },
+  { id: 'locations', label: 'Locations', icon: MapPin, href: '/admin/locations' },
+  { id: 'jobs', label: 'Job Postings', icon: Briefcase, href: '/admin/jobs' },
+  { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/settings' },
 ];
 
 const portalNavItems: NavItem[] = [
@@ -145,6 +146,14 @@ const portalNavItems: NavItem[] = [
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname !== location.pathname.toLowerCase()) {
+      navigate(location.pathname.toLowerCase() + location.search + location.hash, {
+        replace: true,
+      });
+    }
+  }, [location.pathname, location.search, location.hash, navigate]);
 
   const handleNavigate = (
     sub: 'root' | 'chicken' | 'turkey' | 'corporate' | 'portal',
@@ -280,8 +289,9 @@ function App() {
                   />
                 }
               />
+              <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
               <Route
-                path="/admin"
+                path="/admin/:tab"
                 element={
                   <ProtectedRoute role="ADMIN">
                     <AppShell navItems={adminNavItems} defaultTab="dashboard" userType="admin">
