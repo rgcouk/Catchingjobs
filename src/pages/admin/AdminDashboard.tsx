@@ -1458,27 +1458,27 @@ const AdminDashboard = () => {
               <div className="p-4 md:p-8 space-y-6">
                 {/* Header & View Controls */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
+                  <div className="space-y-1">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
                       <Briefcase className="w-7 h-7 text-primary" />
                       Applicants Pipeline
                     </h1>
-                    <p className="text-muted-foreground mt-1 text-sm">
+                    <p className="text-muted-foreground text-xs sm:text-sm">
                       Track candidate progress from initial intake through compliance vetting and
                       hiring.
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={exportApplicantsCSV}
-                      className="text-xs"
+                      className="text-xs shrink-0"
                     >
                       <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
                       Export CSV
                     </Button>
-                    <div className="flex rounded-lg border border-border p-0.5 bg-muted/30">
+                    <div className="flex rounded-lg border border-border p-0.5 bg-muted/30 shrink-0">
                       <Button
                         size="sm"
                         variant={!isKanban ? 'default' : 'ghost'}
@@ -1507,8 +1507,64 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
+                {/* Pipeline KPI Metric Strips */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div
+                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    onClick={() => {
+                      if (activeTab === 'kanban') setApplicantViewMode('kanban');
+                    }}
+                  >
+                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                      New Intake
+                    </span>
+                    <span className="text-xl font-bold text-blue-600">
+                      {applications.filter((a) => (a.status || 'NEW') === 'NEW').length}
+                    </span>
+                  </div>
+                  <div
+                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    onClick={() => {
+                      if (activeTab === 'kanban') setApplicantViewMode('kanban');
+                    }}
+                  >
+                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                      Under Review
+                    </span>
+                    <span className="text-xl font-bold text-amber-600">
+                      {applications.filter((a) => a.status === 'REVIEWING').length}
+                    </span>
+                  </div>
+                  <div
+                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    onClick={() => {
+                      if (activeTab === 'kanban') setApplicantViewMode('kanban');
+                    }}
+                  >
+                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                      Hired / Rostered
+                    </span>
+                    <span className="text-xl font-bold text-emerald-600">
+                      {applications.filter((a) => a.status === 'HIRED').length}
+                    </span>
+                  </div>
+                  <div
+                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    onClick={() => {
+                      if (activeTab === 'kanban') setApplicantViewMode('kanban');
+                    }}
+                  >
+                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                      Rejected
+                    </span>
+                    <span className="text-xl font-bold text-rose-600">
+                      {applications.filter((a) => a.status === 'REJECTED').length}
+                    </span>
+                  </div>
+                </div>
+
                 {/* Search & Multi-filter */}
-                <div className="bg-card border border-border p-4 rounded-lg flex flex-col sm:flex-row items-center gap-3 shadow-xs">
+                <div className="bg-card border border-border p-3.5 rounded-lg flex flex-col sm:flex-row items-center gap-3 shadow-xs">
                   <div className="relative flex-1 w-full">
                     <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
                     <Input
@@ -1523,7 +1579,7 @@ const AdminDashboard = () => {
                     value={applicantSectorFilter}
                     onValueChange={(val: any) => setApplicantSectorFilter(val)}
                   >
-                    <SelectTrigger className="text-xs w-full sm:w-[160px]">
+                    <SelectTrigger className="text-xs w-full sm:w-[170px]">
                       <SelectValue placeholder="Sector" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1536,13 +1592,13 @@ const AdminDashboard = () => {
 
                 {/* Body: Kanban or Table */}
                 {isKanban ? (
-                  <div className="pt-2">
+                  <div className="pt-1">
                     <KanbanBoard
                       columns={[
-                        { id: 'NEW', title: 'NEW INTAKE' },
-                        { id: 'REVIEWING', title: 'UNDER REVIEW' },
-                        { id: 'HIRED', title: 'HIRED / ROSTERED' },
-                        { id: 'REJECTED', title: 'REJECTED' },
+                        { id: 'NEW', title: 'New Intake' },
+                        { id: 'REVIEWING', title: 'Under Review' },
+                        { id: 'HIRED', title: 'Hired / Rostered' },
+                        { id: 'REJECTED', title: 'Rejected' },
                       ]}
                       tasks={filteredApps.map((app) => ({
                         id: String(app.id),
@@ -1550,12 +1606,26 @@ const AdminDashboard = () => {
                         subtitle: `${app.sector?.toUpperCase()} • ${app.town || 'Unassigned'}`,
                         date: new Date(app.createdAt).toLocaleDateString(),
                         statusId: app.status || 'NEW',
+                        name: app.name || undefined,
+                        email: app.email || undefined,
+                        phone: app.phone || undefined,
+                        sector: app.sector,
+                        town: app.town,
+                        rosterRef: app.rosterRef,
+                        hasRightToWork: app.hasRightToWork,
+                        hasDrivingLicense: app.hasDrivingLicense,
+                        profileFormCompleted: app.profileFormCompleted,
+                        contacted: app.contacted,
+                        safetyResourcesSent: app.safetyResourcesSent,
+                        safetyTasksCompleted: app.safetyTasksCompleted,
+                        rawApplication: app,
                       }))}
                       onTaskStatusChange={(taskId, newStatusId) =>
                         updateApplicationStatus(Number(taskId), newStatusId)
                       }
                       onTaskSelect={(task) => {
-                        const app = filteredApps.find((a) => a.id === Number(task.id));
+                        const app =
+                          task.rawApplication || filteredApps.find((a) => a.id === Number(task.id));
                         if (app) setSelectedApp(app);
                       }}
                     />
