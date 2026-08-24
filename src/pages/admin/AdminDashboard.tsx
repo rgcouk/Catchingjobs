@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   LayoutDashboard,
   MapPin,
@@ -30,6 +30,16 @@ import {
   ListFilter,
   ExternalLink,
   Lock,
+  Bus,
+  Navigation,
+  Building2,
+  Layers,
+  ChevronRight,
+  ArrowUpRight,
+  Share2,
+  Calendar,
+  Car,
+  CheckCircle2,
 } from 'lucide-react';
 import type { Application, User, JobPosting } from '@prisma/client';
 import { useAuth } from '@clerk/clerk-react';
@@ -120,13 +130,13 @@ const MarkdownEditor = ({
           name={name}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="flex min-h-[120px] w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex min-h-[100px] w-full rounded-md border border-border bg-background px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           placeholder={placeholder}
         />
       </TabsContent>
       <TabsContent
         value="preview"
-        className="min-h-[120px] p-4 rounded-md border border-border prose prose-sm max-w-none text-foreground bg-background"
+        className="min-h-[100px] p-3 rounded-md border border-border prose prose-xs max-w-none text-foreground bg-background text-xs"
       >
         <ReactMarkdown>{content || '*Nothing to preview*'}</ReactMarkdown>
       </TabsContent>
@@ -174,15 +184,28 @@ const AdminDashboard = () => {
   const [inviteRole, setInviteRole] = useState<'WORKER' | 'ADMIN'>('WORKER');
   const [isInviting, setIsInviting] = useState(false);
 
-  // Location Management
-  const [isEditingLocation, setIsEditingLocation] = useState(false);
+  // Location Management States
+  const [locationSearch, setLocationSearch] = useState('');
+  const [locationRegionFilter, setLocationRegionFilter] = useState<string>('ALL');
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [locationModalType, setLocationModalType] = useState<'region' | 'town'>('region');
   const [editingLocationData, setEditingLocationData] = useState<any>(null);
+  const [selectedLocationDetail, setSelectedLocationDetail] = useState<{
+    type: 'region' | 'town';
+    data: any;
+    parentRegion?: any;
+  } | null>(null);
+
+  // Job Posting States
+  const [isJobModalOpen, setIsJobModalOpen] = useState(false);
+  const [jobSearch, setJobSearch] = useState('');
 
   // General Delete Confirmation Modal
   const [deleteConfirm, setDeleteConfirm] = useState<{
     type: 'location' | 'user' | 'job';
     id: string | number;
     title?: string;
+    subType?: 'region' | 'town';
   } | null>(null);
 
   const loadApplications = useCallback(
@@ -236,6 +259,26 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Sync sub-routes to state filters
+  useEffect(() => {
+    if (activeTab === 'workers') {
+      setUserRoleFilter('WORKER');
+    } else if (activeTab === 'admins') {
+      setUserRoleFilter('ADMIN');
+    }
+
+    if (activeTab === 'kanban') {
+      setApplicantViewMode('kanban');
+    } else if (
+      activeTab === 'applicants' ||
+      activeTab === 'reviewing' ||
+      activeTab === 'hired' ||
+      activeTab === 'rejected'
+    ) {
+      setApplicantViewMode('table');
+    }
+  }, [activeTab]);
 
   // Application Updates
   const updateApplicationStatus = async (id: number, status: string) => {
@@ -398,8 +441,10 @@ const AdminDashboard = () => {
 
     try {
       const token = await getToken();
-      const method = isEditingLocation ? 'PATCH' : 'POST';
-      const url = isEditingLocation
+      const isEditing = !!editingLocationData;
+      const method = isEditing ? 'PATCH' : 'POST';
+      const locType = data.type || locationModalType;
+      const url = isEditing
         ? `/api/admin/locations/${editingLocationData.type}/${editingLocationData.id}`
         : '/api/admin/locations';
 
@@ -411,15 +456,16 @@ const AdminDashboard = () => {
         },
         body: JSON.stringify({
           ...data,
+          type: locType,
           regionId: data.regionId ? data.regionId : undefined,
         }),
       });
-      if (!res.ok) throw new Error(`Failed to ${isEditingLocation ? 'update' : 'create'} location`);
+      if (!res.ok) throw new Error(`Failed to ${isEditing ? 'update' : 'create'} location`);
 
-      setIsEditingLocation(false);
+      setIsLocationModalOpen(false);
       setEditingLocationData(null);
       await fetchData();
-      toast.success(`Location ${isEditingLocation ? 'updated' : 'created'} successfully`);
+      toast.success(`Location ${isEditing ? 'updated' : 'created'} successfully`);
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -434,6 +480,7 @@ const AdminDashboard = () => {
       });
       if (!res.ok) throw new Error('Failed to delete location');
       await fetchData();
+      if (selectedLocationDetail?.data?.id === id) setSelectedLocationDetail(null);
       toast.success('Location deleted successfully');
     } catch (err: any) {
       toast.error(err.message);
@@ -460,6 +507,7 @@ const AdminDashboard = () => {
         throw new Error(errData.error || 'Failed to create job');
       }
       jobForm.reset();
+      setIsJobModalOpen(false);
       await fetchData();
       toast.success('Job posted successfully');
     } catch (err: any) {
@@ -602,8 +650,47 @@ const AdminDashboard = () => {
     toast.success('Users CRM CSV exported');
   };
 
+  const exportLocationsCSV = () => {
+    const headers = ['Type', 'ID Slug', 'Name', 'Parent Region', 'Pickup Point', 'Surrounding'];
+    const rows: string[][] = [];
+    locations.forEach((region) => {
+      rows.push(['Region', region.id, `"${region.name}"`, '-', '-', '-']);
+      (region.towns || []).forEach((town: any) => {
+        rows.push([
+          'Town Depot',
+          town.id,
+          `"${town.name}"`,
+          `"${region.name}"`,
+          `"${town.pickupPoint || ''}"`,
+          `"${town.surrounding || ''}"`,
+        ]);
+      });
+    });
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute(
+      'download',
+      `catchingjobs-locations-${new Date().toISOString().slice(0, 10)}.csv`,
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Locations CSV exported');
+  };
+
+  const allTowns = useMemo(() => {
+    return locations.flatMap((r) =>
+      (r.towns || []).map((t: any) => ({ ...t, parentRegionName: r.name, parentRegionId: r.id })),
+    );
+  }, [locations]);
+
   const renderContent = () => {
-    if (loading && applications.length === 0 && users.length === 0) {
+    if (loading && applications.length === 0 && users.length === 0 && locations.length === 0) {
       return (
         <div className="p-8 md:p-16 flex flex-col items-center justify-center space-y-3 text-muted-foreground">
           <Clock className="w-8 h-8 animate-spin text-primary" />
@@ -635,7 +722,7 @@ const AdminDashboard = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => setActiveTab('jobs')}
+                        onClick={() => setIsJobModalOpen(true)}
                         className="text-xs"
                       >
                         <Briefcase className="w-3.5 h-3.5 mr-1.5 text-primary" />
@@ -649,6 +736,19 @@ const AdminDashboard = () => {
                       >
                         <UserPlus className="w-3.5 h-3.5 mr-1.5 text-primary" />
                         Invite Staff
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setLocationModalType('town');
+                          setEditingLocationData(null);
+                          setIsLocationModalOpen(true);
+                        }}
+                        className="text-xs"
+                      >
+                        <MapPin className="w-3.5 h-3.5 mr-1.5 text-primary" />
+                        Add Town Depot
                       </Button>
                       <Button
                         size="sm"
@@ -754,7 +854,7 @@ const AdminDashboard = () => {
                     <CardHeader className="relative pb-2">
                       <CardDescription>Operational Hubs</CardDescription>
                       <CardTitle className="text-3xl font-semibold tabular-nums text-foreground">
-                        {locations.length}
+                        {locations.length} Regions ({allTowns.length} Towns)
                       </CardTitle>
                       <div className="absolute right-4 top-4">
                         <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
@@ -849,9 +949,11 @@ const AdminDashboard = () => {
         );
 
       /* =========================================================================
-         2. DEDICATED USERS & OPERATIVES CRM
+         2. USERS & OPERATIVES CRM (with /admin/users, /admin/workers, /admin/admins)
       ========================================================================= */
-      case 'users': {
+      case 'users':
+      case 'workers':
+      case 'admins': {
         const filteredUsers = users.filter((u) => {
           const searchLower = userSearch.toLowerCase();
           const matchesSearch =
@@ -860,7 +962,12 @@ const AdminDashboard = () => {
             (u.application?.name && u.application.name.toLowerCase().includes(searchLower)) ||
             (u.application?.town && u.application.town.toLowerCase().includes(searchLower));
 
-          const matchesRole = userRoleFilter === 'ALL' || u.role === userRoleFilter;
+          const matchesRole =
+            activeTab === 'workers'
+              ? u.role === 'WORKER'
+              : activeTab === 'admins'
+                ? u.role === 'ADMIN'
+                : userRoleFilter === 'ALL' || u.role === userRoleFilter;
 
           let matchesStatus = true;
           if (userStatusFilter === 'VERIFIED') {
@@ -889,22 +996,22 @@ const AdminDashboard = () => {
               <div className="p-4 md:p-8 space-y-6">
                 {/* Header & Stats Banner */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
+                  <div className="space-y-1">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
                       <Users className="w-7 h-7 text-primary" />
                       Users & Operatives CRM
                     </h1>
-                    <p className="text-muted-foreground mt-1 text-sm">
+                    <p className="text-muted-foreground text-xs sm:text-sm">
                       Manage all registered system users, staff roles, and linked crew compliance
                       profiles.
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={exportUsersCSV}
-                      className="text-xs"
+                      className="text-xs shrink-0"
                     >
                       <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
                       Export CSV
@@ -912,7 +1019,7 @@ const AdminDashboard = () => {
                     <Button
                       size="sm"
                       onClick={() => setIsInviteModalOpen(true)}
-                      className="bg-primary text-primary-foreground text-xs"
+                      className="bg-primary text-primary-foreground text-xs shrink-0"
                     >
                       <UserPlus className="w-3.5 h-3.5 mr-1.5" />
                       Invite Staff
@@ -922,13 +1029,19 @@ const AdminDashboard = () => {
 
                 {/* CRM KPI Metric Strips */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="bg-card border border-border p-3.5 rounded-lg">
+                  <div
+                    className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    onClick={() => setActiveTab('users')}
+                  >
                     <span className="text-xs font-mono text-muted-foreground block uppercase">
                       Total Accounts
                     </span>
                     <span className="text-2xl font-bold text-foreground">{users.length}</span>
                   </div>
-                  <div className="bg-card border border-border p-3.5 rounded-lg">
+                  <div
+                    className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    onClick={() => setActiveTab('workers')}
+                  >
                     <span className="text-xs font-mono text-muted-foreground block uppercase">
                       Field Operatives
                     </span>
@@ -940,7 +1053,10 @@ const AdminDashboard = () => {
                     </span>
                     <span className="text-2xl font-bold text-primary">{verifiedCount}</span>
                   </div>
-                  <div className="bg-card border border-border p-3.5 rounded-lg">
+                  <div
+                    className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    onClick={() => setActiveTab('admins')}
+                  >
                     <span className="text-xs font-mono text-muted-foreground block uppercase">
                       Admins / Managers
                     </span>
@@ -949,7 +1065,7 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Search & Filter Bar */}
-                <div className="bg-card border border-border p-4 rounded-lg flex flex-col md:flex-row items-center gap-3">
+                <div className="bg-card border border-border p-3.5 rounded-lg flex flex-col md:flex-row items-center gap-3 shadow-xs">
                   <div className="relative flex-1 w-full">
                     <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
                     <Input
@@ -962,7 +1078,13 @@ const AdminDashboard = () => {
 
                   <div className="flex items-center gap-2 w-full md:w-auto">
                     <Select
-                      value={userRoleFilter}
+                      value={
+                        activeTab === 'workers'
+                          ? 'WORKER'
+                          : activeTab === 'admins'
+                            ? 'ADMIN'
+                            : userRoleFilter
+                      }
                       onValueChange={(val: any) => setUserRoleFilter(val)}
                     >
                       <SelectTrigger className="text-xs w-full md:w-[130px]">
@@ -1420,16 +1542,18 @@ const AdminDashboard = () => {
       }
 
       /* =========================================================================
-         3. APPLICANTS & KANBAN PIPELINE
+         3. APPLICANTS & KANBAN PIPELINE (with /admin/applicants, /admin/kanban, /admin/reviewing, /admin/hired, /admin/rejected)
       ========================================================================= */
       case 'kanban':
       case 'all':
+      case 'reviewing':
       case 'hired':
       case 'rejected':
       case 'applicants': {
         const isKanban = activeTab === 'kanban' || applicantViewMode === 'kanban';
 
         const filteredApps = applications.filter((app) => {
+          if (activeTab === 'reviewing' && app.status !== 'REVIEWING') return false;
           if (activeTab === 'hired' && app.status !== 'HIRED') return false;
           if (activeTab === 'rejected' && app.status !== 'REJECTED') return false;
           if (applicantSectorFilter !== 'ALL' && app.sector !== applicantSectorFilter) return false;
@@ -1511,9 +1635,7 @@ const AdminDashboard = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div
                     className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => {
-                      if (activeTab === 'kanban') setApplicantViewMode('kanban');
-                    }}
+                    onClick={() => setActiveTab('applicants')}
                   >
                     <span className="text-[10px] font-mono text-muted-foreground block uppercase">
                       New Intake
@@ -1524,9 +1646,7 @@ const AdminDashboard = () => {
                   </div>
                   <div
                     className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => {
-                      if (activeTab === 'kanban') setApplicantViewMode('kanban');
-                    }}
+                    onClick={() => setActiveTab('reviewing')}
                   >
                     <span className="text-[10px] font-mono text-muted-foreground block uppercase">
                       Under Review
@@ -1537,9 +1657,7 @@ const AdminDashboard = () => {
                   </div>
                   <div
                     className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => {
-                      if (activeTab === 'kanban') setApplicantViewMode('kanban');
-                    }}
+                    onClick={() => setActiveTab('hired')}
                   >
                     <span className="text-[10px] font-mono text-muted-foreground block uppercase">
                       Hired / Rostered
@@ -1550,9 +1668,7 @@ const AdminDashboard = () => {
                   </div>
                   <div
                     className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => {
-                      if (activeTab === 'kanban') setApplicantViewMode('kanban');
-                    }}
+                    onClick={() => setActiveTab('rejected')}
                   >
                     <span className="text-[10px] font-mono text-muted-foreground block uppercase">
                       Rejected
@@ -1658,7 +1774,13 @@ const AdminDashboard = () => {
                               >
                                 <TableCell className="py-3.5">
                                   <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center shrink-0">
+                                    <div
+                                      className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
+                                        app.sector === 'chicken'
+                                          ? 'bg-amber-100 text-amber-800'
+                                          : 'bg-blue-100 text-blue-800'
+                                      }`}
+                                    >
                                       {(app.name || 'A').charAt(0).toUpperCase()}
                                     </div>
                                     <div className="space-y-0.5">
@@ -1686,30 +1808,51 @@ const AdminDashboard = () => {
                                 </TableCell>
 
                                 <TableCell>
-                                  <Badge
-                                    variant={
-                                      app.status === 'HIRED'
-                                        ? 'default'
-                                        : app.status === 'REJECTED'
-                                          ? 'destructive'
-                                          : 'secondary'
-                                    }
-                                    className="text-xs font-mono"
-                                  >
-                                    {app.status || 'NEW'}
-                                  </Badge>
+                                  <div onClick={(e) => e.stopPropagation()}>
+                                    <Select
+                                      value={app.status || 'NEW'}
+                                      onValueChange={(val) => updateApplicationStatus(app.id, val)}
+                                    >
+                                      <SelectTrigger className="h-7 text-xs w-[125px]">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="NEW">New Intake</SelectItem>
+                                        <SelectItem value="REVIEWING">Under Review</SelectItem>
+                                        <SelectItem value="HIRED">Hired</SelectItem>
+                                        <SelectItem value="REJECTED">Rejected</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
                                 </TableCell>
 
                                 <TableCell>
-                                  {app.profileFormCompleted ? (
-                                    <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
-                                      <ShieldCheck className="w-3.5 h-3.5" /> Complete
-                                    </span>
-                                  ) : (
-                                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                                      <Clock className="w-3.5 h-3.5" /> Pending
-                                    </span>
-                                  )}
+                                  <div className="flex items-center gap-1.5">
+                                    {app.hasRightToWork ? (
+                                      <Badge
+                                        variant="outline"
+                                        className="text-[9px] py-0 px-1.5 bg-emerald-50 text-emerald-700 border-emerald-200 font-mono flex items-center gap-1"
+                                      >
+                                        <ShieldCheck className="w-2.5 h-2.5" /> RTW
+                                      </Badge>
+                                    ) : (
+                                      <Badge
+                                        variant="outline"
+                                        className="text-[9px] py-0 px-1.5 text-muted-foreground font-mono"
+                                      >
+                                        RTW Pending
+                                      </Badge>
+                                    )}
+
+                                    {app.profileFormCompleted && (
+                                      <Badge
+                                        variant="outline"
+                                        className="text-[9px] py-0 px-1.5 bg-blue-50 text-blue-700 border-blue-200 font-mono flex items-center gap-1"
+                                      >
+                                        <CheckCircle2 className="w-2.5 h-2.5" /> Induction
+                                      </Badge>
+                                    )}
+                                  </div>
                                 </TableCell>
 
                                 <TableCell className="text-xs text-muted-foreground font-mono">
@@ -1721,6 +1864,25 @@ const AdminDashboard = () => {
                                     className="flex items-center justify-end gap-1"
                                     onClick={(e) => e.stopPropagation()}
                                   >
+                                    {app.phone && (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700"
+                                        title="WhatsApp Candidate"
+                                        onClick={() =>
+                                          window.open(
+                                            getWhatsAppLink(
+                                              app.phone,
+                                              `Hi ${app.name || 'Operative'}, Pullum Ltd recruitment team here regarding your application.`,
+                                            ),
+                                            '_blank',
+                                          )
+                                        }
+                                      >
+                                        <Smartphone className="w-4 h-4" />
+                                      </Button>
+                                    )}
                                     <Button
                                       variant="ghost"
                                       size="sm"
@@ -1741,7 +1903,7 @@ const AdminDashboard = () => {
                                 colSpan={7}
                                 className="text-center py-10 text-muted-foreground"
                               >
-                                No applications found.
+                                No applications found in this view.
                               </TableCell>
                             </TableRow>
                           )}
@@ -2035,434 +2197,995 @@ const AdminDashboard = () => {
       }
 
       /* =========================================================================
-         4. LOCATION & CORRIDOR MANAGER
+         4. LOCATIONS & CORRIDORS SUITE (with /admin/locations, /admin/regions, /admin/towns, /admin/corridors)
       ========================================================================= */
       case 'locations':
+      case 'regions':
+      case 'towns':
+      case 'corridors': {
+        const activeSubView =
+          activeTab === 'regions'
+            ? 'regions'
+            : activeTab === 'towns'
+              ? 'towns'
+              : activeTab === 'corridors'
+                ? 'corridors'
+                : 'all';
+
+        const filteredRegions = locations.filter((r) => {
+          if (locationRegionFilter !== 'ALL' && r.id !== locationRegionFilter) return false;
+          if (!locationSearch) return true;
+          const q = locationSearch.toLowerCase();
+          const matchesRegion =
+            r.name.toLowerCase().includes(q) ||
+            r.id.toLowerCase().includes(q) ||
+            (r.county && r.county.toLowerCase().includes(q));
+          const matchesTown = (r.towns || []).some(
+            (t: any) =>
+              t.name.toLowerCase().includes(q) ||
+              (t.pickupPoint && t.pickupPoint.toLowerCase().includes(q)) ||
+              (t.surrounding && t.surrounding.toLowerCase().includes(q)),
+          );
+          return matchesRegion || matchesTown;
+        });
+
+        const filteredTowns = allTowns.filter((t) => {
+          if (locationRegionFilter !== 'ALL' && t.parentRegionId !== locationRegionFilter)
+            return false;
+          if (!locationSearch) return true;
+          const q = locationSearch.toLowerCase();
+          return (
+            t.name.toLowerCase().includes(q) ||
+            t.id.toLowerCase().includes(q) ||
+            t.parentRegionName.toLowerCase().includes(q) ||
+            (t.pickupPoint && t.pickupPoint.toLowerCase().includes(q)) ||
+            (t.surrounding && t.surrounding.toLowerCase().includes(q))
+          );
+        });
+
         return (
-          <div className="p-4 md:p-8 space-y-6">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">
-                Location & Corridor Manager
-              </h1>
-              <p className="text-muted-foreground mt-1 text-sm">
-                Manage operational hubs, regional SEO landing copy, and minibus pickup depots.
-              </p>
-            </div>
+          <div className="flex h-full w-full">
+            {/* Main Locations Management View */}
+            <div
+              className={`flex-1 flex flex-col min-w-0 overflow-y-auto ${
+                selectedLocationDetail ? 'hidden lg:flex' : 'flex'
+              }`}
+            >
+              <div className="p-4 md:p-8 space-y-6">
+                {/* Header & Primary Actions */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
+                      <MapPin className="w-7 h-7 text-primary" />
+                      Locations & Transport Corridors
+                    </h1>
+                    <p className="text-muted-foreground text-xs sm:text-sm">
+                      Manage UK poultry operational hubs, regional SEO landing copy, and squad
+                      minibus pickup corridors.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={exportLocationsCSV}
+                      className="text-xs shrink-0"
+                    >
+                      <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
+                      Export CSV
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setEditingLocationData(null);
+                        setLocationModalType('region');
+                        setIsLocationModalOpen(true);
+                      }}
+                      className="text-xs shrink-0"
+                    >
+                      <Building2 className="w-3.5 h-3.5 mr-1.5 text-purple-600" />+ Add Region
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        setEditingLocationData(null);
+                        setLocationModalType('town');
+                        setIsLocationModalOpen(true);
+                      }}
+                      className="bg-primary text-primary-foreground text-xs shrink-0"
+                    >
+                      <Plus className="w-3.5 h-3.5 mr-1.5" />+ Add Town Depot
+                    </Button>
+                  </div>
+                </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-              <Card className="lg:col-span-1 h-fit">
-                <CardHeader>
-                  <CardTitle>{isEditingLocation ? 'Edit Location' : 'Add Location'}</CardTitle>
-                  <CardDescription>
-                    {isEditingLocation
-                      ? 'Update location attributes.'
-                      : 'Create a new region or town depot.'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form
-                    key={isEditingLocation ? editingLocationData?.id : 'new'}
-                    onSubmit={handleLocationSubmit}
-                    className="space-y-4 text-xs"
+                {/* KPI Metric Strips */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div
+                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    onClick={() => setActiveTab('regions')}
                   >
-                    <div className="space-y-1.5">
-                      <Label htmlFor="id">ID (Slug)</Label>
-                      <Input
-                        id="id"
-                        name="id"
-                        required
-                        defaultValue={editingLocationData?.id || ''}
-                        placeholder="e.g. norfolk-region"
-                        disabled={isEditingLocation}
-                        className="text-xs"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="name">Name</Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        required
-                        defaultValue={editingLocationData?.name || ''}
-                        placeholder="e.g. Norfolk"
-                        className="text-xs"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="type">Type</Label>
-                      <Select
-                        name="type"
-                        defaultValue={editingLocationData?.type || 'region'}
-                        disabled={isEditingLocation}
-                      >
-                        <SelectTrigger id="type" className="text-xs">
-                          <SelectValue placeholder="Select Type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="region">Region</SelectItem>
-                          <SelectItem value="town">Town</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label>Description</Label>
-                      <Textarea
-                        name="description"
-                        defaultValue={editingLocationData?.description || ''}
-                        placeholder="Optional description"
-                        className="text-xs min-h-[70px]"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label>Region SEO Copy</Label>
-                      <MarkdownEditor
-                        name="seoCopy"
-                        defaultValue={editingLocationData?.seoCopy || ''}
-                        placeholder="Markdown SEO copy"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label>Pickup Point (Town only)</Label>
-                      <Input
-                        id="pickupPoint"
-                        name="pickupPoint"
-                        defaultValue={editingLocationData?.pickupPoint || ''}
-                        placeholder="e.g. Main Transport Depot"
-                        className="text-xs"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label>Parent Region (Town only)</Label>
-                      <Select name="regionId" defaultValue={editingLocationData?.regionId || ''}>
-                        <SelectTrigger id="regionId" className="text-xs">
-                          <SelectValue placeholder="Select Region..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {locations.map((r) => (
-                            <SelectItem key={r.id} value={r.id}>
-                              {r.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex gap-2 pt-2">
-                      {isEditingLocation && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setIsEditingLocation(false);
-                            setEditingLocationData(null);
-                          }}
-                          className="w-full text-xs"
-                        >
-                          Cancel
-                        </Button>
-                      )}
-                      <Button type="submit" size="sm" className="w-full text-xs">
-                        {isEditingLocation ? 'Save Changes' : 'Create Location'}
-                      </Button>
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>
+                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                      Operational Regions
+                    </span>
+                    <span className="text-2xl font-bold text-purple-600">{locations.length}</span>
+                  </div>
+                  <div
+                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    onClick={() => setActiveTab('towns')}
+                  >
+                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                      Town Depots
+                    </span>
+                    <span className="text-2xl font-bold text-primary">{allTowns.length}</span>
+                  </div>
+                  <div
+                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    onClick={() => setActiveTab('corridors')}
+                  >
+                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                      Transit Corridors
+                    </span>
+                    <span className="text-2xl font-bold text-emerald-600">
+                      {allTowns.filter((t) => !!t.pickupPoint).length} Pickup Points
+                    </span>
+                  </div>
+                  <div
+                    className="bg-card border border-border p-3 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    onClick={() => setActiveTab('jobs')}
+                  >
+                    <span className="text-[10px] font-mono text-muted-foreground block uppercase">
+                      Linked Vacancies
+                    </span>
+                    <span className="text-2xl font-bold text-amber-600">
+                      {jobs.filter((j) => j.status === 'ACTIVE').length} Active
+                    </span>
+                  </div>
+                </div>
 
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle>Directory</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Region</TableHead>
-                        <TableHead>Towns</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {locations.map((region) => (
-                        <TableRow key={region.id}>
-                          <TableCell className="font-medium align-top py-4">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                {region.name}
-                                <div className="text-xs text-muted-foreground mt-1 font-mono">
-                                  {region.id}
+                {/* Sub-view switcher tabs */}
+                <div className="flex border-b border-border gap-6 text-sm font-medium">
+                  <button
+                    onClick={() => setActiveTab('locations')}
+                    className={`pb-2 border-b-2 transition-colors cursor-pointer ${
+                      activeSubView === 'all'
+                        ? 'border-primary text-primary font-semibold'
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    Overview Directory
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('regions')}
+                    className={`pb-2 border-b-2 transition-colors cursor-pointer ${
+                      activeSubView === 'regions'
+                        ? 'border-primary text-primary font-semibold'
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    Regions & Hubs ({locations.length})
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('towns')}
+                    className={`pb-2 border-b-2 transition-colors cursor-pointer ${
+                      activeSubView === 'towns'
+                        ? 'border-primary text-primary font-semibold'
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    Town Depots ({allTowns.length})
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('corridors')}
+                    className={`pb-2 border-b-2 transition-colors cursor-pointer ${
+                      activeSubView === 'corridors'
+                        ? 'border-primary text-primary font-semibold'
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    Transit Network
+                  </button>
+                </div>
+
+                {/* Search & Region Filter Bar */}
+                <div className="bg-card border border-border p-3.5 rounded-lg flex flex-col sm:flex-row items-center gap-3 shadow-xs">
+                  <div className="relative flex-1 w-full">
+                    <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
+                    <Input
+                      placeholder="Search regions, towns, pickup points, or surrounding corridors..."
+                      value={locationSearch}
+                      onChange={(e) => setLocationSearch(e.target.value)}
+                      className="pl-9 text-xs"
+                    />
+                  </div>
+
+                  <Select
+                    value={locationRegionFilter}
+                    onValueChange={(val) => setLocationRegionFilter(val)}
+                  >
+                    <SelectTrigger className="text-xs w-full sm:w-[190px]">
+                      <SelectValue placeholder="Filter Region" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All Regions</SelectItem>
+                      {locations.map((r) => (
+                        <SelectItem key={r.id} value={r.id}>
+                          {r.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* VIEW 1: REGIONS & HUBS DIRECTORY */}
+                {(activeSubView === 'all' || activeSubView === 'regions') && (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {filteredRegions.map((region) => {
+                        const regionJobs = jobs.filter((j) =>
+                          (region.towns || []).some((t: any) => t.id === j.townId),
+                        );
+                        const regionApps = applications.filter((a) =>
+                          (region.towns || []).some(
+                            (t: any) =>
+                              t.name.toLowerCase() === (a.town || '').toLowerCase() ||
+                              t.id === a.town,
+                          ),
+                        );
+
+                        return (
+                          <Card
+                            key={region.id}
+                            className="overflow-hidden hover:border-primary/50 transition-colors shadow-xs"
+                          >
+                            <CardHeader className="p-4 bg-muted/20 border-b border-border flex flex-row items-start justify-between pb-3">
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <CardTitle className="text-base font-bold text-foreground">
+                                    {region.name}
+                                  </CardTitle>
+                                  {region.county && (
+                                    <Badge variant="outline" className="text-[10px] font-mono">
+                                      {region.county}
+                                    </Badge>
+                                  )}
                                 </div>
+                                <p className="text-xs font-mono text-muted-foreground">
+                                  Slug: {region.id}
+                                </p>
                               </div>
-                              <div className="flex space-x-1">
+
+                              <div className="flex items-center gap-1">
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-8 w-8 p-0"
-                                  onClick={() => {
-                                    setIsEditingLocation(true);
-                                    setEditingLocationData({ type: 'region', ...region });
-                                  }}
+                                  className="h-7 w-7 p-0"
+                                  title="Inspect Region"
+                                  onClick={() =>
+                                    setSelectedLocationDetail({ type: 'region', data: region })
+                                  }
                                 >
-                                  <Edit className="w-4 h-4 text-muted-foreground" />
+                                  <Eye className="w-3.5 h-3.5 text-primary" />
                                 </Button>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-8 w-8 p-0"
+                                  className="h-7 w-7 p-0"
+                                  title="Edit Region"
+                                  onClick={() => {
+                                    setEditingLocationData({ type: 'region', ...region });
+                                    setLocationModalType('region');
+                                    setIsLocationModalOpen(true);
+                                  }}
+                                >
+                                  <Edit className="w-3.5 h-3.5 text-muted-foreground" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+                                  title="Delete Region"
                                   onClick={() =>
                                     setDeleteConfirm({
                                       type: 'location',
                                       id: region.id,
                                       title: region.name,
+                                      subType: 'region',
                                     })
                                   }
                                 >
-                                  <Trash2 className="w-4 h-4 text-destructive" />
+                                  <Trash2 className="w-3.5 h-3.5" />
                                 </Button>
                               </div>
-                            </div>
-                          </TableCell>
-                          <TableCell className="py-4">
-                            <div className="flex flex-wrap gap-2">
-                              {region.towns?.map((town: any) => (
-                                <Badge
-                                  key={town.id}
-                                  variant="secondary"
-                                  className="flex items-center gap-1 group"
-                                >
-                                  {town.name}
+                            </CardHeader>
+
+                            <CardContent className="p-4 space-y-3 text-xs">
+                              {/* Region Stats */}
+                              <div className="grid grid-cols-3 gap-2 p-2 rounded-lg bg-muted/40 text-center font-mono">
+                                <div>
+                                  <span className="text-[10px] text-muted-foreground block">
+                                    Towns
+                                  </span>
+                                  <span className="font-bold text-foreground">
+                                    {region.towns?.length || 0}
+                                  </span>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] text-muted-foreground block">
+                                    Active Jobs
+                                  </span>
+                                  <span className="font-bold text-emerald-600">
+                                    {regionJobs.length}
+                                  </span>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] text-muted-foreground block">
+                                    Catchers
+                                  </span>
+                                  <span className="font-bold text-primary">
+                                    {regionApps.length}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Towns List in this Region */}
+                              <div>
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-[11px] font-semibold text-muted-foreground uppercase">
+                                    Managed Town Depots
+                                  </span>
                                   <Button
                                     variant="ghost"
-                                    size="icon"
-                                    className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+                                    size="sm"
+                                    className="h-5 text-[10px] text-primary p-0"
                                     onClick={() => {
-                                      setIsEditingLocation(true);
-                                      setEditingLocationData({
-                                        type: 'town',
-                                        ...town,
-                                        regionId: region.id,
-                                      });
+                                      setEditingLocationData({ regionId: region.id });
+                                      setLocationModalType('town');
+                                      setIsLocationModalOpen(true);
                                     }}
                                   >
-                                    <Edit className="w-3 h-3 text-muted-foreground" />
+                                    + Add Town
                                   </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    onClick={() =>
-                                      setDeleteConfirm({
-                                        type: 'location',
-                                        id: town.id,
-                                        title: town.name,
-                                      })
-                                    }
+                                </div>
+
+                                <div className="flex flex-wrap gap-1.5">
+                                  {(region.towns || []).map((town: any) => (
+                                    <Badge
+                                      key={town.id}
+                                      variant="secondary"
+                                      className="flex items-center gap-1.5 py-1 px-2.5 text-xs group cursor-pointer hover:bg-primary/10 transition-colors"
+                                      onClick={() =>
+                                        setSelectedLocationDetail({
+                                          type: 'town',
+                                          data: town,
+                                          parentRegion: region,
+                                        })
+                                      }
+                                    >
+                                      <span>{town.name}</span>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-4 w-4 p-0 opacity-40 group-hover:opacity-100 transition-opacity"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setEditingLocationData({
+                                            type: 'town',
+                                            ...town,
+                                            regionId: region.id,
+                                          });
+                                          setLocationModalType('town');
+                                          setIsLocationModalOpen(true);
+                                        }}
+                                      >
+                                        <Edit className="w-2.5 h-2.5" />
+                                      </Button>
+                                    </Badge>
+                                  ))}
+                                  {(!region.towns || region.towns.length === 0) && (
+                                    <span className="text-xs text-muted-foreground italic">
+                                      No town depots configured
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* SEO Markdown summary chip */}
+                              {region.seoCopy && (
+                                <div className="pt-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
+                                  <span className="flex items-center gap-1">
+                                    <Sparkles className="w-3 h-3 text-amber-500" /> SEO Copy
+                                    Configured
+                                  </span>
+                                  <a
+                                    href={`/chickens/${region.id}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-primary hover:underline flex items-center gap-0.5"
                                   >
-                                    <Trash2 className="w-3 h-3 text-destructive" />
-                                  </Button>
-                                </Badge>
-                              ))}
-                              {(!region.towns || region.towns.length === 0) && (
-                                <span className="text-xs text-muted-foreground italic">
-                                  No towns registered
-                                </span>
+                                    View Lander <ArrowUpRight className="w-3 h-3" />
+                                  </a>
+                                </div>
                               )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {locations.length === 0 && (
-                        <TableRow>
-                          <TableCell colSpan={2} className="text-center py-8 text-muted-foreground">
-                            No locations configured.
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        );
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
-      /* =========================================================================
-         5. JOB POSTINGS MANAGER
-      ========================================================================= */
-      case 'jobs': {
-        const allTowns = locations.flatMap((r) => r.towns || []);
+                {/* VIEW 2: DEDICATED TOWN DEPOTS TABLE */}
+                {(activeSubView === 'all' || activeSubView === 'towns') && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+                        <Building2 className="w-4 h-4 text-primary" />
+                        All Town Depots & Minibus Corridors
+                      </h2>
+                    </div>
 
-        return (
-          <div className="p-4 md:p-8 space-y-6">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">Job Manager</h1>
-              <p className="text-muted-foreground mt-1 text-sm">
-                Publish and manage live catching roles across chicken & turkey divisions.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-              <Card className="lg:col-span-1 h-fit">
-                <CardHeader>
-                  <CardTitle>Post a Job Vacancy</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={jobForm.handleSubmit(onJobSubmit)} className="space-y-4 text-xs">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="title">Title</Label>
-                      <Input
-                        id="title"
-                        {...jobForm.register('title')}
-                        placeholder="e.g. Night Shift Broiler Catcher"
-                        className="text-xs"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label>Description</Label>
-                      <Textarea
-                        {...jobForm.register('description')}
-                        placeholder="Shift times, door-to-door transit, bird weight..."
-                        className="text-xs min-h-[80px]"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="payRate">Pay Rate</Label>
-                      <Input
-                        id="payRate"
-                        {...jobForm.register('payRate')}
-                        placeholder="e.g. £15.50/hr or £22/k birds"
-                        className="text-xs"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="sector">Sector</Label>
-                      <Controller
-                        name="sector"
-                        control={jobForm.control}
-                        render={({ field }) => (
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger id="sector" className="text-xs">
-                              <SelectValue placeholder="Select Sector..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="chicken">Chicken Catching</SelectItem>
-                              <SelectItem value="turkey">Turkey Catching</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="townId">Town Hub</Label>
-                      <Controller
-                        name="townId"
-                        control={jobForm.control}
-                        render={({ field }) => (
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger id="townId" className="text-xs">
-                              <SelectValue placeholder="Select Town..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {allTowns.map((t) => (
-                                <SelectItem key={t.id} value={t.id}>
-                                  {t.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                    </div>
-                    <Button type="submit" size="sm" className="w-full text-xs mt-2">
-                      <Plus className="w-3.5 h-3.5 mr-1.5" /> Publish Role
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle>Active Vacancies & Roles</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Role Title</TableHead>
-                        <TableHead>Town Hub</TableHead>
-                        <TableHead>Pay Rate</TableHead>
-                        <TableHead>Applicants</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {jobs.map((job) => (
-                        <TableRow key={job.id}>
-                          <TableCell className="font-semibold text-sm">
-                            <div>{job.title}</div>
-                            <span className="text-xs text-muted-foreground capitalize font-normal font-mono">
-                              {job.sector}
-                            </span>
-                          </TableCell>
-                          <TableCell className="text-xs text-muted-foreground">
-                            {job.townId}
-                          </TableCell>
-                          <TableCell className="text-xs font-mono font-medium">
-                            {job.payRate}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="text-xs font-mono">
-                              {job._count?.applications || 0} Inquiries
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={job.status === 'ACTIVE' ? 'default' : 'secondary'}
-                              className="text-xs cursor-pointer"
-                              onClick={() => handleToggleJobStatus(job.id, job.status)}
-                            >
-                              {job.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex items-center justify-end gap-1">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-7 text-xs"
-                                onClick={() => handleToggleJobStatus(job.id, job.status)}
-                              >
-                                {job.status === 'ACTIVE' ? 'Pause' : 'Activate'}
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+                    <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col shadow-xs">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Town Depot</TableHead>
+                            <TableHead>Parent Region</TableHead>
+                            <TableHead>Minibus Pickup Point</TableHead>
+                            <TableHead>Catchment Areas</TableHead>
+                            <TableHead>Active Jobs</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredTowns.map((town) => {
+                            const townJobs = jobs.filter((j) => j.townId === town.id);
+                            return (
+                              <TableRow
+                                key={town.id}
+                                className="cursor-pointer hover:bg-muted/50 transition-colors"
                                 onClick={() =>
-                                  setDeleteConfirm({
-                                    type: 'job',
-                                    id: job.id,
-                                    title: job.title,
+                                  setSelectedLocationDetail({
+                                    type: 'town',
+                                    data: town,
+                                    parentRegion: {
+                                      id: town.parentRegionId,
+                                      name: town.parentRegionName,
+                                    },
                                   })
                                 }
                               >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </Button>
+                                <TableCell className="font-semibold text-sm">
+                                  <div>{town.name}</div>
+                                  <div className="text-[10px] font-mono text-muted-foreground font-normal">
+                                    {town.id}
+                                  </div>
+                                </TableCell>
+
+                                <TableCell>
+                                  <Badge variant="outline" className="text-xs font-mono">
+                                    {town.parentRegionName}
+                                  </Badge>
+                                </TableCell>
+
+                                <TableCell className="text-xs text-muted-foreground">
+                                  {town.pickupPoint ? (
+                                    <span className="flex items-center gap-1 text-foreground">
+                                      <Bus className="w-3 h-3 text-emerald-600 shrink-0" />
+                                      {town.pickupPoint}
+                                    </span>
+                                  ) : (
+                                    <span className="italic text-muted-foreground">
+                                      None specified
+                                    </span>
+                                  )}
+                                </TableCell>
+
+                                <TableCell className="text-xs text-muted-foreground max-w-[220px] truncate">
+                                  {town.surrounding || '-'}
+                                </TableCell>
+
+                                <TableCell>
+                                  <Badge
+                                    variant={townJobs.length > 0 ? 'default' : 'secondary'}
+                                    className="text-xs font-mono"
+                                  >
+                                    {townJobs.length} Open
+                                  </Badge>
+                                </TableCell>
+
+                                <TableCell className="text-right">
+                                  <div
+                                    className="flex items-center justify-end gap-1"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-8 w-8 p-0"
+                                      title="Inspect Depot"
+                                      onClick={() =>
+                                        setSelectedLocationDetail({
+                                          type: 'town',
+                                          data: town,
+                                          parentRegion: {
+                                            id: town.parentRegionId,
+                                            name: town.parentRegionName,
+                                          },
+                                        })
+                                      }
+                                    >
+                                      <Eye className="w-4 h-4 text-primary" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-8 w-8 p-0"
+                                      title="Edit Town"
+                                      onClick={() => {
+                                        setEditingLocationData({
+                                          type: 'town',
+                                          ...town,
+                                          regionId: town.parentRegionId,
+                                        });
+                                        setLocationModalType('town');
+                                        setIsLocationModalOpen(true);
+                                      }}
+                                    >
+                                      <Edit className="w-4 h-4 text-muted-foreground" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                                      title="Delete Town"
+                                      onClick={() =>
+                                        setDeleteConfirm({
+                                          type: 'location',
+                                          id: town.id,
+                                          title: town.name,
+                                          subType: 'town',
+                                        })
+                                      }
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                          {filteredTowns.length === 0 && (
+                            <TableRow>
+                              <TableCell
+                                colSpan={6}
+                                className="text-center py-10 text-muted-foreground"
+                              >
+                                No town depots match current search filters.
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                )}
+
+                {/* VIEW 3: TRANSIT CORRIDORS & MINIBUS NETWORK */}
+                {activeSubView === 'corridors' && (
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 dark:bg-emerald-950/20 flex items-start gap-3">
+                      <Bus className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                      <div className="space-y-1 text-xs">
+                        <h3 className="font-bold text-foreground">
+                          Door-to-Door Poultry Transit Network
+                        </h3>
+                        <p className="text-muted-foreground">
+                          Pullum Ltd operates company minibus transport across all key broiler &
+                          turkey corridors. Catchers are collected from their home address or
+                          registered town depot pickup points.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {allTowns.map((town) => (
+                        <Card key={town.id} className="p-4 space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-bold text-sm text-foreground">{town.name} Depot</h4>
+                            <Badge variant="outline" className="text-[10px] font-mono">
+                              {town.parentRegionName}
+                            </Badge>
+                          </div>
+
+                          <div className="space-y-1.5 text-xs text-muted-foreground bg-muted/30 p-2.5 rounded-lg border border-border">
+                            <div className="flex items-start gap-1.5">
+                              <MapPin className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                              <div>
+                                <span className="font-semibold text-foreground block">
+                                  Pickup Point:
+                                </span>
+                                <span>{town.pickupPoint || 'Central Transport Depot'}</span>
+                              </div>
                             </div>
-                          </TableCell>
-                        </TableRow>
+                            {town.surrounding && (
+                              <div className="pt-1 text-[11px]">
+                                <span className="font-medium text-foreground">
+                                  Corridor Stops:{' '}
+                                </span>
+                                <span>{town.surrounding}</span>
+                              </div>
+                            )}
+                          </div>
+                        </Card>
                       ))}
-                      {jobs.length === 0 && (
-                        <TableRow>
-                          <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                            No job roles posted yet.
-                          </TableCell>
-                        </TableRow>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Location Inspector Side Drawer */}
+            {selectedLocationDetail && (
+              <div className="w-full lg:w-[480px] border-l border-border bg-card flex flex-col shrink-0 h-full overflow-y-auto shadow-lg">
+                <div className="p-6 border-b border-border flex justify-between items-start sticky top-0 bg-card z-10">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-bold text-foreground">
+                        {selectedLocationDetail.data.name}
+                      </h2>
+                      <Badge variant="outline" className="text-xs uppercase font-mono">
+                        {selectedLocationDetail.type}
+                      </Badge>
+                    </div>
+                    <p className="text-xs font-mono text-muted-foreground">
+                      Slug: {selectedLocationDetail.data.id}
+                      {selectedLocationDetail.parentRegion &&
+                        ` • Part of ${selectedLocationDetail.parentRegion.name}`}
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedLocationDetail(null)}
+                    className="text-muted-foreground"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
+
+                <div className="p-6 space-y-6 flex-1 text-xs">
+                  {/* Transport & Location Profile */}
+                  <div className="bg-muted/40 p-4 rounded-lg border border-border space-y-3">
+                    <h3 className="font-bold text-xs text-foreground">Hub Details & Transit</h3>
+                    <div className="space-y-2 text-[11px]">
+                      <div>
+                        <span className="text-muted-foreground block text-[10px] uppercase">
+                          Pickup Point Depot
+                        </span>
+                        <span className="font-medium text-foreground">
+                          {selectedLocationDetail.data.pickupPoint ||
+                            'Standard Home Collection / Depot'}
+                        </span>
+                      </div>
+                      {selectedLocationDetail.data.surrounding && (
+                        <div>
+                          <span className="text-muted-foreground block text-[10px] uppercase">
+                            Surrounding Catchment Areas
+                          </span>
+                          <span className="font-medium text-foreground">
+                            {selectedLocationDetail.data.surrounding}
+                          </span>
+                        </div>
                       )}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
+                      {selectedLocationDetail.data.phoneNumber && (
+                        <div>
+                          <span className="text-muted-foreground block text-[10px] uppercase">
+                            Transit Contact Phone
+                          </span>
+                          <span className="font-mono font-medium text-foreground">
+                            {selectedLocationDetail.data.phoneNumber}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Connected Vacancies */}
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-xs text-foreground flex items-center justify-between">
+                      <span>Live Roles in this Hub</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 text-[10px] text-primary p-0"
+                        onClick={() => {
+                          setIsJobModalOpen(true);
+                        }}
+                      >
+                        + Post Role
+                      </Button>
+                    </h3>
+
+                    <div className="space-y-2">
+                      {jobs
+                        .filter(
+                          (j) =>
+                            j.townId === selectedLocationDetail.data.id ||
+                            (selectedLocationDetail.type === 'region' &&
+                              (selectedLocationDetail.data.towns || []).some(
+                                (t: any) => t.id === j.townId,
+                              )),
+                        )
+                        .map((job) => (
+                          <div
+                            key={job.id}
+                            className="p-3 rounded-lg border border-border bg-muted/20 flex items-center justify-between"
+                          >
+                            <div>
+                              <p className="font-semibold text-foreground text-xs">{job.title}</p>
+                              <p className="text-[10px] text-muted-foreground font-mono">
+                                {job.payRate} • {job.sector}
+                              </p>
+                            </div>
+                            <Badge variant="outline" className="text-[10px] font-mono">
+                              {job._count?.applications || 0} Inquiries
+                            </Badge>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+
+                  {/* Public SEO Copy & Lander Link */}
+                  <div className="pt-4 border-t border-border space-y-3">
+                    <h3 className="font-bold text-xs text-foreground">SEO Public Landing Page</h3>
+                    <div className="p-3 rounded-lg border border-border bg-muted/30 flex items-center justify-between">
+                      <span className="font-mono text-[11px] text-muted-foreground">
+                        /chickens/{selectedLocationDetail.data.id}
+                      </span>
+                      <a
+                        href={`/chickens/${selectedLocationDetail.data.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-primary hover:underline font-semibold flex items-center gap-1"
+                      >
+                        Open Lander <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
+
+                    <div className="flex gap-2 pt-2">
+                      <Button
+                        className="flex-1 text-xs"
+                        variant="outline"
+                        onClick={() => {
+                          setEditingLocationData({
+                            type: selectedLocationDetail.type,
+                            ...selectedLocationDetail.data,
+                            regionId: selectedLocationDetail.parentRegion?.id,
+                          });
+                          setLocationModalType(selectedLocationDetail.type);
+                          setIsLocationModalOpen(true);
+                        }}
+                      >
+                        <Edit className="w-3.5 h-3.5 mr-1.5" /> Edit Location Details
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      /* =========================================================================
+         5. JOB POSTINGS MANAGER (with /admin/jobs, /admin/jobs-chicken, /admin/jobs-turkey)
+      ========================================================================= */
+      case 'jobs':
+      case 'jobs-chicken':
+      case 'jobs-turkey': {
+        const sectorFilter =
+          activeTab === 'jobs-chicken' ? 'chicken' : activeTab === 'jobs-turkey' ? 'turkey' : 'ALL';
+
+        const filteredJobs = jobs.filter((job) => {
+          if (sectorFilter !== 'ALL' && job.sector !== sectorFilter) return false;
+          if (jobSearch) {
+            const q = jobSearch.toLowerCase();
+            return (
+              job.title.toLowerCase().includes(q) ||
+              job.townId.toLowerCase().includes(q) ||
+              job.description.toLowerCase().includes(q)
+            );
+          }
+          return true;
+        });
+
+        return (
+          <div className="p-4 md:p-8 space-y-6">
+            {/* Header & Post Job Button */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
+                  <Briefcase className="w-7 h-7 text-primary" />
+                  Job Vacancies Manager
+                </h1>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Publish and manage live catching roles across chicken & turkey divisions.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => setIsJobModalOpen(true)}
+                  className="bg-primary text-primary-foreground text-xs"
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1.5" />
+                  Post New Vacancy
+                </Button>
+              </div>
+            </div>
+
+            {/* KPI Metric Strips */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div
+                className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('jobs')}
+              >
+                <span className="text-xs font-mono text-muted-foreground block uppercase">
+                  Total Vacancies
+                </span>
+                <span className="text-2xl font-bold text-foreground">{jobs.length}</span>
+              </div>
+              <div
+                className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('jobs-chicken')}
+              >
+                <span className="text-xs font-mono text-muted-foreground block uppercase">
+                  Chicken Broiler
+                </span>
+                <span className="text-2xl font-bold text-amber-600">
+                  {jobs.filter((j) => j.sector === 'chicken').length}
+                </span>
+              </div>
+              <div
+                className="bg-card border border-border p-3.5 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                onClick={() => setActiveTab('jobs-turkey')}
+              >
+                <span className="text-xs font-mono text-muted-foreground block uppercase">
+                  Turkey Loading
+                </span>
+                <span className="text-2xl font-bold text-blue-600">
+                  {jobs.filter((j) => j.sector === 'turkey').length}
+                </span>
+              </div>
+              <div className="bg-card border border-border p-3.5 rounded-lg">
+                <span className="text-xs font-mono text-muted-foreground block uppercase">
+                  Total Inquiries
+                </span>
+                <span className="text-2xl font-bold text-emerald-600">
+                  {jobs.reduce((acc, curr) => acc + (curr._count?.applications || 0), 0)}
+                </span>
+              </div>
+            </div>
+
+            {/* Search & Sector Filters */}
+            <div className="bg-card border border-border p-3.5 rounded-lg flex flex-col sm:flex-row items-center gap-3 shadow-xs">
+              <div className="relative flex-1 w-full">
+                <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
+                <Input
+                  placeholder="Search job roles by title, town, or description..."
+                  value={jobSearch}
+                  onChange={(e) => setJobSearch(e.target.value)}
+                  className="pl-9 text-xs"
+                />
+              </div>
+
+              <div className="flex rounded-lg border border-border p-0.5 bg-muted/30">
+                <Button
+                  size="sm"
+                  variant={activeTab === 'jobs' ? 'default' : 'ghost'}
+                  className="h-7 text-xs px-2.5"
+                  onClick={() => setActiveTab('jobs')}
+                >
+                  All Sectors
+                </Button>
+                <Button
+                  size="sm"
+                  variant={activeTab === 'jobs-chicken' ? 'default' : 'ghost'}
+                  className="h-7 text-xs px-2.5"
+                  onClick={() => setActiveTab('jobs-chicken')}
+                >
+                  Chicken
+                </Button>
+                <Button
+                  size="sm"
+                  variant={activeTab === 'jobs-turkey' ? 'default' : 'ghost'}
+                  className="h-7 text-xs px-2.5"
+                  onClick={() => setActiveTab('jobs-turkey')}
+                >
+                  Turkey
+                </Button>
+              </div>
+            </div>
+
+            {/* Vacancies Directory Table */}
+            <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col shadow-xs">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Role Title</TableHead>
+                    <TableHead>Town Hub</TableHead>
+                    <TableHead>Pay Rate</TableHead>
+                    <TableHead>Inquiries</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredJobs.map((job) => (
+                    <TableRow key={job.id}>
+                      <TableCell className="font-semibold text-sm">
+                        <div>{job.title}</div>
+                        <span className="text-xs text-muted-foreground capitalize font-normal font-mono">
+                          {job.sector} Catching
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground font-mono">
+                        {job.townId}
+                      </TableCell>
+                      <TableCell className="text-xs font-mono font-medium">{job.payRate}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="text-xs font-mono">
+                          {job._count?.applications || 0} Inquiries
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={job.status === 'ACTIVE' ? 'default' : 'secondary'}
+                          className="text-xs cursor-pointer"
+                          onClick={() => handleToggleJobStatus(job.id, job.status)}
+                        >
+                          {job.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 text-xs"
+                            onClick={() => handleToggleJobStatus(job.id, job.status)}
+                          >
+                            {job.status === 'ACTIVE' ? 'Pause' : 'Activate'}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+                            onClick={() =>
+                              setDeleteConfirm({
+                                type: 'job',
+                                id: job.id,
+                                title: job.title,
+                              })
+                            }
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {filteredJobs.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                        No job vacancies found.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </div>
           </div>
         );
@@ -2565,6 +3288,262 @@ const AdminDashboard = () => {
   return (
     <div className="h-full flex-1">
       {renderContent()}
+
+      {/* Add / Edit Location Dialog */}
+      <Dialog open={isLocationModalOpen} onOpenChange={setIsLocationModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {editingLocationData
+                ? `Edit ${locationModalType === 'region' ? 'Region' : 'Town Depot'}`
+                : `Add New ${locationModalType === 'region' ? 'Region' : 'Town Depot'}`}
+            </DialogTitle>
+            <DialogDescription>
+              Configure geographic catchment and SEO metadata for Catchingjobs deployments.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleLocationSubmit} className="space-y-4 pt-2 text-xs">
+            <input type="hidden" name="type" value={locationModalType} />
+
+            <div className="flex rounded-lg border border-border p-0.5 bg-muted/30 mb-2">
+              <Button
+                type="button"
+                size="sm"
+                variant={locationModalType === 'region' ? 'default' : 'ghost'}
+                className="h-7 text-xs flex-1"
+                disabled={!!editingLocationData}
+                onClick={() => setLocationModalType('region')}
+              >
+                Region
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={locationModalType === 'town' ? 'default' : 'ghost'}
+                className="h-7 text-xs flex-1"
+                disabled={!!editingLocationData}
+                onClick={() => setLocationModalType('town')}
+              >
+                Town Depot
+              </Button>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="id">ID (Slug URL)</Label>
+              <Input
+                id="id"
+                name="id"
+                required
+                defaultValue={editingLocationData?.id || ''}
+                placeholder={locationModalType === 'region' ? 'e.g. norfolk' : 'e.g. attleborough'}
+                disabled={!!editingLocationData?.id}
+                className="text-xs"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="name">Location Name</Label>
+              <Input
+                id="name"
+                name="name"
+                required
+                defaultValue={editingLocationData?.name || ''}
+                placeholder={locationModalType === 'region' ? 'e.g. Norfolk' : 'e.g. Attleborough'}
+                className="text-xs"
+              />
+            </div>
+
+            {locationModalType === 'region' && (
+              <>
+                <div className="space-y-1.5">
+                  <Label htmlFor="county">County / District</Label>
+                  <Input
+                    id="county"
+                    name="county"
+                    defaultValue={editingLocationData?.county || ''}
+                    placeholder="e.g. East Anglia"
+                    className="text-xs"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Region SEO Copy (Markdown)</Label>
+                  <MarkdownEditor
+                    name="seoCopy"
+                    defaultValue={editingLocationData?.seoCopy || ''}
+                    placeholder="SEO and recruitment overview..."
+                  />
+                </div>
+              </>
+            )}
+
+            {locationModalType === 'town' && (
+              <>
+                <div className="space-y-1.5">
+                  <Label htmlFor="regionId">Parent Region</Label>
+                  <Select
+                    name="regionId"
+                    defaultValue={editingLocationData?.regionId || locations[0]?.id || ''}
+                  >
+                    <SelectTrigger id="regionId" className="text-xs">
+                      <SelectValue placeholder="Select Parent Region..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {locations.map((r) => (
+                        <SelectItem key={r.id} value={r.id}>
+                          {r.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="pickupPoint">Minibus Pickup Point</Label>
+                  <Input
+                    id="pickupPoint"
+                    name="pickupPoint"
+                    defaultValue={editingLocationData?.pickupPoint || ''}
+                    placeholder="e.g. Main Transport Depot, Market Square"
+                    className="text-xs"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="surrounding">Surrounding Catchment Areas</Label>
+                  <Input
+                    id="surrounding"
+                    name="surrounding"
+                    defaultValue={editingLocationData?.surrounding || ''}
+                    placeholder="e.g. Thetford, Wymondham, Diss"
+                    className="text-xs"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="phoneNumber">Transit Coordinator Phone</Label>
+                  <Input
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    defaultValue={editingLocationData?.phoneNumber || ''}
+                    placeholder="e.g. 01205 123456"
+                    className="text-xs"
+                  />
+                </div>
+              </>
+            )}
+
+            <DialogFooter className="mt-4">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setIsLocationModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" size="sm">
+                {editingLocationData ? 'Save Changes' : 'Create Location'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Post Job Modal Dialog */}
+      <Dialog open={isJobModalOpen} onOpenChange={setIsJobModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Post a Job Vacancy</DialogTitle>
+            <DialogDescription>
+              Create a live poultry harvesting role across chicken or turkey squads.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={jobForm.handleSubmit(onJobSubmit)} className="space-y-4 pt-2 text-xs">
+            <div className="space-y-1.5">
+              <Label htmlFor="title">Job Title</Label>
+              <Input
+                id="title"
+                {...jobForm.register('title')}
+                placeholder="e.g. Night Shift Broiler Catcher"
+                className="text-xs"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label>Description</Label>
+              <Textarea
+                {...jobForm.register('description')}
+                placeholder="Shift times, door-to-door transit, bird weight requirements..."
+                className="text-xs min-h-[80px]"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="payRate">Pay Rate</Label>
+              <Input
+                id="payRate"
+                {...jobForm.register('payRate')}
+                placeholder="e.g. £15.50/hr or £22/k birds"
+                className="text-xs"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="sector">Sector</Label>
+              <Controller
+                name="sector"
+                control={jobForm.control}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger id="sector" className="text-xs">
+                      <SelectValue placeholder="Select Sector..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="chicken">Chicken Catching</SelectItem>
+                      <SelectItem value="turkey">Turkey Catching</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="townId">Town Hub</Label>
+              <Controller
+                name="townId"
+                control={jobForm.control}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger id="townId" className="text-xs">
+                      <SelectValue placeholder="Select Town Depot..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allTowns.map((t) => (
+                        <SelectItem key={t.id} value={t.id}>
+                          {t.name} ({t.parentRegionName})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+
+            <DialogFooter className="mt-4">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setIsJobModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" size="sm">
+                Publish Vacancy
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Staff Invitation Modal */}
       <Dialog open={isInviteModalOpen} onOpenChange={setIsInviteModalOpen}>
@@ -2753,7 +3732,10 @@ const AdminDashboard = () => {
               onClick={() => {
                 if (!deleteConfirm) return;
                 if (deleteConfirm.type === 'location') {
-                  executeDeleteLocation('region', String(deleteConfirm.id));
+                  executeDeleteLocation(
+                    deleteConfirm.subType || 'region',
+                    String(deleteConfirm.id),
+                  );
                 } else if (deleteConfirm.type === 'user') {
                   handleDeleteUser(String(deleteConfirm.id));
                 } else if (deleteConfirm.type === 'job') {

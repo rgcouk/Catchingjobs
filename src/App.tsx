@@ -122,15 +122,47 @@ const adminNavItems: NavItem[] = [
     icon: ClipboardList,
     href: '/admin/applicants',
     children: [
-      { id: 'all', label: 'All Applicants', href: '/admin/applicants' },
+      { id: 'applicants', label: 'All Applicants', href: '/admin/applicants' },
       { id: 'kanban', label: 'Kanban Board', href: '/admin/kanban' },
-      { id: 'hired', label: 'Hired', href: '/admin/hired' },
+      { id: 'reviewing', label: 'Under Review', href: '/admin/reviewing' },
+      { id: 'hired', label: 'Hired / Rostered', href: '/admin/hired' },
       { id: 'rejected', label: 'Rejected', href: '/admin/rejected' },
     ],
   },
-  { id: 'users', label: 'Users CRM', icon: Users, href: '/admin/users' },
-  { id: 'locations', label: 'Locations', icon: MapPin, href: '/admin/locations' },
-  { id: 'jobs', label: 'Job Postings', icon: Briefcase, href: '/admin/jobs' },
+  {
+    id: 'users',
+    label: 'Users CRM',
+    icon: Users,
+    href: '/admin/users',
+    children: [
+      { id: 'users', label: 'All Accounts', href: '/admin/users' },
+      { id: 'workers', label: 'Field Operatives', href: '/admin/workers' },
+      { id: 'admins', label: 'Staff & Admins', href: '/admin/admins' },
+    ],
+  },
+  {
+    id: 'locations',
+    label: 'Locations',
+    icon: MapPin,
+    href: '/admin/locations',
+    children: [
+      { id: 'locations', label: 'All Locations', href: '/admin/locations' },
+      { id: 'regions', label: 'Regions & Hubs', href: '/admin/regions' },
+      { id: 'towns', label: 'Town Depots', href: '/admin/towns' },
+      { id: 'corridors', label: 'Transit Corridors', href: '/admin/corridors' },
+    ],
+  },
+  {
+    id: 'jobs',
+    label: 'Job Postings',
+    icon: Briefcase,
+    href: '/admin/jobs',
+    children: [
+      { id: 'jobs', label: 'All Vacancies', href: '/admin/jobs' },
+      { id: 'jobs-chicken', label: 'Chicken Catching', href: '/admin/jobs-chicken' },
+      { id: 'jobs-turkey', label: 'Turkey Squads', href: '/admin/jobs-turkey' },
+    ],
+  },
   { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/settings' },
 ];
 
