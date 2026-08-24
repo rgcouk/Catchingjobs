@@ -10,18 +10,14 @@ import { DomainError } from '../src/services/exceptions.js';
 
 const app = new Hono();
 
+import { requireAdmin } from './middleware/auth.js';
+
 app.use('/api/admin/*', clerkMiddleware({
   publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,
   secretKey: process.env.CLERK_SECRET_KEY,
 }));
 
-app.use('/api/admin/*', async (c, next) => {
-  const auth = getAuth(c);
-  if (!auth?.userId) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
-  await next();
-});
+app.use('/api/admin/*', requireAdmin);
 
 const handleError = (error: unknown, defaultMessage: string, c: any) => {
   if (error instanceof DomainError) {

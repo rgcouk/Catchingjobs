@@ -144,30 +144,7 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Interactive administrator panel state
-  const [showPortal, setShowPortal] = useState<boolean>(false);
-  const [applications, setApplications] = useState<SubmittedApplication[]>([]);
-  const [activeNotification, setActiveNotification] = useState<{
-    name: string;
-    ref: string;
-    sector: string;
-  } | null>(null);
 
-  // Load registered applications from backend on launch
-  useEffect(() => {
-    const fetchApplications = async () => {
-      try {
-        const res = await fetch('/api/applications');
-        if (res.ok) {
-          const data = await res.json();
-          setApplications(data);
-        }
-      } catch (e) {
-        console.warn('Could not load applications from API:', e);
-      }
-    };
-    fetchApplications();
-  }, []);
 
   const handleNavigate = (
     sub: 'root' | 'chicken' | 'turkey' | 'corporate' | 'portal',
@@ -183,131 +160,7 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleWizardSuccess = async (
-    data: ApplicationData & { rosterRef: string; sector: 'chicken' | 'turkey' },
-  ) => {
-    const timestamp = new Date().toLocaleString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
 
-    const newApp: SubmittedApplication = {
-      ...data,
-      timestamp,
-      contacted: false,
-      safetyResourcesSent: false,
-      safetyTasksCompleted: false,
-    };
-
-    try {
-      const res = await fetch('/api/webhook/intake', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newApp),
-      });
-      if (res.ok) {
-        const savedApp = await res.json();
-        setApplications((prev) => [savedApp, ...prev]);
-
-        if (!location.pathname.includes('/employee')) {
-          setActiveNotification({
-            name: data.name,
-            ref: data.rosterRef,
-            sector: data.sector === 'chicken' ? 'Chicken catching' : 'Turkey catching',
-          });
-
-          setShowPortal(true);
-        }
-      }
-    } catch (e) {
-      console.error('Failed to create application:', e);
-    }
-  };
-
-  const handleSendSafetyResources = async (ref: string) => {
-    try {
-      await fetch(`/api/applications/${ref}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ safetyResourcesSent: true, contacted: true }),
-      });
-      setApplications((prev) =>
-        prev.map((app) =>
-          app.rosterRef === ref ? { ...app, safetyResourcesSent: true, contacted: true } : app,
-        ),
-      );
-    } catch (e) {
-      console.error('Failed to update application:', e);
-    }
-  };
-
-  const handleCompleteSafetyTasks = async (ref: string) => {
-    try {
-      await fetch(`/api/applications/${ref}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ safetyTasksCompleted: true }),
-      });
-      setApplications((prev) =>
-        prev.map((app) => (app.rosterRef === ref ? { ...app, safetyTasksCompleted: true } : app)),
-      );
-    } catch (e) {
-      console.error('Failed to update application:', e);
-    }
-  };
-
-  const handleUpdateProfile = async (ref: string, profileData: Partial<SubmittedApplication>) => {
-    try {
-      await fetch(`/api/applications/${ref}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profileData),
-      });
-      setApplications((prev) =>
-        prev.map((app) => (app.rosterRef === ref ? { ...app, ...profileData } : app)),
-      );
-    } catch (e) {
-      console.error('Failed to update application:', e);
-    }
-  };
-
-  const handlePurgePortal = async () => {
-    try {
-      await fetch('/api/applications', { method: 'DELETE' });
-      setApplications([]);
-    } catch (e) {
-      console.error('Failed to purge applications:', e);
-    }
-  };
-
-  const handleRemoveApplication = async (ref: string) => {
-    try {
-      await fetch(`/api/applications/${ref}`, { method: 'DELETE' });
-      setApplications((prev) => prev.filter((app) => app.rosterRef !== ref));
-    } catch (e) {
-      console.error('Failed to delete application:', e);
-    }
-  };
-
-  const handleToggleContacted = async (ref: string) => {
-    const app = applications.find((a) => a.rosterRef === ref);
-    if (!app) return;
-    try {
-      await fetch(`/api/applications/${ref}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contacted: !app.contacted }),
-      });
-      setApplications((prev) =>
-        prev.map((a) => (a.rosterRef === ref ? { ...a, contacted: !a.contacted } : a)),
-      );
-    } catch (e) {
-      console.error('Failed to toggle contact status:', e);
-    }
-  };
 
   const path = location.pathname;
   const pathParts = path.split('/');
@@ -409,45 +262,7 @@ function App() {
         </nav>
       )}
 
-      <AnimatePresence>
-        {activeNotification && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-24 right-4 z-[60] bg-[var(--color-ink)] text-[var(--color-paper)] p-3 rounded-xl shadow-lg border border-[var(--color-ink-2)] max-w-sm"
-          >
-            <div className="flex flex-col gap-3 text-xs">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex gap-2">
-                  <div className="mt-1 shrink-0 w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
-                  <span className="leading-relaxed">
-                    New candidate <strong>{activeNotification.name}</strong> just registered for the{' '}
-                    {activeNotification.sector} roster.
-                  </span>
-                </div>
-                <button
-                  onClick={() => setActiveNotification(null)}
-                  className="text-[var(--color-paper-2)] hover:text-[var(--color-paper)]"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-              <button
-                onClick={() => {
-                  handleSendSafetyResources(activeNotification.ref);
-                  setActiveNotification(null);
-                }}
-                className="bg-[var(--color-accent)] text-[var(--color-paper)] font-semibold py-1.5 px-3 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-              >
-                <Send className="w-3 h-3" />
-                Contact & Send Resources
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
       <main
         className={`flex-1 w-full flex flex-col lg:flex-row relative ${!isAppRoute ? 'pt-16' : ''}`}
@@ -521,18 +336,7 @@ function App() {
           </ErrorBoundary>
         </div>
 
-        {showPortal && (
-          <div className="w-full lg:w-96 shrink-0 self-start">
-            <RosterPortal
-              applications={applications}
-              onClear={handlePurgePortal}
-              onRemove={handleRemoveApplication}
-              onToggleContacted={handleToggleContacted}
-              onSendSafetyResources={handleSendSafetyResources}
-              onCompleteSafetyTasks={handleCompleteSafetyTasks}
-            />
-          </div>
-        )}
+
       </main>
 
       {!isAppRoute && (

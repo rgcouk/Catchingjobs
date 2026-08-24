@@ -4,6 +4,7 @@ import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
 import { getPrisma } from '../server/db.js';
 import { ManageApplications } from '../src/services/ManageApplications.js';
 import { DomainError } from '../src/services/exceptions.js';
+import { requireAdmin } from './middleware/auth.js';
 
 const app = new Hono();
 
@@ -102,7 +103,7 @@ app.post('/api/applications/submit', async (c) => {
   }
 });
 
-app.get('/api/applications', async (c) => {
+app.get('/api/applications', requireAdmin, async (c) => {
   const service = new ManageApplications(getPrisma());
   try {
     const applications = await service.getAllApplicationsDesc();
@@ -112,7 +113,7 @@ app.get('/api/applications', async (c) => {
   }
 });
 
-app.post('/api/applications', async (c) => {
+app.post('/api/applications', requireAdmin, async (c) => {
   const service = new ManageApplications(getPrisma());
   try {
     const body = await c.req.json();
@@ -123,7 +124,7 @@ app.post('/api/applications', async (c) => {
   }
 });
 
-app.put('/api/applications/:rosterRef', async (c) => {
+app.put('/api/applications/:rosterRef', requireAdmin, async (c) => {
   const service = new ManageApplications(getPrisma());
   try {
     const { rosterRef } = c.req.param();
@@ -135,7 +136,7 @@ app.put('/api/applications/:rosterRef', async (c) => {
   }
 });
 
-app.delete('/api/applications/:rosterRef', async (c) => {
+app.delete('/api/applications/:rosterRef', requireAdmin, async (c) => {
   const service = new ManageApplications(getPrisma());
   try {
     const { rosterRef } = c.req.param();
