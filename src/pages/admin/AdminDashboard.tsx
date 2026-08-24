@@ -227,6 +227,35 @@ const AdminDashboard = () => {
     subType?: 'region' | 'town';
   } | null>(null);
 
+  // Email Suite States (Composer, Logs, Settings)
+  const [emailLogs, setEmailLogs] = useState<any[]>([]);
+  const [totalEmailLogs, setTotalEmailLogs] = useState(0);
+  const [emailLogSearch, setEmailLogSearch] = useState('');
+  const [emailLogStatusFilter, setEmailLogStatusFilter] = useState<
+    'ALL' | 'SENT' | 'FAILED' | 'MOCKED'
+  >('ALL');
+  const [selectedEmailLog, setSelectedEmailLog] = useState<any | null>(null);
+
+  const [composerRecipientMode, setComposerRecipientMode] = useState<'single' | 'filtered' | 'all'>(
+    'single',
+  );
+  const [composerSingleEmail, setComposerSingleEmail] = useState('');
+  const [composerRecipientName, setComposerRecipientName] = useState('');
+  const [composerSubject, setComposerSubject] = useState('');
+  const [composerBody, setComposerBody] = useState('');
+  const [composerTemplatePreset, setComposerTemplatePreset] = useState<string>('custom');
+  const [isSendingCustomEmail, setIsSendingCustomEmail] = useState(false);
+
+  const [emailSettings, setEmailSettings] = useState<{
+    hasApiKey: boolean;
+    fromEmail: string;
+    adminEmail: string;
+    appUrl: string;
+    provider: string;
+  } | null>(null);
+  const [testEmailRecipient, setTestEmailRecipient] = useState('');
+  const [isSendingTestEmail, setIsSendingTestEmail] = useState(false);
+
   const loadApplications = useCallback(
     async (skip = 0, isLoadMore = false) => {
       try {
@@ -267,6 +296,22 @@ const AdminDashboard = () => {
       if (jobsRes.ok) setJobs(await jobsRes.json());
       if (usersRes.ok) setUsers(await usersRes.json());
 
+      // Fetch Email Logs & Settings
+      fetch('/api/admin/emails/settings', { headers })
+        .then((r) => r.ok && r.json())
+        .then((d) => d && setEmailSettings(d))
+        .catch(() => {});
+
+      fetch('/api/admin/emails/logs?take=50', { headers })
+        .then((r) => r.ok && r.json())
+        .then((d) => {
+          if (d) {
+            setEmailLogs(d.data || []);
+            setTotalEmailLogs(d.total || 0);
+          }
+        })
+        .catch(() => {});
+
       await loadApplications(0, false);
     } catch (err: any) {
       setError(err.message);
@@ -274,6 +319,110 @@ const AdminDashboard = () => {
       setLoading(false);
     }
   }, [getToken, loadApplications]);
+
+  const loadEmailLogs = async () => {
+    try {
+      const token = await getToken();
+      let url = `/api/admin/emails/logs?take=50`;
+      if (emailLogSearch) url += `&search=${encodeURIComponent(emailLogSearch)}`;
+      if (emailLogStatusFilter !== 'ALL') url += `&status=${emailLogStatusFilter}`;
+
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) throw new Error('Failed to fetch email logs');
+      const data = await res.json();
+      setEmailLogs(data.data || []);
+      setTotalEmailLogs(data.total || 0);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to fetch email logs');
+    }
+  };
+
+  const handleSendCustomEmail = async () => {
+    if (!composerSubject.trim() || !composerBody.trim()) {
+      toast.error('Please provide both subject and message body');
+      return;
+    }
+
+    let recipientList: string[] = [];
+    if (composerRecipientMode === 'single') {
+      if (!composerSingleEmail.trim() || !composerSingleEmail.includes('@')) {
+        toast.error('Please enter a valid recipient email');
+        return;
+      }
+      recipientList = [composerSingleEmail.trim()];
+    } else if (composerRecipientMode === 'filtered') {
+      recipientList = filteredUsers
+        .map((u) => u.email)
+        .filter((e) => e && !e.includes('placeholder') && e.includes('@'));
+    } else if (composerRecipientMode === 'all') {
+      recipientList = users
+        .map((u) => u.email)
+        .filter((e) => e && !e.includes('placeholder') && e.includes('@'));
+    }
+
+    if (recipientList.length === 0) {
+      toast.error('No valid recipients selected');
+      return;
+    }
+
+    setIsSendingCustomEmail(true);
+    try {
+      const token = await getToken();
+      const res = await fetch('/api/admin/emails/compose', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          to: recipientList,
+          recipientName: composerRecipientName || undefined,
+          subject: composerSubject,
+          body: composerBody,
+          template: composerTemplatePreset,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to dispatch email');
+      const data = await res.json();
+      toast.success(`Dispatched email to ${data.count || recipientList.length} recipient(s)`);
+      if (composerRecipientMode === 'single') {
+        setComposerSingleEmail('');
+        setComposerRecipientName('');
+      }
+      setComposerSubject('');
+      setComposerBody('');
+      await loadEmailLogs();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to send email');
+    } finally {
+      setIsSendingCustomEmail(false);
+    }
+  };
+
+  const handleSendTestEmail = async () => {
+    setIsSendingTestEmail(true);
+    try {
+      const token = await getToken();
+      const res = await fetch('/api/admin/emails/test', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ to: testEmailRecipient || undefined }),
+      });
+
+      if (!res.ok) throw new Error('Test email failed');
+      const data = await res.json();
+      toast.success(`Test email sent to ${data.recipient}`);
+      await loadEmailLogs();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to send test email');
+    } finally {
+      setIsSendingTestEmail(false);
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -2868,7 +3017,498 @@ const AdminDashboard = () => {
       }
 
       /* =========================================================================
-         6. SYSTEM SETTINGS & COMPLIANCE
+         6. EMAIL SUITE (Compose, Logs, Settings)
+      ========================================================================= */
+      case 'emails':
+      case 'emails-compose':
+      case 'emails-logs':
+      case 'emails-settings':
+        return (
+          <div className="p-4 md:p-8 space-y-6 w-full">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
+                  <Mail className="w-7 h-7 text-primary" />
+                  Email & Dispatch Notifications Suite
+                </h1>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Compose individual & batch emails, monitor transactional delivery logs, and manage
+                  Resend configuration.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant={
+                    activeTab === 'emails-compose' || activeTab === 'emails' ? 'default' : 'outline'
+                  }
+                  onClick={() => setActiveTab('emails-compose')}
+                  className="text-xs"
+                >
+                  <Send className="w-3.5 h-3.5 mr-1.5" />
+                  Compose
+                </Button>
+                <Button
+                  size="sm"
+                  variant={activeTab === 'emails-logs' ? 'default' : 'outline'}
+                  onClick={() => {
+                    setActiveTab('emails-logs');
+                    loadEmailLogs();
+                  }}
+                  className="text-xs"
+                >
+                  <Clock className="w-3.5 h-3.5 mr-1.5" />
+                  Dispatch Logs ({totalEmailLogs})
+                </Button>
+                <Button
+                  size="sm"
+                  variant={activeTab === 'emails-settings' ? 'default' : 'outline'}
+                  onClick={() => setActiveTab('emails-settings')}
+                  className="text-xs"
+                >
+                  <Settings className="w-3.5 h-3.5 mr-1.5" />
+                  Settings
+                </Button>
+              </div>
+            </div>
+
+            {/* TAB 1: COMPOSE EMAIL */}
+            {(activeTab === 'emails-compose' || activeTab === 'emails') && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <Card className="lg:col-span-2">
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Send className="w-4 h-4 text-primary" />
+                      Email Composer
+                    </CardTitle>
+                    <CardDescription>
+                      Dispatch transactional or recruitment outreach messages via Resend.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Recipient Mode */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-foreground">
+                        Target Recipients
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={composerRecipientMode === 'single' ? 'default' : 'outline'}
+                          onClick={() => setComposerRecipientMode('single')}
+                          className="text-xs h-7"
+                        >
+                          Single Candidate
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={composerRecipientMode === 'filtered' ? 'default' : 'outline'}
+                          onClick={() => setComposerRecipientMode('filtered')}
+                          className="text-xs h-7"
+                        >
+                          Current CRM Filter (
+                          {
+                            filteredUsers.filter((u) => u.email && !u.email.includes('placeholder'))
+                              .length
+                          }
+                          )
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={composerRecipientMode === 'all' ? 'default' : 'outline'}
+                          onClick={() => setComposerRecipientMode('all')}
+                          className="text-xs h-7"
+                        >
+                          All Verified Contacts (
+                          {users.filter((u) => u.email && !u.email.includes('placeholder')).length})
+                        </Button>
+                      </div>
+                    </div>
+
+                    {composerRecipientMode === 'single' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-xs text-muted-foreground">Recipient Email *</label>
+                          <Input
+                            placeholder="candidate@example.com"
+                            value={composerSingleEmail}
+                            onChange={(e) => setComposerSingleEmail(e.target.value)}
+                            className="text-xs"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs text-muted-foreground">
+                            Recipient Name (Optional)
+                          </label>
+                          <Input
+                            placeholder="e.g. Arthur King"
+                            value={composerRecipientName}
+                            onChange={(e) => setComposerRecipientName(e.target.value)}
+                            className="text-xs"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Template Preset Selector */}
+                    <div className="space-y-1">
+                      <label className="text-xs text-muted-foreground">Template Preset</label>
+                      <Select
+                        value={composerTemplatePreset}
+                        onValueChange={(val) => {
+                          setComposerTemplatePreset(val);
+                          if (val === 'interview') {
+                            setComposerSubject(
+                              'Pullum Ltd Interview Invitation — Poultry Harvesting Squad',
+                            );
+                            setComposerBody(
+                              'Hi there,\n\nWe have reviewed your application for the harvesting squad in your local area. We would like to invite you for a quick phone interview to discuss upcoming shift rotas and door-to-door transit.\n\nAre you available for a 5-minute call this week?',
+                            );
+                          } else if (val === 'shift') {
+                            setComposerSubject(
+                              'Urgent Night Shift Vacancies — Minibus Pickup Scheduled',
+                            );
+                            setComposerBody(
+                              'Urgent shift alert: We have immediate squad openings for broiler catching this week. Minibus collection is provided directly from your home address with guaranteed Friday pay.\n\nPlease log in to your employee portal to confirm your availability.',
+                            );
+                          } else if (val === 'rtw') {
+                            setComposerSubject(
+                              'Pullum Ltd Compliance: Right to Work Verification Reminder',
+                            );
+                            setComposerBody(
+                              'Hello,\n\nTo finalize your squad placement and transit manifest, please log in to your portal and upload your UK Right to Work share code or document.\n\nThank you,\nPullum Ltd Compliance Team',
+                            );
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="text-xs h-8">
+                          <SelectValue placeholder="Choose a preset template..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="custom">Custom Email (Blank)</SelectItem>
+                          <SelectItem value="interview">Phone Interview Invitation</SelectItem>
+                          <SelectItem value="shift">Urgent Shift Notification</SelectItem>
+                          <SelectItem value="rtw">Right to Work Document Request</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Subject */}
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-foreground">Subject *</label>
+                      <Input
+                        placeholder="e.g. Welcome to Pullum Ltd Harvesting Squads"
+                        value={composerSubject}
+                        onChange={(e) => setComposerSubject(e.target.value)}
+                        className="text-xs"
+                      />
+                    </div>
+
+                    {/* Body */}
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-foreground">
+                        Message Body *
+                      </label>
+                      <Textarea
+                        rows={7}
+                        placeholder="Write your email message here..."
+                        value={composerBody}
+                        onChange={(e) => setComposerBody(e.target.value)}
+                        className="text-xs font-mono"
+                      />
+                      <span className="text-[10px] text-muted-foreground block">
+                        Emails are automatically wrapped in the responsive Pullum Ltd branded layout
+                        with GLAA licence footer.
+                      </span>
+                    </div>
+
+                    <div className="pt-2 flex items-center justify-end gap-2">
+                      <Button
+                        size="sm"
+                        disabled={isSendingCustomEmail}
+                        onClick={handleSendCustomEmail}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs"
+                      >
+                        <Send className="w-3.5 h-3.5 mr-1.5" />
+                        {isSendingCustomEmail ? 'Sending...' : 'Dispatch Email'}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Email Preview & Brand Rules */}
+                <div className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm">Template Preview</CardTitle>
+                      <CardDescription>Live preview of standard responsive layout.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3 text-xs">
+                      <div className="border border-border rounded-lg p-3 bg-muted/20 space-y-2">
+                        <div className="bg-slate-900 text-white p-2 text-center rounded text-[11px] font-bold">
+                          Catching<span className="text-emerald-500">jobs</span>
+                          <div className="text-[9px] text-slate-400 font-normal">
+                            GLAA Licence: PULL0001
+                          </div>
+                        </div>
+                        <div className="font-semibold text-foreground text-xs">
+                          {composerSubject || 'Email Subject Header'}
+                        </div>
+                        <div className="text-muted-foreground text-[11px] whitespace-pre-wrap line-clamp-6">
+                          {composerBody ||
+                            'Message content will render here wrapped in brand tokens...'}
+                        </div>
+                        <div className="bg-emerald-600 text-white text-center py-1.5 rounded text-[10px] font-semibold">
+                          Open Employee Portal
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm flex items-center gap-1.5">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        Compliance Standards
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-xs text-muted-foreground space-y-2">
+                      <p>• All communications adhere to GLAA gangmaster licensing regulations.</p>
+                      <p>
+                        • Weekly Friday payroll and zero-travel-deduction policies are reinforced.
+                      </p>
+                      <p>
+                        • Every email includes unsubscription and 24/7 Operations Desk hotline
+                        (01522 504311).
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: DISPATCH LOGS */}
+            {activeTab === 'emails-logs' && (
+              <div className="space-y-4">
+                {/* Search and Filters */}
+                <div className="bg-card border border-border p-3.5 rounded-lg flex flex-col sm:flex-row items-center gap-3 shadow-xs">
+                  <div className="relative flex-1 w-full">
+                    <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
+                    <Input
+                      placeholder="Search email logs by recipient, subject, template..."
+                      value={emailLogSearch}
+                      onChange={(e) => setEmailLogSearch(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && loadEmailLogs()}
+                      className="pl-9 text-xs"
+                    />
+                  </div>
+
+                  <Select
+                    value={emailLogStatusFilter}
+                    onValueChange={(val: any) => {
+                      setEmailLogStatusFilter(val);
+                      setTimeout(loadEmailLogs, 50);
+                    }}
+                  >
+                    <SelectTrigger className="text-xs w-full sm:w-[150px]">
+                      <SelectValue placeholder="Delivery Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All Statuses</SelectItem>
+                      <SelectItem value="SENT">Sent (Live)</SelectItem>
+                      <SelectItem value="MOCKED">Mocked (Dev)</SelectItem>
+                      <SelectItem value="FAILED">Failed</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Button size="sm" variant="outline" onClick={loadEmailLogs} className="text-xs">
+                    Refresh Logs
+                  </Button>
+                </div>
+
+                {/* Logs Table */}
+                <div className="bg-card border border-border rounded-lg overflow-hidden shadow-xs">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Timestamp</TableHead>
+                        <TableHead>Recipient</TableHead>
+                        <TableHead>Subject</TableHead>
+                        <TableHead>Template / Trigger</TableHead>
+                        <TableHead>Delivery Status</TableHead>
+                        <TableHead className="text-right">Inspect</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {emailLogs.map((log) => (
+                        <TableRow key={log.id} className="hover:bg-muted/40 transition-colors">
+                          <TableCell className="text-xs font-mono text-muted-foreground whitespace-nowrap">
+                            {new Date(log.createdAt).toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-xs font-medium text-foreground">
+                            <div>{log.recipient}</div>
+                            {log.recipientName && (
+                              <span className="text-[10px] text-muted-foreground">
+                                {log.recipientName}
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-xs font-semibold text-foreground max-w-xs truncate">
+                            {log.subject}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="text-[10px] font-mono uppercase">
+                              {log.template}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                log.status === 'SENT'
+                                  ? 'default'
+                                  : log.status === 'FAILED'
+                                    ? 'destructive'
+                                    : 'secondary'
+                              }
+                              className={
+                                log.status === 'SENT'
+                                  ? 'bg-emerald-600 text-white text-[10px]'
+                                  : log.status === 'MOCKED'
+                                    ? 'bg-amber-100 text-amber-800 border-amber-300 text-[10px]'
+                                    : 'text-[10px]'
+                              }
+                            >
+                              {log.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setSelectedEmailLog(log)}
+                              className="h-7 text-xs"
+                            >
+                              <Eye className="w-3.5 h-3.5 mr-1" />
+                              View
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+
+                      {emailLogs.length === 0 && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={6}
+                            className="text-center py-10 text-muted-foreground text-xs"
+                          >
+                            No dispatch logs found. Send an email or trigger an application to see
+                            records here.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 3: EMAIL SETTINGS */}
+            {activeTab === 'emails-settings' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Settings className="w-4 h-4 text-primary" />
+                      Email Provider Status
+                    </CardTitle>
+                    <CardDescription>
+                      Resend service integration and environment variables.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4 text-xs">
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
+                      <div>
+                        <span className="font-semibold block text-foreground">Active Provider</span>
+                        <span className="text-muted-foreground">
+                          {emailSettings?.provider || 'Resend Engine'}
+                        </span>
+                      </div>
+                      <Badge
+                        variant={emailSettings?.hasApiKey ? 'default' : 'secondary'}
+                        className={
+                          emailSettings?.hasApiKey
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-amber-100 text-amber-800 border-amber-300'
+                        }
+                      >
+                        {emailSettings?.hasApiKey ? 'API Key Active' : 'Dev Mock Mode'}
+                      </Badge>
+                    </div>
+
+                    <div className="space-y-1.5 p-3 rounded-lg bg-muted/40 border border-border">
+                      <span className="font-semibold block text-foreground">
+                        Sender Identity (FROM)
+                      </span>
+                      <span className="font-mono text-muted-foreground">
+                        {emailSettings?.fromEmail ||
+                          'Catchingjobs <notifications@catchingjobs.co.uk>'}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 p-3 rounded-lg bg-muted/40 border border-border">
+                      <span className="font-semibold block text-foreground">
+                        Dispatch Alerts Mailbox
+                      </span>
+                      <span className="font-mono text-muted-foreground">
+                        {emailSettings?.adminEmail || 'dispatch@pullum.co.uk'}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-primary" />
+                      Send Test Notification
+                    </CardTitle>
+                    <CardDescription>
+                      Send a verification test email through the current email service.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4 text-xs">
+                    <div className="space-y-1">
+                      <label className="text-muted-foreground">Test Recipient Address</label>
+                      <Input
+                        placeholder="your-email@example.com"
+                        value={testEmailRecipient}
+                        onChange={(e) => setTestEmailRecipient(e.target.value)}
+                        className="text-xs"
+                      />
+                    </div>
+
+                    <Button
+                      size="sm"
+                      disabled={isSendingTestEmail}
+                      onClick={handleSendTestEmail}
+                      className="bg-primary text-primary-foreground text-xs w-full"
+                    >
+                      <Send className="w-3.5 h-3.5 mr-1.5" />
+                      {isSendingTestEmail ? 'Sending Test...' : 'Send Test Verification Email'}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </div>
+        );
+
+      /* =========================================================================
+         7. SYSTEM SETTINGS & COMPLIANCE
       ========================================================================= */
       case 'settings':
         return (
@@ -4051,6 +4691,111 @@ const AdminDashboard = () => {
               }}
             >
               Delete Permanently
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Email Log Inspection Dialog */}
+      <Dialog open={!!selectedEmailLog} onOpenChange={(open) => !open && setSelectedEmailLog(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <DialogTitle className="text-lg font-bold">Email Dispatch Details</DialogTitle>
+              <Badge
+                variant={
+                  selectedEmailLog?.status === 'SENT'
+                    ? 'default'
+                    : selectedEmailLog?.status === 'FAILED'
+                      ? 'destructive'
+                      : 'secondary'
+                }
+                className={
+                  selectedEmailLog?.status === 'SENT'
+                    ? 'bg-emerald-600 text-white text-[10px]'
+                    : selectedEmailLog?.status === 'MOCKED'
+                      ? 'bg-amber-100 text-amber-800 border-amber-300 text-[10px]'
+                      : 'text-[10px]'
+                }
+              >
+                {selectedEmailLog?.status}
+              </Badge>
+            </div>
+            <DialogDescription className="font-mono text-xs">
+              ID: {selectedEmailLog?.id} • Sent:{' '}
+              {selectedEmailLog?.createdAt && new Date(selectedEmailLog.createdAt).toLocaleString()}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedEmailLog && (
+            <div className="space-y-4 text-xs">
+              <div className="bg-muted/40 p-3 rounded-lg border border-border space-y-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <span className="text-muted-foreground text-[10px] uppercase block">
+                      Recipient
+                    </span>
+                    <span className="font-semibold text-foreground">
+                      {selectedEmailLog.recipient}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground text-[10px] uppercase block">
+                      Recipient Name
+                    </span>
+                    <span className="font-semibold text-foreground">
+                      {selectedEmailLog.recipientName || 'N/A'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground text-[10px] uppercase block">
+                      Template Type
+                    </span>
+                    <span className="font-mono text-foreground uppercase">
+                      {selectedEmailLog.template}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground text-[10px] uppercase block">
+                      Resend Message ID
+                    </span>
+                    <span className="font-mono text-foreground">
+                      {selectedEmailLog.resendId || 'Mock ID'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <span className="font-semibold text-foreground block">Subject Header:</span>
+                <div className="p-2.5 bg-card border border-border rounded-md font-semibold text-foreground">
+                  {selectedEmailLog.subject}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <span className="font-semibold text-foreground block">
+                  Message Content Preview:
+                </span>
+                <div className="p-3 bg-muted/20 border border-border rounded-md text-muted-foreground whitespace-pre-wrap font-mono text-[11px] max-h-48 overflow-y-auto">
+                  {selectedEmailLog.bodySnippet || 'No snippet stored.'}
+                </div>
+              </div>
+
+              {selectedEmailLog.metadata && (
+                <div className="space-y-1">
+                  <span className="font-semibold text-foreground block">Metadata Payload:</span>
+                  <pre className="p-2.5 bg-muted/40 border border-border rounded-md text-[10px] font-mono overflow-x-auto">
+                    {JSON.stringify(selectedEmailLog.metadata, null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter className="mt-4">
+            <Button variant="outline" size="sm" onClick={() => setSelectedEmailLog(null)}>
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>

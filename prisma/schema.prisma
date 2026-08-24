@@ -146,3 +146,16 @@ model Resource {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model EmailLog {
+  id            Int      @id @default(autoincrement())
+  recipient     String
+  recipientName String?
+  subject       String
+  template      String   @default("custom") // "receipt", "alert", "status_change", "invitation", "campaign", "custom", "test"
+  status        String   @default("SENT")   // "SENT", "FAILED", "MOCKED"
+  resendId      String?
+  bodySnippet   String?
+  metadata      Json?
+  createdAt     DateTime @default(now())
+}

@@ -163,6 +163,17 @@ const adminNavItems: NavItem[] = [
       { id: 'jobs-turkey', label: 'Turkey Squads', href: '/admin/jobs-turkey' },
     ],
   },
+  {
+    id: 'emails',
+    label: 'Emails & Alerts',
+    icon: Send,
+    href: '/admin/emails-compose',
+    children: [
+      { id: 'emails-compose', label: 'Compose Email', href: '/admin/emails-compose' },
+      { id: 'emails-logs', label: 'Dispatch Logs', href: '/admin/emails-logs' },
+      { id: 'emails-settings', label: 'Email Settings', href: '/admin/emails-settings' },
+    ],
+  },
   { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/settings' },
 ];
 

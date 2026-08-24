@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { getPrisma } from '../../server/db.js';
 
 export interface EmailApplicantPayload {
   name: string;
@@ -28,6 +29,16 @@ export interface EmailCampaignPayload {
   customBody?: string;
 }
 
+export interface CustomEmailPayload {
+  to: string | string[];
+  recipientName?: string;
+  subject: string;
+  body: string;
+  isHtml?: boolean;
+  template?: string;
+  metadata?: any;
+}
+
 export class EmailService {
   private resend: Resend | null = null;
   private fromEmail: string;
@@ -42,6 +53,16 @@ export class EmailService {
     this.fromEmail = process.env.EMAIL_FROM || 'Catchingjobs <notifications@catchingjobs.co.uk>';
     this.adminEmail = process.env.ADMIN_ALERT_EMAIL || 'dispatch@pullum.co.uk';
     this.appUrl = process.env.APP_URL || 'https://catchingjobs.co.uk';
+  }
+
+  getSettings() {
+    return {
+      hasApiKey: !!process.env.RESEND_API_KEY,
+      fromEmail: this.fromEmail,
+      adminEmail: this.adminEmail,
+      appUrl: this.appUrl,
+      provider: process.env.RESEND_API_KEY ? 'Resend (Live)' : 'Mock / Console (Dev Mode)',
+    };
   }
 
   /**
@@ -90,26 +111,60 @@ export class EmailService {
   }
 
   /**
-   * Helper to send or fallback to console log
+   * Helper to send or fallback to console log, with persistent database logging
    */
   private async dispatchEmail(
     to: string,
     subject: string,
     html: string,
+    options: {
+      recipientName?: string;
+      template?: string;
+      metadata?: any;
+    } = {},
   ): Promise<{ success: boolean; id?: string }> {
+    const { recipientName, template = 'custom', metadata } = options;
+
     if (!to || !to.includes('@')) {
       console.warn(`[EmailService] Invalid recipient email address: "${to}". Skipping dispatch.`);
       return { success: false };
     }
 
+    const snippet = html
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 200);
+
     if (!this.resend) {
       console.log(`\n================== [EmailService - MOCK SEND] ==================`);
-      console.log(`To:      ${to}`);
-      console.log(`From:    ${this.fromEmail}`);
-      console.log(`Subject: ${subject}`);
-      console.log(`Status:  Resend API key not set in environment. Mocking successful delivery.`);
+      console.log(`To:        ${to} (${recipientName || 'No Name'})`);
+      console.log(`From:      ${this.fromEmail}`);
+      console.log(`Subject:   ${subject}`);
+      console.log(`Template:  ${template}`);
+      console.log(`Status:    Resend API key not set in environment. Mocking successful delivery.`);
       console.log(`=================================================================\n`);
-      return { success: true, id: `mock-${Date.now()}` };
+
+      const mockId = `mock-${Date.now()}`;
+      try {
+        const prisma = getPrisma();
+        await prisma.emailLog.create({
+          data: {
+            recipient: to,
+            recipientName: recipientName || null,
+            subject,
+            template,
+            status: 'MOCKED',
+            resendId: mockId,
+            bodySnippet: snippet,
+            metadata: metadata || null,
+          },
+        });
+      } catch (logErr) {
+        console.error('[EmailService] Failed to create EmailLog record:', logErr);
+      }
+
+      return { success: true, id: mockId };
     }
 
     try {
@@ -122,12 +177,68 @@ export class EmailService {
 
       if (response.error) {
         console.error(`[EmailService] Resend API error sending to ${to}:`, response.error);
+
+        try {
+          const prisma = getPrisma();
+          await prisma.emailLog.create({
+            data: {
+              recipient: to,
+              recipientName: recipientName || null,
+              subject,
+              template,
+              status: 'FAILED',
+              bodySnippet: snippet,
+              metadata: { error: response.error, ...(metadata || {}) },
+            },
+          });
+        } catch (logErr) {
+          console.error('[EmailService] Failed to log email error:', logErr);
+        }
+
         return { success: false };
       }
 
-      return { success: true, id: response.data?.id };
+      const resendId = response.data?.id;
+
+      try {
+        const prisma = getPrisma();
+        await prisma.emailLog.create({
+          data: {
+            recipient: to,
+            recipientName: recipientName || null,
+            subject,
+            template,
+            status: 'SENT',
+            resendId: resendId || null,
+            bodySnippet: snippet,
+            metadata: metadata || null,
+          },
+        });
+      } catch (logErr) {
+        console.error('[EmailService] Failed to create EmailLog record:', logErr);
+      }
+
+      return { success: true, id: resendId };
     } catch (err: any) {
       console.error(`[EmailService] Exception during email delivery to ${to}:`, err);
+
+      try {
+        const prisma = getPrisma();
+        await prisma.emailLog.create({
+          data: {
+            recipient: to,
+            recipientName: recipientName || null,
+            subject,
+            template,
+            status: 'FAILED',
+            bodySnippet: snippet,
+            metadata: { error: err?.message || String(err), ...(metadata || {}) },
+          },
+        });
+      } catch (logErr) {
+        console.error('[EmailService] Failed to log email exception:', logErr);
+      }
+
       return { success: false };
     }
   }
@@ -165,7 +276,11 @@ export class EmailService {
     `;
 
     const html = this.wrapEmailHtml(subject, content);
-    return this.dispatchEmail(applicant.email, subject, html);
+    return this.dispatchEmail(applicant.email, subject, html, {
+      recipientName: applicant.name,
+      template: 'receipt',
+      metadata: { rosterRef: applicant.rosterRef, town, sector: applicant.sector },
+    });
   }
 
   /**
@@ -194,7 +309,11 @@ export class EmailService {
     `;
 
     const html = this.wrapEmailHtml(subject, content);
-    return this.dispatchEmail(this.adminEmail, subject, html);
+    return this.dispatchEmail(this.adminEmail, subject, html, {
+      recipientName: 'Pullum Dispatch Desk',
+      template: 'alert',
+      metadata: { rosterRef: application.rosterRef, candidateId: application.id },
+    });
   }
 
   /**
@@ -258,7 +377,11 @@ export class EmailService {
     `;
 
     const html = this.wrapEmailHtml(subject, content);
-    return this.dispatchEmail(applicant.email, subject, html);
+    return this.dispatchEmail(applicant.email, subject, html, {
+      recipientName: applicant.name,
+      template: 'status_change',
+      metadata: { rosterRef: applicant.rosterRef, newStatus },
+    });
   }
 
   /**
@@ -285,7 +408,11 @@ export class EmailService {
     `;
 
     const html = this.wrapEmailHtml(subject, content);
-    return this.dispatchEmail(email, subject, html);
+    return this.dispatchEmail(email, subject, html, {
+      recipientName: email.split('@')[0],
+      template: 'invitation',
+      metadata: { role },
+    });
   }
 
   /**
@@ -349,7 +476,87 @@ export class EmailService {
     `;
 
     const html = this.wrapEmailHtml(subject, content);
-    return this.dispatchEmail(email, subject, html);
+    return this.dispatchEmail(email, subject, html, {
+      recipientName: name,
+      template: `campaign_${template}`,
+      metadata: { town, sector },
+    });
+  }
+
+  /**
+   * 6. Send Custom Email from Admin Composer
+   */
+  async sendCustomEmail(payload: CustomEmailPayload): Promise<{ success: boolean; count: number }> {
+    const {
+      to,
+      recipientName,
+      subject,
+      body,
+      isHtml = false,
+      template = 'custom',
+      metadata,
+    } = payload;
+    const recipients = Array.isArray(to) ? to : [to];
+
+    let successCount = 0;
+    for (const recipient of recipients) {
+      if (!recipient || !recipient.includes('@')) continue;
+
+      const formattedBody = isHtml ? body : `<p style="white-space: pre-wrap;">${body}</p>`;
+      const html = this.wrapEmailHtml(
+        subject,
+        `
+        <h1 class="title">${subject}</h1>
+        ${formattedBody}
+        <div style="text-align: center; margin-top: 24px;">
+          <a href="${this.appUrl}/employee" class="btn">Open Employee Portal</a>
+        </div>
+      `,
+      );
+
+      const res = await this.dispatchEmail(recipient, subject, html, {
+        recipientName: recipientName || recipient.split('@')[0],
+        template,
+        metadata,
+      });
+
+      if (res.success) successCount++;
+    }
+
+    return { success: successCount > 0, count: successCount };
+  }
+
+  /**
+   * 7. Query Email Logs
+   */
+  async getEmailLogs(options: { skip?: number; take?: number; search?: string; status?: string }) {
+    const prisma = getPrisma();
+    const { skip = 0, take = 50, search, status } = options;
+
+    const where: any = {};
+    if (status && status !== 'ALL') {
+      where.status = status;
+    }
+    if (search) {
+      where.OR = [
+        { recipient: { contains: search, mode: 'insensitive' } },
+        { recipientName: { contains: search, mode: 'insensitive' } },
+        { subject: { contains: search, mode: 'insensitive' } },
+        { template: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const [logs, total] = await Promise.all([
+      prisma.emailLog.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.emailLog.count({ where }),
+    ]);
+
+    return { data: logs, total, skip, take };
   }
 }
 

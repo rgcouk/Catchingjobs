@@ -275,6 +275,75 @@ app.post('/api/admin/broadcast-email', async (c) => {
   }
 });
 
+/**
+ * EMAIL SUITE: Logs, Composer, and Settings
+ */
+app.get('/api/admin/emails/logs', async (c) => {
+  try {
+    const skip = parseInt(c.req.query('skip') || '0', 10);
+    const take = parseInt(c.req.query('take') || '50', 10);
+    const search = c.req.query('search') || undefined;
+    const status = c.req.query('status') || undefined;
+
+    const result = await emailService.getEmailLogs({ skip, take, search, status });
+    return c.json(result);
+  } catch (error) {
+    return handleError(error, 'Failed to fetch email logs', c);
+  }
+});
+
+app.post('/api/admin/emails/compose', async (c) => {
+  try {
+    const body = await c.req.json();
+    const { to, recipientName, subject, body: emailBody, template, metadata } = body;
+
+    if (!to || !subject || !emailBody) {
+      return c.json({ error: 'Missing required fields: to, subject, body' }, 400);
+    }
+
+    const result = await emailService.sendCustomEmail({
+      to,
+      recipientName,
+      subject,
+      body: emailBody,
+      template: template || 'custom_compose',
+      metadata,
+    });
+
+    return c.json(result);
+  } catch (error) {
+    return handleError(error, 'Failed to send custom email', c);
+  }
+});
+
+app.get('/api/admin/emails/settings', async (c) => {
+  try {
+    const settings = emailService.getSettings();
+    return c.json(settings);
+  } catch (error) {
+    return handleError(error, 'Failed to fetch email settings', c);
+  }
+});
+
+app.post('/api/admin/emails/test', async (c) => {
+  try {
+    const body = await c.req.json().catch(() => ({}));
+    const testRecipient = body.to || 'dispatch@pullum.co.uk';
+
+    const result = await emailService.sendCustomEmail({
+      to: testRecipient,
+      recipientName: 'Admin Tester',
+      subject: 'Test Notification - Catchingjobs Email Service',
+      body: 'This is a test notification verifying that the Resend email engine and HTML template generator are functioning properly in Catchingjobs.',
+      template: 'test',
+    });
+
+    return c.json({ success: result.success, recipient: testRecipient });
+  } catch (error) {
+    return handleError(error, 'Failed to send test email', c);
+  }
+});
+
 export { app };
 const handler = handle(app);
 export const GET = handler;

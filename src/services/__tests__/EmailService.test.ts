@@ -72,6 +72,21 @@ describe('EmailService', () => {
     expect(result.success).toBe(true);
   });
 
+  it('should send custom composed emails and retrieve settings', async () => {
+    const customRes = await emailService.sendCustomEmail({
+      to: 'custom@example.com',
+      recipientName: 'Custom Recipient',
+      subject: 'Custom Subject Title',
+      body: 'Custom message body content',
+    });
+    expect(customRes.success).toBe(true);
+    expect(customRes.count).toBe(1);
+
+    const settings = emailService.getSettings();
+    expect(settings.fromEmail).toBeDefined();
+    expect(settings.provider).toBeDefined();
+  });
+
   it('should gracefully skip invalid email addresses', async () => {
     const result = await emailService.sendApplicationReceipt({
       name: 'Bad Email',
