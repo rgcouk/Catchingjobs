@@ -173,11 +173,13 @@ function App() {
             ? 'turkey'
             : 'root';
 
+  const lowerPath = path.toLowerCase();
   const isAppRoute =
-    path.startsWith('/admin') ||
-    path.startsWith('/login') ||
-    path.startsWith('/register') ||
-    path === '/sso-callback';
+    lowerPath.startsWith('/admin') ||
+    lowerPath.startsWith('/login') ||
+    lowerPath.startsWith('/register') ||
+    lowerPath.startsWith('/employee') ||
+    lowerPath === '/sso-callback';
 
   return (
     <div className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] flex flex-col font-sans selection:bg-[var(--color-accent)] selection:text-white antialiased relative">
