@@ -620,6 +620,171 @@ export class EmailService {
 
     return result;
   }
+
+  /**
+   * 9. Get Live Domain Health & DNS Verification
+   */
+  async getDomainHealth() {
+    if (!this.resend) {
+      return {
+        configured: false,
+        domain: 'send.catchingjobs.co.uk',
+        status: 'mock_mode',
+        records: [],
+      };
+    }
+
+    try {
+      const response = await this.resend.domains.list();
+      const domains = response.data?.data || [];
+      const primaryDomain =
+        domains.find((d: any) => d.name === 'send.catchingjobs.co.uk') ||
+        domains.find((d: any) => d.name.includes('catchingjobs')) ||
+        domains[0];
+
+      return {
+        configured: true,
+        domain: primaryDomain?.name || 'send.catchingjobs.co.uk',
+        status: primaryDomain?.status || 'unknown',
+        region: primaryDomain?.region || 'eu-west-1',
+        capabilities: primaryDomain?.capabilities || { sending: 'enabled' },
+        clickTracking: primaryDomain?.click_tracking ?? true,
+        openTracking: primaryDomain?.open_tracking ?? false,
+      };
+    } catch (err: any) {
+      console.error('[EmailService] Failed to fetch domain health:', err);
+      return {
+        configured: true,
+        domain: 'send.catchingjobs.co.uk',
+        status: 'error',
+        error: err.message,
+      };
+    }
+  }
+
+  /**
+   * 10. Handle Inbound Resend Webhooks
+   */
+  async handleWebhookEvent(event: {
+    type: string;
+    created_at?: string;
+    data: {
+      email_id?: string;
+      to?: string[];
+      subject?: string;
+      click?: { link?: string; timestamp?: string };
+      bounce?: { message?: string; type?: string };
+      [key: string]: any;
+    };
+  }) {
+    const prisma = getPrisma();
+    const { type, data } = event;
+    const resendId = data.email_id;
+
+    if (!resendId) {
+      console.warn('[EmailService Webhook] Received event without email_id:', type);
+      return { success: false, reason: 'missing_email_id' };
+    }
+
+    const log = await prisma.emailLog.findFirst({
+      where: { resendId },
+    });
+
+    const now = new Date();
+    const updateData: any = {};
+
+    switch (type) {
+      case 'email.delivered':
+        updateData.status = 'DELIVERED';
+        updateData.deliveredAt = now;
+        break;
+      case 'email.opened':
+        updateData.status = 'OPENED';
+        updateData.openedAt = now;
+        break;
+      case 'email.clicked':
+        updateData.status = 'CLICKED';
+        updateData.clickedAt = now;
+        if (data.click?.link) {
+          updateData.metadata = {
+            ...((log?.metadata as any) || {}),
+            lastClickedLink: data.click.link,
+          };
+        }
+        break;
+      case 'email.bounced':
+        updateData.status = 'BOUNCED';
+        updateData.bouncedAt = now;
+        updateData.metadata = {
+          ...((log?.metadata as any) || {}),
+          bounceReason: data.bounce?.message || 'Bounced',
+        };
+        break;
+      case 'email.complained':
+        updateData.status = 'COMPLAINED';
+        break;
+      default:
+        console.log('[EmailService Webhook] Unhandled event type:', type);
+    }
+
+    if (log) {
+      await prisma.emailLog.update({
+        where: { id: log.id },
+        data: updateData,
+      });
+      return { success: true, updated: true, logId: log.id, status: updateData.status };
+    } else {
+      // Create new log record if not existed yet
+      const recipient = data.to?.[0] || 'unknown@catchingjobs.co.uk';
+      const newLog = await prisma.emailLog.create({
+        data: {
+          recipient,
+          subject: data.subject || 'Webhook Notification',
+          template: 'webhook_inbound',
+          resendId,
+          ...updateData,
+        },
+      });
+      return { success: true, created: true, logId: newLog.id };
+    }
+  }
+
+  /**
+   * 11. Get Aggregate Delivery Metrics for Dashboard KPIs
+   */
+  async getDeliveryMetrics() {
+    const prisma = getPrisma();
+
+    const [total, sent, delivered, opened, clicked, bounced, failed] = await Promise.all([
+      prisma.emailLog.count(),
+      prisma.emailLog.count({ where: { status: 'SENT' } }),
+      prisma.emailLog.count({ where: { status: 'DELIVERED' } }),
+      prisma.emailLog.count({ where: { status: 'OPENED' } }),
+      prisma.emailLog.count({ where: { status: 'CLICKED' } }),
+      prisma.emailLog.count({ where: { status: 'BOUNCED' } }),
+      prisma.emailLog.count({ where: { status: 'FAILED' } }),
+    ]);
+
+    const liveDispatched = total - (await prisma.emailLog.count({ where: { status: 'MOCKED' } }));
+    const openRate =
+      delivered + opened + clicked > 0
+        ? Math.round(((opened + clicked) / (delivered + opened + clicked)) * 100)
+        : 0;
+    const clickRate = opened + clicked > 0 ? Math.round((clicked / (opened + clicked)) * 100) : 0;
+
+    return {
+      total,
+      sent,
+      delivered,
+      opened,
+      clicked,
+      bounced,
+      failed,
+      liveDispatched,
+      openRate,
+      clickRate,
+    };
+  }
 }
 
 export const emailService = new EmailService();

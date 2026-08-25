@@ -148,14 +148,23 @@ model Resource {
 }
 
 model EmailLog {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   recipient     String
   recipientName String?
   subject       String
-  template      String   @default("custom") // "receipt", "alert", "status_change", "invitation", "campaign", "custom", "test"
-  status        String   @default("SENT")   // "SENT", "FAILED", "MOCKED"
+  template      String    @default("custom") // "receipt", "alert", "status_change", "invitation", "campaign", "custom", "test"
+  status        String    @default("SENT")   // "SENT", "DELIVERED", "OPENED", "CLICKED", "BOUNCED", "COMPLAINED", "FAILED", "MOCKED"
   resendId      String?
   bodySnippet   String?
+  deliveredAt   DateTime?
+  openedAt      DateTime?
+  clickedAt     DateTime?
+  bouncedAt     DateTime?
   metadata      Json?
-  createdAt     DateTime @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+
+  @@index([recipient])
+  @@index([status])
+  @@index([resendId])
 }

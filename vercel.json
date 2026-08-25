@@ -45,6 +45,10 @@
       "destination": "/api/webhook-intake.ts"
     },
     {
+      "source": "/api/webhook/resend",
+      "destination": "/api/webhook-resend.ts"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

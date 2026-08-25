@@ -344,6 +344,24 @@ app.post('/api/admin/emails/test', async (c) => {
   }
 });
 
+app.get('/api/admin/emails/domain', async (c) => {
+  try {
+    const health = await emailService.getDomainHealth();
+    return c.json(health);
+  } catch (error) {
+    return handleError(error, 'Failed to fetch domain health', c);
+  }
+});
+
+app.get('/api/admin/emails/metrics', async (c) => {
+  try {
+    const metrics = await emailService.getDeliveryMetrics();
+    return c.json(metrics);
+  } catch (error) {
+    return handleError(error, 'Failed to fetch delivery metrics', c);
+  }
+});
+
 app.post('/api/admin/emails/retry/:id', async (c) => {
   try {
     const logId = parseInt(c.req.param('id'), 10);
