@@ -50,7 +50,8 @@ export class EmailService {
     if (apiKey) {
       this.resend = new Resend(apiKey);
     }
-    this.fromEmail = process.env.EMAIL_FROM || 'Catchingjobs <notifications@catchingjobs.co.uk>';
+    this.fromEmail =
+      process.env.EMAIL_FROM || 'Catchingjobs <notifications@send.catchingjobs.co.uk>';
     this.adminEmail = process.env.ADMIN_ALERT_EMAIL || 'dispatch@pullum.co.uk';
     this.appUrl = process.env.APP_URL || 'https://catchingjobs.co.uk';
   }
