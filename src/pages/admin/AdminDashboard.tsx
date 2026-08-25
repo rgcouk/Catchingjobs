@@ -460,6 +460,40 @@ const AdminDashboard = () => {
     }
   };
 
+  const [retryingLogId, setRetryingLogId] = useState<number | null>(null);
+
+  const handleRetryEmail = async (logId: number) => {
+    setRetryingLogId(logId);
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/admin/emails/retry/${logId}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to resend email');
+      }
+
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Email resent successfully via Resend`);
+      } else {
+        toast.error(`Resend attempt failed. Check delivery logs for details.`);
+      }
+
+      await loadEmailLogs();
+      if (selectedEmailLog && selectedEmailLog.id === logId) {
+        setSelectedEmailLog(null);
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to retry email');
+    } finally {
+      setRetryingLogId(null);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -3422,15 +3456,32 @@ const AdminDashboard = () => {
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setSelectedEmailLog(log)}
-                              className="h-7 text-xs"
-                            >
-                              <Eye className="w-3.5 h-3.5 mr-1" />
-                              View
-                            </Button>
+                            <div className="flex items-center justify-end gap-1.5">
+                              {log.status === 'FAILED' && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  disabled={retryingLogId === log.id}
+                                  onClick={() => handleRetryEmail(log.id)}
+                                  className="h-7 text-[11px] text-amber-700 bg-amber-50 border-amber-200 hover:bg-amber-100"
+                                  title="Retry sending via Resend"
+                                >
+                                  <RotateCcw
+                                    className={`w-3 h-3 mr-1 ${retryingLogId === log.id ? 'animate-spin' : ''}`}
+                                  />
+                                  {retryingLogId === log.id ? 'Retrying...' : 'Resend'}
+                                </Button>
+                              )}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setSelectedEmailLog(log)}
+                                className="h-7 text-xs"
+                              >
+                                <Eye className="w-3.5 h-3.5 mr-1" />
+                                View
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -4802,6 +4853,27 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
+              {/* Failure Error Alert */}
+              {selectedEmailLog.status === 'FAILED' && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg space-y-1 text-red-900">
+                  <div className="flex items-center gap-1.5 font-semibold text-xs text-red-800">
+                    <AlertTriangle className="w-4 h-4 text-red-600" />
+                    Delivery Failure Details
+                  </div>
+                  <p className="text-[11px] text-red-700 font-mono">
+                    {typeof selectedEmailLog.metadata?.error === 'object'
+                      ? selectedEmailLog.metadata?.error?.message ||
+                        JSON.stringify(selectedEmailLog.metadata?.error)
+                      : selectedEmailLog.metadata?.error || 'Unknown delivery failure'}
+                  </p>
+                  {selectedEmailLog.metadata?.error?.statusCode && (
+                    <span className="inline-block text-[10px] bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-mono">
+                      HTTP {selectedEmailLog.metadata?.error?.statusCode}
+                    </span>
+                  )}
+                </div>
+              )}
+
               <div className="space-y-1">
                 <span className="font-semibold text-foreground block">Subject Header:</span>
                 <div className="p-2.5 bg-card border border-border rounded-md font-semibold text-foreground">
@@ -4829,7 +4901,24 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          <DialogFooter className="mt-4">
+          <DialogFooter className="mt-4 flex items-center justify-between gap-2">
+            <div>
+              {selectedEmailLog?.status === 'FAILED' && (
+                <Button
+                  size="sm"
+                  disabled={retryingLogId === selectedEmailLog?.id}
+                  onClick={() => handleRetryEmail(selectedEmailLog.id)}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs"
+                >
+                  <RotateCcw
+                    className={`w-3.5 h-3.5 mr-1.5 ${retryingLogId === selectedEmailLog?.id ? 'animate-spin' : ''}`}
+                  />
+                  {retryingLogId === selectedEmailLog?.id
+                    ? 'Retrying Dispatch...'
+                    : 'Resend Email Now'}
+                </Button>
+              )}
+            </div>
             <Button variant="outline" size="sm" onClick={() => setSelectedEmailLog(null)}>
               Close
             </Button>

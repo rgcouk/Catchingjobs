@@ -344,6 +344,20 @@ app.post('/api/admin/emails/test', async (c) => {
   }
 });
 
+app.post('/api/admin/emails/retry/:id', async (c) => {
+  try {
+    const logId = parseInt(c.req.param('id'), 10);
+    if (isNaN(logId)) {
+      return c.json({ error: 'Invalid email log ID' }, 400);
+    }
+
+    const result = await emailService.resendEmailLog(logId);
+    return c.json(result);
+  } catch (error) {
+    return handleError(error, 'Failed to retry email dispatch', c);
+  }
+});
+
 export { app };
 const handler = handle(app);
 export const GET = handler;

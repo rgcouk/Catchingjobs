@@ -570,6 +570,56 @@ export class EmailService {
 
     return { data: logs, total, skip, take };
   }
+
+  /**
+   * 8. Retry / Resend Failed Email Log
+   */
+  async resendEmailLog(logId: number) {
+    const prisma = getPrisma();
+    const log = await prisma.emailLog.findUnique({ where: { id: logId } });
+    if (!log) {
+      throw new Error(`Email log #${logId} not found`);
+    }
+
+    // Re-dispatch using the stored content snippet / subject
+    const subject = log.subject;
+    const bodyText = log.bodySnippet || log.subject;
+    const isHtml = bodyText.includes('<p>') || bodyText.includes('<div>');
+    const formattedBody = isHtml ? bodyText : `<p style="white-space: pre-wrap;">${bodyText}</p>`;
+
+    const html = this.wrapEmailHtml(
+      subject,
+      `
+      <h1 class="title">${subject}</h1>
+      ${formattedBody}
+      <div style="text-align: center; margin-top: 24px;">
+        <a href="${this.appUrl}/employee" class="btn">Open Employee Portal</a>
+      </div>
+    `,
+    );
+
+    const result = await this.dispatchEmail(log.recipient, subject, html, {
+      recipientName: log.recipientName || undefined,
+      template: `retry_${log.template}`,
+      metadata: { retriedFromLogId: log.id, originalMetadata: log.metadata },
+    });
+
+    if (result.success) {
+      // Update original log status note or mark retried
+      await prisma.emailLog.update({
+        where: { id: logId },
+        data: {
+          metadata: {
+            ...((log.metadata as any) || {}),
+            retriedAt: new Date().toISOString(),
+            retrySuccess: true,
+          },
+        },
+      });
+    }
+
+    return result;
+  }
 }
 
 export const emailService = new EmailService();
