@@ -284,7 +284,7 @@ export class EmailService {
   }
 
   /**
-   * 2. Send New Application Alert to Admin Team
+   * 2. Send New Application Alert to Admin Team (supports comma-separated emails)
    */
   async sendAdminNewApplicationAlert(application: EmailAdminAlertPayload) {
     const sectorName = application.sector === 'turkey' ? 'Turkey Harvesting' : 'Chicken Catching';
@@ -309,11 +309,22 @@ export class EmailService {
     `;
 
     const html = this.wrapEmailHtml(subject, content);
-    return this.dispatchEmail(this.adminEmail, subject, html, {
-      recipientName: 'Pullum Dispatch Desk',
-      template: 'alert',
-      metadata: { rosterRef: application.rosterRef, candidateId: application.id },
-    });
+    const adminRecipients = this.adminEmail
+      .split(',')
+      .map((e) => e.trim())
+      .filter((e) => e && e.includes('@'));
+
+    const results = await Promise.all(
+      adminRecipients.map((recipient) =>
+        this.dispatchEmail(recipient, subject, html, {
+          recipientName: 'Pullum Dispatch Desk',
+          template: 'alert',
+          metadata: { rosterRef: application.rosterRef, candidateId: application.id },
+        }),
+      ),
+    );
+
+    return { success: results.some((r) => r.success) };
   }
 
   /**
