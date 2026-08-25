@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { Webhook } from 'svix';
-import { getPrisma } from '../server/db.js';
+import { getPrisma } from '../db.js';
 
 const app = new Hono();
 

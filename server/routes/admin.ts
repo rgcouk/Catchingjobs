@@ -1,17 +1,16 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
-import { getPrisma } from '../server/db.js';
-import { ManageLocations } from '../src/services/ManageLocations.js';
-import { ManageApplications } from '../src/services/ManageApplications.js';
-import { ManageJobPostings } from '../src/services/ManageJobPostings.js';
-import { ManageUsers } from '../src/services/ManageUsers.js';
-import { emailService } from '../src/services/EmailService.js';
-import { DomainError } from '../src/services/exceptions.js';
+import { getPrisma } from '../db.js';
+import { ManageLocations } from '../../src/services/ManageLocations.js';
+import { ManageApplications } from '../../src/services/ManageApplications.js';
+import { ManageJobPostings } from '../../src/services/ManageJobPostings.js';
+import { ManageUsers } from '../../src/services/ManageUsers.js';
+import { emailService } from '../../src/services/EmailService.js';
+import { DomainError } from '../../src/services/exceptions.js';
+import { requireAdmin } from '../middleware/auth.js';
 
 const app = new Hono();
-
-import { requireAdmin } from './middleware/auth.js';
 
 app.use('/api/admin/*', clerkMiddleware({
   publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,

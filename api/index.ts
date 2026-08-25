@@ -3,18 +3,18 @@ import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { cors } from 'hono/cors';
 
-// Import individual route sub-apps
-import { app as pingApp } from './ping.js';
-import { app as locationsApp } from './locations.js';
-import { app as applicationsApp } from './applications.js';
-import { app as adminApp } from './admin.js';
-import { app as portalApp } from './portal.js';
-import { app as uploadApp } from './upload.js';
-import { app as clerkWebhookApp } from './webhook-clerk.js';
-import { app as intakeWebhookApp } from './webhook-intake.js';
-import { app as resendWebhookApp } from './webhook-resend.js';
-import { app as triageApp } from './triage.js';
-import { app as jobsApp } from './jobs.js';
+// Import individual route sub-apps from server/routes/
+import { app as pingApp } from '../server/routes/ping.js';
+import { app as locationsApp } from '../server/routes/locations.js';
+import { app as applicationsApp } from '../server/routes/applications.js';
+import { app as adminApp } from '../server/routes/admin.js';
+import { app as portalApp } from '../server/routes/portal.js';
+import { app as uploadApp } from '../server/routes/upload.js';
+import { app as clerkWebhookApp } from '../server/routes/webhook-clerk.js';
+import { app as intakeWebhookApp } from '../server/routes/webhook-intake.js';
+import { app as resendWebhookApp } from '../server/routes/webhook-resend.js';
+import { app as triageApp } from '../server/routes/triage.js';
+import { app as jobsApp } from '../server/routes/jobs.js';
 
 const app = new Hono();
 

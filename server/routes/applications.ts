@@ -1,11 +1,11 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
-import { getPrisma } from '../server/db.js';
-import { ManageApplications } from '../src/services/ManageApplications.js';
-import { emailService } from '../src/services/EmailService.js';
-import { DomainError } from '../src/services/exceptions.js';
-import { requireAdmin } from './middleware/auth.js';
+import { getPrisma } from '../db.js';
+import { ManageApplications } from '../../src/services/ManageApplications.js';
+import { emailService } from '../../src/services/EmailService.js';
+import { DomainError } from '../../src/services/exceptions.js';
+import { requireAdmin } from '../middleware/auth.js';
 
 const app = new Hono();
 

@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
-import { getPrisma } from '../server/db.js';
-import { emailService } from '../src/services/EmailService.js';
+import { getPrisma } from '../db.js';
+import { emailService } from '../../src/services/EmailService.js';
 
 type Variables = {
   userId: string;
