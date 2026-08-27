@@ -287,14 +287,14 @@ function App() {
             <SignedOut>
               <button
                 onClick={() => navigate('/login')}
-                className="text-xs font-mono font-medium uppercase tracking-wider text-[#64748B] hover:text-[#0F172A] px-3 py-2 cursor-pointer flex items-center gap-1.5"
+                className="text-xs font-mono font-medium uppercase tracking-wider text-[#64748B] hover:text-[#0F172A] active:scale-95 px-3 py-2 cursor-pointer flex items-center gap-1.5 transition-all duration-150 rounded-md focus-visible:ring-2 focus-visible:ring-[#0F172A]"
               >
                 <Lock className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Log In</span>
               </button>
               <Link
                 to="/register"
-                className="bg-[#059669] hover:bg-[#047857] text-white px-4 py-2 rounded-lg font-mono font-semibold text-xs uppercase tracking-wider transition-colors shadow-xs cursor-pointer"
+                className="bg-[#059669] hover:bg-[#047857] active:scale-[0.98] text-white px-4 py-2 rounded-lg font-mono font-semibold text-xs uppercase tracking-wider transition-all duration-150 shadow-xs hover:shadow-md cursor-pointer focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
               >
                 Apply Now
               </Link>
@@ -303,7 +303,7 @@ function App() {
               <div className="flex items-center gap-3">
                 <Link
                   to="/employee"
-                  className="bg-[#059669] hover:bg-[#047857] text-white px-3.5 py-1.5 rounded-lg font-mono font-semibold text-xs uppercase tracking-wider transition-colors shadow-xs flex items-center gap-1.5"
+                  className="bg-[#059669] hover:bg-[#047857] active:scale-[0.98] text-white px-3.5 py-1.5 rounded-lg font-mono font-semibold text-xs uppercase tracking-wider transition-all duration-150 shadow-xs flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
                 >
                   Employee Portal
                 </Link>
