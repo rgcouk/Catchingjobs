@@ -148,9 +148,11 @@ Catchingjobs/
 
 | Feature                                   | Description                                                                                                                                    |
 | :---------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| **National Hub** (`/`)                    | Hero diptych, live vacancy board fetching from `/api/jobs`, division cards (Chicken / Turkey), fleet showcase, and regional corridor directory |
-| **Sector Hubs** (`/chickens`, `/turkeys`) | Division-specific landing pages with filtered vacancies and town depot directory                                                               |
+| **National Hub** (`/`)                    | Hero diptych, live vacancy board fetching from `/api/jobs`, division cards (Chicken / Turkey), interactive vector map, and regional directory |
+| **Sector Hubs** (`/chickens`, `/turkeys`) | Division-specific landing pages with filtered vacancies, interactive corridor map, and town depot directory                                  |
 | **Town SEO Landers** (`/:sector/:town`)   | SSR-rendered pages with JSON-LD `JobPosting` schema, editable Markdown SEO copy, embedded `HeroTriageForm`, local vacancies, and testimonials  |
+| **Dedicated Job Pages** (`/jobs/:id`)     | Shareable job view with schema.org `JobPosting` JSON-LD structured data, social sharing modal (`JobShareModal`), and direct application funnel |
+| **Interactive Catching Grid**            | 0ms instant-loading SVG vector map (`RegionalCatchingMap`) displaying 18 active town depots, crew counts, shift rotas, and 1-click links       |
 | **Automated Triage**                      | Right to Work gate → Draft application creation → OTP verification (guest) or 1-Click Fast Apply (logged-in employee)                          |
 | **1-Click Fast Apply**                    | Logged-in workers auto-populate form fields, claim the draft via `/api/triage/claim`, and redirect straight to `/employee?applied=true`        |
 
@@ -405,6 +407,7 @@ WORKER (default)          ADMIN
 | `/turkeys`            | `SectorHub`                    | Public        | Turkey division hub                        |
 | `/chickens/:regionId` | `RegionLander`                 | Public        | Dynamic town SSR lander                    |
 | `/turkeys/:regionId`  | `RegionLander`                 | Public        | Dynamic town SSR lander                    |
+| `/jobs/:id`           | `JobDetailsPage`               | Public        | Dedicated SEO job details view & sharing   |
 | `/login/*`            | `Login`                        | Public        | Clerk email/password + Google SSO          |
 | `/register/*`         | `Register`                     | Public        | Clerk registration + email OTP             |
 | `/sso-callback`       | Clerk redirect handler         | Auth          | OAuth callback                             |

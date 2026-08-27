@@ -34,6 +34,10 @@
 | 18 | Multi-Page Vacancy Grids | Dynamic job cards on Index (`/`), Sector Hubs (`/chickens`, `/turkeys`), and Town landers with deep linking | M8 | DONE |
 | 19 | Full-Width Admin Modals & Controlled Sidebar | 100% full-width layout, Center Dialog inspection modals, and smooth sidebar submenu control in `NavMain.tsx` | M9 | DONE |
 | 20 | Quality Gate & Full Verification | Prettier format, ESLint check, TypeScript build, Vitest unit suite, and atomic sequential commits | M7 | DONE |
+| 21 | Dedicated SEO Job Pages (`/jobs/:id`) | Shareable job details pages with full schema.org `JobPosting` JSON-LD structured data and responsive layout | M10 | DONE |
+| 22 | Job Social Sharing & View Links | Native social sharing modal (`JobShareModal.tsx`) and direct clickable job detail links on all job cards | M10 | DONE |
+| 23 | Interactive Catching Network Map | Zero-dependency, instant-loading SVG vector map (`RegionalCatchingMap.tsx`) across Index and Sector hubs | M11 | DONE |
+| 24 | Balanced Domain & Transit Copy | Poultry-specific terminology overhaul (broiler/turkey), balanced company transit copy, and Lantra welfare standards | M11 | DONE |
 
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
@@ -47,6 +51,8 @@
 | 7 | Milestone 7: Final E2E Suite & Quality Gate | `npm run quality-check`, Vitest suite, verification of sequential commits | M1-M6 | DONE |
 | 8 | Milestone 8: Job Vacancies & Public Distribution | Job posting CRUD in Admin, `/api/jobs` endpoint, multi-page live vacancy grids, and deep linking | M5, M6 | DONE |
 | 9 | Milestone 9: 1-Click Fast Apply & Full-Width Admin | 1-Click apply for logged-in employees, full-width admin layout with Center Dialog modals | M3, M5, M8 | DONE |
+| 10 | Milestone 10: Individual SEO Job Pages & Sharing | Dedicated `/jobs/:id` view, `JobPosting` schema.org tags, social share modal, and card links | M8 | DONE |
+| 11 | Milestone 11: Interactive Map Grid & Domain Polish | SVG vector UK catching corridor map, depot inspector, poultry domain copy, transit balance | M2, M8 | DONE |
 
 ## Interface Contracts
 

@@ -94,11 +94,24 @@ graph TD
   - **Homepage (`/`)**: National interactive vacancy board with sector filters and deep apply links (`?jobId=...&jobTitle=...`).
   - **Sector Hubs (`/chickens`, `/turkeys`)**: Sector-specific vacancy boards.
   - **Town Landers (`/:sector/:town`)**: Town-specific active vacancies with direct scroll-to-apply interactions.
+  - **Direct Job Card Links**: Every job card across the site links directly to `/jobs/:id` as well as quick modal triage.
 
-### 4.2 Candidate Triage & 1-Click Fast Apply
+### 4.2 Dedicated SEO Job Details Pages (`/jobs/:id`)
+- **Individual Job Pages**: Dynamic server-side and client-rendered job view with full job description, shift schedule, pay rate (£750–£1,050/wk), transit hub, and requirements.
+- **Schema.org Structured Data**: Generates and embeds valid `JobPosting` JSON-LD metadata (`hiringOrganization`, `baseSalary`, `jobLocation`, `employmentType`) for Google Jobs and search engine indexing.
+- **Social Sharing (`JobShareModal.tsx`)**: 1-click modal to copy URL, share via WhatsApp, Twitter/X, LinkedIn, and native mobile Web Share API.
+- **Integrated Application Funnel**: Direct anchor to inline triage form or 1-Click Fast Apply for logged-in workers.
+
+### 4.3 Interactive UK Catching Network Grid (`RegionalCatchingMap.tsx`)
+- **Lightweight SVG Vector Map**: Zero-dependency, 0ms instant-loading UK mainland vector map plotting 18 regional town depots across Lincolnshire, Norfolk, Yorkshire, Shropshire, and Suffolk.
+- **Visual Status Indicators**: Glowing radar pins for active depots with dashed green agricultural transit corridors.
+- **Interactive Depot Inspector**: Selecting any town displays active crew numbers, typical night shift earnings (£750–£980/wk), shift timings (20:00–05:00), transit pickup points, and direct links to chicken and turkey applications.
+- **Quick Town Navigator**: Fast 1-click town pills grouped across UK regions.
+
+### 4.4 Candidate Triage & 1-Click Fast Apply
 - **Hero Triage Form (`HeroTriageForm.tsx`)**:
-  - Right to Work gate (blocks non-UK eligible applicants with legal explanation).
-  - Captures full name, mobile number, email address.
+  - Right to Work gate (blocks non-UK eligible applicants with clear notice that no visa sponsorships are available).
+  - Captures full name, mobile number, email address, town, and sector.
   - **Guest Flow**: Creates draft application and triggers Clerk passwordless OTP modal.
   - **Logged-In Employee Flow**: Auto-detects Clerk session, pre-fills verified data, displays verified employee badge, submits draft, automatically claims application via `/api/triage/claim`, and navigates directly to `/employee?applied=true`.
 
