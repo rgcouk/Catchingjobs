@@ -39,9 +39,8 @@ const STATIC_DEFAULT_JOBS = [
     townId: 'boston',
     townName: 'Boston',
     regionName: 'Lincolnshire',
-    pickupPoint: 'Boston Railway Station, Station Approach',
     description:
-      'Working in modern poultry sheds. Manual catching by both legs under blue light, loading transport modules. Night shifts with guaranteed door-to-door home pickup. Consistent 45-50 hrs weekly with Friday payroll.',
+      'Working in modern poultry sheds. Manual catching by both legs under blue light, loading transport modules. Night shifts with free home pickup. Consistent 45-50 hrs weekly with Friday payroll.',
     payRate: '£15.50 - £18.50/hr',
     status: 'ACTIVE',
   },
@@ -52,9 +51,8 @@ const STATIC_DEFAULT_JOBS = [
     townId: 'lincoln',
     townName: 'Lincoln',
     regionName: 'Lincolnshire',
-    pickupPoint: 'Lincoln Central Transit Depot',
     description:
-      'Lead a team of 6-8 professional catchers. Bird welfare compliance, minibus transit manifest coordination, and shift logging with farm managers.',
+      'Lead a team of 6-8 professional catchers. Bird welfare compliance, crew communication, and shift logging with farm managers. Free home pickup included.',
     payRate: '£19.00 - £23.00/hr',
     status: 'ACTIVE',
   },
@@ -65,7 +63,6 @@ const STATIC_DEFAULT_JOBS = [
     townId: 'sleaford',
     townName: 'Sleaford',
     regionName: 'Lincolnshire',
-    pickupPoint: 'Sleaford Market Square Outpost',
     description:
       'Specialist turkey catching and module loading. Full two-handed handling and welfare training provided, weekly Friday wages direct into your bank account.',
     payRate: '£16.00 - £19.50/hr',
@@ -78,9 +75,8 @@ const STATIC_DEFAULT_JOBS = [
     townId: 'attleborough',
     townName: 'Attleborough',
     regionName: 'Norfolk',
-    pickupPoint: 'Attleborough High Street Transport Stop',
     description:
-      'Night shift broiler catching across Norfolk grower farms. Heated minibus transport direct from your front door.',
+      'Night shift broiler catching across Norfolk grower farms. Free heated minibus transport direct from your home.',
     payRate: '£15.00 - £18.00/hr',
     status: 'ACTIVE',
   },
@@ -91,7 +87,6 @@ const STATIC_DEFAULT_JOBS = [
     townId: 'hull',
     townName: 'Hull',
     regionName: 'Yorkshire',
-    pickupPoint: 'Hull Interchange Hub',
     description:
       'Established Yorkshire poultry catching team operations. Stable long-term contract with premium overtime opportunities and weekly pay.',
     payRate: '£15.50 - £18.50/hr',
@@ -104,9 +99,8 @@ const STATIC_DEFAULT_JOBS = [
     townId: 'thetford',
     townName: 'Thetford',
     regionName: 'Norfolk',
-    pickupPoint: 'Thetford Bus Interchange',
     description:
-      'Clean UK driving license required. Drive company heated minibus for crew pickup and participate in catching team operations. Vehicle driver allowance bonus.',
+      'Clean UK driving license required. Drive company minibus for crew pickup and participate in catching team operations. Vehicle driver allowance bonus.',
     payRate: '£17.00 - £21.00/hr',
     status: 'ACTIVE',
   },
@@ -117,9 +111,8 @@ const STATIC_DEFAULT_JOBS = [
     townId: 'shrewsbury',
     townName: 'Shrewsbury',
     regionName: 'Shropshire',
-    pickupPoint: 'Shrewsbury Abbey Foregate Depot',
     description:
-      'Broiler chicken catching crews covering Shropshire grower facilities. Full PPE, welfare certification, and door-to-door transit.',
+      'Broiler chicken catching crews covering Shropshire grower facilities. Full PPE, welfare certification, and free home pickup.',
     payRate: '£15.25 - £18.00/hr',
     status: 'ACTIVE',
   },
@@ -454,22 +447,20 @@ export default function Index({ onNavigate }: IndexProps) {
 
                     {/* Location & Pay Details */}
                     <div className="space-y-2 text-xs text-[#64748B] font-mono bg-[#F8FAFC] p-3 rounded-lg border border-[#E2E8F0]">
-                      <div className="flex items-center gap-2 text-[#0F172A] font-semibold">
+                      <div className="flex items-center gap-2 text-[#0F172A]">
                         <MapPin className="w-3.5 h-3.5 text-[#059669] shrink-0" />
-                        <span>
-                          {job.townName || job.townId} Hub • {job.regionName || job.county || 'UK'}
+                        <span className="font-semibold">
+                          {job.townName || job.townId} Area • {job.regionName || job.county || 'UK'}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-[#059669] font-bold">
                         <Coins className="w-3.5 h-3.5 shrink-0" />
                         <span>{job.payRate} • Weekly Friday Pay</span>
                       </div>
-                      {job.pickupPoint && (
-                        <div className="flex items-start gap-2 pt-1 border-t border-[#E2E8F0]/60 text-[11px] text-[#64748B]">
-                          <Truck className="w-3.5 h-3.5 text-[#059669] shrink-0 mt-0.5" />
-                          <span>Pickup: {job.pickupPoint}</span>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-2 pt-1 border-t border-[#E2E8F0]/60 text-[11px] text-[#64748B]">
+                        <Truck className="w-3.5 h-3.5 text-[#059669] shrink-0" />
+                        <span>Free home pickup included</span>
+                      </div>
                     </div>
 
                     {/* Description excerpt */}
@@ -569,7 +560,7 @@ export default function Index({ onNavigate }: IndexProps) {
                 {region.towns && region.towns.length > 0 && (
                   <div className="space-y-3 pt-2">
                     <div className="text-xs font-mono font-semibold text-[#0F172A] uppercase tracking-wider">
-                      Regional Depots & Town Hubs:
+                      Towns We Cover in {region.name}:
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                       {region.towns.map((town) => (
@@ -580,11 +571,11 @@ export default function Index({ onNavigate }: IndexProps) {
                           <div className="font-bold text-sm text-[#0F172A] flex items-center justify-between">
                             <span>{town.name}</span>
                             <span className="text-[10px] font-mono text-[#059669] bg-[#ECFDF5] px-1.5 py-0.5 rounded">
-                              Active Depot
+                              Active Area
                             </span>
                           </div>
                           <p className="text-[11px] text-[#64748B] line-clamp-1">
-                            Catching teams operating in {town.name}
+                            Catching teams covering {town.name} & surrounding farms
                           </p>
                           <div className="flex items-center gap-2 pt-1 border-t border-[#E2E8F0] text-xs font-mono">
                             <Link

@@ -127,12 +127,12 @@ export const REGIONS: Region[] = [
     activeCrews: 14,
     featuredRoles: ['poultry-operative', 'crew-leader'],
     seoCopy:
-      'Lincolnshire is the primary poultry production hub of the UK. Pullum Ltd supplies professional broiler and turkey catching teams to major grower farms throughout Boston, Sleaford, Grantham, and Lincoln. Our local crews enjoy free door-to-door home collection, consistent 45–50 hour workweeks, weekly Friday pay, and full Lantra welfare certification.',
+      'Lincolnshire is the primary poultry production hub of the UK. Pullum Ltd supplies professional broiler and turkey catching teams to major grower farms throughout Boston, Sleaford, Grantham, and Lincoln. Our local crews enjoy free home pickup, consistent 45–50 hour workweeks, weekly Friday pay, and full Lantra welfare certification.',
     towns: [
       {
         id: 'boston',
         name: 'Boston',
-        pickupPoint: 'Door-to-door home pickup in Boston',
+        pickupPoint: 'Boston & surrounding area (Free home pickup)',
         surroundingAreas: ['Kirton', 'Sutterton', 'Spalding'],
         localizedCopy:
           'Serving Boston, Kirton, Sutterton, and Spalding. We pick you up directly from your front door in comfortable heated minibuses and return you home safely after each shift. We offer fair recruitment under strict GLAA compliance. Professional poultry catching teams in Boston with guaranteed Friday weekly pay. Please note: Pullum Ltd does not provide visa sponsorships for these roles.',
@@ -140,7 +140,7 @@ export const REGIONS: Region[] = [
       {
         id: 'sleaford',
         name: 'Sleaford',
-        pickupPoint: 'Door-to-door home pickup in Sleaford',
+        pickupPoint: 'Sleaford & surrounding area (Free home pickup)',
         surroundingAreas: ['Ruskington', 'Heckington', 'Ancaster'],
         localizedCopy:
           'Serving Sleaford, Ruskington, Heckington, and Ancaster. We pick you up directly from your front door in dedicated crew minibuses. Professional turkey and broiler catching teams across Lincolnshire under GLAA compliance with guaranteed Friday pay.',
@@ -148,18 +148,18 @@ export const REGIONS: Region[] = [
       {
         id: 'lincoln',
         name: 'Lincoln',
-        pickupPoint: 'Door-to-door home pickup in Lincoln',
+        pickupPoint: 'Lincoln & surrounding area (Free home pickup)',
         surroundingAreas: ['Washingborough', 'Branston', 'Cherry Willingham'],
         localizedCopy:
-          'Serving Lincoln and surrounding poultry catching corridors with free door-to-door home collection. Fair recruitment and GLAA compliant practices guaranteed. No visa sponsorships available.',
+          'Serving Lincoln and surrounding poultry catching corridors with free home pickup. Fair recruitment and GLAA compliant practices guaranteed. No visa sponsorships available.',
       },
       {
         id: 'grantham',
         name: 'Grantham',
-        pickupPoint: 'Door-to-door home pickup in Grantham',
+        pickupPoint: 'Grantham & surrounding area (Free home pickup)',
         surroundingAreas: ['Barrowby', 'Gonerby', 'Colsterworth'],
         localizedCopy:
-          'Serving Grantham, Barrowby, Gonerby, and Colsterworth. Free door-to-door home pickup and return for all night shifts. Strict GLAA compliance. Note: No visa sponsorships are provided.',
+          'Serving Grantham, Barrowby, Gonerby, and Colsterworth. free home pickup and return for all night shifts. Strict GLAA compliance. Note: No visa sponsorships are provided.',
       },
     ],
   },
@@ -170,12 +170,12 @@ export const REGIONS: Region[] = [
     activeCrews: 9,
     featuredRoles: ['poultry-operative', 'safety-supervisor'],
     seoCopy:
-      "With its dense concentration of poultry farms, Norfolk is a key hub for our broiler catching and loading divisions. Recruiting in Norwich, Thetford, Attleborough, and Diss, we offer stable year-round catching work with free door-to-door home transit under Pullum Ltd's strict professional standards. Earn consistent high weekly wages with verified welfare credentials.",
+      "With its dense concentration of poultry farms, Norfolk is a key hub for our broiler catching and loading divisions. Recruiting in Norwich, Thetford, Attleborough, and Diss, we offer stable year-round catching work with free home pickup under Pullum Ltd's strict professional standards. Earn consistent high weekly wages with verified welfare credentials.",
     towns: [
       {
         id: 'attleborough',
         name: 'Attleborough',
-        pickupPoint: 'Door-to-door home pickup in Attleborough',
+        pickupPoint: 'Attleborough & surrounding area (Free home pickup)',
         surroundingAreas: ['Wymondham', 'Besthorpe', 'Snetterton'],
         localizedCopy:
           'Serving Attleborough, Wymondham, Besthorpe, and Snetterton. We pick you up directly from your front door. Fully GLAA compliant recruitment with no hidden fees and guaranteed weekly pay. No visa sponsorship available.',
@@ -183,18 +183,18 @@ export const REGIONS: Region[] = [
       {
         id: 'thetford',
         name: 'Thetford',
-        pickupPoint: 'Door-to-door home pickup in Thetford',
+        pickupPoint: 'Thetford & surrounding area (Free home pickup)',
         surroundingAreas: ['Brandon', 'Watton', 'East Harling'],
         localizedCopy:
-          'Serving Thetford, Brandon, Watton, and East Harling. Free door-to-door home collection for all night catching shifts. Fully GLAA compliant recruitment and guaranteed payroll.',
+          'Serving Thetford, Brandon, Watton, and East Harling. free home pickup for all night catching shifts. Fully GLAA compliant recruitment and guaranteed payroll.',
       },
       {
         id: 'norwich',
         name: 'Norwich',
-        pickupPoint: 'Door-to-door home pickup in Norwich',
+        pickupPoint: 'Norwich & surrounding area (Free home pickup)',
         surroundingAreas: ['Costessey', 'Hethersett', 'Drayton'],
         localizedCopy:
-          'Serving Norwich and broader Norfolk broiler catching corridors. Reliable nightly door-to-door transit with licensed crew leaders.',
+          'Serving Norwich and broader Norfolk broiler catching corridors. Reliable nightly free home pickup with licensed crew leaders.',
       },
     ],
   },
@@ -205,12 +205,12 @@ export const REGIONS: Region[] = [
     activeCrews: 11,
     featuredRoles: ['turkey-operative', 'crew-leader'],
     seoCopy:
-      "Serving primary broiler and high-volume seasonal turkey growers across Yorkshire's agricultural corridors. We maintain peak crew efficiency operating from Hull, York, Malton, and Driffield with free door-to-door home collection. Our professional team members benefit from stable farm contracts, ensuring guaranteed long-term weekly earnings.",
+      "Serving primary broiler and high-volume seasonal turkey growers across Yorkshire's agricultural corridors. We maintain peak crew efficiency operating from Hull, York, Malton, and Driffield with free home pickup. Our professional team members benefit from stable farm contracts, ensuring guaranteed long-term weekly earnings.",
     towns: [
       {
         id: 'hull',
         name: 'Hull',
-        pickupPoint: 'Door-to-door home pickup in Hull',
+        pickupPoint: 'Hull & surrounding area (Free home pickup)',
         surroundingAreas: ['Beverley', 'Cottingham', 'Hedon'],
         localizedCopy:
           'Serving Hull, Beverley, Cottingham, and Hedon. Dedicated crew minibuses pick you up directly from your front door. High-volume commercial poultry catching operations with guaranteed Friday pay.',
@@ -218,7 +218,7 @@ export const REGIONS: Region[] = [
       {
         id: 'york',
         name: 'York',
-        pickupPoint: 'Door-to-door home pickup in York',
+        pickupPoint: 'York & surrounding area (Free home pickup)',
         surroundingAreas: ['Selby', 'Malton', 'Pocklington'],
         localizedCopy:
           'Serving York, Selby, Malton, and Pocklington poultry farm zones with free home pickup. Professional catching teams with Lantra welfare certification.',
@@ -232,15 +232,15 @@ export const REGIONS: Region[] = [
     activeCrews: 6,
     featuredRoles: ['poultry-operative', 'turkey-operative'],
     seoCopy:
-      "Covering poultry catching operations in Shrewsbury, Oswestry, and Telford. Pullum Ltd's Shropshire teams are highly regarded for welfare excellence and absolute safety compliance. Our local farm contracts guarantee stable weekly rosters, free door-to-door transit, and secure Friday pay deposits.",
+      "Covering poultry catching operations in Shrewsbury, Oswestry, and Telford. Pullum Ltd's Shropshire teams are highly regarded for welfare excellence and absolute safety compliance. Our local farm contracts guarantee stable weekly rosters, free free home pickup, and secure Friday pay deposits.",
     towns: [
       {
         id: 'shrewsbury',
         name: 'Shrewsbury',
-        pickupPoint: 'Door-to-door home pickup in Shrewsbury',
+        pickupPoint: 'Shrewsbury & surrounding area (Free home pickup)',
         surroundingAreas: ['Oswestry', 'Telford', 'Wem'],
         localizedCopy:
-          'Serving Shrewsbury, Oswestry, and Telford catching corridors. Night shift operations with dedicated door-to-door home collection and Friday weekly pay.',
+          'Serving Shrewsbury, Oswestry, and Telford catching corridors. Night shift operations with dedicated free home pickup and Friday weekly pay.',
       },
     ],
   },
@@ -251,15 +251,15 @@ export const REGIONS: Region[] = [
     activeCrews: 8,
     featuredRoles: ['poultry-operative', 'safety-supervisor'],
     seoCopy:
-      "Suffolk's poultry farming operations demand high-integrity, well-trained team members. Pullum Ltd provides premium catching crew support for grower units in Ipswich, Bury St Edmunds, and Eye with free door-to-door home pickup. Dependable, well-compensated physical catching roles with Friday pay.",
+      "Suffolk's poultry farming operations demand high-integrity, well-trained team members. Pullum Ltd provides premium catching crew support for grower units in Ipswich, Bury St Edmunds, and Eye with free home pickup. Dependable, well-compensated physical catching roles with Friday pay.",
     towns: [
       {
         id: 'bury-st-edmunds',
         name: 'Bury St Edmunds',
-        pickupPoint: 'Door-to-door home pickup in Bury St Edmunds',
+        pickupPoint: 'Bury St Edmunds & surrounding area (Free home pickup)',
         surroundingAreas: ['Stowmarket', 'Haverhill', 'Thetford Borders'],
         localizedCopy:
-          'Serving Bury St Edmunds, Stowmarket, and Haverhill with free door-to-door home collection. Professional catching crews operating under Pullum Ltd welfare standards.',
+          'Serving Bury St Edmunds, Stowmarket, and Haverhill with free home pickup. Professional catching crews operating under Pullum Ltd welfare standards.',
       },
     ],
   },

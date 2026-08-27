@@ -197,7 +197,7 @@ export default function JobDetailsPage() {
       '@context': 'https://schema.org/',
       '@type': 'JobPosting',
       title: job.title,
-      description: `${job.description} Immediate start available. Guaranteed door-to-door home collection across ${locationDisplay}. Weekly Friday payroll managed by Pullum Ltd.`,
+      description: `${job.description} Immediate start available. Free home pickup included across ${locationDisplay}. Guaranteed weekly Friday payroll managed by Pullum Ltd.`,
       identifier: {
         '@type': 'PropertyValue',
         name: 'Pullum Ltd / CatchingJobs',

@@ -4673,12 +4673,12 @@ const AdminDashboard = () => {
                   </Select>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="pickupPoint">Minibus Pickup Point</Label>
+                  <Label htmlFor="pickupPoint">Coverage & Transport Notes</Label>
                   <Input
                     id="pickupPoint"
                     name="pickupPoint"
                     defaultValue={editingLocationData?.pickupPoint || ''}
-                    placeholder="e.g. Main Transport Depot, Market Square"
+                    placeholder="e.g. Free home pickup across Boston and surrounding area"
                     className="text-xs"
                   />
                 </div>

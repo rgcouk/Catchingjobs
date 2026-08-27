@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router';
 import {
   MapPin,
-  Briefcase,
   Users,
   Coins,
   ArrowRight,
@@ -30,13 +29,12 @@ export interface TownLocation {
   activeCrews: number;
   weeklyPay: string;
   shiftHours: string;
-  pickupPoint: string;
   surrounding: string[];
   description: string;
 }
 
 export const UK_TOWN_LOCATIONS: TownLocation[] = [
-  // Lincolnshire Hubs
+  // Lincolnshire Towns
   {
     id: 'lincoln',
     name: 'Lincoln',
@@ -48,10 +46,8 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 8,
     weeklyPay: '£750 - £950 / week',
     shiftHours: '20:00 - 05:00 (Night Shift)',
-    pickupPoint: 'Lincoln Central Transit & Minibus Hub',
     surrounding: ['Washingborough', 'Branston', 'Cherry Willingham', 'Nettleham'],
-    description:
-      'Central Lincolnshire operations hub serving high-volume commercial broiler grower networks.',
+    description: 'Active broiler chicken catching teams covering farms across the Lincoln area.',
   },
   {
     id: 'boston',
@@ -64,10 +60,9 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 6,
     weeklyPay: '£780 - £980 / week',
     shiftHours: '19:30 - 04:30 (Night Shift)',
-    pickupPoint: 'Boston Fens Depot & Minibus Hub',
     surrounding: ['Kirton', 'Sutterton', 'Spalding', 'Wyberton'],
     description:
-      'Primary South Lincolnshire catching division serving major poultry processors and growers.',
+      'Regular catching teams serving major poultry growers throughout South Lincolnshire.',
   },
   {
     id: 'sleaford',
@@ -80,9 +75,8 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 5,
     weeklyPay: '£750 - £950 / week',
     shiftHours: '20:00 - 05:00 (Night Shift)',
-    pickupPoint: 'Sleaford Central Pickup Point',
     surrounding: ['Ruskington', 'Heckington', 'Ancaster', 'Billinghay'],
-    description: 'Dedicated broiler loading crews for central Lincolnshire agricultural corridors.',
+    description: 'Dedicated broiler loading crews operating across central Lincolnshire farms.',
   },
   {
     id: 'grantham',
@@ -95,13 +89,11 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 4,
     weeklyPay: '£760 - £960 / week',
     shiftHours: '20:00 - 05:00 (Night Shift)',
-    pickupPoint: 'Grantham A1 Corridor Hub',
     surrounding: ['Barrowby', 'Gonerby', 'Colsterworth', 'Great Gonerby'],
-    description:
-      'Strategic A1 transit hub connecting Lincolnshire and East Midlands catching contracts.',
+    description: 'Night shift catching crews covering Grantham and surrounding poultry units.',
   },
 
-  // Norfolk Hubs
+  // Norfolk Towns
   {
     id: 'norwich',
     name: 'Norwich',
@@ -113,10 +105,9 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 7,
     weeklyPay: '£780 - £1,050 / week',
     shiftHours: '20:00 - 05:00 (Night Shift)',
-    pickupPoint: 'Norwich Operations Center',
     surrounding: ['Costessey', 'Hethersett', 'Drayton', 'Taverham'],
     description:
-      'East Anglian commercial broiler and turkey catching center with year-round rotas.',
+      'Commercial broiler and turkey catching teams with consistent year-round schedules.',
   },
   {
     id: 'thetford',
@@ -129,9 +120,8 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 5,
     weeklyPay: '£770 - £1,000 / week',
     shiftHours: '19:30 - 04:30 (Night Shift)',
-    pickupPoint: 'Thetford Forest Transit Point',
     surrounding: ['Brandon', 'Watton', 'East Harling', 'Mundford'],
-    description: 'Cross-county transit hub connecting Norfolk and Suffolk poultry grower farms.',
+    description: 'Regular catching teams covering farms across the Norfolk and Suffolk borders.',
   },
   {
     id: 'attleborough',
@@ -144,12 +134,11 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 4,
     weeklyPay: '£750 - £960 / week',
     shiftHours: '20:00 - 05:00 (Night Shift)',
-    pickupPoint: 'Attleborough Central Depot',
     surrounding: ['Wymondham', 'Besthorpe', 'Snetterton', 'Old Buckenham'],
-    description: 'Commercial poultry harvesting teams across South Norfolk broiler sheds.',
+    description: 'Commercial poultry harvesting crews working across South Norfolk grower sheds.',
   },
 
-  // Yorkshire Hubs
+  // Yorkshire Towns
   {
     id: 'york',
     name: 'York',
@@ -161,10 +150,8 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 6,
     weeklyPay: '£780 - £1,020 / week',
     shiftHours: '20:00 - 05:00 (Night Shift)',
-    pickupPoint: 'York Transit Hub',
     surrounding: ['Selby', 'Tadcaster', 'Pocklington', 'Stamford Bridge'],
-    description:
-      'Vale of York harvesting division serving high-welfare broiler and turkey contracts.',
+    description: 'Broiler and turkey catching teams serving farms throughout the Vale of York.',
   },
   {
     id: 'hull',
@@ -177,13 +164,12 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 5,
     weeklyPay: '£760 - £960 / week',
     shiftHours: '19:30 - 04:30 (Night Shift)',
-    pickupPoint: 'Hull & Humber Depot',
     surrounding: ['Beverley', 'Cottingham', 'Hedon', 'Brough'],
     description:
-      'East Yorkshire broiler and seasonal turkey operations with regular Friday payroll.',
+      'East Yorkshire catching operations with regular shifts and guaranteed Friday pay.',
   },
 
-  // Shropshire Hubs
+  // Shropshire Towns
   {
     id: 'shrewsbury',
     name: 'Shrewsbury',
@@ -195,9 +181,8 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 5,
     weeklyPay: '£760 - £980 / week',
     shiftHours: '20:00 - 05:00 (Night Shift)',
-    pickupPoint: 'Shrewsbury Operations Base',
     surrounding: ['Bayston Hill', 'Shawbury', 'Baschurch', 'Wem'],
-    description: 'West Midlands division serving Welsh border and Shropshire commercial growers.',
+    description: 'West Midlands catching teams serving Shropshire and border agricultural growers.',
   },
   {
     id: 'telford',
@@ -210,12 +195,11 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 4,
     weeklyPay: '£750 - £950 / week',
     shiftHours: '20:00 - 05:00 (Night Shift)',
-    pickupPoint: 'Telford Transit Point',
     surrounding: ['Newport', 'Shifnal', 'Oakengates', 'Wellington'],
-    description: 'Central Shropshire catching teams with company minibus transit provided.',
+    description: 'Central Shropshire catching teams with home pickup provided as standard.',
   },
 
-  // Suffolk Hubs
+  // Suffolk Towns
   {
     id: 'ipswich',
     name: 'Ipswich',
@@ -227,9 +211,9 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 4,
     weeklyPay: '£770 - £980 / week',
     shiftHours: '20:00 - 05:00 (Night Shift)',
-    pickupPoint: 'Ipswich Central Hub',
     surrounding: ['Kesgrave', 'Woodbridge', 'Needham Market', 'Hadleigh'],
-    description: 'South East Anglia catching operations covering modern broiler grower units.',
+    description:
+      'Broiler catching crews covering commercial poultry grower units across South Suffolk.',
   },
   {
     id: 'bury-st-edmunds',
@@ -242,9 +226,9 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     activeCrews: 4,
     weeklyPay: '£780 - £1,020 / week',
     shiftHours: '20:00 - 05:00 (Night Shift)',
-    pickupPoint: 'Bury St Edmunds Depot',
     surrounding: ['Stowmarket', 'Ixworth', 'Mildenhall', 'Haverhill'],
-    description: 'Mid-Suffolk corridor with guaranteed hours and Lantra welfare certification.',
+    description:
+      'Mid-Suffolk catching teams with regular hours and full animal welfare certification.',
   },
 ];
 
@@ -298,16 +282,16 @@ export function RegionalCatchingMap({
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-mono font-semibold uppercase tracking-wider bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
                 <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
-                Active Catching Corridors
+                Towns We Cover
               </span>
-              <span className="text-xs font-mono text-[#64748B]">18 Regional Town Depots</span>
+              <span className="text-xs font-mono text-[#64748B]">18 Active Coverage Areas</span>
             </div>
             <h3 className="text-2xl font-bold tracking-tight text-[#0F172A]">
-              UK Catching Operations & Regional Hubs
+              Towns We Cover & Regional Catching Crews
             </h3>
             <p className="text-xs sm:text-sm text-[#64748B] max-w-2xl">
-              Select your region or town depot below to inspect active shift rotas, transit pickup
-              points, and guaranteed Friday piece-rate earnings.
+              Select your town or area below to view active catching teams, shift timings, and
+              guaranteed Friday pay. Our teams are picked up from home as standard free of charge.
             </p>
           </div>
 
@@ -335,7 +319,7 @@ export function RegionalCatchingMap({
                 : 'bg-[#F8FAFC] text-[#64748B] border-[#E2E8F0] hover:border-[#0F172A] hover:text-[#0F172A]')
             }
           >
-            All UK Regions ({UK_TOWN_LOCATIONS.length})
+            All Towns ({UK_TOWN_LOCATIONS.length})
           </button>
           {REGIONS.map((region) => {
             const count = UK_TOWN_LOCATIONS.filter((t) => t.regionId === region.id).length;
@@ -368,25 +352,26 @@ export function RegionalCatchingMap({
         </div>
       </div>
 
-      {/* Main Split Presentation: Interactive Vector Map & Live Hub Inspector */}
+      {/* Main Split Presentation: Interactive Vector Map & Live Area Inspector */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Left: Clean, Lightweight SVG Vector Map of UK Catching Corridors */}
+        {/* Left: Clean, Lightweight SVG Vector Map of UK Catching Locations */}
         <div className="lg:col-span-6 xl:col-span-7 bg-[#0F172A] text-white rounded-2xl p-5 sm:p-6 border border-slate-800 flex flex-col justify-between relative overflow-hidden min-h-[440px] shadow-sm">
           {/* Map Title & Legend Overlay */}
           <div className="flex items-center justify-between z-10">
             <div className="flex items-center gap-2">
               <Building2 className="w-4 h-4 text-emerald-400" />
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
-                UK Catching Grid
+                UK Coverage Grid
               </span>
             </div>
             <div className="flex items-center gap-3 text-[11px] font-mono text-slate-300">
               <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" /> Active
-                Depots
+                <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" /> Towns
+                Covered
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-3.5 h-0.5 border-t border-dashed border-emerald-400" /> Corridors
+                <span className="w-3.5 h-0.5 border-t border-dashed border-emerald-400" /> Crew
+                Routes
               </span>
             </div>
           </div>
@@ -419,7 +404,7 @@ export function RegionalCatchingMap({
                 strokeLinejoin="round"
               />
 
-              {/* Connecting Agricultural Transit Corridors */}
+              {/* Connecting Operational Catching Routes */}
               <path
                 d="M 56 37 L 65 41 L 62 48 L 63 52 L 67 53 L 60 54"
                 fill="none"
@@ -445,7 +430,7 @@ export function RegionalCatchingMap({
                 opacity="0.5"
               />
 
-              {/* Town Hub Markers */}
+              {/* Town Markers */}
               {displayedTowns.map((town) => {
                 const isSelected = selectedTown?.id === town.id;
                 return (
@@ -504,24 +489,22 @@ export function RegionalCatchingMap({
 
           {/* Lower hint */}
           <div className="text-[11px] font-mono text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-2.5 z-10">
-            <span>Click any location dot to inspect depot</span>
+            <span>Click any location dot to view area details</span>
             <span className="text-emerald-400 font-semibold">{selectedTown.name} Selected</span>
           </div>
         </div>
 
-        {/* Right: Selected Hub Live Details Card */}
+        {/* Right: Selected Town Details Card */}
         <div className="lg:col-span-6 xl:col-span-5 bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs flex flex-col justify-between space-y-6">
           <div className="space-y-5">
-            {/* Depot Header */}
+            {/* Area Header */}
             <div className="flex items-start justify-between gap-3 border-b border-[#F1F5F9] pb-4">
               <div className="space-y-1">
                 <div className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[#059669] bg-[#ECFDF5] px-2.5 py-0.5 rounded border border-[#A7F3D0]">
                   <MapPin className="w-3 h-3" />
-                  <span>{selectedTown.regionName} Corridor</span>
+                  <span>{selectedTown.regionName}</span>
                 </div>
-                <h4 className="text-2xl font-bold text-[#0F172A]">
-                  {selectedTown.name} Catching Depot
-                </h4>
+                <h4 className="text-2xl font-bold text-[#0F172A]">{selectedTown.name} Area</h4>
                 <p className="text-xs text-[#64748B] font-mono">{selectedTown.county}</p>
               </div>
 
@@ -562,14 +545,16 @@ export function RegionalCatchingMap({
               </div>
             </div>
 
-            {/* Transit & Surrounding Areas */}
+            {/* Transport & Surrounding Areas */}
             <div className="space-y-3 pt-2 text-xs font-mono">
               <div className="space-y-1">
                 <div className="text-[#64748B] font-semibold flex items-center gap-1.5">
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" />
-                  <span>Minibus Transit Hub:</span>
+                  <span>Transport:</span>
                 </div>
-                <p className="text-[#0F172A] pl-5">{selectedTown.pickupPoint}</p>
+                <p className="text-[#0F172A] pl-5">
+                  Free home pickup included as standard for all catching team shifts.
+                </p>
               </div>
 
               {selectedTown.surrounding && selectedTown.surrounding.length > 0 && (
@@ -611,10 +596,10 @@ export function RegionalCatchingMap({
         </div>
       </div>
 
-      {/* Fast Town Directory Badges */}
+      {/* Fast Town Navigator */}
       <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs space-y-3">
         <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#64748B]">
-          Quick Town Depot Navigator:
+          Quick Town Navigator:
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
           {UK_TOWN_LOCATIONS.map((town) => {

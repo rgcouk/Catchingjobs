@@ -209,15 +209,13 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                       <div className="flex items-center gap-1.5 text-[#0F172A]">
                         <MapPin className="w-3.5 h-3.5 text-[#059669]" />
                         <span>
-                          {job.townName || job.townId} Hub • {job.regionName || job.county || 'UK'}
+                          {job.townName || job.townId} Area • {job.regionName || job.county || 'UK'}
                         </span>
                       </div>
-                      {job.pickupPoint && (
-                        <div className="flex items-center gap-1.5 text-[11px]">
-                          <Truck className="w-3.5 h-3.5 text-[#059669]" />
-                          <span>Pickup: {job.pickupPoint}</span>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1.5 text-[11px]">
+                        <Truck className="w-3.5 h-3.5 text-[#059669]" />
+                        <span>Free home pickup included</span>
+                      </div>
                     </div>
                   </div>
 
@@ -246,14 +244,14 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-2 max-w-2xl">
               <span className="text-xs font-mono font-semibold text-[#059669] uppercase tracking-widest">
-                Active Operational Hubs
+                Towns We Cover
               </span>
               <h2 className="text-3xl font-bold tracking-tight text-[#0F172A] leading-tight">
-                Local {sectorName} Corridors & Town Hubs
+                Towns We Cover For {sectorName}
               </h2>
               <p className="text-base text-[#64748B] font-normal leading-relaxed">
-                Select your nearest town to inspect local shift rotas, depot transit points, and
-                submit your candidate application for {industryName}.
+                Select your town or area to inspect shift rotas, farm networks, and submit your
+                candidate application for {industryName}. Teams are picked up from home as standard.
               </p>
             </div>
           </div>
@@ -276,7 +274,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                         {item.name} Catching Area
                       </h3>
                       <p className="text-xs font-mono text-[#059669] flex items-center gap-1 font-medium">
-                        <Building2 className="w-3.5 h-3.5" /> Regional catching hub in {item.name}
+                        <Building2 className="w-3.5 h-3.5" /> Catching teams covering {item.name}
                       </p>
                       <p className="text-xs text-[#64748B] leading-relaxed max-w-xl line-clamp-2">
                         {item.copy}
@@ -289,7 +287,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                       {item.activeCrews} Active Crews
                     </span>
                     <div className="flex items-center gap-1 text-xs font-mono font-semibold text-[#0F172A] group-hover:text-[#059669] transition-colors mt-1 uppercase tracking-wider">
-                      <span>View Town Hub</span>
+                      <span>View Town</span>
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>

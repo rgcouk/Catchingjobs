@@ -7,13 +7,13 @@ Catchingjobs is a UK recruitment and workforce operations platform dedicated to 
 ## 1. What Catchingjobs Does
 
 - **Recruitment for Poultry Catchers**: Connects operatives with stable broiler chicken and turkey catching night shifts (typically 20:00–05:00) with commercial agricultural processors and growers.
-- **Company Transit & Depot Routes**: Provides free heated minibus transit with designated home and regional depot pickup points across active agricultural corridors.
-- **Guaranteed Friday Payroll**: Emphasizes reliable weekly Friday BACS payroll (£750 - £1,050/wk) with piece-rate bonuses and zero deductions for travel.
+- **Standard Free Home Pickup**: Catching crews are picked up from home as standard for all shifts free of charge. We do NOT have bus stations or pickup points — we have towns and areas we cover.
+- **Guaranteed Friday Payroll**: Emphasizes reliable weekly Friday BACS payroll (£750 - £1,050/wk) with piece-rate bonuses and zero travel deductions.
 - **Animal Welfare Compliance**: Enforces Lantra Level 2 Animal Welfare and AHVLA-approved bird handling standards (catching by both legs with breast support).
 - **Automated Screening & Right to Work**: Pre-screens candidates with instant UK Right to Work checks (no UK visa sponsorships provided) before collecting full registration.
-- **Interactive Corridor Grid**: Features an instant-loading SVG vector map mapping 18 regional town depots with live crew numbers and shift rotas.
+- **Interactive Coverage Grid**: Features an instant-loading SVG vector map mapping 18 towns covered with live crew numbers and shift rotas.
 - **Dedicated SEO Job Pages**: Dynamic job vacancies (`/jobs/:id`) with schema.org `JobPosting` JSON-LD structured data for Google Jobs indexing and social sharing.
-- **Staff & Admin Management**: Equips operations dispatchers with an admin dashboard to review applicants on a Kanban board, publish job vacancies, manage pickup depots, and send automated emails.
+- **Staff & Admin Management**: Equips operations dispatchers with an admin dashboard to review applicants on a Kanban board, publish job vacancies, and manage candidate workflows.
 
 ---
 
@@ -24,13 +24,13 @@ Catchingjobs is a UK recruitment and workforce operations platform dedicated to 
 | **Catching Team / Crew**                  | The group of 6–8 catchers working shifts together in a specific area. _(Always use "team" or "crew", never "squad".)_                |
 | **Sector**                                | The type of poultry catching work: `chicken` (broiler) or `turkey` (commercial turkey).                                              |
 | **Region**                                | An operational county or territory (e.g., Lincolnshire, Norfolk, Yorkshire, Shropshire, Suffolk).                                     |
-| **Town / Depot**                          | A local hub with a specific minibus pickup point (`pickupPoint`) and surrounding commute areas (`surrounding`).                       |
+| **Town / Coverage Area**                  | A town we cover where teams operate. Team members are picked up directly from home as the standard routine (no pickup points needed). |
 | **Job Vacancy (`JobPosting`)**            | An active job opening with dedicated URL (`/jobs/:id`), pay rate (e.g., `£15.50 - £18.50/hr`), and schema.org `JobPosting` metadata.  |
 | **Candidate Application (`Application`)** | A worker's registration and compliance record. Contains contact info, licenses, medical declarations, work history, and ID documents. |
 | **Roster Reference (`rosterRef`)**        | A unique reference ID given to every application (formatted as `CJ-XXXXX`).                                                           |
 | **Automated Triage**                      | The quick form at the top of landing pages that checks UK Right to Work before moving candidates to full registration.                |
 | **1-Click Apply**                         | Fast application for logged-in workers that reuses their verified details and skips repetitive forms.                                 |
-| **Regional Catching Grid**                | Interactive vector map (`RegionalCatchingMap`) displaying active town depots, crew counts, and route corridors across the UK.        |
+| **Regional Catching Grid**                | Interactive vector map (`RegionalCatchingMap`) displaying towns covered, crew counts, and route corridors across the UK.              |
 | **Email Log (`EmailLog`)**                | A record tracking every automated email sent to candidates (receipts, status updates, safety packs) and its delivery status.          |
 
 ---

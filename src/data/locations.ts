@@ -74,7 +74,9 @@ export function resolveTown(sectorParam: string, townSlug: string): TownLoaderDa
         town: {
           id: region.id,
           name: primaryTown ? primaryTown.name : region.name,
-          pickupPoint: primaryTown ? primaryTown.pickupPoint : `${region.name} Central Outpost`,
+          pickupPoint: primaryTown
+            ? primaryTown.pickupPoint
+            : `${region.name} Area (Free home pickup)`,
           surrounding: primaryTown
             ? primaryTown.surroundingAreas.join(', ')
             : `${region.county} Area`,
