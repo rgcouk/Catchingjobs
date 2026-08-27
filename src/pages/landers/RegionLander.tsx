@@ -260,7 +260,7 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
 
   const testimonials = [
     {
-      quote: `Pullum Ltd runs the most organized catching crews in ${town.name}. The hours are guaranteed, free door-to-door home pickup is always on time, and weekly wages are deposited every Friday morning without fail.`,
+      quote: `Pullum Ltd runs the most organized catching crews in ${town.name}. The hours are guaranteed, company minibus pickup is always on time, and weekly wages are deposited every Friday morning without fail.`,
       author: `Arthur K.`,
       role: `Senior Catching Crew Leader (${town.name})`,
     },

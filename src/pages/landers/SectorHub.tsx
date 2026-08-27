@@ -28,9 +28,11 @@ import {
   ShieldCheck,
   Truck,
   Award,
+  Building2,
 } from 'lucide-react';
 import { TENANTS, REGIONS } from '../../data';
 import { getAllRegionsWithTowns } from '../../data/locations';
+import { RegionalCatchingMap } from '../../components/map/RegionalCatchingMap';
 
 interface SectorHubProps {
   sectorId: 'chicken' | 'turkey';
@@ -169,8 +171,8 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                   Live {sectorName} Vacancies
                 </h2>
                 <p className="text-sm text-[#64748B] font-normal leading-relaxed">
-                  Join active catching teams with guaranteed Friday payroll and door-to-door home
-                  collection.
+                  Join active catching teams with guaranteed Friday payroll and company transit
+                  provided.
                 </p>
               </div>
             </div>
@@ -219,18 +221,25 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                     </div>
                   </div>
 
-                  <Link
-                    to={`/jobs/${job.id}`}
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#059669] text-white font-mono text-xs font-semibold uppercase tracking-wider py-2.5 px-4 rounded-md transition-colors shadow-xs no-underline"
-                  >
-                    <span>View Role & Apply</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                  <div className="pt-2 border-t border-[#F1F5F9] flex items-center justify-between">
+                    <Link
+                      to={`/jobs/${job.id}`}
+                      className="text-xs font-mono font-semibold text-[#059669] hover:underline flex items-center gap-1 uppercase tracking-wider"
+                    >
+                      <span>Apply for Role</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         )}
+
+        {/* Interactive Catching Map */}
+        <section className="space-y-6">
+          <RegionalCatchingMap initialSelectedRegionId="ALL" />
+        </section>
 
         {/* Operational Recruiting Locations (THE FUNNEL) */}
         <div className="space-y-6 w-full" id="locations">
@@ -240,11 +249,11 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                 Active Operational Hubs
               </span>
               <h2 className="text-3xl font-bold tracking-tight text-[#0F172A] leading-tight">
-                Local {sectorName} Corridors & Door-to-Door Areas
+                Local {sectorName} Corridors & Town Hubs
               </h2>
               <p className="text-base text-[#64748B] font-normal leading-relaxed">
-                Select your nearest town to inspect local schedules, free door-to-door home pickup
-                coverage, and submit your candidate triage for {industryName}.
+                Select your nearest town to inspect local shift rotas, depot transit points, and
+                submit your candidate application for {industryName}.
               </p>
             </div>
           </div>
@@ -267,7 +276,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                         {item.name} Catching Area
                       </h3>
                       <p className="text-xs font-mono text-[#059669] flex items-center gap-1 font-medium">
-                        <Truck className="w-3.5 h-3.5" /> Door-to-door home pickup in {item.name}
+                        <Building2 className="w-3.5 h-3.5" /> Regional catching hub in {item.name}
                       </p>
                       <p className="text-xs text-[#64748B] leading-relaxed max-w-xl line-clamp-2">
                         {item.copy}

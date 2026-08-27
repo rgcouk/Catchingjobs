@@ -8,7 +8,8 @@ const app = new Hono();
 app.get('/api/locations', async (c) => {
   try {
     const prisma = getPrisma();
-    const locations = await prisma.location.findMany({
+    const locations = await prisma.region.findMany({
+      include: { towns: true },
       orderBy: { name: 'asc' },
     });
     return c.json(locations);

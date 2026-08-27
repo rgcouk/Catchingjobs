@@ -100,6 +100,7 @@ import { useAppShell } from '../../components/layout/AppShell';
 
 export type UserWithApplication = User & {
   application?: Application | null;
+  source?: string;
   _count?: { applications?: number };
 };
 

@@ -25,6 +25,7 @@ import {
   Award,
 } from 'lucide-react';
 import { REGIONS } from '../data';
+import { RegionalCatchingMap } from '../components/map/RegionalCatchingMap';
 
 interface IndexProps {
   onNavigate?: (subdomain: 'root' | 'chicken' | 'turkey' | 'corporate', regionId: string) => void;
@@ -378,8 +379,8 @@ export default function Index({ onNavigate }: IndexProps) {
                 Live Poultry Catching Vacancies
               </h2>
               <p className="text-sm text-[#64748B] leading-relaxed">
-                Guaranteed weekly Friday pay, free door-to-door home pickup, and immediate start
-                dates across all active UK catching teams.
+                Guaranteed weekly Friday pay, free company transport, and immediate start dates
+                across all active UK catching teams.
               </p>
             </div>
 
@@ -507,67 +508,23 @@ export default function Index({ onNavigate }: IndexProps) {
           )}
         </section>
 
-        {/* Door-to-Door Transit Fleet Highlight Banner */}
-        <section className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs grid lg:grid-cols-2">
-          <div className="p-8 sm:p-12 flex flex-col justify-between space-y-6">
-            <div className="space-y-4">
-              <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-1 rounded-md">
-                <Truck className="w-3.5 h-3.5" />
-                GPS-Tracked Transit Service
-              </span>
-              <h2 className="text-3xl font-bold tracking-tight text-[#0F172A] leading-tight">
-                Door-to-Door Home Pickup Across Every Corridor.
-              </h2>
-              <p className="text-sm text-[#64748B] leading-relaxed">
-                Catchingjobs provides heated, modern minibus transport direct from your front door.
-                No bus stations, no cold morning depot waits. Our dispatch coordinators pick up each
-                crew member directly at their registered address before every night run.
-              </p>
-            </div>
-
-            <div className="space-y-3 pt-4 border-t border-[#F1F5F9] text-xs font-mono text-[#0F172A]">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#059669]" />
-                <span>Heated passenger minibuses with dedicated drivers</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#059669]" />
-                <span>Direct return drop-off to your front door at shift end</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#059669]" />
-                <span>Zero travel cost or fuel deduction from your Friday payroll</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative min-h-[300px] lg:min-h-full border-t lg:border-t-0 lg:border-l border-[#E2E8F0] overflow-hidden">
-            <img
-              src="/images/door-pickup-fleet.jpg"
-              alt="Door-to-door home pickup passenger transit fleet"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-xs p-3 rounded-lg border border-white/20 text-xs font-mono text-white flex items-center justify-between">
-              <span className="flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-[#059669]" /> Direct Home Collection
-              </span>
-              <span className="text-slate-300">Free of Charge</span>
-            </div>
-          </div>
+        {/* Interactive UK Regional Catching Map & Live Network */}
+        <section className="space-y-6" id="interactive-map">
+          <RegionalCatchingMap />
         </section>
 
         {/* National Regional & Town Routing Directory */}
         <section className="space-y-10" id="directory">
           <div className="max-w-3xl space-y-3">
             <span className="text-xs font-mono font-semibold text-[#059669] uppercase tracking-widest">
-              National Routing Directory
+              Regional Directory
             </span>
             <h2 className="text-3xl font-bold tracking-tight text-[#0F172A]">
-              UK Regional Catching Corridors & Door-to-Door Coverage
+              UK Regional Catching Corridors & Local Hubs
             </h2>
             <p className="text-base text-[#64748B] leading-relaxed">
-              Select your local area to view localized schedules, door-to-door home collection
-              routes, and join active catching crews.
+              Select your local area to view localized shift rotas, farm networks, and join active
+              poultry catching crews.
             </p>
           </div>
 
@@ -612,7 +569,7 @@ export default function Index({ onNavigate }: IndexProps) {
                 {region.towns && region.towns.length > 0 && (
                   <div className="space-y-3 pt-2">
                     <div className="text-xs font-mono font-semibold text-[#0F172A] uppercase tracking-wider">
-                      Door-to-Door Collection Areas:
+                      Regional Depots & Town Hubs:
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                       {region.towns.map((town) => (
@@ -623,11 +580,11 @@ export default function Index({ onNavigate }: IndexProps) {
                           <div className="font-bold text-sm text-[#0F172A] flex items-center justify-between">
                             <span>{town.name}</span>
                             <span className="text-[10px] font-mono text-[#059669] bg-[#ECFDF5] px-1.5 py-0.5 rounded">
-                              Door Pickup
+                              Active Depot
                             </span>
                           </div>
                           <p className="text-[11px] text-[#64748B] line-clamp-1">
-                            Home collection across {town.name}
+                            Catching teams operating in {town.name}
                           </p>
                           <div className="flex items-center gap-2 pt-1 border-t border-[#E2E8F0] text-xs font-mono">
                             <Link

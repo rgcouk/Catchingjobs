@@ -17,6 +17,7 @@ export interface EmailAdminAlertPayload {
   phone?: string;
   town?: string;
   sector?: string;
+  hasRightToWork?: boolean;
 }
 
 export interface EmailCampaignPayload {
