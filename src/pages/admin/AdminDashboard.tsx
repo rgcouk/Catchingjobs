@@ -3051,7 +3051,18 @@ const AdminDashboard = () => {
                   {filteredJobs.map((job) => (
                     <TableRow key={job.id}>
                       <TableCell className="font-semibold text-sm">
-                        <div>{job.title}</div>
+                        <div className="flex items-center gap-1.5">
+                          <a
+                            href={`/jobs/${job.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-foreground hover:text-emerald-600 transition-colors flex items-center gap-1 group font-semibold"
+                            title="View Public Job Page"
+                          >
+                            <span>{job.title}</span>
+                            <ExternalLink className="w-3 h-3 text-muted-foreground opacity-60 group-hover:opacity-100 transition-opacity" />
+                          </a>
+                        </div>
                         <span className="text-xs text-muted-foreground capitalize font-normal font-mono">
                           {job.sector} Catching
                         </span>
@@ -3076,6 +3087,17 @@ const AdminDashboard = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
+                          <Button
+                            asChild
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 p-0"
+                            title="View Public Job Page"
+                          >
+                            <a href={`/jobs/${job.id}`} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" />
+                            </a>
+                          </Button>
                           <Button
                             variant="ghost"
                             size="sm"
@@ -4004,6 +4026,17 @@ const AdminDashboard = () => {
                             {job._count?.applications || 0} Inquiries
                           </Badge>
                           <Button
+                            asChild
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+                            title="View Live Job Page"
+                          >
+                            <a href={`/jobs/${job.id}`} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          </Button>
+                          <Button
                             variant="ghost"
                             size="sm"
                             className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
@@ -4182,6 +4215,25 @@ const AdminDashboard = () => {
                       </span>
                       <span className="font-medium text-foreground">{selectedApp.town}</span>
                     </div>
+                    {selectedApp.jobPostingId && (
+                      <div>
+                        <span className="text-muted-foreground block text-[10px] uppercase">
+                          Specific Vacancy
+                        </span>
+                        <a
+                          href={`/jobs/${selectedApp.jobPostingId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-emerald-600 hover:underline flex items-center gap-1 mt-0.5"
+                        >
+                          <span>
+                            {selectedApp.jobPosting?.title ||
+                              `Job Opening #${selectedApp.jobPostingId}`}
+                          </span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
 
