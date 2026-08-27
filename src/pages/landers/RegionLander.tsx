@@ -368,7 +368,7 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
                 Surrounding Service Areas
               </span>
               <p className="text-sm text-[#0F172A]">
-                {town.surrounding || `${town.name} and surrounding agricultural corridors`}
+                {town.surrounding || `${town.name} and surrounding farming areas`}
               </p>
             </div>
           </div>

@@ -475,8 +475,8 @@ export class EmailService {
       <p>${bodyText}</p>
       
       <div class="card">
-        <p style="margin: 0 0 6px;"><strong>Location:</strong> ${town} & Surrounding Corridors</p>
-        <p style="margin: 0 0 6px;"><strong>Transit:</strong> Free door-to-door collection provided</p>
+        <p style="margin: 0 0 6px;"><strong>Location:</strong> ${town} & Surrounding Areas</p>
+        <p style="margin: 0 0 6px;"><strong>Transit:</strong> Free home pickup provided</p>
         <p style="margin: 0;"><strong>Payroll:</strong> Every Friday without deduction</p>
       </div>
 

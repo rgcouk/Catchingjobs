@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary & Vision
 
-Catchingjobs is a UK agricultural recruitment and workforce operations platform connecting qualified poultry harvesting operatives and squad leaders with commercial catching crews across England and the UK agricultural corridors.
+Catchingjobs is a UK poultry catching workforce operations platform managed by Pullum Ltd, offering regular broiler chicken and commercial turkey catching jobs across England.
 
 The platform bridges high-intent organic local search traffic with a seamless, compliance-hardened onboarding pipeline and an operational administration hub for Pullum Ltd dispatchers and coordinators.
 

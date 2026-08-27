@@ -1,13 +1,13 @@
 # Catchingjobs - Domain Glossary & Architecture Context
 
-Catchingjobs is a UK recruitment and workforce operations platform dedicated to poultry catching operations, managed by Pullum Ltd (GLAA Licence `PULL0001`). It connects catchers with broiler chicken and commercial turkey catching teams across England through localized job boards, instant UK Right to Work compliance checks, interactive corridor maps, and an employee onboarding portal.
+Catchingjobs is a UK poultry catching workforce platform managed by Pullum Ltd (GLAA Licence `PULL0001`). We offer regular poultry catching work (broiler chickens and commercial turkeys) across England, providing free home pickup, guaranteed weekly Friday pay, instant Right to Work screening, and an employee onboarding portal.
 
 ---
 
 ## 1. What Catchingjobs Does
 
-- **Recruitment for Poultry Catchers**: Connects operatives with stable broiler chicken and turkey catching night shifts (typically 20:00–05:00) with commercial agricultural processors and growers.
-- **Standard Free Home Pickup**: Catching crews are picked up from home as standard for all shifts free of charge. We do NOT have bus stations or pickup points — we have towns and areas we cover.
+- **Poultry Catching Work**: Offers regular broiler chicken and commercial turkey catching jobs, day and night shifts, across commercial poultry farms.
+- **Standard Free Home Pickup**: Catching teams are picked up from home as standard for all shifts free of charge. We do NOT have bus stations or pickup points — we have towns and areas we cover.
 - **Guaranteed Friday Payroll**: Emphasizes reliable weekly Friday BACS payroll (£750 - £1,050/wk) with piece-rate bonuses and zero travel deductions.
 - **Animal Welfare Compliance**: Enforces Lantra Level 2 Animal Welfare and AHVLA-approved bird handling standards (catching by both legs with breast support).
 - **Automated Screening & Right to Work**: Pre-screens candidates with instant UK Right to Work checks (no UK visa sponsorships provided) before collecting full registration.

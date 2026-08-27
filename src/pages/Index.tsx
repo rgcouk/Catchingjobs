@@ -223,9 +223,9 @@ export default function Index({ onNavigate }: IndexProps) {
               </h1>
 
               <p className="text-base sm:text-lg text-[#64748B] max-w-xl font-normal leading-relaxed">
-                Dedicated agricultural recruitment managed by Pullum Ltd. Free door-to-door home
-                pickup, friendly teams, and guaranteed weekly payroll across the UK's premier
-                poultry catching corridors.
+                Poultry catching work managed directly by Pullum Ltd. Free home pickup, friendly
+                teams, and guaranteed weekly Friday payroll across poultry catching locations in
+                England.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -247,7 +247,7 @@ export default function Index({ onNavigate }: IndexProps) {
 
               <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-[#E2E8F0] text-xs font-mono text-[#64748B]">
                 <span className="flex items-center gap-1.5 font-medium text-[#0F172A]">
-                  <Truck className="w-4 h-4 text-[#059669]" /> Free Door-to-Door Pickup
+                  <Truck className="w-4 h-4 text-[#059669]" /> Free Home Pickup
                 </span>
                 <span className="flex items-center gap-1.5 font-medium text-[#0F172A]">
                   <ShieldCheck className="w-4 h-4 text-[#059669]" /> GLAA Licensed
@@ -270,7 +270,7 @@ export default function Index({ onNavigate }: IndexProps) {
                   <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
                   Live UK Roster
                 </span>
-                <span className="text-[#64748B]">18 Regional Corridors</span>
+                <span className="text-[#64748B]">18 Regional Locations</span>
               </div>
             </div>
           </div>
@@ -305,7 +305,7 @@ export default function Index({ onNavigate }: IndexProps) {
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-xs border border-[#E2E8F0] px-2.5 py-1 rounded-md text-xs font-mono font-semibold uppercase text-[#059669]">
-                  Active Corridors
+                  Active Locations
                 </div>
               </div>
               <div className="p-6 flex flex-col flex-1 justify-between bg-white space-y-4">
@@ -315,12 +315,12 @@ export default function Index({ onNavigate }: IndexProps) {
                   </span>
                   <h3 className="text-xl font-bold text-[#0F172A]">Chicken Catching</h3>
                   <p className="text-sm text-[#64748B] leading-relaxed">
-                    Operating in highly disciplined, welfare-compliant chicken catching teams. Night
-                    shift rosters with free door-to-door home pickup in modern heated minibuses.
+                    Operating in disciplined, welfare-compliant chicken catching teams. Day and
+                    night shifts with free home pickup in modern heated minibuses.
                   </p>
                 </div>
                 <div className="pt-4 flex items-center justify-between border-t border-[#F1F5F9] text-xs font-mono font-semibold text-[#0F172A] group-hover:text-[#059669] transition-colors">
-                  <span>Explore Chicken Hubs</span>
+                  <span>Explore Chicken Locations</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
@@ -347,12 +347,12 @@ export default function Index({ onNavigate }: IndexProps) {
                   </span>
                   <h3 className="text-xl font-bold text-[#0F172A]">Turkey Catching</h3>
                   <p className="text-sm text-[#64748B] leading-relaxed">
-                    Specialist teams handling commercial turkey catching operations. Stable weekly
-                    Friday pay, seasonal premiums, and full door-to-door transit support.
+                    Specialist teams handling commercial turkey catching operations. Day and night
+                    shifts, stable weekly Friday pay, and free home pickup.
                   </p>
                 </div>
                 <div className="pt-4 flex items-center justify-between border-t border-[#F1F5F9] text-xs font-mono font-semibold text-[#0F172A] group-hover:text-[#059669] transition-colors">
-                  <span>Explore Turkey Hubs</span>
+                  <span>Explore Turkey Locations</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
@@ -366,7 +366,7 @@ export default function Index({ onNavigate }: IndexProps) {
             <div className="max-w-2xl space-y-2">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#ECFDF5] border border-[#A7F3D0] rounded-md text-xs font-mono font-semibold text-[#065F46] uppercase tracking-wider">
                 <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
-                <span>Live Openings Across UK Corridors</span>
+                <span>Live Openings Across UK Locations</span>
               </div>
               <h2 className="text-3xl font-bold tracking-tight text-[#0F172A]">
                 Live Poultry Catching Vacancies
@@ -381,122 +381,102 @@ export default function Index({ onNavigate }: IndexProps) {
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setJobFilterSector('ALL')}
-                className={`px-3 py-1.5 text-xs font-mono rounded-md border transition-colors cursor-pointer ${
+                className={`px-3 py-1.5 rounded-md text-xs font-mono font-semibold transition-colors cursor-pointer ${
                   jobFilterSector === 'ALL'
-                    ? 'bg-[#0F172A] text-white border-[#0F172A] font-semibold'
-                    : 'bg-white text-[#64748B] border-[#E2E8F0] hover:border-[#0F172A]'
+                    ? 'bg-[#0F172A] text-white'
+                    : 'bg-[#F8FAFC] text-[#64748B] hover:bg-[#E2E8F0]'
                 }`}
               >
                 All Roles ({liveJobs.length})
               </button>
               <button
                 onClick={() => setJobFilterSector('chicken')}
-                className={`px-3 py-1.5 text-xs font-mono rounded-md border transition-colors cursor-pointer ${
+                className={`px-3 py-1.5 rounded-md text-xs font-mono font-semibold transition-colors cursor-pointer ${
                   jobFilterSector === 'chicken'
-                    ? 'bg-[#059669] text-white border-[#059669] font-semibold'
-                    : 'bg-white text-[#64748B] border-[#E2E8F0] hover:border-[#059669]'
+                    ? 'bg-[#059669] text-white'
+                    : 'bg-[#F8FAFC] text-[#64748B] hover:bg-[#E2E8F0]'
                 }`}
               >
-                Chicken ({liveJobs.filter((j) => j.sector === 'chicken').length})
+                Chickens ({liveJobs.filter((j) => j.sector === 'chicken').length})
               </button>
               <button
                 onClick={() => setJobFilterSector('turkey')}
-                className={`px-3 py-1.5 text-xs font-mono rounded-md border transition-colors cursor-pointer ${
+                className={`px-3 py-1.5 rounded-md text-xs font-mono font-semibold transition-colors cursor-pointer ${
                   jobFilterSector === 'turkey'
-                    ? 'bg-[#EA580C] text-white border-[#EA580C] font-semibold'
-                    : 'bg-white text-[#64748B] border-[#E2E8F0] hover:border-[#EA580C]'
+                    ? 'bg-[#EA580C] text-white'
+                    : 'bg-[#F8FAFC] text-[#64748B] hover:bg-[#E2E8F0]'
                 }`}
               >
-                Turkey ({liveJobs.filter((j) => j.sector === 'turkey').length})
+                Turkeys ({liveJobs.filter((j) => j.sector === 'turkey').length})
               </button>
             </div>
           </div>
 
-          {/* Job Vacancy Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredLiveJobs.map((job) => {
-              const targetUrl = `/jobs/${job.id}`;
-              return (
-                <div
-                  key={job.id}
-                  className="bg-white rounded-xl border border-[#E2E8F0] hover:border-[#059669] transition-all p-6 flex flex-col justify-between space-y-5 shadow-xs group"
-                >
-                  <div className="space-y-3.5">
-                    {/* Header tags */}
-                    <div className="flex items-center justify-between">
-                      <span
-                        className={`text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md border ${
-                          job.sector === 'chicken'
-                            ? 'bg-amber-50 text-amber-800 border-amber-200'
-                            : 'bg-teal-50 text-teal-800 border-teal-200'
-                        }`}
-                      >
-                        {job.sector === 'chicken' ? 'Broiler Catching' : 'Turkey Catching'}
-                      </span>
-                      <span className="text-[11px] font-mono text-[#059669] font-medium flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Immediate Start
-                      </span>
-                    </div>
-
-                    {/* Job Title */}
-                    <h3 className="text-lg font-bold text-[#0F172A] group-hover:text-[#059669] transition-colors leading-snug">
-                      <Link to={targetUrl} className="hover:underline text-inherit no-underline">
-                        {job.title}
-                      </Link>
-                    </h3>
-
-                    {/* Location & Pay Details */}
-                    <div className="space-y-2 text-xs text-[#64748B] font-mono bg-[#F8FAFC] p-3 rounded-lg border border-[#E2E8F0]">
-                      <div className="flex items-center gap-2 text-[#0F172A]">
-                        <MapPin className="w-3.5 h-3.5 text-[#059669] shrink-0" />
-                        <span className="font-semibold">
-                          {job.townName || job.townId} Area • {job.regionName || job.county || 'UK'}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-[#059669] font-bold">
-                        <Coins className="w-3.5 h-3.5 shrink-0" />
-                        <span>{job.payRate} • Weekly Friday Pay</span>
-                      </div>
-                      <div className="flex items-center gap-2 pt-1 border-t border-[#E2E8F0]/60 text-[11px] text-[#64748B]">
-                        <Truck className="w-3.5 h-3.5 text-[#059669] shrink-0" />
-                        <span>Free home pickup included</span>
-                      </div>
-                    </div>
-
-                    {/* Description excerpt */}
-                    <p className="text-xs text-[#64748B] line-clamp-2 leading-relaxed">
-                      {job.description}
-                    </p>
-                  </div>
-
-                  {/* Apply CTA Button */}
-                  <div className="pt-3 border-t border-[#F1F5F9] flex items-center justify-between">
-                    <Link
-                      to={targetUrl}
-                      className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#059669] text-white font-mono text-xs font-semibold uppercase tracking-wider py-2.5 px-4 rounded-md transition-colors shadow-xs"
-                    >
-                      <span>View Role & Apply</span>
-                      <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {filteredLiveJobs.length === 0 && (
-            <div className="p-8 rounded-xl bg-white border border-[#E2E8F0] text-center space-y-2">
-              <p className="text-sm font-mono text-[#64748B]">
-                No live vacancies currently listed in this category.
-              </p>
-              <button
-                onClick={() => setJobFilterSector('ALL')}
-                className="text-xs font-mono font-semibold text-[#059669] hover:underline cursor-pointer"
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredLiveJobs.map((job) => (
+              <div
+                key={job.id}
+                className="group flex flex-col justify-between rounded-xl border border-[#E2E8F0] bg-white p-6 hover:border-[#059669] transition-all shadow-xs space-y-4"
               >
-                View all available vacancies
-              </button>
-            </div>
-          )}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded ${
+                        job.sector === 'chicken'
+                          ? 'bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]'
+                          : 'bg-[#FFF7ED] text-[#EA580C] border border-[#FFEDD5]'
+                      }`}
+                    >
+                      {job.sector === 'chicken' ? 'Chicken Catching' : 'Turkey Catching'}
+                    </span>
+                    <span className="text-xs font-mono text-[#059669] font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" /> Immediate Start
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-[#0F172A] text-lg group-hover:text-[#059669] transition-colors leading-snug">
+                    <Link to={`/jobs/${job.id}`} className="hover:underline text-inherit">
+                      {job.title}
+                    </Link>
+                  </h3>
+
+                  {/* Location & Pay Details */}
+                  <div className="space-y-2 text-xs text-[#64748B] font-mono bg-[#F8FAFC] p-3 rounded-lg border border-[#E2E8F0]">
+                    <div className="flex items-center gap-2 text-[#0F172A]">
+                      <MapPin className="w-3.5 h-3.5 text-[#059669] shrink-0" />
+                      <span className="font-semibold">
+                        {job.townName || job.townId} Area • {job.regionName || job.county || 'UK'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#059669] font-bold">
+                      <Coins className="w-3.5 h-3.5 shrink-0" />
+                      <span>{job.payRate} • Weekly Friday Pay</span>
+                    </div>
+                    <div className="flex items-center gap-2 pt-1 border-t border-[#E2E8F0]/60 text-[11px] text-[#64748B]">
+                      <Truck className="w-3.5 h-3.5 text-[#059669] shrink-0" />
+                      <span>Free home pickup included</span>
+                    </div>
+                  </div>
+
+                  {/* Description excerpt */}
+                  <p className="text-xs text-[#64748B] line-clamp-2 leading-relaxed">
+                    {job.description}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-[#F1F5F9] flex items-center justify-between">
+                  <span className="text-[11px] font-mono text-[#94A3B8]">Ref: CJ-JOB-{job.id}</span>
+                  <Link
+                    to={`/jobs/${job.id}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[#059669] hover:underline"
+                  >
+                    <span>View Role</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* Interactive UK Regional Catching Map & Live Network */}
@@ -511,11 +491,10 @@ export default function Index({ onNavigate }: IndexProps) {
               Regional Directory
             </span>
             <h2 className="text-3xl font-bold tracking-tight text-[#0F172A]">
-              UK Regional Catching Corridors & Local Hubs
+              UK Regional Catching Locations & Towns
             </h2>
             <p className="text-base text-[#64748B] leading-relaxed">
-              Select your local area to view localized shift rotas, farm networks, and join active
-              poultry catching crews.
+              Select your local area to view farm networks and join active poultry catching teams.
             </p>
           </div>
 
@@ -534,7 +513,7 @@ export default function Index({ onNavigate }: IndexProps) {
                     <div>
                       <h3 className="text-xl font-bold text-[#0F172A]">{region.name}</h3>
                       <p className="text-xs font-mono text-[#64748B] uppercase">
-                        {region.county} Catching Corridor
+                        {region.county} Catching Area
                       </p>
                     </div>
                   </div>

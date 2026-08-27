@@ -149,7 +149,7 @@ Catchingjobs/
 | Feature                                   | Description                                                                                                                                    |
 | :---------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
 | **National Hub** (`/`)                    | Hero diptych, live vacancy board fetching from `/api/jobs`, division cards (Chicken / Turkey), interactive vector map, and regional directory |
-| **Sector Hubs** (`/chickens`, `/turkeys`) | Division-specific landing pages with filtered vacancies, interactive corridor map, and town depot directory                                  |
+| **Sector Hubs** (`/chickens`, `/turkeys`) | Division-specific landing pages with filtered vacancies, interactive location map, and town directory          |
 | **Town SEO Landers** (`/:sector/:town`)   | SSR-rendered pages with JSON-LD `JobPosting` schema, editable Markdown SEO copy, embedded `HeroTriageForm`, local vacancies, and testimonials  |
 | **Dedicated Job Pages** (`/jobs/:id`)     | Shareable job view with schema.org `JobPosting` JSON-LD structured data, social sharing modal (`JobShareModal`), and direct application funnel |
 | **Interactive Location Map**              | 0ms instant-loading SVG vector map (`RegionalCatchingMap`) with clickable location markers linking to chicken and turkey vacancies across towns covered |

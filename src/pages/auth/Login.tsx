@@ -121,8 +121,8 @@ export default function Login() {
                 <Truck className="w-4 h-4" />
               </div>
               <div>
-                <strong className="text-white block font-medium">Free Door-to-Door Pickup</strong>
-                <span>Direct home collection across all UK catching corridors.</span>
+                <strong className="text-white block font-medium">Free Home Pickup</strong>
+                <span>Home collection across all UK catching locations.</span>
               </div>
             </div>
 
