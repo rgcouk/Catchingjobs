@@ -136,7 +136,7 @@ export default function LandingPage({
     },
     {
       quote:
-        "As an agricultural facility manager, I demand absolute safety and animal welfare compliance. Pullum Ltd's catching squads are disciplined, professional, and Lantra certified.",
+        "As an agricultural facility manager, I demand absolute safety and animal welfare compliance. Pullum Ltd's catching teams are disciplined, professional, and Lantra certified.",
       author: 'Mark R.',
       role: 'Agricultural Facility Manager',
     },

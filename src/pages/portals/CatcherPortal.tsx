@@ -353,7 +353,7 @@ export default function CatcherPortal({ applications, onUpdateProfile }: Catcher
               to="/register"
               className="text-xs text-muted-foreground hover:text-foreground underline font-medium cursor-pointer"
             >
-              Don't have a Roster ID yet? Apply to join our squads
+              Don't have a Roster ID yet? Apply to join our catching teams
             </Link>
           </div>
         </div>

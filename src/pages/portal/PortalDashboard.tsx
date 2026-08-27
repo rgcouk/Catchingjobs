@@ -30,6 +30,7 @@ import {
   Download,
   Send,
   Sparkles,
+  RotateCcw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -261,7 +262,7 @@ const PortalDashboard = () => {
                   Your application for{' '}
                   {searchParams.get('town')
                     ? `${searchParams.get('town')} crew`
-                    : 'the harvesting squad'}{' '}
+                    : 'the catching team'}{' '}
                   has been registered with Pullum Ltd. Complete your induction details below.
                 </p>
               </div>
@@ -272,22 +273,25 @@ const PortalDashboard = () => {
         {/* Header Banner */}
         <header className="rounded-xl border border-[#E2E8F0] bg-white p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 rounded-md">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 Verified Employee Portal
               </span>
-              <span className="text-xs font-mono text-[#64748B] bg-[#F8FAFC] border border-[#E2E8F0] px-2.5 py-0.5 rounded-md">
-                Roster Ref: <strong className="text-[#0F172A]">{rosterRef}</strong>
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#059669] bg-[#ECFDF5] px-2.5 py-0.5 rounded-md border border-[#A7F3D0]">
+                {app?.rosterRef || rosterRef || 'Candidate Hub'}
+              </span>
+              <span className="text-xs font-mono text-[#64748B] flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-[#059669]" />
+                {app?.town ? `${app.town} Catching Area` : 'Regional Operations'}
               </span>
             </div>
-
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0F172A]">
-              Welcome, {user?.firstName || user?.fullName || 'Operative'}.
+            <h1 className="text-3xl font-bold tracking-tight text-[#0F172A]">
+              Welcome back, {user?.firstName || user?.fullName || app?.name || 'Operative'}
             </h1>
-            <p className="text-sm text-[#64748B] max-w-2xl leading-relaxed">
-              Manage your crew records, check door-to-door transit schedule, review Friday payroll
-              details, and access official Lantra welfare documentation.
+            <p className="text-sm text-[#64748B] max-w-xl leading-relaxed">
+              Pullum Ltd Employee & Compliance Portal. View your roster status, manage door-to-door
+              transit address, verify licenses, and message dispatch.
             </p>
           </div>
 
@@ -296,6 +300,7 @@ const PortalDashboard = () => {
               <>
                 <Button
                   variant="outline"
+                  size="sm"
                   onClick={() => setIsViewModalOpen(true)}
                   className="border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] font-mono text-xs uppercase tracking-wider rounded-md flex items-center gap-1.5 cursor-pointer"
                 >
@@ -305,6 +310,7 @@ const PortalDashboard = () => {
 
                 <Button
                   variant="outline"
+                  size="sm"
                   onClick={() => setIsEditModalOpen(true)}
                   className="border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] font-mono text-xs uppercase tracking-wider rounded-md flex items-center gap-1.5 cursor-pointer"
                 >
@@ -313,6 +319,17 @@ const PortalDashboard = () => {
                 </Button>
               </>
             )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                fetchData();
+              }}
+              className="text-xs font-mono border-[#E2E8F0] hover:border-[#0F172A] text-[#0F172A] rounded-md h-9 px-3"
+            >
+              <RotateCcw className="w-3.5 h-3.5 mr-1" /> Refresh Roster
+            </Button>
           </div>
         </header>
 
@@ -321,7 +338,7 @@ const PortalDashboard = () => {
           <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] space-y-3 shadow-xs">
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono font-semibold uppercase text-[#059669]">
-                Assigned Division
+                Division Assignment
               </span>
               <div className="w-8 h-8 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
                 🐔
@@ -329,7 +346,7 @@ const PortalDashboard = () => {
             </div>
             <h3 className="text-lg font-bold text-[#0F172A]">{sectorName}</h3>
             <p className="text-xs text-[#64748B] leading-relaxed">
-              Active rostered crew member with Pullum Ltd harvesting operations.
+              Active rostered crew member with Pullum Ltd catching operations.
             </p>
           </div>
 
@@ -399,7 +416,7 @@ const PortalDashboard = () => {
                 <p className="text-sm text-[#065F46] leading-relaxed">
                   All 3 stages of candidate induction (Right to Work compliance, Door-to-Door
                   transit address, and Animal Welfare declarations) are verified on file. Shift
-                  schedules are dispatched directly via SMS and squad lead WhatsApp channels.
+                  schedules are dispatched directly via SMS and crew lead WhatsApp channels.
                 </p>
               </div>
             </div>
@@ -414,7 +431,7 @@ const PortalDashboard = () => {
                     onClick={() => setIsEditingWizard(false)}
                     className="text-xs font-mono text-[#64748B] hover:text-[#0F172A] flex items-center gap-1 cursor-pointer"
                   >
-                    <X className="w-3.5 h-3.5" /> Cancel
+                    Cancel Editing
                   </button>
                 </div>
               )}
@@ -554,7 +571,7 @@ const PortalDashboard = () => {
                   </Label>
                   <div className="flex gap-2">
                     <Input
-                      placeholder="Enter your message for the squad leader or payroll team..."
+                      placeholder="Enter your message for the crew leader or payroll team..."
                       value={dispatchMessage}
                       onChange={(e) => setDispatchMessage(e.target.value)}
                       className="bg-[#F8FAFC] border-[#E2E8F0] focus:border-[#059669] text-xs rounded-md"

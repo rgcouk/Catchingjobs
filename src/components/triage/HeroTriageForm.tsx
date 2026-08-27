@@ -269,10 +269,9 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
                 Right to Work in the UK is required
               </h4>
               <p className="text-xs text-[#64748B] leading-relaxed">
-                All agricultural poultry harvesting positions with Pullum Ltd legally require
-                verified UK Right to Work (UK/Irish passport, Settled/Pre-Settled status, or a valid
-                work visa). We cannot proceed without valid Right to Work. Thank you for your
-                interest.
+                All UK poultry catching positions with Pullum Ltd legally require verified UK Right
+                to Work (UK/Irish passport, Settled/Pre-Settled status, or a valid work visa). We
+                cannot proceed without valid Right to Work. Thank you for your interest.
               </p>
             </div>
           </div>

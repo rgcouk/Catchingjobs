@@ -40,85 +40,85 @@ const STATIC_DEFAULT_JOBS = [
     regionName: 'Lincolnshire',
     pickupPoint: 'Boston Railway Station, Station Approach',
     description:
-      'Operating in modern broiler houses. Night shifts with guaranteed door-to-door home pickup. Consistent 45-50 hrs weekly with Friday payroll.',
+      'Working in modern poultry sheds. Manual catching by both legs under blue light, loading transport modules. Night shifts with guaranteed door-to-door home pickup. Consistent 45-50 hrs weekly with Friday payroll.',
     payRate: '£15.50 - £18.50/hr',
     status: 'ACTIVE',
   },
   {
     id: 2,
-    title: 'Poultry Harvest Crew Leader',
+    title: 'Poultry Catching Crew Leader',
     sector: 'chicken',
     townId: 'lincoln',
     townName: 'Lincoln',
     regionName: 'Lincolnshire',
     pickupPoint: 'Lincoln Central Transit Depot',
     description:
-      'Lead a squad of 6-8 professional catchers. Animal welfare compliance, squad vehicle transit coordination, and shift logging.',
+      'Lead a team of 6-8 professional catchers. Bird welfare compliance, minibus transit manifest coordination, and shift logging with farm managers.',
     payRate: '£19.00 - £23.00/hr',
     status: 'ACTIVE',
   },
   {
     id: 3,
-    title: 'Commercial Turkey Loading Operative',
+    title: 'Commercial Turkey Catcher',
     sector: 'turkey',
     townId: 'sleaford',
     townName: 'Sleaford',
     regionName: 'Lincolnshire',
     pickupPoint: 'Sleaford Market Square Outpost',
     description:
-      'Heavy agricultural turkey loading and welfare handling. Full manual handling training provided, weekly wages direct into your account.',
+      'Specialist turkey catching and module loading. Full two-handed handling and welfare training provided, weekly Friday wages direct into your bank account.',
     payRate: '£16.00 - £19.50/hr',
     status: 'ACTIVE',
   },
   {
     id: 4,
-    title: 'Broiler Harvesting Squad Operative',
+    title: 'Broiler Catching Team Member',
     sector: 'chicken',
     townId: 'attleborough',
     townName: 'Attleborough',
     regionName: 'Norfolk',
     pickupPoint: 'Attleborough High Street Transport Stop',
     description:
-      'Night shift harvesting across Norfolk grower contracts. Heated minibus transport direct from your front door.',
+      'Night shift broiler catching across Norfolk grower farms. Heated minibus transport direct from your front door.',
     payRate: '£15.00 - £18.00/hr',
     status: 'ACTIVE',
   },
   {
     id: 5,
-    title: 'Agricultural Catching Specialist',
+    title: 'Experienced Poultry Catcher',
     sector: 'chicken',
     townId: 'hull',
     townName: 'Hull',
     regionName: 'Yorkshire',
     pickupPoint: 'Hull Interchange Hub',
     description:
-      'Fast-growing Yorkshire squad operations. Stable long-term contract with premium overtime opportunities.',
+      'Established Yorkshire poultry catching team operations. Stable long-term contract with premium overtime opportunities and weekly pay.',
     payRate: '£15.50 - £18.50/hr',
     status: 'ACTIVE',
   },
   {
     id: 6,
-    title: 'Turkey Squad Driver & Catcher',
+    title: 'Minibus Driver & Poultry Catcher',
     sector: 'turkey',
     townId: 'thetford',
     townName: 'Thetford',
     regionName: 'Norfolk',
     pickupPoint: 'Thetford Bus Interchange',
     description:
-      'Clean UK driving license preferred. Drive company minibus and participate in harvest squad operations. Vehicle allowance bonus.',
+      'Clean UK driving license required. Drive company heated minibus for crew pickup and participate in catching team operations. Vehicle driver allowance bonus.',
     payRate: '£17.00 - £21.00/hr',
     status: 'ACTIVE',
   },
   {
     id: 7,
-    title: 'Harvesting Operative - West Midlands',
+    title: 'Broiler Catcher - West Midlands',
     sector: 'chicken',
     townId: 'shrewsbury',
     townName: 'Shrewsbury',
     regionName: 'Shropshire',
     pickupPoint: 'Shrewsbury Abbey Foregate Depot',
     description:
-      'Broiler chicken catching crews covering Shropshire and Welsh border facilities. Full PPE and door-to-door transit.',
+      'Broiler chicken catching crews covering Shropshire grower facilities. Full PPE, welfare certification, and door-to-door transit.',
     payRate: '£15.25 - £18.00/hr',
     status: 'ACTIVE',
   },
@@ -171,7 +171,7 @@ export default function Index({ onNavigate }: IndexProps) {
       time: '19:00 - 21:00',
       title: 'Norfolk Autumn Catching Coordination Briefing',
       location: 'Thetford Hub / Zoom',
-      desc: 'Pre-roster briefing for all registered Norfolk poultry catching squad leaders and transport operatives.',
+      desc: 'Pre-roster briefing for all registered Norfolk poultry catching crew leaders and transport operatives.',
     },
     {
       id: 'evt-2',
@@ -188,13 +188,13 @@ export default function Index({ onNavigate }: IndexProps) {
       title: 'Candidate Right to Work Guide for Catching Roles',
       type: 'Compliance',
       size: '2.4 MB PDF',
-      desc: 'Checklist of acceptable UK identification, share codes, and permanent employment visa parameters for agricultural catchers.',
+      desc: 'Checklist of acceptable UK identification, share codes, and permanent employment visa parameters for poultry catchers.',
     },
     {
-      title: 'Pullum Ltd Health & Safety Catching Manual',
+      title: 'Pullum Ltd Poultry Catching & Welfare Manual',
       type: 'Operations',
       size: '4.1 MB PDF',
-      desc: 'Mandatory on-site manual handling rules, catching PPE requirements, and team coordination protocols.',
+      desc: 'Mandatory on-site bird handling rules, catching PPE requirements, and team coordination protocols.',
     },
   ];
 
@@ -204,7 +204,7 @@ export default function Index({ onNavigate }: IndexProps) {
         <title>CatchingJobs | National Poultry Catching Directory & Recruitment</title>
         <meta
           name="description"
-          content="UK National Poultry Catching Directory. Explore professional broiler and turkey catching squads across Lincolnshire, Norfolk, Yorkshire, Shropshire, and Suffolk. Free door-to-door home pickup and guaranteed weekly pay."
+          content="UK National Poultry Catching Directory. Explore professional broiler and turkey catching teams across Lincolnshire, Norfolk, Yorkshire, Shropshire, and Suffolk. Free door-to-door home pickup and guaranteed weekly pay."
         />
         <meta property="og:title" content="CatchingJobs | UK Poultry Catching Directory" />
         <meta
@@ -353,7 +353,7 @@ export default function Index({ onNavigate }: IndexProps) {
                   </span>
                   <h3 className="text-xl font-bold text-[#0F172A]">Turkey Catching</h3>
                   <p className="text-sm text-[#64748B] leading-relaxed">
-                    Specialized squads handling commercial turkey catching operations. Stable weekly
+                    Specialist teams handling commercial turkey catching operations. Stable weekly
                     Friday pay, seasonal premiums, and full door-to-door transit support.
                   </p>
                 </div>
@@ -375,11 +375,11 @@ export default function Index({ onNavigate }: IndexProps) {
                 <span>Live Openings Across UK Corridors</span>
               </div>
               <h2 className="text-3xl font-bold tracking-tight text-[#0F172A]">
-                Current Poultry Harvesting Vacancies
+                Live Poultry Catching Vacancies
               </h2>
               <p className="text-sm text-[#64748B] leading-relaxed">
                 Guaranteed weekly Friday pay, free door-to-door home pickup, and immediate start
-                dates across all active UK catching squads.
+                dates across all active UK catching teams.
               </p>
             </div>
 
@@ -437,7 +437,7 @@ export default function Index({ onNavigate }: IndexProps) {
                             : 'bg-teal-50 text-teal-800 border-teal-200'
                         }`}
                       >
-                        {job.sector === 'chicken' ? 'Broiler Catching' : 'Turkey Harvesting'}
+                        {job.sector === 'chicken' ? 'Broiler Catching' : 'Turkey Catching'}
                       </span>
                       <span className="text-[11px] font-mono text-[#059669] font-medium flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Immediate Start

@@ -66,7 +66,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
   const sectorSlug = sectorId === 'chicken' ? 'chickens' : 'turkeys';
   const sectorName = sectorId === 'chicken' ? 'Chicken Catching' : 'Turkey Catching';
   const industryName =
-    sectorId === 'chicken' ? 'Broiler & Breeder Industry' : 'Commercial Turkey Harvesting';
+    sectorId === 'chicken' ? 'Broiler & Breeder Catching' : 'Commercial Turkey Catching';
   const heroImage =
     sectorSlug === 'chickens'
       ? '/images/chicken-sector-hero.jpg'
@@ -169,7 +169,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                   Live {sectorName} Vacancies
                 </h2>
                 <p className="text-sm text-[#64748B] font-normal leading-relaxed">
-                  Join active harvest squads with guaranteed Friday payroll and door-to-door home
+                  Join active catching teams with guaranteed Friday payroll and door-to-door home
                   collection.
                 </p>
               </div>
@@ -184,7 +184,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
-                        {job.sector === 'chicken' ? 'Broiler Squad' : 'Turkey Squad'}
+                        {job.sector === 'chicken' ? 'Broiler Team' : 'Turkey Team'}
                       </span>
                       <span className="text-xs font-mono font-bold text-[#059669]">
                         {job.payRate}
@@ -338,7 +338,7 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                 What We Offer Catchers
               </h2>
               <p className="text-sm text-[#64748B] font-normal leading-relaxed">
-                We invest in our squads so you can do your job safely, comfortably, and with total
+                We invest in our teams so you can do your job safely, comfortably, and with total
                 financial security.
               </p>
             </div>

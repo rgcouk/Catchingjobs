@@ -12,7 +12,7 @@ export function ChickenCampaignLandingPage() {
     <LandingPage
       campaignId="chicken"
       title="Professional Chicken Catching Careers"
-      subtitle="Join our elite poultry harvesting crews with guaranteed weekly pay and door-to-door transit across Lincolnshire, Norfolk, and Yorkshire."
+      subtitle="Join our elite poultry catching crews with guaranteed weekly pay and door-to-door transit across Lincolnshire, Norfolk, and Yorkshire."
       heroImage="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200"
       ctaButtons={[
         {
@@ -73,8 +73,8 @@ export function TurkeyCampaignLandingPage() {
   return (
     <LandingPage
       campaignId="turkey"
-      title="Seasonal Turkey Harvesting Opportunities"
-      subtitle="Join our professional turkey harvesting teams for stable year-round contracts with premium earnings and welfare-first practices."
+      title="Seasonal Turkey Catching Opportunities"
+      subtitle="Join our professional turkey catching teams for stable year-round contracts with premium earnings and welfare-first practices."
       heroImage="https://images.unsplash.com/photo-1550684376-efcbd6e3f031?auto=format&fit=crop&q=80&w=1200"
       ctaButtons={[
         {
@@ -92,7 +92,7 @@ export function TurkeyCampaignLandingPage() {
         {
           title: 'Premium Contract Earnings',
           description:
-            'Weekly rates of £800-£1,100 for heavy agricultural work with guaranteed weekly pay every Friday.',
+            'Weekly rates of £800-£1,100 for heavy poultry catching work with guaranteed weekly pay every Friday.',
         },
         {
           title: 'Welfare-First Approach',
@@ -113,9 +113,9 @@ export function TurkeyCampaignLandingPage() {
       testimonials={[
         {
           quote:
-            'The turkey harvesting work is professionally managed. We get proper breaks, safety equipment, and our wages are always on time.',
+            'The turkey catching work is professionally managed. We get proper breaks, safety equipment, and our wages are always on time.',
           author: 'Michael T.',
-          role: 'Heavy Agricultural Operative, Yorkshire',
+          role: 'Turkey Catching Operative, Yorkshire',
         },
         {
           quote:

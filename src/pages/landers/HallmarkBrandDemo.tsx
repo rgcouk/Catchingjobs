@@ -230,9 +230,9 @@ export default function HallmarkBrandDemo() {
               </h1>
 
               <p className="text-base sm:text-lg text-[#64748B] font-normal leading-relaxed max-w-2xl">
-                Connecting professional broiler and turkey squads with premier UK agricultural
-                growers. Free local minibus collections, transparent piece-rate earnings, and
-                guaranteed Friday deposits.
+                Connecting professional broiler and turkey catching teams with premier UK
+                agricultural growers. Free local minibus collections, transparent piece-rate
+                earnings, and guaranteed Friday deposits.
               </p>
 
               {/* Multi-Segment Search Console (Ref 01 & 02 Architecture) */}
@@ -667,8 +667,8 @@ export default function HallmarkBrandDemo() {
                 </div>
                 <h3 className="text-2xl font-bold text-[#0F172A]">Commercial Farm Service</h3>
                 <p className="text-sm text-[#64748B] leading-relaxed">
-                  Dedicated 7–9 person squads for major poultry processors and independent growers
-                  with zero harvest delays.
+                  Dedicated 7–9 person catching teams for major poultry processors and independent
+                  growers with zero downtime.
                 </p>
               </div>
 
@@ -740,7 +740,7 @@ export default function HallmarkBrandDemo() {
                     to={`/turkeys/${region.id}`}
                     className="text-[#64748B] hover:text-[#0F172A]"
                   >
-                    Turkey Squads
+                    Turkey Teams
                   </Link>
                 </div>
               </div>
@@ -753,7 +753,7 @@ export default function HallmarkBrandDemo() {
       <section className="py-16 bg-white border-b border-[#E2E8F0]">
         <div className="max-w-4xl mx-auto px-4 text-center space-y-6">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0F172A]">
-            Ready to join a dedicated UK catching squad?
+            Ready to join a dedicated UK catching team?
           </h2>
           <p className="text-base text-[#64748B] max-w-xl mx-auto leading-relaxed">
             Apply online in 3 minutes, confirm your right-to-work, and get scheduled for your local

@@ -265,9 +265,9 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
       role: `Senior Catching Crew Leader (${town.name})`,
     },
     {
-      quote: `As an agricultural facility manager near ${town.name}, I demand absolute safety and animal welfare compliance. Pullum Ltd's catching squads from ${town.region.name} are disciplined, professional, and Lantra certified.`,
+      quote: `As a broiler farm manager near ${town.name}, I demand absolute safety and bird welfare compliance. Pullum Ltd's catching teams from ${town.region.name} are disciplined, professional, and Lantra certified.`,
       author: `Mark R.`,
-      role: `Agricultural Facility Manager`,
+      role: `Broiler Farm Manager`,
     },
   ];
 
@@ -461,7 +461,7 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
-                        {sectorId === 'chicken' ? 'Broiler Squad' : 'Turkey Squad'}
+                        {sectorId === 'chicken' ? 'Broiler Team' : 'Turkey Team'}
                       </span>
                       <span className="text-xs font-mono font-bold text-[#059669]">
                         £750 - £950 / week
@@ -474,7 +474,7 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
                         : `Commercial Turkey Operative (${town.name})`}
                     </h3>
                     <p className="text-xs text-[#64748B] leading-relaxed">
-                      Night shift harvesting squad operations with free door-to-door minibus
+                      Night shift poultry catching team operations with free door-to-door minibus
                       collection in {town.name}. Full training and PPE provided.
                     </p>
 
@@ -516,7 +516,7 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200">
-                        Squad Leadership
+                        Team Leadership
                       </span>
                       <span className="text-xs font-mono font-bold text-[#059669]">
                         £1,050 - £1,300 / week
@@ -539,7 +539,7 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Truck className="w-3.5 h-3.5 text-[#059669]" />
-                        <span>Squad vehicle coordination allowance</span>
+                        <span>Crew vehicle coordination allowance</span>
                       </div>
                     </div>
                   </div>

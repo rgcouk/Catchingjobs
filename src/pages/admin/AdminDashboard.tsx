@@ -847,7 +847,7 @@ const AdminDashboard = () => {
       );
     } else if (type === 'shift') {
       setCustomMsgText(
-        `Shift notification for ${name}: Door-to-door minibus pickup is scheduled for your ${divisionName} squad. Please be ready at your registered home address.`,
+        `Shift notification for ${name}: Door-to-door minibus pickup is scheduled for your ${divisionName} team. Please be ready at your registered home address.`,
       );
     }
   };
@@ -867,7 +867,7 @@ const AdminDashboard = () => {
   };
 
   const getDirectMailLink = (email: string, name: string, text: string) => {
-    return `mailto:${encodeURIComponent(email)}?subject=Pullum Ltd Harvesting Squad Opportunities - ${name}&body=${encodeURIComponent(text)}`;
+    return `mailto:${encodeURIComponent(email)}?subject=Pullum Ltd Catching Team Opportunities - ${name}&body=${encodeURIComponent(text)}`;
   };
 
   const getCampaignMessage = (
@@ -876,19 +876,19 @@ const AdminDashboard = () => {
   ) => {
     const name = candidate?.name || candidate?.email?.split('@')[0] || 'Operative';
     const town = candidate?.town || 'your local hub';
-    const sectorName = candidate?.sector === 'turkey' ? 'Turkey Harvesting' : 'Broiler Catching';
+    const sectorName = candidate?.sector === 'turkey' ? 'Turkey Catching' : 'Broiler Catching';
 
     switch (templateKey) {
       case 'reengage':
-        return `Hi ${name}, Pullum Ltd has immediate start poultry harvesting vacancies near ${town} with guaranteed Friday weekly pay (£750-£950/wk) and door-to-door minibus collection. Are you available for active squad placement? Reply to re-join.`;
+        return `Hi ${name}, Pullum Ltd has immediate start poultry catching vacancies near ${town} with guaranteed Friday weekly pay (£750-£950/wk) and door-to-door minibus collection. Are you available for active team placement? Reply to re-join.`;
       case 'urgent':
-        return `Urgent shift notification for ${name}: Immediate squad openings for ${sectorName} in ${town}. Minibus pickup provided from your door. Contact Pullum Ltd to claim your shift.`;
+        return `Urgent shift notification for ${name}: Immediate team openings for ${sectorName} in ${town}. Minibus pickup provided from your door. Contact Pullum Ltd to claim your shift.`;
       case 'peak':
-        return `Peak season harvesting bonus rates are now active for ${sectorName} teams in ${town}! Earn up to £1,100+/week with weekly pay. Reply to secure your spot.`;
+        return `Peak season catching bonus rates are now active for ${sectorName} teams in ${town}! Earn up to £1,100+/week with weekly pay. Reply to secure your spot.`;
       case 'rtw':
-        return `Hi ${name}, Pullum Ltd recruitment team. We'd love to get you deployed with a squad near ${town}. Please reply with your Right to Work share code/document to complete your onboarding.`;
+        return `Hi ${name}, Pullum Ltd recruitment team. We'd love to get you deployed with a crew near ${town}. Please reply with your Right to Work share code/document to complete your onboarding.`;
       default:
-        return `Hi ${name}, Pullum Ltd recruitment team here regarding harvesting opportunities in ${town}.`;
+        return `Hi ${name}, Pullum Ltd recruitment team here regarding catching opportunities in ${town}.`;
     }
   };
 
@@ -1242,7 +1242,7 @@ const AdminDashboard = () => {
                       </div>
                     </CardHeader>
                     <CardFooter className="flex-col items-start gap-1 text-xs text-muted-foreground pt-0">
-                      <span>Across chicken & turkey squads</span>
+                      <span>Across chicken & turkey teams</span>
                     </CardFooter>
                   </Card>
 
@@ -1559,11 +1559,11 @@ const AdminDashboard = () => {
                 <div className="text-[11px] font-mono text-muted-foreground italic truncate max-w-xl">
                   &quot;
                   {crmCampaignTemplate === 'reengage'
-                    ? 'Pullum Ltd has immediate start poultry harvesting vacancies near {town} with guaranteed Friday pay (£750-£950/wk)...'
+                    ? 'Pullum Ltd has immediate start poultry catching vacancies near {town} with guaranteed Friday pay (£750-£950/wk)...'
                     : crmCampaignTemplate === 'urgent'
-                      ? 'Urgent shift notification: Immediate squad openings with free door-to-door minibus pickup...'
+                      ? 'Urgent shift notification: Immediate team openings with free door-to-door minibus pickup...'
                       : crmCampaignTemplate === 'peak'
-                        ? 'Peak season harvesting bonus rates are active now! Earn up to £1,100+/wk...'
+                        ? 'Peak season catching bonus rates are active now! Earn up to £1,100+/wk...'
                         : 'Please reply with your Right to Work share code/document to complete onboarding...'}
                   &quot;
                 </div>
@@ -2347,7 +2347,7 @@ const AdminDashboard = () => {
                   Locations & Transport Corridors
                 </h1>
                 <p className="text-muted-foreground text-xs sm:text-sm">
-                  Manage UK poultry operational hubs, regional SEO landing copy, and squad minibus
+                  Manage UK poultry operational hubs, regional SEO landing copy, and crew minibus
                   pickup corridors.
                 </p>
               </div>
@@ -3304,24 +3304,24 @@ const AdminDashboard = () => {
                           setComposerTemplatePreset(val);
                           if (val === 'interview') {
                             setComposerSubject(
-                              'Pullum Ltd Interview Invitation — Poultry Harvesting Squad',
+                              'Pullum Ltd Interview Invitation — Poultry Catching Team',
                             );
                             setComposerBody(
-                              'Hi there,\n\nWe have reviewed your application for the harvesting squad in your local area. We would like to invite you for a quick phone interview to discuss upcoming shift rotas and door-to-door transit.\n\nAre you available for a 5-minute call this week?',
+                              'Hi there,\n\nWe have reviewed your application for the catching team in your local area. We would like to invite you for a quick phone interview to discuss upcoming shift rotas and door-to-door transit.\n\nAre you available for a 5-minute call this week?',
                             );
                           } else if (val === 'shift') {
                             setComposerSubject(
                               'Urgent Night Shift Vacancies — Minibus Pickup Scheduled',
                             );
                             setComposerBody(
-                              'Urgent shift alert: We have immediate squad openings for broiler catching this week. Minibus collection is provided directly from your home address with guaranteed Friday pay.\n\nPlease log in to your employee portal to confirm your availability.',
+                              'Urgent shift alert: We have immediate team openings for broiler catching this week. Minibus collection is provided directly from your home address with guaranteed Friday pay.\n\nPlease log in to your employee portal to confirm your availability.',
                             );
                           } else if (val === 'rtw') {
                             setComposerSubject(
                               'Pullum Ltd Compliance: Right to Work Verification Reminder',
                             );
                             setComposerBody(
-                              'Hello,\n\nTo finalize your squad placement and transit manifest, please log in to your portal and upload your UK Right to Work share code or document.\n\nThank you,\nPullum Ltd Compliance Team',
+                              'Hello,\n\nTo finalize your crew placement and transit manifest, please log in to your portal and upload your UK Right to Work share code or document.\n\nThank you,\nPullum Ltd Compliance Team',
                             );
                           }
                         }}
@@ -4198,7 +4198,7 @@ const AdminDashboard = () => {
                         Driving License
                       </span>
                       <span className="font-medium text-foreground">
-                        {selectedApp.hasDrivingLicense ? 'Yes (Can drive squad minibus)' : 'No'}
+                        {selectedApp.hasDrivingLicense ? 'Yes (Can drive crew minibus)' : 'No'}
                       </span>
                     </div>
                     <div>
@@ -4744,7 +4744,7 @@ const AdminDashboard = () => {
             <DialogDescription>
               {editingJobData
                 ? 'Update role compensation, shift details, and localized transport hub.'
-                : 'Create a live poultry harvesting role across chicken or turkey squads.'}
+                : 'Create a live poultry catching role across chicken or turkey teams.'}
             </DialogDescription>
           </DialogHeader>
 
@@ -4845,8 +4845,8 @@ const AdminDashboard = () => {
           <DialogHeader>
             <DialogTitle>Invite Staff / Manager</DialogTitle>
             <DialogDescription>
-              Invite a new squad manager or administrator. They will receive an email invitation to
-              access the Catchingjobs portal.
+              Invite a new operations manager or administrator. They will receive an email
+              invitation to access the Catchingjobs portal.
             </DialogDescription>
           </DialogHeader>
 

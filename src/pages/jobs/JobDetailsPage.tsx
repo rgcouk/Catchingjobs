@@ -117,7 +117,7 @@ export default function JobDetailsPage() {
       .catch((err) => {
         if (!isMounted) return;
         console.warn('Could not fetch job details:', err);
-        setError('The requested poultry harvesting vacancy could not be found or has closed.');
+        setError('The requested poultry catching vacancy could not be found or has closed.');
         setLoading(false);
       });
 
@@ -170,7 +170,7 @@ export default function JobDetailsPage() {
       try {
         await navigator.share({
           title: `${job.title} - CatchingJobs`,
-          text: `Poultry Harvesting vacancy: ${job.title} in ${locationDisplay} (${job.payRate}). Guaranteed Friday pay & door-to-door home pickup!`,
+          text: `Poultry Catching vacancy: ${job.title} in ${locationDisplay} (${job.payRate}). Guaranteed Friday pay & door-to-door home pickup!`,
           url: jobUrl,
         });
         return;
@@ -230,11 +230,11 @@ export default function JobDetailsPage() {
           unitText: 'HOUR',
         },
       },
-      industry: 'Poultry Agriculture & Livestock Harvesting',
+      industry: 'Poultry Handling & Broiler Catching',
       qualifications:
-        'Right to work in the UK. Physical fitness for agricultural catching operations.',
+        'Right to work in the UK. Physical fitness for poultry catching and module loading.',
       responsibilities:
-        'Night shift livestock harvesting, humane animal welfare handling, team transit coordination.',
+        'Night shift broiler catching, humane bird welfare handling by both legs, module loading, team transit coordination.',
       applicantLocationRequirements: {
         '@type': 'Country',
         name: 'United Kingdom',
@@ -262,7 +262,7 @@ export default function JobDetailsPage() {
         <div className="max-w-md space-y-2">
           <h1 className="text-2xl font-bold text-[#0F172A]">Vacancy Unavailable</h1>
           <p className="text-sm text-[#64748B]">
-            {error || 'This poultry harvesting role may have been filled or the link has expired.'}
+            {error || 'This poultry catching role may have been filled or the link has expired.'}
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-3">
@@ -412,61 +412,98 @@ export default function JobDetailsPage() {
               </p>
             </div>
 
-            {/* Location & Depot info */}
-            <div className="flex flex-wrap items-center gap-6 pt-2 text-xs font-mono text-slate-300">
-              <span className="flex items-center gap-1.5 text-white font-medium">
+            {/* Quick Meta Badges */}
+            <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm font-mono text-slate-200 pt-2">
+              <div className="flex items-center gap-1.5 bg-black/40 px-3 py-1.5 rounded-md border border-white/15">
                 <MapPin className="w-4 h-4 text-[#059669]" />
-                {locationDisplay}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Building2 className="w-4 h-4 text-[#059669]" />
-                Transit Hub: {job.pickupPoint || town?.pickupPoint || 'Minibus Door Pickup'}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-[#059669]" />
-                GLAA Licensed & Lantra Certified
-              </span>
+                <span>{locationDisplay}</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-black/40 px-3 py-1.5 rounded-md border border-white/15 text-emerald-400 font-bold">
+                <Coins className="w-4 h-4" />
+                <span>{job.payRate}</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-black/40 px-3 py-1.5 rounded-md border border-white/15">
+                <Truck className="w-4 h-4 text-[#059669]" />
+                <span>Free Minibus Pickup</span>
+              </div>
+            </div>
+
+            {/* Action Bar: Quick Apply Anchor & Share Suite */}
+            <div className="flex flex-wrap items-center gap-3 pt-3">
+              <a
+                href="#apply-form"
+                className="inline-flex items-center gap-2 bg-[#059669] hover:bg-[#047857] text-white font-mono text-xs font-semibold uppercase tracking-wider px-6 py-3.5 rounded-md transition-colors shadow-xs"
+              >
+                <span>Apply for this Role (60s)</span>
+                <ArrowRight className="w-4 h-4" />
+              </a>
+
+              <button
+                onClick={handleNativeShare}
+                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/25 font-mono text-xs font-semibold uppercase tracking-wider px-4 py-3.5 rounded-md transition-colors cursor-pointer"
+                title="Share this Job Opening"
+              >
+                <Share2 className="w-4 h-4 text-[#059669]" />
+                <span>Share Role</span>
+              </button>
+
+              <button
+                onClick={handleCopyLink}
+                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/25 font-mono text-xs font-semibold uppercase tracking-wider px-4 py-3.5 rounded-md transition-colors cursor-pointer"
+                title="Copy direct URL"
+              >
+                {copiedLink ? (
+                  <>
+                    <Check className="w-4 h-4 text-emerald-400" />
+                    <span className="text-emerald-400">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    <span>Copy Link</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Main Content Layout (Diptych) */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          {/* Left Column: Role Details & Specifications */}
-          <div className="lg:col-span-7 space-y-10">
-            {/* Key Metric Highlights Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="bg-white border border-[#E2E8F0] p-4 rounded-xl shadow-xs space-y-1">
+      {/* Main 2-Column Content Layout */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          {/* Left Column: Full Specifications & Duties */}
+          <div className="lg:col-span-7 space-y-8">
+            {/* Quick Spec Highlights Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white border border-[#E2E8F0] p-4 rounded-xl shadow-xs">
+              <div className="space-y-1 p-2">
                 <span className="text-[11px] font-mono text-[#64748B] uppercase block">
-                  Est. Weekly Earnings
+                  Est. Weekly
                 </span>
-                <span className="text-sm font-bold font-mono text-[#0F172A] block">
+                <span className="text-sm font-bold font-mono text-[#059669] block">
                   {job.weeklyPayEst || '£750 - £950'}
                 </span>
-                <span className="text-[10px] text-[#059669] font-mono">Paid every Friday</span>
+                <span className="text-[10px] text-[#64748B] font-mono">Friday payroll</span>
               </div>
-
-              <div className="bg-white border border-[#E2E8F0] p-4 rounded-xl shadow-xs space-y-1">
+              <div className="space-y-1 p-2 border-l border-[#F1F5F9]">
                 <span className="text-[11px] font-mono text-[#64748B] uppercase block">
-                  Weekly Schedule
+                  Shift Type
                 </span>
-                <span className="text-sm font-bold font-mono text-[#0F172A] block">45-50 hrs</span>
-                <span className="text-[10px] text-[#64748B] font-mono">Consistent rosters</span>
+                <span className="text-sm font-bold font-mono text-[#0F172A] block">
+                  Night Shift
+                </span>
+                <span className="text-[10px] text-[#64748B] font-mono">20:00 - 05:00</span>
               </div>
-
-              <div className="bg-white border border-[#E2E8F0] p-4 rounded-xl shadow-xs space-y-1">
+              <div className="space-y-1 p-2 border-l border-[#F1F5F9]">
                 <span className="text-[11px] font-mono text-[#64748B] uppercase block">
                   Transit
                 </span>
-                <span className="text-sm font-bold font-mono text-[#0F172A] block">
-                  Home Pickup
+                <span className="text-sm font-bold font-mono text-[#059669] block">
+                  Door-to-Door
                 </span>
-                <span className="text-[10px] text-[#059669] font-mono">100% Free / Heated</span>
+                <span className="text-[10px] text-[#64748B] font-mono">Heated minibus</span>
               </div>
-
-              <div className="bg-white border border-[#E2E8F0] p-4 rounded-xl shadow-xs space-y-1">
+              <div className="space-y-1 p-2 border-l border-[#F1F5F9]">
                 <span className="text-[11px] font-mono text-[#64748B] uppercase block">
                   Welfare
                 </span>
@@ -482,14 +519,14 @@ export default function JobDetailsPage() {
                   Role Overview
                 </span>
                 <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
-                  About This Poultry Harvesting Position
+                  About This Poultry Catching Position
                 </h2>
               </div>
 
               <div className="prose prose-slate text-sm text-[#475569] leading-relaxed space-y-4 max-w-none">
                 <p>{job.description}</p>
                 <p>
-                  Deploying directly from {locationDisplay}, you will work with an established squad
+                  Deploying directly from {locationDisplay}, you will work with an established team
                   of professional operatives supplying the UK&apos;s premier food producers. All
                   transport is handled by our company fleet—our heated crew minibuses collect you
                   from your front door before shift and return you safely upon completion.
@@ -546,7 +583,7 @@ export default function JobDetailsPage() {
                 <p>
                   <strong>Important Notice:</strong> Pullum Ltd enforces strict GLAA compliance and
                   does not charge any recruitment or transit fees. Please note that visa
-                  sponsorships are not provided for agricultural harvesting roles.
+                  sponsorships are not provided for poultry catching roles.
                 </p>
               </div>
             </section>
@@ -702,7 +739,7 @@ export default function JobDetailsPage() {
               </div>
               <p className="leading-relaxed">
                 Operating across {locationDisplay}. You do not need a personal vehicle—our heated
-                squad minibuses provide collection directly from your home address.
+                crew minibuses provide collection directly from your home address.
               </p>
               <div className="pt-2 border-t border-[#E2E8F0] flex items-center justify-between text-[11px] text-[#64748B]">
                 <span>Pullum Ltd Recruitment</span>

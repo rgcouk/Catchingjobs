@@ -115,7 +115,7 @@ export default function RosterPortal({
       );
     } else if (type === 'roster') {
       setCustomMsgText(
-        `Hi ${candidate.name}, Pullum Ltd here. We have active shifts starting near ${candidate.town} shortly. Are you still available to join our local harvesting squads? Let us know. Thanks!`,
+        `Hi ${candidate.name}, Pullum Ltd here. We have active shifts starting near ${candidate.town} shortly. Are you still available to join our local catching teams? Let us know. Thanks!`,
       );
     }
   };

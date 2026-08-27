@@ -184,7 +184,7 @@ export default function CorporateLander({ onNavigate }: CorporateLanderProps) {
               {
                 icon: GitBranch,
                 title: 'Career Progression',
-                desc: 'Clear pathways from catcher to squad leader, transport operative, or regional coordinator.',
+                desc: 'Clear pathways from catcher to crew leader, transport operative, or regional coordinator.',
                 span: 2,
               },
             ].map((item, i) => (

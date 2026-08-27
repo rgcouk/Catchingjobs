@@ -249,16 +249,14 @@ export class EmailService {
    */
   async sendApplicationReceipt(applicant: EmailApplicantPayload) {
     const sectorName =
-      applicant.sector === 'turkey'
-        ? 'Commercial Turkey Loading'
-        : 'Broiler & Breeder Chicken Catching';
+      applicant.sector === 'turkey' ? 'Commercial Turkey Catching' : 'Broiler Chicken Catching';
     const town = applicant.town || 'your local hub';
 
-    const subject = `Application Received: ${applicant.rosterRef} - Pullum Ltd Harvesting Squads`;
+    const subject = `Application Received: ${applicant.rosterRef} - Pullum Ltd Catching Teams`;
     const content = `
       <h1 class="title">Application Received — Roster Ref: ${applicant.rosterRef}</h1>
       <p>Hello <strong>${applicant.name || 'Operative'}</strong>,</p>
-      <p>Thank you for submitting your onboarding compliance details for the <strong>${sectorName}</strong> squad in <strong>${town}</strong>.</p>
+      <p>Thank you for submitting your onboarding compliance details for the <strong>${sectorName}</strong> team in <strong>${town}</strong>.</p>
       
       <div class="card">
         <p style="margin: 0 0 8px;"><strong>Roster Reference:</strong> <span style="color: #059669; font-family: monospace; font-size: 16px;">${applicant.rosterRef}</span></p>
@@ -288,7 +286,7 @@ export class EmailService {
    * 2. Send New Application Alert to Admin Team (supports comma-separated emails)
    */
   async sendAdminNewApplicationAlert(application: EmailAdminAlertPayload) {
-    const sectorName = application.sector === 'turkey' ? 'Turkey Harvesting' : 'Chicken Catching';
+    const sectorName = application.sector === 'turkey' ? 'Turkey Catching' : 'Chicken Catching';
     const subject = `[New Candidate] ${application.name} (${application.rosterRef}) - ${application.town || 'UK Hub'}`;
 
     const content = `
@@ -298,29 +296,30 @@ export class EmailService {
       <div class="card">
         <p style="margin: 0 0 6px;"><strong>Candidate:</strong> ${application.name}</p>
         <p style="margin: 0 0 6px;"><strong>Roster Ref:</strong> <span style="font-family: monospace;">${application.rosterRef}</span></p>
-        <p style="margin: 0 0 6px;"><strong>Email:</strong> ${application.email || 'N/A'}</p>
-        <p style="margin: 0 0 6px;"><strong>Phone:</strong> ${application.phone || 'N/A'}</p>
-        <p style="margin: 0 0 6px;"><strong>Town / Hub:</strong> ${application.town || 'Unassigned'}</p>
-        <p style="margin: 0;"><strong>Sector:</strong> ${sectorName}</p>
+        <p style="margin: 0 0 6px;"><strong>Division:</strong> ${sectorName}</p>
+        <p style="margin: 0 0 6px;"><strong>Hub:</strong> ${application.town || 'Unassigned'}</p>
+        <p style="margin: 0;"><strong>Right to Work:</strong> ${application.hasRightToWork ? 'Verified UK Worker' : 'Pending Share Code'}</p>
       </div>
 
+      <p>Review candidate licenses, medical declarations, and approve for crew deployment:</p>
+
       <div style="text-align: center;">
-        <a href="${this.appUrl}/admin/applicants" class="btn">Inspect in Admin Hub</a>
+        <a href="${this.appUrl}/admin" class="btn">Open Admin Kanban Board</a>
       </div>
     `;
 
     const html = this.wrapEmailHtml(subject, content);
-    const adminRecipients = this.adminEmail
+    const recipients = (this.adminEmail || 'operations@pullumltd.co.uk')
       .split(',')
       .map((e) => e.trim())
       .filter((e) => e && e.includes('@'));
 
     const results = await Promise.all(
-      adminRecipients.map((recipient) =>
+      recipients.map((recipient) =>
         this.dispatchEmail(recipient, subject, html, {
-          recipientName: 'Pullum Dispatch Desk',
-          template: 'alert',
-          metadata: { rosterRef: application.rosterRef, candidateId: application.id },
+          recipientName: 'Catchingjobs Dispatch Desk',
+          template: 'admin_alert',
+          metadata: { rosterRef: application.rosterRef, candidateName: application.name },
         }),
       ),
     );
@@ -343,13 +342,13 @@ export class EmailService {
       case 'APPROVED':
         subject = `Application Approved: Welcome to Pullum Ltd (${applicant.rosterRef})`;
         messageBody = `
-          <p>Great news! Your compliance induction for the <strong>${applicant.town || 'UK'}</strong> catching squad has been <strong>APPROVED</strong>.</p>
-          <p>Your details have been verified for squad deployment. Please ensure your transit pickup address and phone number are up-to-date in your portal so your minibus driver can coordinate with you.</p>
+          <p>Great news! Your compliance induction for the <strong>${applicant.town || 'UK'}</strong> catching team has been <strong>APPROVED</strong>.</p>
+          <p>Your details have been verified for team deployment. Please ensure your transit pickup address and phone number are up-to-date in your portal so your minibus driver can coordinate with you.</p>
         `;
         break;
 
       case 'HIRED':
-        subject = `Squad Assignment Confirmed (${applicant.rosterRef}) - Pullum Ltd`;
+        subject = `Crew Assignment Confirmed (${applicant.rosterRef}) - Pullum Ltd`;
         messageBody = `
           <p>Congratulations! You are now officially registered as an active crew operative for <strong>Pullum Ltd</strong>.</p>
           <p>Our dispatch desk will notify you of upcoming night shift collections. Reminder: all door-to-door transit is free of deductions and weekly payroll is deposited every Friday.</p>
@@ -367,8 +366,8 @@ export class EmailService {
       case 'REJECTED':
         subject = `Update Regarding Your Application (${applicant.rosterRef}) - Pullum Ltd`;
         messageBody = `
-          <p>Thank you for your interest in joining Pullum Ltd's harvesting crews in <strong>${applicant.town || 'your area'}</strong>.</p>
-          <p>At this time, we are unable to advance your application for immediate placement. However, your contact details remain in our verified pool, and we will notify you when new seasonal harvesting positions or peak rate bonuses become available.</p>
+          <p>Thank you for your interest in joining Pullum Ltd's catching crews in <strong>${applicant.town || 'your area'}</strong>.</p>
+          <p>At this time, we are unable to advance your application for immediate placement. However, your contact details remain in our verified pool, and we will notify you when new seasonal catching positions or peak rate bonuses become available.</p>
         `;
         ctaText = 'View National Vacancies';
         ctaUrl = `${this.appUrl}/`;
@@ -441,31 +440,31 @@ export class EmailService {
       customBody,
     } = payload;
     const sectorName =
-      sector === 'turkey' ? 'Commercial Turkey Harvesting' : 'Broiler Chicken Catching';
+      sector === 'turkey' ? 'Commercial Turkey Catching' : 'Broiler Chicken Catching';
 
-    let subject = customSubject || `Immediate Harvesting Squad Vacancies in ${town} - Pullum Ltd`;
+    let subject = customSubject || `Immediate Catching Team Vacancies in ${town} - Pullum Ltd`;
     let bodyText = customBody;
 
     if (!bodyText) {
       switch (template) {
         case 'reengage':
-          subject = `Immediate Harvesting Opportunities near ${town} — Guaranteed Friday Pay`;
-          bodyText = `Pullum Ltd has immediate start poultry harvesting vacancies near <strong>${town}</strong> with guaranteed Friday weekly pay (£750–£950/wk) and door-to-door heated minibus collection. Are you available for active squad placement?`;
+          subject = `Immediate Catching Opportunities near ${town} — Guaranteed Friday Pay`;
+          bodyText = `Pullum Ltd has immediate start poultry catching vacancies near <strong>${town}</strong> with guaranteed Friday weekly pay (£750–£950/wk) and door-to-door heated minibus collection. Are you available for active team placement?`;
           break;
         case 'urgent':
           subject = `[Urgent Shift Notification] Immediate Openings for ${sectorName} in ${town}`;
-          bodyText = `Urgent shift notification: We have immediate squad openings for <strong>${sectorName}</strong> in <strong>${town}</strong>. Minibus pickup is provided direct from your door. Contact Pullum Ltd now to claim your shift.`;
+          bodyText = `Urgent shift notification: We have immediate team openings for <strong>${sectorName}</strong> in <strong>${town}</strong>. Minibus pickup is provided direct from your door. Contact Pullum Ltd now to claim your shift.`;
           break;
         case 'peak':
           subject = `Peak Season Bonus Rates Active: Earn up to £1,100+/week in ${town}`;
-          bodyText = `Peak season harvesting bonus rates are now active for <strong>${sectorName}</strong> teams in <strong>${town}</strong>! Earn up to £1,100+/week with weekly Friday BACS payroll. Reply or log in to secure your spot.`;
+          bodyText = `Peak season catching bonus rates are now active for <strong>${sectorName}</strong> teams in <strong>${town}</strong>! Earn up to £1,100+/week with weekly Friday BACS payroll. Reply or log in to secure your spot.`;
           break;
         case 'rtw':
           subject = `Pullum Ltd Compliance: Complete your Right-to-Work verification`;
-          bodyText = `We are preparing our upcoming squad manifests in <strong>${town}</strong>. Please upload or share your UK Right-to-Work document or share code so we can finalize your deployment.`;
+          bodyText = `We are preparing our upcoming crew manifests in <strong>${town}</strong>. Please upload or share your UK Right-to-Work document or share code so we can finalize your deployment.`;
           break;
         default:
-          bodyText = `New poultry harvesting opportunities are available in <strong>${town}</strong> with Pullum Ltd.`;
+          bodyText = `New poultry catching opportunities are available in <strong>${town}</strong> with Pullum Ltd.`;
       }
     }
 
