@@ -191,7 +191,14 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                       </span>
                     </div>
 
-                    <h3 className="text-lg font-bold text-[#0F172A]">{job.title}</h3>
+                    <h3 className="text-lg font-bold text-[#0F172A]">
+                      <Link
+                        to={`/jobs/${job.id}`}
+                        className="hover:text-[#059669] text-inherit transition-colors no-underline"
+                      >
+                        {job.title}
+                      </Link>
+                    </h3>
                     <p className="text-xs text-[#64748B] leading-relaxed line-clamp-2">
                       {job.description}
                     </p>
@@ -213,10 +220,10 @@ export default function SectorHub({ sectorId, onSelectRegion }: SectorHubProps) 
                   </div>
 
                   <Link
-                    to={`/${sectorSlug}/${job.townId}?jobId=${job.id}&jobTitle=${encodeURIComponent(job.title)}`}
+                    to={`/jobs/${job.id}`}
                     className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#059669] text-white font-mono text-xs font-semibold uppercase tracking-wider py-2.5 px-4 rounded-md transition-colors shadow-xs no-underline"
                   >
-                    <span>Apply for {job.townName || job.townId}</span>
+                    <span>View Role & Apply</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>

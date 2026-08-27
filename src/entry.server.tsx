@@ -11,13 +11,13 @@ import { Toaster } from 'sonner';
 import App from './App';
 import { SSRDataProvider } from './context/SSRDataContext';
 import { loadRouteData } from '../server/ssrLoader';
-import { TownLoaderData } from './types';
+import { SSRRouteData } from './types';
 
 export interface RenderResult {
   html: string;
   head: string;
   statusCode?: number;
-  initialData?: TownLoaderData | null;
+  initialData?: SSRRouteData | null;
 }
 
 export async function render(url: string): Promise<RenderResult> {
@@ -30,7 +30,7 @@ export async function render(url: string): Promise<RenderResult> {
     'pk_test_ZXZvbHZlZC1jYW1lbC01OS5jbGVyay5hY2NvdW50cy5kZXYk';
 
   // 1. Server-side Route Pre-fetching
-  let initialData: TownLoaderData | null = null;
+  let initialData: SSRRouteData | null = null;
   try {
     initialData = await loadRouteData(url);
   } catch (err) {

@@ -421,7 +421,7 @@ export default function Index({ onNavigate }: IndexProps) {
           {/* Job Vacancy Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredLiveJobs.map((job) => {
-              const targetUrl = `/${job.sector === 'chicken' ? 'chickens' : 'turkeys'}/${job.townId}?jobId=${job.id}&jobTitle=${encodeURIComponent(job.title)}`;
+              const targetUrl = `/jobs/${job.id}`;
               return (
                 <div
                   key={job.id}
@@ -446,7 +446,9 @@ export default function Index({ onNavigate }: IndexProps) {
 
                     {/* Job Title */}
                     <h3 className="text-lg font-bold text-[#0F172A] group-hover:text-[#059669] transition-colors leading-snug">
-                      {job.title}
+                      <Link to={targetUrl} className="hover:underline text-inherit no-underline">
+                        {job.title}
+                      </Link>
                     </h3>
 
                     {/* Location & Pay Details */}
@@ -481,7 +483,7 @@ export default function Index({ onNavigate }: IndexProps) {
                       to={targetUrl}
                       className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#059669] text-white font-mono text-xs font-semibold uppercase tracking-wider py-2.5 px-4 rounded-md transition-colors shadow-xs"
                     >
-                      <span>Apply & Reserve Pickup</span>
+                      <span>View Role & Apply</span>
                       <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </div>

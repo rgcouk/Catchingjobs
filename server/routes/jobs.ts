@@ -209,6 +209,91 @@ app.get('/api/jobs', async (c) => {
   return c.json(results);
 });
 
+// Helper to resolve specific job with enriched specs
+export async function getJobById(id: number | string) {
+  const numericId = Number(id);
+
+  // 1. Try DB
+  try {
+    const prisma = getPrisma();
+    const job = await prisma.jobPosting.findUnique({
+      where: { id: numericId },
+      include: {
+        _count: {
+          select: { applications: true },
+        },
+      },
+    });
+
+    if (job) {
+      const meta = findLocationMeta(job.townId);
+      const isChicken = job.sector.toLowerCase() === 'chicken';
+      return {
+        ...job,
+        ...meta,
+        weeklyPayEst: isChicken ? '£750 - £950' : '£800 - £1,100',
+        shiftPattern: isChicken
+          ? 'Guaranteed 40-50 hours weekly, stable night rosters (approx. 20:00 - 05:00)'
+          : 'Consistent roster, balanced day and evening harvesting blocks',
+        requirements: [
+          'Right to work in the UK (verified via passport / share code)',
+          'Physical fitness and stamina for livestock harvesting operations',
+          'Commitment to strict AHVLA & Lantra animal welfare protocols',
+          'Reliable attendance for nightly crew minibus pickup',
+        ],
+        trainingStandards: [
+          'Lantra Commercial Poultry Handling & Welfare (Level 2)',
+          'Pullum Ltd Standard Safety Induction & PPE Protocols',
+          'GLAA Compliant Agricultural Worker Certification',
+        ],
+      };
+    }
+  } catch (error) {
+    console.warn('[getJobById] DB query error, checking fallback roster:', error);
+  }
+
+  // 2. Try Fallback Jobs
+  const fallback = FALLBACK_JOBS.find((j) => String(j.id) === String(id));
+  if (fallback) {
+    const meta = findLocationMeta(fallback.townId);
+    const isChicken = fallback.sector === 'chicken';
+    return {
+      ...fallback,
+      ...meta,
+      weeklyPayEst: isChicken ? '£750 - £950' : '£800 - £1,100',
+      shiftPattern: isChicken
+        ? 'Guaranteed 40-50 hours weekly, stable night rosters (approx. 20:00 - 05:00)'
+        : 'Consistent roster, balanced day and evening harvesting blocks',
+      requirements: [
+        'Right to work in the UK (verified via passport / share code)',
+        'Physical fitness and stamina for livestock harvesting operations',
+        'Commitment to strict AHVLA & Lantra animal welfare protocols',
+        'Reliable attendance for nightly crew minibus pickup',
+      ],
+      trainingStandards: [
+        'Lantra Commercial Poultry Handling & Welfare (Level 2)',
+        'Pullum Ltd Standard Safety Induction & PPE Protocols',
+        'GLAA Compliant Agricultural Worker Certification',
+      ],
+    };
+  }
+
+  return null;
+}
+
+app.get('/api/jobs/:id', async (c) => {
+  const id = c.req.param('id');
+  const job = await getJobById(id);
+
+  if (!job) {
+    return c.json({ error: 'Job not found' }, 404);
+  }
+
+  return c.json(job);
+});
+
+export { FALLBACK_JOBS, findLocationMeta };
+
 export { app };
 const handler = handle(app);
 export const GET = handler;

@@ -1,8 +1,8 @@
 import React, { createContext, useContext } from 'react';
-import { TownLoaderData } from '../types';
+import { TownLoaderData, JobLoaderData, SSRRouteData } from '../types';
 
 interface SSRDataContextValue {
-  initialData?: TownLoaderData | null;
+  initialData?: SSRRouteData | TownLoaderData | JobLoaderData | any | null;
 }
 
 const SSRDataContext = createContext<SSRDataContextValue>({});
@@ -12,7 +12,7 @@ export function SSRDataProvider({
   initialData,
 }: {
   children: React.ReactNode;
-  initialData?: TownLoaderData | null;
+  initialData?: SSRRouteData | TownLoaderData | JobLoaderData | any | null;
 }) {
   return <SSRDataContext.Provider value={{ initialData }}>{children}</SSRDataContext.Provider>;
 }

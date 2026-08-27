@@ -1,10 +1,54 @@
 import { getPrisma } from './db';
 import { resolveTown } from '../src/data/locations';
-import { TownLoaderData } from '../src/types';
+import { TownLoaderData, JobLoaderData, SSRRouteData } from '../src/types';
+import { getJobById } from './routes/jobs';
 
-export async function loadRouteData(url: string): Promise<TownLoaderData | null> {
+export async function loadRouteData(url: string): Promise<SSRRouteData | null> {
   const pathname = url.split('?')[0];
   const parts = pathname.split('/').filter(Boolean);
+
+  // Match /jobs/:id or /jobs/:id/:slug
+  if (parts.length >= 2 && parts[0] === 'jobs') {
+    const rawJobId = parts[1];
+    try {
+      const job = await getJobById(rawJobId);
+      if (job) {
+        const sector = (job.sector === 'turkey' ? 'turkey' : 'chicken') as 'chicken' | 'turkey';
+        const staticLookup = resolveTown(sector, job.townId);
+        const townData = staticLookup?.town || {
+          id: job.townId,
+          name: job.townName || job.townId.charAt(0).toUpperCase() + job.townId.slice(1),
+          pickupPoint: job.pickupPoint || 'Company Minibus Home Pickup',
+          surrounding: job.county || 'Local Transit Corridor',
+          localizedCopy: job.description,
+          description: null,
+          phoneNumber: null,
+          region: {
+            id: job.regionId || 'uk',
+            name: job.regionName || 'UK Network',
+            county: job.county || 'UK',
+            activeCrews: 10,
+            seoCopy: undefined,
+          },
+        };
+
+        return {
+          job,
+          town: townData,
+          sector,
+        } as JobLoaderData;
+      }
+    } catch (err) {
+      console.warn('[SSR Loader] Error loading job data for route:', err);
+    }
+
+    return {
+      job: null,
+      town: null,
+      sector: 'chicken',
+      notFound: true,
+    } as JobLoaderData;
+  }
 
   // Match /chickens/:town, /turkeys/:town, /:sector/:town
   if (parts.length === 2) {

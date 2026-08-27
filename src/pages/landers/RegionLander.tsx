@@ -408,7 +408,14 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
                       </span>
                     </div>
 
-                    <h3 className="text-lg font-bold text-[#0F172A]">{job.title}</h3>
+                    <h3 className="text-lg font-bold text-[#0F172A]">
+                      <Link
+                        to={`/jobs/${job.id}`}
+                        className="hover:text-[#059669] text-inherit transition-colors no-underline"
+                      >
+                        {job.title}
+                      </Link>
+                    </h3>
                     <p className="text-xs text-[#64748B] leading-relaxed">{job.description}</p>
 
                     <div className="space-y-1.5 pt-2 text-xs font-mono text-[#64748B]">
@@ -423,21 +430,29 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      setSearchParams({ jobId: String(job.id), jobTitle: job.title });
-                      const formEl = document.getElementById('hero-triage-form');
-                      if (formEl) {
-                        formEl.scrollIntoView({ behavior: 'smooth' });
-                        const nameInput = formEl.querySelector('input');
-                        if (nameInput) nameInput.focus();
-                      }
-                    }}
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#059669] text-white font-mono text-xs font-semibold uppercase tracking-wider py-2.5 px-4 rounded-md transition-colors cursor-pointer shadow-xs"
-                  >
-                    <span>Apply for this {town.name} Role</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-2 pt-2">
+                    <Link
+                      to={`/jobs/${job.id}`}
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 border border-[#E2E8F0] hover:border-[#0F172A] bg-white text-[#0F172A] font-mono text-xs font-semibold uppercase tracking-wider py-2 px-3 rounded-md transition-colors shadow-xs no-underline"
+                    >
+                      <span>Role Info</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-[#059669]" />
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setSearchParams({ jobId: String(job.id), jobTitle: job.title });
+                        const formEl = document.getElementById('hero-triage-form');
+                        if (formEl) {
+                          formEl.scrollIntoView({ behavior: 'smooth' });
+                          const nameInput = formEl.querySelector('input');
+                          if (nameInput) nameInput.focus();
+                        }
+                      }}
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#0F172A] hover:bg-[#059669] text-white font-mono text-xs font-semibold uppercase tracking-wider py-2 px-3 rounded-md transition-colors cursor-pointer shadow-xs"
+                    >
+                      <span>Quick Apply</span>
+                    </button>
+                  </div>
                 </div>
               ))
             ) : (
