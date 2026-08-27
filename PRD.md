@@ -102,10 +102,9 @@ graph TD
 - **Social Sharing (`JobShareModal.tsx`)**: 1-click modal to copy URL, share via WhatsApp, Twitter/X, LinkedIn, and native mobile Web Share API.
 - **Integrated Application Funnel**: Direct anchor to inline triage form or 1-Click Fast Apply for logged-in workers.
 
-### 4.3 Interactive UK Catching Network Grid (`RegionalCatchingMap.tsx`)
-- **Lightweight SVG Vector Map**: Zero-dependency, 0ms instant-loading UK mainland vector map plotting 18 regional town depots across Lincolnshire, Norfolk, Yorkshire, Shropshire, and Suffolk.
-- **Visual Status Indicators**: Glowing radar pins for active depots with dashed green agricultural transit corridors.
-- **Interactive Depot Inspector**: Selecting any town displays active crew numbers, typical night shift earnings (£750–£980/wk), shift timings (20:00–05:00), transit pickup points, and direct links to chicken and turkey applications.
+### 4.3 Interactive UK Location Map (`RegionalCatchingMap.tsx`)
+- **Lightweight SVG Vector Map**: Zero-dependency, 0ms instant-loading UK mainland vector map with clickable location markers for towns covered across Lincolnshire, Norfolk, Yorkshire, Shropshire, and Suffolk.
+- **Clickable Location Markers**: Selecting any town displays the town area and direct 1-click links to chicken and turkey job pages.
 - **Quick Town Navigator**: Fast 1-click town pills grouped across UK regions.
 
 ### 4.4 Candidate Triage & 1-Click Fast Apply

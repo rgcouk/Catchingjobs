@@ -152,7 +152,7 @@ Catchingjobs/
 | **Sector Hubs** (`/chickens`, `/turkeys`) | Division-specific landing pages with filtered vacancies, interactive corridor map, and town depot directory                                  |
 | **Town SEO Landers** (`/:sector/:town`)   | SSR-rendered pages with JSON-LD `JobPosting` schema, editable Markdown SEO copy, embedded `HeroTriageForm`, local vacancies, and testimonials  |
 | **Dedicated Job Pages** (`/jobs/:id`)     | Shareable job view with schema.org `JobPosting` JSON-LD structured data, social sharing modal (`JobShareModal`), and direct application funnel |
-| **Interactive Catching Grid**            | 0ms instant-loading SVG vector map (`RegionalCatchingMap`) displaying 18 active town depots, crew counts, shift rotas, and 1-click links       |
+| **Interactive Location Map**              | 0ms instant-loading SVG vector map (`RegionalCatchingMap`) with clickable location markers linking to chicken and turkey vacancies across towns covered |
 | **Automated Triage**                      | Right to Work gate → Draft application creation → OTP verification (guest) or 1-Click Fast Apply (logged-in employee)                          |
 | **1-Click Fast Apply**                    | Logged-in workers auto-populate form fields, claim the draft via `/api/triage/claim`, and redirect straight to `/employee?applied=true`        |
 

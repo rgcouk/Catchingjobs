@@ -11,7 +11,7 @@ Catchingjobs is a UK recruitment and workforce operations platform dedicated to 
 - **Guaranteed Friday Payroll**: Emphasizes reliable weekly Friday BACS payroll (£750 - £1,050/wk) with piece-rate bonuses and zero travel deductions.
 - **Animal Welfare Compliance**: Enforces Lantra Level 2 Animal Welfare and AHVLA-approved bird handling standards (catching by both legs with breast support).
 - **Automated Screening & Right to Work**: Pre-screens candidates with instant UK Right to Work checks (no UK visa sponsorships provided) before collecting full registration.
-- **Interactive Coverage Grid**: Features an instant-loading SVG vector map mapping 18 towns covered with live crew numbers and shift rotas.
+- **Interactive Location Map**: Features an instant-loading SVG vector map with clickable location markers that link directly to chicken and turkey vacancies for each town covered.
 - **Dedicated SEO Job Pages**: Dynamic job vacancies (`/jobs/:id`) with schema.org `JobPosting` JSON-LD structured data for Google Jobs indexing and social sharing.
 - **Staff & Admin Management**: Equips operations dispatchers with an admin dashboard to review applicants on a Kanban board, publish job vacancies, and manage candidate workflows.
 
@@ -30,7 +30,7 @@ Catchingjobs is a UK recruitment and workforce operations platform dedicated to 
 | **Roster Reference (`rosterRef`)**        | A unique reference ID given to every application (formatted as `CJ-XXXXX`).                                                           |
 | **Automated Triage**                      | The quick form at the top of landing pages that checks UK Right to Work before moving candidates to full registration.                |
 | **1-Click Apply**                         | Fast application for logged-in workers that reuses their verified details and skips repetitive forms.                                 |
-| **Regional Catching Grid**                | Interactive vector map (`RegionalCatchingMap`) displaying towns covered, crew counts, and route corridors across the UK.              |
+| **Interactive Location Map**              | Instant-loading vector map (`RegionalCatchingMap`) with clickable location markers linking to chicken and turkey job pages.           |
 | **Email Log (`EmailLog`)**                | A record tracking every automated email sent to candidates (receipts, status updates, safety packs) and its delivery status.          |
 
 ---
