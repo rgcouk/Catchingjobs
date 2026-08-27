@@ -3,47 +3,39 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router';
-import {
-  Map,
-  MapControls,
-  MapMarker,
-  MarkerContent,
-  MarkerTooltip,
-  MapRoute,
-  type MapRef,
-} from '@/components/ui/map';
 import {
   MapPin,
   Briefcase,
   Users,
   Coins,
   ArrowRight,
-  Sparkles,
-  Compass,
-  Search,
+  Clock,
+  ShieldCheck,
+  Building2,
+  ChevronRight,
+  CheckCircle2,
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { REGIONS } from '@/data';
 
-export interface MapHubData {
+export interface TownLocation {
   id: string;
   name: string;
   regionId: string;
   regionName: string;
   county: string;
-  coordinates: [number, number]; // [lng, lat]
+  svgX: number; // Percentage coordinate on UK map (0-100)
+  svgY: number; // Percentage coordinate on UK map (0-100)
   activeCrews: number;
-  sectors: ('chicken' | 'turkey')[];
   weeklyPay: string;
-  shiftWindow: string;
+  shiftHours: string;
   pickupPoint: string;
+  surrounding: string[];
   description: string;
 }
 
-// Complete geographic coordinate dataset for UK poultry catching hubs
-export const UK_CATCHING_HUBS: MapHubData[] = [
+export const UK_TOWN_LOCATIONS: TownLocation[] = [
   // Lincolnshire Hubs
   {
     id: 'lincoln',
@@ -51,13 +43,15 @@ export const UK_CATCHING_HUBS: MapHubData[] = [
     regionId: 'lincolnshire',
     regionName: 'Lincolnshire',
     county: 'Lincolnshire',
-    coordinates: [-0.5406, 53.2307],
+    svgX: 62,
+    svgY: 48,
     activeCrews: 8,
-    sectors: ['chicken', 'turkey'],
-    weeklyPay: '£750 - £950/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Lincoln Central Hub & Minibus Collection',
-    description: 'Central operations hub covering high-density broiler farm networks.',
+    weeklyPay: '£750 - £950 / week',
+    shiftHours: '20:00 - 05:00 (Night Shift)',
+    pickupPoint: 'Lincoln Central Transit & Minibus Hub',
+    surrounding: ['Washingborough', 'Branston', 'Cherry Willingham', 'Nettleham'],
+    description:
+      'Central Lincolnshire operations hub serving high-volume commercial broiler grower networks.',
   },
   {
     id: 'boston',
@@ -65,13 +59,15 @@ export const UK_CATCHING_HUBS: MapHubData[] = [
     regionId: 'lincolnshire',
     regionName: 'Lincolnshire',
     county: 'Lincolnshire',
-    coordinates: [-0.0266, 52.9763],
+    svgX: 67,
+    svgY: 53,
     activeCrews: 6,
-    sectors: ['chicken'],
-    weeklyPay: '£780 - £980/wk',
-    shiftWindow: '19:30 - 04:30',
-    pickupPoint: 'Boston Fens Depot & Minibus Collection',
-    description: 'Primary broiler catching hub serving major South Lincolnshire processors.',
+    weeklyPay: '£780 - £980 / week',
+    shiftHours: '19:30 - 04:30 (Night Shift)',
+    pickupPoint: 'Boston Fens Depot & Minibus Hub',
+    surrounding: ['Kirton', 'Sutterton', 'Spalding', 'Wyberton'],
+    description:
+      'Primary South Lincolnshire catching division serving major poultry processors and growers.',
   },
   {
     id: 'sleaford',
@@ -79,13 +75,14 @@ export const UK_CATCHING_HUBS: MapHubData[] = [
     regionId: 'lincolnshire',
     regionName: 'Lincolnshire',
     county: 'Lincolnshire',
-    coordinates: [-0.4124, 52.9984],
+    svgX: 63,
+    svgY: 52,
     activeCrews: 5,
-    sectors: ['chicken'],
-    weeklyPay: '£750 - £950/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Sleaford Transit Point & Minibus Collection',
-    description: 'Dedicated broiler loading teams for central agricultural corridors.',
+    weeklyPay: '£750 - £950 / week',
+    shiftHours: '20:00 - 05:00 (Night Shift)',
+    pickupPoint: 'Sleaford Central Pickup Point',
+    surrounding: ['Ruskington', 'Heckington', 'Ancaster', 'Billinghay'],
+    description: 'Dedicated broiler loading crews for central Lincolnshire agricultural corridors.',
   },
   {
     id: 'grantham',
@@ -93,41 +90,15 @@ export const UK_CATCHING_HUBS: MapHubData[] = [
     regionId: 'lincolnshire',
     regionName: 'Lincolnshire',
     county: 'Lincolnshire',
-    coordinates: [-0.6385, 52.918],
+    svgX: 60,
+    svgY: 54,
     activeCrews: 4,
-    sectors: ['chicken', 'turkey'],
-    weeklyPay: '£760 - £960/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Grantham A1 Corridor & Minibus Collection',
-    description: 'Strategic A1 transit point connecting Lincolnshire and Midlands farms.',
-  },
-  {
-    id: 'louth',
-    name: 'Louth',
-    regionId: 'lincolnshire',
-    regionName: 'Lincolnshire',
-    county: 'Lincolnshire',
-    coordinates: [-0.0051, 53.3664],
-    activeCrews: 3,
-    sectors: ['chicken'],
-    weeklyPay: '£750 - £920/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Louth Wolds Transit & Minibus Collection',
-    description: 'East Lindsey farm coverage and broiler shed loading teams.',
-  },
-  {
-    id: 'gainsborough',
-    name: 'Gainsborough',
-    regionId: 'lincolnshire',
-    regionName: 'Lincolnshire',
-    county: 'Lincolnshire',
-    coordinates: [-0.7766, 53.3986],
-    activeCrews: 4,
-    sectors: ['chicken'],
-    weeklyPay: '£750 - £940/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Gainsborough Depot & Minibus Collection',
-    description: 'West Lincolnshire and Nottinghamshire border agricultural routes.',
+    weeklyPay: '£760 - £960 / week',
+    shiftHours: '20:00 - 05:00 (Night Shift)',
+    pickupPoint: 'Grantham A1 Corridor Hub',
+    surrounding: ['Barrowby', 'Gonerby', 'Colsterworth', 'Great Gonerby'],
+    description:
+      'Strategic A1 transit hub connecting Lincolnshire and East Midlands catching contracts.',
   },
 
   // Norfolk Hubs
@@ -137,13 +108,15 @@ export const UK_CATCHING_HUBS: MapHubData[] = [
     regionId: 'norfolk',
     regionName: 'Norfolk',
     county: 'Norfolk',
-    coordinates: [1.2974, 52.6309],
+    svgX: 82,
+    svgY: 57,
     activeCrews: 7,
-    sectors: ['chicken', 'turkey'],
-    weeklyPay: '£780 - £1,050/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Norwich City Hub & Minibus Collection',
-    description: 'East Anglian commercial turkey and broiler catching center.',
+    weeklyPay: '£780 - £1,050 / week',
+    shiftHours: '20:00 - 05:00 (Night Shift)',
+    pickupPoint: 'Norwich Operations Center',
+    surrounding: ['Costessey', 'Hethersett', 'Drayton', 'Taverham'],
+    description:
+      'East Anglian commercial broiler and turkey catching center with year-round rotas.',
   },
   {
     id: 'thetford',
@@ -151,41 +124,29 @@ export const UK_CATCHING_HUBS: MapHubData[] = [
     regionId: 'norfolk',
     regionName: 'Norfolk',
     county: 'Norfolk',
-    coordinates: [0.7497, 52.4137],
+    svgX: 76,
+    svgY: 60,
     activeCrews: 5,
-    sectors: ['chicken', 'turkey'],
-    weeklyPay: '£770 - £1,000/wk',
-    shiftWindow: '19:30 - 04:30',
-    pickupPoint: 'Thetford Forest Transit & Minibus Collection',
-    description: 'Cross-county hub connecting Norfolk and Suffolk poultry farms.',
+    weeklyPay: '£770 - £1,000 / week',
+    shiftHours: '19:30 - 04:30 (Night Shift)',
+    pickupPoint: 'Thetford Forest Transit Point',
+    surrounding: ['Brandon', 'Watton', 'East Harling', 'Mundford'],
+    description: 'Cross-county transit hub connecting Norfolk and Suffolk poultry grower farms.',
   },
   {
-    id: 'kings-lynn',
-    name: 'King’s Lynn',
+    id: 'attleborough',
+    name: 'Attleborough',
     regionId: 'norfolk',
     regionName: 'Norfolk',
     county: 'Norfolk',
-    coordinates: [0.3978, 52.7554],
+    svgX: 79,
+    svgY: 59,
     activeCrews: 4,
-    sectors: ['chicken'],
-    weeklyPay: '£750 - £950/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'King’s Lynn Depot & Minibus Collection',
-    description: 'West Norfolk and Fenland catching crew dispatch.',
-  },
-  {
-    id: 'diss',
-    name: 'Diss',
-    regionId: 'norfolk',
-    regionName: 'Norfolk',
-    county: 'Norfolk',
-    coordinates: [1.109, 52.378],
-    activeCrews: 3,
-    sectors: ['turkey', 'chicken'],
-    weeklyPay: '£800 - £1,100/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Diss Waveney Hub & Minibus Collection',
-    description: 'Specialist commercial turkey catching and broiler loading teams.',
+    weeklyPay: '£750 - £960 / week',
+    shiftHours: '20:00 - 05:00 (Night Shift)',
+    pickupPoint: 'Attleborough Central Depot',
+    surrounding: ['Wymondham', 'Besthorpe', 'Snetterton', 'Old Buckenham'],
+    description: 'Commercial poultry harvesting teams across South Norfolk broiler sheds.',
   },
 
   // Yorkshire Hubs
@@ -195,13 +156,15 @@ export const UK_CATCHING_HUBS: MapHubData[] = [
     regionId: 'yorkshire',
     regionName: 'Yorkshire',
     county: 'North & East Yorkshire',
-    coordinates: [-1.0815, 53.959],
+    svgX: 56,
+    svgY: 37,
     activeCrews: 6,
-    sectors: ['chicken', 'turkey'],
-    weeklyPay: '£780 - £1,020/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'York Ring Road Transit & Minibus Collection',
-    description: 'Major hub connecting Vale of York and North Yorkshire farm networks.',
+    weeklyPay: '£780 - £1,020 / week',
+    shiftHours: '20:00 - 05:00 (Night Shift)',
+    pickupPoint: 'York Transit Hub',
+    surrounding: ['Selby', 'Tadcaster', 'Pocklington', 'Stamford Bridge'],
+    description:
+      'Vale of York harvesting division serving high-welfare broiler and turkey contracts.',
   },
   {
     id: 'hull',
@@ -209,27 +172,15 @@ export const UK_CATCHING_HUBS: MapHubData[] = [
     regionId: 'yorkshire',
     regionName: 'Yorkshire',
     county: 'East Riding of Yorkshire',
-    coordinates: [-0.3367, 53.7457],
+    svgX: 65,
+    svgY: 41,
     activeCrews: 5,
-    sectors: ['chicken'],
-    weeklyPay: '£760 - £960/wk',
-    shiftWindow: '19:30 - 04:30',
-    pickupPoint: 'Hull & East Riding Hub & Minibus Collection',
-    description: 'East Yorkshire broiler harvesting crews with regular night rosters.',
-  },
-  {
-    id: 'beverley',
-    name: 'Beverley',
-    regionId: 'yorkshire',
-    regionName: 'Yorkshire',
-    county: 'East Riding of Yorkshire',
-    coordinates: [-0.4285, 53.8459],
-    activeCrews: 4,
-    sectors: ['chicken'],
-    weeklyPay: '£750 - £950/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Beverley Depot & Minibus Collection',
-    description: 'Wolds and Holderness poultry production routes.',
+    weeklyPay: '£760 - £960 / week',
+    shiftHours: '19:30 - 04:30 (Night Shift)',
+    pickupPoint: 'Hull & Humber Depot',
+    surrounding: ['Beverley', 'Cottingham', 'Hedon', 'Brough'],
+    description:
+      'East Yorkshire broiler and seasonal turkey operations with regular Friday payroll.',
   },
 
   // Shropshire Hubs
@@ -239,13 +190,14 @@ export const UK_CATCHING_HUBS: MapHubData[] = [
     regionId: 'shropshire',
     regionName: 'Shropshire',
     county: 'Shropshire & West Midlands',
-    coordinates: [-2.7533, 52.7064],
+    svgX: 41,
+    svgY: 56,
     activeCrews: 5,
-    sectors: ['chicken', 'turkey'],
-    weeklyPay: '£760 - £980/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Shrewsbury Hub & Minibus Collection',
-    description: 'West Midlands catching center serving Welsh border and Shropshire growers.',
+    weeklyPay: '£760 - £980 / week',
+    shiftHours: '20:00 - 05:00 (Night Shift)',
+    pickupPoint: 'Shrewsbury Operations Base',
+    surrounding: ['Bayston Hill', 'Shawbury', 'Baschurch', 'Wem'],
+    description: 'West Midlands division serving Welsh border and Shropshire commercial growers.',
   },
   {
     id: 'telford',
@@ -253,27 +205,14 @@ export const UK_CATCHING_HUBS: MapHubData[] = [
     regionId: 'shropshire',
     regionName: 'Shropshire',
     county: 'Shropshire',
-    coordinates: [-2.4453, 52.6784],
+    svgX: 44,
+    svgY: 57,
     activeCrews: 4,
-    sectors: ['chicken'],
-    weeklyPay: '£750 - £950/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Telford Central Depot & Minibus Collection',
-    description: 'Central Shropshire broiler catching operations.',
-  },
-  {
-    id: 'oswestry',
-    name: 'Oswestry',
-    regionId: 'shropshire',
-    regionName: 'Shropshire',
-    county: 'Shropshire',
-    coordinates: [-3.056, 52.8604],
-    activeCrews: 3,
-    sectors: ['chicken'],
-    weeklyPay: '£750 - £940/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Oswestry Border Transit & Minibus Collection',
-    description: 'Border corridor poultry catching crews.',
+    weeklyPay: '£750 - £950 / week',
+    shiftHours: '20:00 - 05:00 (Night Shift)',
+    pickupPoint: 'Telford Transit Point',
+    surrounding: ['Newport', 'Shifnal', 'Oakengates', 'Wellington'],
+    description: 'Central Shropshire catching teams with company minibus transit provided.',
   },
 
   // Suffolk Hubs
@@ -283,13 +222,14 @@ export const UK_CATCHING_HUBS: MapHubData[] = [
     regionId: 'suffolk',
     regionName: 'Suffolk',
     county: 'Suffolk',
-    coordinates: [1.1482, 52.0567],
+    svgX: 80,
+    svgY: 66,
     activeCrews: 4,
-    sectors: ['chicken', 'turkey'],
-    weeklyPay: '£770 - £980/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Ipswich Hub & Minibus Collection',
-    description: 'South East Anglia broiler and commercial poultry farm coverage.',
+    weeklyPay: '£770 - £980 / week',
+    shiftHours: '20:00 - 05:00 (Night Shift)',
+    pickupPoint: 'Ipswich Central Hub',
+    surrounding: ['Kesgrave', 'Woodbridge', 'Needham Market', 'Hadleigh'],
+    description: 'South East Anglia catching operations covering modern broiler grower units.',
   },
   {
     id: 'bury-st-edmunds',
@@ -297,233 +237,94 @@ export const UK_CATCHING_HUBS: MapHubData[] = [
     regionId: 'suffolk',
     regionName: 'Suffolk',
     county: 'Suffolk',
-    coordinates: [0.7132, 52.2461],
+    svgX: 74,
+    svgY: 63,
     activeCrews: 4,
-    sectors: ['chicken', 'turkey'],
-    weeklyPay: '£780 - £1,020/wk',
-    shiftWindow: '20:00 - 05:00',
-    pickupPoint: 'Bury St Edmunds Depot & Minibus Collection',
-    description: 'Central Suffolk corridor connecting high-yield broiler units.',
+    weeklyPay: '£780 - £1,020 / week',
+    shiftHours: '20:00 - 05:00 (Night Shift)',
+    pickupPoint: 'Bury St Edmunds Depot',
+    surrounding: ['Stowmarket', 'Ixworth', 'Mildenhall', 'Haverhill'],
+    description: 'Mid-Suffolk corridor with guaranteed hours and Lantra welfare certification.',
   },
-];
-
-// Corridor network connecting major transit routes
-const CORRIDOR_ROUTES: [number, number][][] = [
-  // Lincolnshire Spine
-  [
-    [-0.7766, 53.3986], // Gainsborough
-    [-0.5406, 53.2307], // Lincoln
-    [-0.4124, 52.9984], // Sleaford
-    [-0.0266, 52.9763], // Boston
-  ],
-  [
-    [-0.5406, 53.2307], // Lincoln
-    [-0.6385, 52.918], // Grantham
-  ],
-  [
-    [-0.5406, 53.2307], // Lincoln
-    [-0.0051, 53.3664], // Louth
-  ],
-  // Norfolk / East Anglia Spine
-  [
-    [0.3978, 52.7554], // King's Lynn
-    [1.2974, 52.6309], // Norwich
-    [1.109, 52.378], // Diss
-    [1.1482, 52.0567], // Ipswich
-  ],
-  [
-    [1.2974, 52.6309], // Norwich
-    [0.7497, 52.4137], // Thetford
-    [0.7132, 52.2461], // Bury St Edmunds
-    [1.1482, 52.0567], // Ipswich
-  ],
-  // Yorkshire Spine
-  [
-    [-1.0815, 53.959], // York
-    [-0.4285, 53.8459], // Beverley
-    [-0.3367, 53.7457], // Hull
-  ],
-  // Shropshire Spine
-  [
-    [-3.056, 52.8604], // Oswestry
-    [-2.7533, 52.7064], // Shrewsbury
-    [-2.4453, 52.6784], // Telford
-  ],
 ];
 
 interface RegionalCatchingMapProps {
   className?: string;
   initialSelectedRegionId?: string;
   initialSelectedTownId?: string;
-  onSelectHub?: (hub: MapHubData) => void;
 }
 
 export function RegionalCatchingMap({
   className = '',
   initialSelectedRegionId = 'ALL',
   initialSelectedTownId,
-  onSelectHub,
 }: RegionalCatchingMapProps) {
-  const mapRef = useRef<MapRef | null>(null);
-  const [isClient, setIsClient] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string>(initialSelectedRegionId);
-  const [selectedSector, setSelectedSector] = useState<'ALL' | 'chicken' | 'turkey'>('ALL');
-  const [selectedHub, setSelectedHub] = useState<MapHubData | null>(
-    () => UK_CATCHING_HUBS.find((h) => h.id === initialSelectedTownId) || UK_CATCHING_HUBS[0],
-  );
-  const [searchQuery, setSearchQuery] = useState('');
-  const [hoveredHubId, setHoveredHubId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  // Filtered hubs based on region, sector, and search query
-  const filteredHubs = useMemo(() => {
-    return UK_CATCHING_HUBS.filter((hub) => {
-      const matchesRegion = selectedRegion === 'ALL' || hub.regionId === selectedRegion;
-      const matchesSector =
-        selectedSector === 'ALL' || hub.sectors.includes(selectedSector as 'chicken' | 'turkey');
-      const matchesSearch =
-        !searchQuery ||
-        hub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        hub.regionName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        hub.county.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesRegion && matchesSector && matchesSearch;
-    });
-  }, [selectedRegion, selectedSector, searchQuery]);
-
-  // Handle zooming/flying to a selected hub
-  const handleSelectHub = (hub: MapHubData) => {
-    setSelectedHub(hub);
-    if (onSelectHub) {
-      onSelectHub(hub);
+  const [selectedTown, setSelectedTown] = useState<TownLocation>(() => {
+    if (initialSelectedTownId) {
+      const match = UK_TOWN_LOCATIONS.find((t) => t.id === initialSelectedTownId);
+      if (match) return match;
     }
-    if (mapRef.current) {
-      mapRef.current.flyTo({
-        center: hub.coordinates,
-        zoom: 9.2,
-        duration: 1200,
-        essential: true,
-      });
-    }
+    return UK_TOWN_LOCATIONS[0]; // Lincoln by default
+  });
+
+  // Filtered towns based on region filter
+  const displayedTowns =
+    selectedRegion === 'ALL'
+      ? UK_TOWN_LOCATIONS
+      : UK_TOWN_LOCATIONS.filter((t) => t.regionId === selectedRegion);
+
+  const handleSelectTown = (town: TownLocation) => {
+    setSelectedTown(town);
+    setSelectedRegion(town.regionId);
   };
 
-  // Handle region filter change and pan map to that region center
   const handleSelectRegion = (regionId: string) => {
     setSelectedRegion(regionId);
-    if (regionId === 'ALL') {
-      if (mapRef.current) {
-        mapRef.current.flyTo({
-          center: [-0.6, 52.9],
-          zoom: 7.0,
-          duration: 1400,
-        });
-      }
-    } else {
-      const regionHubs = UK_CATCHING_HUBS.filter((h) => h.regionId === regionId);
-      if (regionHubs.length > 0) {
-        setSelectedHub(regionHubs[0]);
-        if (mapRef.current) {
-          mapRef.current.flyTo({
-            center: regionHubs[0].coordinates,
-            zoom: 8.5,
-            duration: 1300,
-          });
-        }
+    if (regionId !== 'ALL') {
+      const firstInRegion = UK_TOWN_LOCATIONS.find((t) => t.regionId === regionId);
+      if (firstInRegion) {
+        setSelectedTown(firstInRegion);
       }
     }
   };
-
-  if (!isClient) {
-    return (
-      <div className={'rounded-2xl border border-[#E2E8F0] bg-white p-8 shadow-sm ' + className}>
-        <div className="h-[480px] bg-slate-100 rounded-xl animate-pulse flex items-center justify-center text-xs font-mono text-slate-400">
-          Loading UK Catching Operations Map...
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={'space-y-6 ' + className}>
-      {/* Top Header & Interactive Filter Bar */}
-      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 sm:p-6 shadow-xs space-y-5">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      {/* Header & Quick Region Selector */}
+      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-mono font-semibold uppercase tracking-wider bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
                 <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
-                Live Operational Network
+                Active Catching Corridors
               </span>
-              <span className="text-xs font-mono text-[#64748B]">18 Active Regional Depots</span>
+              <span className="text-xs font-mono text-[#64748B]">18 Regional Town Depots</span>
             </div>
             <h3 className="text-2xl font-bold tracking-tight text-[#0F172A]">
-              Interactive Catching Network & Regional Hubs
+              UK Catching Operations & Regional Hubs
             </h3>
             <p className="text-xs sm:text-sm text-[#64748B] max-w-2xl">
-              Explore active poultry catching corridors across Lincolnshire, Norfolk, Yorkshire,
-              Shropshire, and Suffolk. Select a depot to inspect live shift rotas and piece-rate
-              earnings.
+              Select your region or town depot below to inspect active shift rotas, transit pickup
+              points, and guaranteed Friday piece-rate earnings.
             </p>
           </div>
 
-          {/* Quick Sector & Search Inputs */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 text-[#94A3B8] absolute left-3 top-2.5" />
-              <input
-                type="text"
-                placeholder="Search town depot..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs font-mono bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg focus:outline-hidden focus:border-[#059669] w-[180px] sm:w-[220px]"
-              />
+          <div className="flex items-center gap-2 text-xs font-mono">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] font-semibold">
+              <Users className="w-3.5 h-3.5 text-[#059669]" />
+              <span>42 Active Crews</span>
             </div>
-
-            <div className="flex items-center bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg p-1 text-xs font-mono">
-              <button
-                type="button"
-                onClick={() => setSelectedSector('ALL')}
-                className={
-                  'px-2.5 py-1 rounded-md transition-colors cursor-pointer ' +
-                  (selectedSector === 'ALL'
-                    ? 'bg-[#0F172A] text-white font-semibold shadow-xs'
-                    : 'text-[#64748B] hover:text-[#0F172A]')
-                }
-              >
-                All
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedSector('chicken')}
-                className={
-                  'px-2.5 py-1 rounded-md transition-colors cursor-pointer ' +
-                  (selectedSector === 'chicken'
-                    ? 'bg-[#059669] text-white font-semibold shadow-xs'
-                    : 'text-[#64748B] hover:text-[#0F172A]')
-                }
-              >
-                Broiler
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedSector('turkey')}
-                className={
-                  'px-2.5 py-1 rounded-md transition-colors cursor-pointer ' +
-                  (selectedSector === 'turkey'
-                    ? 'bg-[#EA580C] text-white font-semibold shadow-xs'
-                    : 'text-[#64748B] hover:text-[#0F172A]')
-                }
-              >
-                Turkey
-              </button>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0] text-[#059669] font-semibold">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Lantra Certified</span>
             </div>
           </div>
         </div>
 
-        {/* Region Pills Navigation */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-none">
+        {/* Region Filter Buttons */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-none border-t border-[#F1F5F9]">
           <button
             type="button"
             onClick={() => handleSelectRegion('ALL')}
@@ -531,13 +332,13 @@ export function RegionalCatchingMap({
               'px-3 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 cursor-pointer border ' +
               (selectedRegion === 'ALL'
                 ? 'bg-[#0F172A] text-white border-[#0F172A] font-bold shadow-xs'
-                : 'bg-white text-[#64748B] border-[#E2E8F0] hover:border-[#0F172A]')
+                : 'bg-[#F8FAFC] text-[#64748B] border-[#E2E8F0] hover:border-[#0F172A] hover:text-[#0F172A]')
             }
           >
-            All UK Regions ({UK_CATCHING_HUBS.length})
+            All UK Regions ({UK_TOWN_LOCATIONS.length})
           </button>
           {REGIONS.map((region) => {
-            const count = UK_CATCHING_HUBS.filter((h) => h.regionId === region.id).length;
+            const count = UK_TOWN_LOCATIONS.filter((t) => t.regionId === region.id).length;
             const isSelected = selectedRegion === region.id;
             return (
               <button
@@ -567,250 +368,274 @@ export function RegionalCatchingMap({
         </div>
       </div>
 
-      {/* Main Map Presentation Stage */}
-      <div className="relative rounded-2xl border border-[#E2E8F0] overflow-hidden bg-white shadow-md">
-        <div className="h-[460px] sm:h-[540px] w-full relative">
-          <Map
-            ref={mapRef}
-            center={[-0.6, 52.85]}
-            zoom={7.1}
-            minZoom={5.5}
-            maxZoom={14}
-            theme="light"
-            style={{ width: '100%', height: '100%' }}
-          >
-            <MapControls position="bottom-right" />
+      {/* Main Split Presentation: Interactive Vector Map & Live Hub Inspector */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        {/* Left: Clean, Lightweight SVG Vector Map of UK Catching Corridors */}
+        <div className="lg:col-span-6 xl:col-span-7 bg-[#0F172A] text-white rounded-2xl p-5 sm:p-6 border border-slate-800 flex flex-col justify-between relative overflow-hidden min-h-[440px] shadow-sm">
+          {/* Map Title & Legend Overlay */}
+          <div className="flex items-center justify-between z-10">
+            <div className="flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
+                UK Catching Grid
+              </span>
+            </div>
+            <div className="flex items-center gap-3 text-[11px] font-mono text-slate-300">
+              <span className="flex items-center gap-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" /> Active
+                Depots
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-3.5 h-0.5 border-t border-dashed border-emerald-400" /> Corridors
+              </span>
+            </div>
+          </div>
 
-            {/* Connecting Corridor Operational Lines */}
-            {CORRIDOR_ROUTES.map((routeCoords, idx) => (
-              <MapRoute
-                key={'route-' + idx}
-                coordinates={routeCoords}
-                color="#10B981"
-                width={3}
-                opacity={0.55}
-                dashArray={[2, 2]}
+          {/* SVG Map Canvas Container */}
+          <div className="relative w-full h-[360px] sm:h-[400px] my-2 flex items-center justify-center">
+            <svg
+              viewBox="0 0 100 100"
+              className="w-full h-full max-h-[380px] drop-shadow-lg select-none"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              {/* Simplified stylized UK mainland silhouette paths */}
+              <defs>
+                <linearGradient id="ukGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#1E293B" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#0F172A" stopOpacity="0.95" />
+                </linearGradient>
+                <radialGradient id="hubGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#10B981" stopOpacity="0.6" />
+                  <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+
+              {/* Stylized UK Landmass Polygon */}
+              <path
+                d="M 38 12 L 48 8 L 56 12 L 58 20 L 53 28 L 56 34 L 64 36 L 70 42 L 66 50 L 80 54 L 86 58 L 84 68 L 74 72 L 66 74 L 56 75 L 42 74 L 32 76 L 24 74 L 28 66 L 36 62 L 36 50 L 46 44 L 42 34 L 34 26 L 38 12 Z"
+                fill="url(#ukGradient)"
+                stroke="#334155"
+                strokeWidth="1.2"
+                strokeLinejoin="round"
               />
-            ))}
 
-            {/* Interactive Hub Markers */}
-            {filteredHubs.map((hub) => {
-              const isSelected = selectedHub?.id === hub.id;
-              const isHovered = hoveredHubId === hub.id;
+              {/* Connecting Agricultural Transit Corridors */}
+              <path
+                d="M 56 37 L 65 41 L 62 48 L 63 52 L 67 53 L 60 54"
+                fill="none"
+                stroke="#059669"
+                strokeWidth="0.9"
+                strokeDasharray="1.5 1.5"
+                opacity="0.7"
+              />
+              <path
+                d="M 62 48 L 76 60 L 82 57 L 79 59 L 74 63 L 80 66"
+                fill="none"
+                stroke="#059669"
+                strokeWidth="0.9"
+                strokeDasharray="1.5 1.5"
+                opacity="0.7"
+              />
+              <path
+                d="M 41 56 L 44 57 L 60 54"
+                fill="none"
+                stroke="#059669"
+                strokeWidth="0.9"
+                strokeDasharray="1.5 1.5"
+                opacity="0.5"
+              />
 
-              return (
-                <MapMarker
-                  key={hub.id}
-                  longitude={hub.coordinates[0]}
-                  latitude={hub.coordinates[1]}
-                  onClick={() => handleSelectHub(hub)}
-                  onMouseEnter={() => setHoveredHubId(hub.id)}
-                  onMouseLeave={() => setHoveredHubId(null)}
-                >
-                  <MarkerContent>
-                    <div
-                      className={
-                        'relative flex items-center justify-center cursor-pointer transition-transform duration-200 ' +
-                        (isSelected
-                          ? 'scale-125 z-30'
-                          : isHovered
-                            ? 'scale-115 z-20'
-                            : 'scale-100 z-10')
-                      }
-                    >
-                      {/* Pulse Ring for Active Hubs */}
-                      <span
-                        className={
-                          'absolute w-10 h-10 rounded-full opacity-40 animate-ping ' +
-                          (hub.sectors.includes('chicken') ? 'bg-[#059669]' : 'bg-[#EA580C]')
-                        }
+              {/* Town Hub Markers */}
+              {displayedTowns.map((town) => {
+                const isSelected = selectedTown?.id === town.id;
+                return (
+                  <g
+                    key={town.id}
+                    onClick={() => handleSelectTown(town)}
+                    className="cursor-pointer group"
+                  >
+                    {/* Pulsing ring for selected / active */}
+                    {isSelected && (
+                      <circle
+                        cx={town.svgX}
+                        cy={town.svgY}
+                        r="6.5"
+                        fill="url(#hubGlow)"
+                        className="animate-ping"
                       />
+                    )}
 
-                      {/* Marker Icon Pill */}
-                      <div
-                        className={
-                          'px-2.5 py-1.5 rounded-xl flex items-center gap-1.5 shadow-md border font-mono transition-colors ' +
-                          (isSelected
-                            ? 'bg-[#0F172A] text-white border-white ring-2 ring-[#059669]'
-                            : hub.sectors.includes('chicken')
-                              ? 'bg-white text-[#0F172A] border-[#059669]/60 hover:bg-[#ECFDF5]'
-                              : 'bg-white text-[#0F172A] border-[#EA580C]/60 hover:bg-amber-50')
-                        }
+                    {/* Outer marker ring */}
+                    <circle
+                      cx={town.svgX}
+                      cy={town.svgY}
+                      r={isSelected ? 3.6 : 2.4}
+                      fill={isSelected ? '#10B981' : '#059669'}
+                      stroke="#FFFFFF"
+                      strokeWidth={isSelected ? 1.0 : 0.6}
+                      className="transition-all duration-200 group-hover:r-3.8"
+                    />
+
+                    {/* Inner pin dot */}
+                    <circle
+                      cx={town.svgX}
+                      cy={town.svgY}
+                      r={isSelected ? 1.4 : 0.9}
+                      fill="#FFFFFF"
+                    />
+
+                    {/* Town label */}
+                    <text
+                      x={town.svgX + 4}
+                      y={town.svgY + 1}
+                      fill={isSelected ? '#34D399' : '#E2E8F0'}
+                      fontSize={isSelected ? '3.2' : '2.6'}
+                      fontWeight={isSelected ? 'bold' : 'normal'}
+                      fontFamily="monospace"
+                      className="transition-colors pointer-events-none drop-shadow"
+                    >
+                      {town.name}
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
+
+          {/* Lower hint */}
+          <div className="text-[11px] font-mono text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-2.5 z-10">
+            <span>Click any location dot to inspect depot</span>
+            <span className="text-emerald-400 font-semibold">{selectedTown.name} Selected</span>
+          </div>
+        </div>
+
+        {/* Right: Selected Hub Live Details Card */}
+        <div className="lg:col-span-6 xl:col-span-5 bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs flex flex-col justify-between space-y-6">
+          <div className="space-y-5">
+            {/* Depot Header */}
+            <div className="flex items-start justify-between gap-3 border-b border-[#F1F5F9] pb-4">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[#059669] bg-[#ECFDF5] px-2.5 py-0.5 rounded border border-[#A7F3D0]">
+                  <MapPin className="w-3 h-3" />
+                  <span>{selectedTown.regionName} Corridor</span>
+                </div>
+                <h4 className="text-2xl font-bold text-[#0F172A]">
+                  {selectedTown.name} Catching Depot
+                </h4>
+                <p className="text-xs text-[#64748B] font-mono">{selectedTown.county}</p>
+              </div>
+
+              <div className="text-right shrink-0">
+                <div className="text-xs font-mono font-bold text-[#0F172A] bg-[#F8FAFC] border border-[#E2E8F0] px-2.5 py-1 rounded-md">
+                  {selectedTown.activeCrews} Active Crews
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
+              {selectedTown.description}
+            </p>
+
+            {/* Core Metrics Grid */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-xl space-y-1">
+                <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#64748B]">
+                  <Coins className="w-3.5 h-3.5 text-[#059669]" />
+                  <span>Weekly Pay</span>
+                </div>
+                <div className="text-sm font-bold font-mono text-[#0F172A]">
+                  {selectedTown.weeklyPay}
+                </div>
+                <div className="text-[10px] text-[#059669] font-mono">BACS every Friday</div>
+              </div>
+
+              <div className="bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-xl space-y-1">
+                <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#64748B]">
+                  <Clock className="w-3.5 h-3.5 text-[#059669]" />
+                  <span>Shift Pattern</span>
+                </div>
+                <div className="text-sm font-bold font-mono text-[#0F172A]">
+                  {selectedTown.shiftHours.split(' ')[0]}
+                </div>
+                <div className="text-[10px] text-[#64748B] font-mono">Stable Night Roster</div>
+              </div>
+            </div>
+
+            {/* Transit & Surrounding Areas */}
+            <div className="space-y-3 pt-2 text-xs font-mono">
+              <div className="space-y-1">
+                <div className="text-[#64748B] font-semibold flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" />
+                  <span>Minibus Transit Hub:</span>
+                </div>
+                <p className="text-[#0F172A] pl-5">{selectedTown.pickupPoint}</p>
+              </div>
+
+              {selectedTown.surrounding && selectedTown.surrounding.length > 0 && (
+                <div className="space-y-1.5">
+                  <div className="text-[#64748B] font-semibold">Surrounding Areas Covered:</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedTown.surrounding.map((area) => (
+                      <span
+                        key={area}
+                        className="bg-slate-100 text-[#334155] px-2 py-0.5 rounded text-[11px]"
                       >
-                        <Briefcase
-                          className={
-                            'w-3.5 h-3.5 ' +
-                            (isSelected
-                              ? 'text-emerald-400'
-                              : hub.sectors.includes('chicken')
-                                ? 'text-[#059669]'
-                                : 'text-[#EA580C]')
-                          }
-                        />
-                        <span className="text-[11px] font-bold tracking-tight">{hub.name}</span>
-                      </div>
-                    </div>
-                  </MarkerContent>
+                        {area}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
-                  {/* Marker Popup Tooltip */}
-                  <MarkerTooltip>
-                    <div className="bg-[#0F172A] text-white text-xs font-mono p-2.5 rounded-lg shadow-xl space-y-1 max-w-[200px] border border-slate-700">
-                      <div className="font-bold flex items-center justify-between text-emerald-400">
-                        <span>{hub.name} Hub</span>
-                        <span className="text-[10px] text-slate-300">{hub.activeCrews} crews</span>
-                      </div>
-                      <p className="text-[11px] text-slate-300">{hub.county}</p>
-                      <div className="text-[11px] font-bold text-white pt-1 border-t border-slate-700/80">
-                        {hub.weeklyPay}
-                      </div>
-                    </div>
-                  </MarkerTooltip>
-                </MapMarker>
-              );
-            })}
-          </Map>
+          {/* Action CTAs */}
+          <div className="pt-4 border-t border-[#F1F5F9] grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <Link
+              to={'/chickens/' + selectedTown.id}
+              className="inline-flex items-center justify-center gap-1.5 bg-[#059669] hover:bg-[#047857] text-white font-mono text-xs font-semibold py-2.5 px-3 rounded-lg transition-colors shadow-xs no-underline"
+            >
+              <span>{selectedTown.name} Chickens</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
 
-          {/* Floating Map Legend Overlay */}
-          <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md p-3 rounded-xl border border-[#E2E8F0] shadow-sm text-xs font-mono space-y-1.5 hidden sm:block pointer-events-none z-10">
-            <div className="font-bold text-[#0F172A] flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-              <Compass className="w-3.5 h-3.5 text-[#059669]" /> UK Catching Grid
-            </div>
-            <div className="flex items-center gap-2 text-[11px] text-[#475569]">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#059669]" />
-              <span>Broiler Chicken Depots</span>
-            </div>
-            <div className="flex items-center gap-2 text-[11px] text-[#475569]">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#EA580C]" />
-              <span>Turkey Harvesting Corridors</span>
-            </div>
-            <div className="flex items-center gap-2 text-[11px] text-[#64748B]">
-              <span className="w-4 h-0.5 border-t-2 border-dashed border-emerald-500" />
-              <span>Active Minibus Routes</span>
-            </div>
+            <Link
+              to={'/turkeys/' + selectedTown.id}
+              className="inline-flex items-center justify-center gap-1.5 bg-[#0F172A] hover:bg-slate-800 text-white font-mono text-xs font-semibold py-2.5 px-3 rounded-lg transition-colors no-underline"
+            >
+              <span>{selectedTown.name} Turkeys</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Lower Dashboard Panels (Matching the layout of the user reference image) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Panel 1: AI Assistant & Real-Time Roster Dispatch */}
-        <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 shadow-xs flex flex-col justify-between space-y-4">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#059669] flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" /> Dispatch Roster AI
-              </span>
-              <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
-            </div>
-
-            {/* Chat bubble styled after reference image */}
-            <div className="bg-[#ECFDF5] border border-[#A7F3D0] p-3 rounded-lg text-xs text-[#065F46] space-y-1.5">
-              <p className="font-semibold">
-                Looking for active catching work in {selectedHub?.name || 'your area'}?
-              </p>
-              <p className="text-[11px] text-[#047857] leading-relaxed">
-                Night shifts operate 20:00–05:00. Weekly Friday BACS pay is deposited without
-                deductions.
-              </p>
-            </div>
-          </div>
-
-          <div className="pt-2 border-t border-[#F1F5F9] flex items-center justify-between text-xs font-mono">
-            <span className="text-[#64748B]">Response Time:</span>
-            <span className="text-[#059669] font-bold">&lt; 15 mins</span>
-          </div>
+      {/* Fast Town Directory Badges */}
+      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs space-y-3">
+        <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#64748B]">
+          Quick Town Depot Navigator:
         </div>
-
-        {/* Panel 2: Weekly Piece Rate & Performance Metric */}
-        <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 shadow-xs flex flex-col justify-between space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-semibold uppercase text-[#64748B]">
-                Average Weekly Pay
-              </span>
-              <div className="w-8 h-8 rounded-lg bg-[#ECFDF5] text-[#059669] flex items-center justify-center">
-                <Coins className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="space-y-1">
-              <div className="text-3xl font-bold font-mono tracking-tight text-[#0F172A]">
-                £780–£980
-              </div>
-              <p className="text-xs text-[#64748B]">
-                Weekly BACS payroll every Friday morning with clear digital slips.
-              </p>
-            </div>
-          </div>
-
-          <div className="pt-2 border-t border-[#F1F5F9] flex items-center justify-between text-xs font-mono">
-            <span className="text-[#64748B]">Payroll Day:</span>
-            <span className="text-[#059669] font-bold">Every Friday</span>
-          </div>
-        </div>
-
-        {/* Panel 3: Active Catching Teams Deployed */}
-        <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 shadow-xs flex flex-col justify-between space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-semibold uppercase text-[#64748B]">
-                Active Catching Teams
-              </span>
-              <div className="w-8 h-8 rounded-lg bg-[#F8FAFC] text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center">
-                <Users className="w-4 h-4 text-[#059669]" />
-              </div>
-            </div>
-            <div className="space-y-1">
-              <div className="text-3xl font-bold font-mono tracking-tight text-[#0F172A]">
-                42 Teams
-              </div>
-              <p className="text-xs text-[#64748B]">
-                Disciplined 7–9 person crews operating across 18 regional town depots.
-              </p>
-            </div>
-          </div>
-
-          <div className="pt-2 border-t border-[#F1F5F9] flex items-center justify-between text-xs font-mono">
-            <span className="text-[#64748B]">Welfare Standard:</span>
-            <span className="text-[#0F172A] font-bold">Lantra Level 2</span>
-          </div>
-        </div>
-
-        {/* Panel 4: Selected Hub Focus & Quick Apply Anchor */}
-        <div className="bg-[#0F172A] text-white rounded-xl p-5 shadow-md flex flex-col justify-between space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 font-semibold flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5" /> {selectedHub?.name || 'Selected'} Hub
-              </span>
-              <Badge
-                variant="outline"
-                className="border-slate-600 text-slate-300 text-[10px] font-mono"
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+          {UK_TOWN_LOCATIONS.map((town) => {
+            const isSelected = selectedTown.id === town.id;
+            return (
+              <button
+                key={town.id}
+                type="button"
+                onClick={() => handleSelectTown(town)}
+                className={
+                  'px-3 py-2 rounded-lg text-xs font-mono text-left transition-all border cursor-pointer ' +
+                  (isSelected
+                    ? 'bg-[#ECFDF5] border-[#059669] text-[#065F46] font-bold shadow-xs ring-1 ring-[#059669]'
+                    : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#334155] hover:bg-white hover:border-[#0F172A]')
+                }
               >
-                {selectedHub?.regionName}
-              </Badge>
-            </div>
-
-            <div className="space-y-1">
-              <h4 className="text-xl font-bold text-white">{selectedHub?.name} Division</h4>
-              <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
-                {selectedHub?.description}
-              </p>
-            </div>
-
-            <div className="text-xs font-mono text-emerald-400 font-semibold pt-1">
-              {selectedHub?.weeklyPay} • Night Shift (20:00–05:00)
-            </div>
-          </div>
-
-          <div className="pt-3 border-t border-slate-700/80 flex items-center justify-between gap-2">
-            <Link
-              to={'/chickens/' + (selectedHub?.id || 'lincoln')}
-              className="inline-flex items-center justify-center gap-1.5 w-full bg-[#059669] hover:bg-[#047857] text-white font-mono text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs no-underline"
-            >
-              <span>Explore {selectedHub?.name} Jobs</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
+                <div className="font-semibold">{town.name}</div>
+                <div className="text-[10px] text-[#64748B]">{town.regionName}</div>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
