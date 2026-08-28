@@ -207,86 +207,88 @@ export default function Index({ onNavigate }: IndexProps) {
         />
       </Helmet>
 
-      {/* Hero Section */}
-      <section className="border-b border-[#E2E8F0] bg-white py-12 lg:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#ECFDF5] border border-[#A7F3D0] rounded-full text-xs font-mono font-medium text-[#065F46] shadow-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" />
+      {/* 1. Hero Section with Full Background Image */}
+      <section
+        className="relative bg-[#0F172A] text-white py-20 sm:py-24 lg:py-32 border-b border-[#E2E8F0] overflow-hidden"
+        id="hero"
+      >
+        {/* Background Image & Multi-layer Contrast Gradients */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/images/homepage-hero.jpg"
+            alt="Poultry catching operations and crew transit minibus"
+            className="w-full h-full object-cover object-center scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A]/95 via-[#0F172A]/85 to-[#0F172A]/70" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-transparent to-black/40" />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl space-y-7">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-xs font-mono font-medium text-[#A7F3D0] shadow-sm">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#34D399]" />
                 <span>UK's #1 Rated Poultry Catching Operator · GLAA Licensed</span>
               </div>
-
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#0F172A] leading-[1.12] text-balance">
-                Honest work. <br />
-                <span className="text-[#059669]">Weekly Friday pay.</span>
-              </h1>
-
-              <p className="text-base sm:text-lg text-[#64748B] max-w-xl font-normal leading-relaxed text-pretty">
-                Poultry catching work managed directly by Pullum Ltd. Free home pickup, friendly
-                teams, and guaranteed weekly Friday payroll across poultry catching locations in
-                England.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <Link
-                  to="/chickens"
-                  className="group inline-flex items-center justify-center gap-2.5 bg-[#059669] hover:bg-[#047857] active:scale-[0.98] text-white font-mono text-xs font-semibold uppercase tracking-wider px-6 py-3.5 rounded-lg transition-all duration-200 shadow-xs hover:shadow-md focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
-                >
-                  <span>Explore Chicken Catching</span>
-                  <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-0.5 transition-transform duration-200">
-                    <ArrowRight className="w-3 h-3 text-white" />
-                  </div>
-                </Link>
-                <Link
-                  to="/turkeys"
-                  className="group inline-flex items-center justify-center gap-2 border border-[#E2E8F0] hover:border-[#0F172A] hover:bg-[#F8FAFC] active:scale-[0.98] bg-white text-[#0F172A] font-mono text-xs font-semibold uppercase tracking-wider px-6 py-3.5 rounded-lg transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#0F172A] focus-visible:ring-offset-2"
-                >
-                  <span>Explore Turkey Catching</span>
-                  <ArrowRight className="w-4 h-4 text-[#64748B] group-hover:text-[#0F172A] group-hover:translate-x-0.5 transition-all duration-200" />
-                </Link>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-[#E2E8F0] text-xs font-mono text-[#64748B]">
-                <span className="flex items-center gap-1.5 font-medium text-[#0F172A]">
-                  <Truck className="w-4 h-4 text-[#059669]" /> Free Home Pickup
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#059669]/25 backdrop-blur-md border border-[#059669]/40 rounded-full text-xs font-mono text-white shadow-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#34D399] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#34D399]"></span>
                 </span>
-                <span className="flex items-center gap-1.5 font-medium text-[#0F172A]">
-                  <ShieldCheck className="w-4 h-4 text-[#059669]" /> GLAA Licensed
-                </span>
-                <span className="flex items-center gap-1.5 font-medium text-[#0F172A]">
-                  <Users className="w-4 h-4 text-[#059669]" /> Supportive Crews
-                </span>
+                <span>Live UK Roster · 18 Regional Locations</span>
               </div>
             </div>
 
-            <div className="relative aspect-square lg:aspect-[4/3] rounded-2xl bg-[#F8FAFC] overflow-hidden border border-[#E2E8F0] ring-1 ring-black/5 shadow-sm">
-              <img
-                src="/images/homepage-hero.jpg"
-                alt="Poultry catching operations and crew transit minibus"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md p-3.5 rounded-xl border border-white/80 text-xs font-mono text-[#0F172A] flex items-center justify-between shadow-md">
-                <span className="font-semibold flex items-center gap-2">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#059669] opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#059669]"></span>
-                  </span>
-                  Live UK Roster
-                </span>
-                <span className="text-[#64748B] font-medium">18 Regional Locations</span>
-              </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.12] text-balance">
+              Honest work. <br />
+              <span className="text-[#34D399]">Weekly Friday pay.</span>
+            </h1>
+
+            <p className="text-base sm:text-lg text-[#CBD5E1] max-w-2xl font-normal leading-relaxed text-pretty">
+              Poultry catching work managed directly by Pullum Ltd. Free door-to-door home pickup,
+              friendly squads, and guaranteed weekly Friday payroll across poultry catching
+              locations in England.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3.5 pt-2">
+              <Link
+                to="/chickens"
+                className="group inline-flex items-center justify-center gap-2.5 bg-[#059669] hover:bg-[#047857] active:scale-[0.98] text-white font-mono text-xs font-semibold uppercase tracking-wider px-6 py-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg focus-visible:ring-2 focus-visible:ring-[#34D399] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F172A]"
+              >
+                <span>Explore Chicken Catching</span>
+                <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-0.5 transition-transform duration-200">
+                  <ArrowRight className="w-3 h-3 text-white" />
+                </div>
+              </Link>
+              <Link
+                to="/turkeys"
+                className="group inline-flex items-center justify-center gap-2 border border-white/20 hover:border-white hover:bg-white/10 active:scale-[0.98] bg-white/5 backdrop-blur-sm text-white font-mono text-xs font-semibold uppercase tracking-wider px-6 py-4 rounded-lg transition-all duration-200 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F172A]"
+              >
+                <span>Explore Turkey Catching</span>
+                <ArrowRight className="w-4 h-4 text-[#CBD5E1] group-hover:text-white group-hover:translate-x-0.5 transition-all duration-200" />
+              </Link>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-6 sm:gap-8 pt-6 border-t border-white/15 text-xs font-mono text-[#CBD5E1]">
+              <span className="flex items-center gap-2 font-medium text-white">
+                <Truck className="w-4 h-4 text-[#34D399]" /> Free Door-to-Door Pickup
+              </span>
+              <span className="flex items-center gap-2 font-medium text-white">
+                <ShieldCheck className="w-4 h-4 text-[#34D399]" /> GLAA Licensed & Insured
+              </span>
+              <span className="flex items-center gap-2 font-medium text-white">
+                <Users className="w-4 h-4 text-[#34D399]" /> Supportive Dedicated Crews
+              </span>
             </div>
           </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
-        {/* Core Agricultural Divisions */}
-        <section className="space-y-8" id="sectors">
+      {/* 2. Core Agricultural Divisions Section (White Background) */}
+      <section className="bg-white py-16 lg:py-24 border-b border-[#E2E8F0]" id="sectors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           <div className="max-w-3xl space-y-3">
-            <span className="text-xs font-mono uppercase font-semibold text-[#059669]">
+            <span className="text-xs font-mono uppercase font-semibold text-[#059669] tracking-wider">
               Specialized Divisions
             </span>
             <h2 className="text-3xl font-bold tracking-tight text-[#0F172A]">
@@ -371,10 +373,12 @@ export default function Index({ onNavigate }: IndexProps) {
               </div>
             </Link>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Live Harvesting Vacancies Section */}
-        <section className="space-y-8" id="vacancies">
+      {/* 3. Live Harvesting Vacancies Section (Soft Slate Canvas Background) */}
+      <section className="bg-[#F8FAFC] py-16 lg:py-24 border-b border-[#E2E8F0]" id="vacancies">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="max-w-2xl space-y-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#ECFDF5] border border-[#A7F3D0] rounded-full text-xs font-mono font-semibold text-[#065F46] uppercase tracking-wider shadow-xs">
@@ -495,15 +499,19 @@ export default function Index({ onNavigate }: IndexProps) {
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Interactive UK Regional Catching Map & Live Network */}
-        <section className="space-y-6" id="interactive-map">
+      {/* 4. Interactive UK Regional Catching Map & Live Network (White Background) */}
+      <section className="bg-white py-16 lg:py-24 border-b border-[#E2E8F0]" id="interactive-map">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <RegionalCatchingMap />
-        </section>
+        </div>
+      </section>
 
-        {/* National Regional & Town Routing Directory */}
-        <section className="space-y-10" id="directory">
+      {/* 5. National Regional & Town Routing Directory (Soft Slate Background) */}
+      <section className="bg-[#F8FAFC] py-16 lg:py-24 border-b border-[#E2E8F0]" id="directory">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           <div className="max-w-3xl space-y-3">
             <span className="text-xs font-mono font-semibold text-[#059669] uppercase tracking-widest">
               Regional Directory
@@ -598,86 +606,90 @@ export default function Index({ onNavigate }: IndexProps) {
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Notices, Events & Resources Sections */}
-        <section className="grid lg:grid-cols-3 gap-6">
-          {/* News */}
-          <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs ring-1 ring-black/[0.02]">
-            <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
-              <Newspaper className="w-4 h-4 text-[#059669]" />
-              <h3 className="font-bold text-base text-[#0F172A]">Notices & Updates</h3>
-            </div>
-            <div className="p-6 space-y-6">
-              {news.map((item) => (
-                <article key={item.id} className="space-y-2 group">
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-[#64748B]">{item.date}</span>
-                    <span className="text-[#059669] font-semibold">{item.category}</span>
-                  </div>
-                  <h4 className="font-bold text-sm text-[#0F172A] group-hover:text-[#059669] transition-colors leading-snug">
-                    {item.title}
-                  </h4>
-                  <p className="text-xs text-[#64748B] leading-relaxed">{item.summary}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          {/* Events */}
-          <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs ring-1 ring-black/[0.02]">
-            <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
-              <Calendar className="w-4 h-4 text-[#059669]" />
-              <h3 className="font-bold text-base text-[#0F172A]">Coordination Briefings</h3>
-            </div>
-            <div className="p-6 space-y-4">
-              {events.map((evt) => (
-                <div
-                  key={evt.id}
-                  className="p-3.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] space-y-2"
-                >
-                  <div className="flex items-center justify-between text-[11px] font-mono text-[#64748B]">
-                    <span>{evt.date}</span>
-                    <span className="tabular-nums">{evt.time}</span>
-                  </div>
-                  <h4 className="font-bold text-sm text-[#0F172A] leading-snug">{evt.title}</h4>
-                  <div className="text-[11px] font-mono text-[#64748B] flex items-center gap-1.5 pt-1">
-                    <MapPin className="w-3.5 h-3.5 text-[#059669]" />
-                    <span>{evt.location}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Resources */}
-          <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs ring-1 ring-black/[0.02]">
-            <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
-              <FileText className="w-4 h-4 text-[#059669]" />
-              <h3 className="font-bold text-base text-[#0F172A]">Compliance Guides</h3>
-            </div>
-            <div className="p-6 space-y-4">
-              {resources.map((res, idx) => (
-                <div
-                  key={idx}
-                  className="group p-3.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-white hover:border-[#059669] hover:shadow-xs transition-all duration-200 space-y-2 cursor-pointer"
-                >
-                  <div className="flex items-center justify-between text-[11px] font-mono">
-                    <span className="text-[#64748B] font-semibold">{res.type}</span>
-                    <span className="text-[#059669] font-semibold">{res.size}</span>
-                  </div>
-                  <div className="flex items-start justify-between gap-3">
-                    <h4 className="font-bold text-xs text-[#0F172A] leading-snug group-hover:text-[#059669] transition-colors">
-                      {res.title}
+      {/* 6. Notices, Events & Resources Section (White Background) */}
+      <section className="bg-white py-16 lg:py-24" id="resources">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* News */}
+            <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs ring-1 ring-black/[0.02]">
+              <div className="p-4.5 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
+                <Newspaper className="w-4 h-4 text-[#059669]" />
+                <h3 className="font-bold text-base text-[#0F172A]">Notices & Updates</h3>
+              </div>
+              <div className="p-6 space-y-6">
+                {news.map((item) => (
+                  <article key={item.id} className="space-y-2 group">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span className="text-[#64748B]">{item.date}</span>
+                      <span className="text-[#059669] font-semibold">{item.category}</span>
+                    </div>
+                    <h4 className="font-bold text-sm text-[#0F172A] group-hover:text-[#059669] transition-colors leading-snug">
+                      {item.title}
                     </h4>
-                    <Download className="w-4 h-4 text-[#94A3B8] shrink-0 group-hover:text-[#059669] group-hover:translate-y-0.5 transition-all duration-200" />
+                    <p className="text-xs text-[#64748B] leading-relaxed">{item.summary}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            {/* Events */}
+            <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs ring-1 ring-black/[0.02]">
+              <div className="p-4.5 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
+                <Calendar className="w-4 h-4 text-[#059669]" />
+                <h3 className="font-bold text-base text-[#0F172A]">Coordination Briefings</h3>
+              </div>
+              <div className="p-6 space-y-4">
+                {events.map((evt) => (
+                  <div
+                    key={evt.id}
+                    className="p-3.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] space-y-2"
+                  >
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[#64748B]">
+                      <span>{evt.date}</span>
+                      <span className="tabular-nums">{evt.time}</span>
+                    </div>
+                    <h4 className="font-bold text-sm text-[#0F172A] leading-snug">{evt.title}</h4>
+                    <div className="text-[11px] font-mono text-[#64748B] flex items-center gap-1.5 pt-1">
+                      <MapPin className="w-3.5 h-3.5 text-[#059669]" />
+                      <span>{evt.location}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Resources */}
+            <div className="rounded-2xl border border-[#E2E8F0] bg-white overflow-hidden shadow-xs ring-1 ring-black/[0.02]">
+              <div className="p-4.5 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2.5">
+                <FileText className="w-4 h-4 text-[#059669]" />
+                <h3 className="font-bold text-base text-[#0F172A]">Compliance Guides</h3>
+              </div>
+              <div className="p-6 space-y-4">
+                {resources.map((res, idx) => (
+                  <div
+                    key={idx}
+                    className="group p-3.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-white hover:border-[#059669] hover:shadow-xs transition-all duration-200 space-y-2 cursor-pointer"
+                  >
+                    <div className="flex items-center justify-between text-[11px] font-mono">
+                      <span className="text-[#64748B] font-semibold">{res.type}</span>
+                      <span className="text-[#059669] font-semibold">{res.size}</span>
+                    </div>
+                    <div className="flex items-start justify-between gap-3">
+                      <h4 className="font-bold text-xs text-[#0F172A] leading-snug group-hover:text-[#059669] transition-colors">
+                        {res.title}
+                      </h4>
+                      <Download className="w-4 h-4 text-[#94A3B8] shrink-0 group-hover:text-[#059669] group-hover:translate-y-0.5 transition-all duration-200" />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }
