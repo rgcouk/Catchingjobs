@@ -52,6 +52,23 @@ describe('Location & SSR Data Services', () => {
       expect(dataAttleborough?.town?.region.name).toBe('Norfolk');
     });
 
+    it('resolves region/county hub slug to dedicated county loader contract', () => {
+      const data = resolveTown('chickens', 'lincolnshire');
+      expect(data).not.toBeNull();
+      expect(data?.sector).toBe('chicken');
+      expect(data?.town?.id).toBe('lincolnshire');
+      expect(data?.town?.name).toBe('Lincolnshire');
+      expect(data?.town?.isRegionHub).toBe(true);
+      expect(data?.town?.towns?.length).toBeGreaterThanOrEqual(4);
+      expect(data?.town?.region.name).toBe('Lincolnshire');
+
+      const dataYorkshire = resolveTown('turkeys', 'yorkshire');
+      expect(dataYorkshire?.town?.id).toBe('yorkshire');
+      expect(dataYorkshire?.town?.name).toBe('Yorkshire');
+      expect(dataYorkshire?.town?.isRegionHub).toBe(true);
+      expect(dataYorkshire?.town?.towns?.length).toBeGreaterThanOrEqual(2);
+    });
+
     it('returns null for nonexistent town slug', () => {
       const data = resolveTown('chickens', 'nonexistent-town-xyz');
       expect(data).toBeNull();

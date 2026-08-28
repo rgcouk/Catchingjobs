@@ -110,25 +110,34 @@ export async function loadRouteData(url: string): Promise<SSRRouteData | null> {
       });
 
       if (regionRecord) {
-        const firstTown = regionRecord.towns?.[0];
+        const townList = (regionRecord.towns || []).map((t) => ({
+          id: t.id,
+          name: t.name,
+          pickupPoint: t.pickupPoint,
+          surrounding: t.surrounding,
+        }));
+        const townNames = townList.map((t) => t.name).join(', ');
+
         return {
           town: {
             id: regionRecord.id,
-            name: firstTown ? firstTown.name : regionRecord.name,
-            pickupPoint: firstTown ? firstTown.pickupPoint : `${regionRecord.name} Central Outpost`,
-            surrounding: firstTown ? firstTown.surrounding : `${regionRecord.county} Area`,
-            localizedCopy: firstTown ? firstTown.localizedCopy : regionRecord.seoCopy,
+            name: regionRecord.name,
+            pickupPoint: `${regionRecord.name} County Hub (Free home pickup across ${townNames})`,
+            surrounding: townNames || `${regionRecord.county} Area`,
+            localizedCopy: regionRecord.seoCopy,
             description: regionRecord.description,
             phoneNumber: regionRecord.phoneNumber,
+            isRegionHub: true,
+            towns: townList,
             region: {
               id: regionRecord.id,
               name: regionRecord.name,
               county: regionRecord.county,
               activeCrews: regionRecord.activeCrews,
               seoCopy: regionRecord.seoCopy,
-            }
+            },
           },
-          sector
+          sector,
         };
       }
     } catch (dbErr) {

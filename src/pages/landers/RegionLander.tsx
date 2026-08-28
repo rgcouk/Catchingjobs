@@ -138,17 +138,24 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
             r.id.toLowerCase() === regionId.toLowerCase() ||
             r.name.toLowerCase() === regionId.toLowerCase()
           ) {
-            const firstTown = r.towns?.[0];
+            const townList = (r.towns || []).map((t: any) => ({
+              id: t.id,
+              name: t.name,
+              pickupPoint: t.pickupPoint,
+              surrounding: t.surrounding || t.surroundingAreas?.join(', ') || '',
+            }));
+            const townNames = townList.map((t: any) => t.name).join(', ');
+
             foundTown = {
               id: r.id,
-              name: firstTown ? firstTown.name : r.name,
-              pickupPoint: firstTown ? firstTown.pickupPoint : `${r.name} Area`,
-              surrounding: firstTown
-                ? firstTown.surrounding || firstTown.surroundingAreas?.join(', ') || ''
-                : `${r.county} Area`,
-              localizedCopy: firstTown ? firstTown.localizedCopy : r.seoCopy,
+              name: r.name,
+              pickupPoint: `${r.name} County Hub (Free home pickup across ${townNames})`,
+              surrounding: townNames || `${r.county} Area`,
+              localizedCopy: r.seoCopy,
               description: r.description,
               phoneNumber: r.phoneNumber,
+              isRegionHub: true,
+              towns: townList,
               region: {
                 id: r.id,
                 name: r.name,
@@ -301,13 +308,14 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
               <div className="inline-flex items-center gap-2 text-xs font-mono font-medium text-white bg-white/10 px-2.5 py-0.5 rounded-md border border-white/20 uppercase tracking-wider mx-auto md:mx-0">
                 <MapPin className="w-3.5 h-3.5 text-[#059669]" />
                 <span>
-                  {town.name} Catching Area • {town.region.name}
+                  {town.name} {town.isRegionHub ? 'County Hub' : 'Catching Area'} •{' '}
+                  {town.region.name}
                 </span>
               </div>
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight">
-              Join our professional catching crews in {town.name}.
+              Join our professional catching crews {town.isRegionHub ? 'across' : 'in'} {town.name}.
             </h1>
 
             <div className="text-base text-slate-300 leading-relaxed font-normal max-w-xl mx-auto md:mx-0 prose prose-invert prose-p:mb-4">
@@ -336,8 +344,63 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
         </div>
       </section>
 
-      {/* Transit & Door-to-Door Pickup Section */}
+      {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+        {/* County Hub Town Depots Grid */}
+        {town.isRegionHub && town.towns && town.towns.length > 0 && (
+          <section
+            className="rounded-xl border border-[#E2E8F0] bg-white p-6 sm:p-8 space-y-6 shadow-xs"
+            id="region-towns"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#F1F5F9] pb-4">
+              <div>
+                <div className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[#059669] uppercase tracking-wider">
+                  <MapPin className="w-3.5 h-3.5" />
+                  Local Depots
+                </div>
+                <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+                  Town Depots & Pickup Points in {town.name}
+                </h2>
+              </div>
+              <span className="text-xs font-mono text-[#64748B]">
+                {town.towns.length} Active Town Outposts
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {town.towns.map((subTown) => (
+                <div
+                  key={subTown.id}
+                  className="rounded-xl border border-[#E2E8F0] p-4 bg-[#F8FAFC] hover:bg-white hover:border-[#0F172A] hover:shadow-xs transition-all space-y-2.5 flex flex-col justify-between"
+                >
+                  <div className="space-y-1.5">
+                    <div className="font-bold text-sm text-[#0F172A] flex items-center justify-between">
+                      <span>{subTown.name}</span>
+                      <span className="text-[10px] font-mono text-[#059669] bg-[#ECFDF5] px-2 py-0.5 rounded-full border border-[#A7F3D0]">
+                        Active Depot
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-[#64748B] line-clamp-2">
+                      {subTown.pickupPoint ||
+                        `Serving ${subTown.name} and surrounding grower farms`}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 pt-2 border-t border-[#E2E8F0] text-xs font-mono">
+                    <Link
+                      to={`/${sectorId === 'chicken' ? 'chickens' : 'turkeys'}/${subTown.id}`}
+                      className="text-[#059669] hover:underline font-semibold text-[11px] flex items-center gap-1"
+                    >
+                      <span>Explore {subTown.name}</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Transit & Door-to-Door Pickup Section */}
         <section className="rounded-xl border border-[#E2E8F0] bg-white p-6 sm:p-8 space-y-4 shadow-xs">
           <div className="flex items-center gap-3 border-b border-[#F1F5F9] pb-4">
             <div className="p-2.5 rounded-lg bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
@@ -359,8 +422,9 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
                 Home Collection Policy
               </span>
               <p className="text-sm text-[#0F172A] font-medium">
-                We pick you up directly from your front door in {town.name} and return you safely
-                after each shift.
+                We pick you up directly from your front door{' '}
+                {town.isRegionHub ? `across all ${town.name} depots` : `in ${town.name}`} and return
+                you safely after each shift.
               </p>
             </div>
             <div className="space-y-1">
@@ -383,7 +447,8 @@ export default function RegionLander({ regionId, sectorId, onBackToSector }: Reg
                 Active Local Roster
               </div>
               <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
-                Open Harvesting Vacancies in {town.name} & {town.region.name}
+                Open Harvesting Vacancies in {town.name}{' '}
+                {town.isRegionHub ? 'County' : `& ${town.region.name}`}
               </h2>
             </div>
             <span className="text-xs font-mono text-[#64748B]">

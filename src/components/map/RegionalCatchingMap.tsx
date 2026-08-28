@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router';
-import { MapPin, ArrowRight, ChevronRight, Building2, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, Compass, Radio } from 'lucide-react';
 import { REGIONS } from '@/data';
 
 export interface TownLocation {
@@ -14,22 +14,26 @@ export interface TownLocation {
   regionId: string;
   regionName: string;
   county: string;
-  svgX: number; // Percentage coordinate on UK map (0-100)
-  svgY: number; // Percentage coordinate on UK map (0-100)
+  coords: string;
+  svgX: number;
+  svgY: number;
   surrounding?: string[];
+  activeCrews: number;
 }
 
 export const UK_TOWN_LOCATIONS: TownLocation[] = [
-  // Lincolnshire Towns
+  // Lincolnshire
   {
     id: 'lincoln',
     name: 'Lincoln',
     regionId: 'lincolnshire',
     regionName: 'Lincolnshire',
     county: 'Lincolnshire',
+    coords: '53.23° N, 0.54° W',
     svgX: 62,
-    svgY: 48,
+    svgY: 46,
     surrounding: ['Washingborough', 'Branston', 'Cherry Willingham', 'Nettleham'],
+    activeCrews: 4,
   },
   {
     id: 'boston',
@@ -37,9 +41,11 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     regionId: 'lincolnshire',
     regionName: 'Lincolnshire',
     county: 'Lincolnshire',
-    svgX: 67,
-    svgY: 53,
+    coords: '52.98° N, 0.03° W',
+    svgX: 68,
+    svgY: 52,
     surrounding: ['Kirton', 'Sutterton', 'Spalding', 'Wyberton'],
+    activeCrews: 3,
   },
   {
     id: 'sleaford',
@@ -47,9 +53,11 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     regionId: 'lincolnshire',
     regionName: 'Lincolnshire',
     county: 'Lincolnshire',
+    coords: '53.00° N, 0.41° W',
     svgX: 63,
-    svgY: 52,
+    svgY: 51,
     surrounding: ['Ruskington', 'Heckington', 'Ancaster', 'Billinghay'],
+    activeCrews: 3,
   },
   {
     id: 'grantham',
@@ -57,21 +65,25 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     regionId: 'lincolnshire',
     regionName: 'Lincolnshire',
     county: 'Lincolnshire',
-    svgX: 60,
+    coords: '52.92° N, 0.64° W',
+    svgX: 59,
     svgY: 54,
     surrounding: ['Barrowby', 'Gonerby', 'Colsterworth', 'Great Gonerby'],
+    activeCrews: 4,
   },
 
-  // Norfolk Towns
+  // Norfolk
   {
     id: 'norwich',
     name: 'Norwich',
     regionId: 'norfolk',
     regionName: 'Norfolk',
     county: 'Norfolk',
-    svgX: 82,
+    coords: '52.63° N, 1.30° E',
+    svgX: 84,
     svgY: 57,
     surrounding: ['Costessey', 'Hethersett', 'Drayton', 'Taverham'],
+    activeCrews: 3,
   },
   {
     id: 'thetford',
@@ -79,9 +91,11 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     regionId: 'norfolk',
     regionName: 'Norfolk',
     county: 'Norfolk',
+    coords: '52.41° N, 0.75° E',
     svgX: 76,
     svgY: 60,
     surrounding: ['Brandon', 'Watton', 'East Harling', 'Mundford'],
+    activeCrews: 3,
   },
   {
     id: 'attleborough',
@@ -89,21 +103,25 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     regionId: 'norfolk',
     regionName: 'Norfolk',
     county: 'Norfolk',
-    svgX: 79,
+    coords: '52.52° N, 1.02° E',
+    svgX: 80,
     svgY: 59,
     surrounding: ['Wymondham', 'Besthorpe', 'Snetterton', 'Old Buckenham'],
+    activeCrews: 3,
   },
 
-  // Yorkshire Towns
+  // Yorkshire
   {
     id: 'york',
     name: 'York',
     regionId: 'yorkshire',
     regionName: 'Yorkshire',
     county: 'North & East Yorkshire',
-    svgX: 56,
-    svgY: 37,
+    coords: '53.96° N, 1.08° W',
+    svgX: 55,
+    svgY: 34,
     surrounding: ['Selby', 'Tadcaster', 'Pocklington', 'Stamford Bridge'],
+    activeCrews: 5,
   },
   {
     id: 'hull',
@@ -111,21 +129,25 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     regionId: 'yorkshire',
     regionName: 'Yorkshire',
     county: 'East Riding of Yorkshire',
-    svgX: 65,
-    svgY: 41,
+    coords: '53.77° N, 0.33° W',
+    svgX: 66,
+    svgY: 39,
     surrounding: ['Beverley', 'Cottingham', 'Hedon', 'Brough'],
+    activeCrews: 6,
   },
 
-  // Shropshire Towns
+  // Shropshire
   {
     id: 'shrewsbury',
     name: 'Shrewsbury',
     regionId: 'shropshire',
     regionName: 'Shropshire',
     county: 'Shropshire & West Midlands',
-    svgX: 41,
+    coords: '52.71° N, 2.75° W',
+    svgX: 40,
     svgY: 56,
     surrounding: ['Bayston Hill', 'Shawbury', 'Baschurch', 'Wem'],
+    activeCrews: 3,
   },
   {
     id: 'telford',
@@ -133,21 +155,25 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     regionId: 'shropshire',
     regionName: 'Shropshire',
     county: 'Shropshire',
+    coords: '52.68° N, 2.45° W',
     svgX: 44,
     svgY: 57,
     surrounding: ['Newport', 'Shifnal', 'Oakengates', 'Wellington'],
+    activeCrews: 3,
   },
 
-  // Suffolk Towns
+  // Suffolk
   {
     id: 'ipswich',
     name: 'Ipswich',
     regionId: 'suffolk',
     regionName: 'Suffolk',
     county: 'Suffolk',
-    svgX: 80,
-    svgY: 66,
+    coords: '52.06° N, 1.15° E',
+    svgX: 81,
+    svgY: 67,
     surrounding: ['Kesgrave', 'Woodbridge', 'Needham Market', 'Hadleigh'],
+    activeCrews: 4,
   },
   {
     id: 'bury-st-edmunds',
@@ -155,10 +181,27 @@ export const UK_TOWN_LOCATIONS: TownLocation[] = [
     regionId: 'suffolk',
     regionName: 'Suffolk',
     county: 'Suffolk',
+    coords: '52.25° N, 0.72° E',
     svgX: 74,
-    svgY: 63,
+    svgY: 64,
     surrounding: ['Stowmarket', 'Ixworth', 'Mildenhall', 'Haverhill'],
+    activeCrews: 4,
   },
+];
+
+const LOGISTICS_TRANSIT_ARCS = [
+  { from: 'york', to: 'hull' },
+  { from: 'york', to: 'lincoln' },
+  { from: 'lincoln', to: 'sleaford' },
+  { from: 'sleaford', to: 'boston' },
+  { from: 'sleaford', to: 'grantham' },
+  { from: 'grantham', to: 'shrewsbury' },
+  { from: 'shrewsbury', to: 'telford' },
+  { from: 'boston', to: 'thetford' },
+  { from: 'thetford', to: 'norwich' },
+  { from: 'thetford', to: 'attleborough' },
+  { from: 'thetford', to: 'bury-st-edmunds' },
+  { from: 'bury-st-edmunds', to: 'ipswich' },
 ];
 
 interface RegionalCatchingMapProps {
@@ -173,15 +216,15 @@ export function RegionalCatchingMap({
   initialSelectedTownId,
 }: RegionalCatchingMapProps) {
   const [selectedRegion, setSelectedRegion] = useState<string>(initialSelectedRegionId);
+  const [hoveredTown, setHoveredTown] = useState<TownLocation | null>(null);
   const [selectedTown, setSelectedTown] = useState<TownLocation>(() => {
     if (initialSelectedTownId) {
       const match = UK_TOWN_LOCATIONS.find((t) => t.id === initialSelectedTownId);
       if (match) return match;
     }
-    return UK_TOWN_LOCATIONS[0]; // Lincoln by default
+    return UK_TOWN_LOCATIONS[0];
   });
 
-  // Filtered towns based on region filter
   const displayedTowns =
     selectedRegion === 'ALL'
       ? UK_TOWN_LOCATIONS
@@ -202,214 +245,127 @@ export function RegionalCatchingMap({
     }
   };
 
+  const activeTown = hoveredTown || selectedTown;
+
   return (
-    <div className={'space-y-6 ' + className}>
-      {/* Clean Header & Region Selector */}
-      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 sm:p-6 shadow-xs space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-mono font-semibold uppercase tracking-wider bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
-                <span className="w-2 h-2 rounded-full bg-[#059669]" />
-                Towns We Cover
-              </span>
-              <span className="text-xs font-mono text-[#64748B]">
-                {UK_TOWN_LOCATIONS.length} UK Locations
+    <div className={`relative isolate w-full py-8 lg:py-12 ${className}`}>
+      {/* Background Ambience & Soft Gradients */}
+      <div
+        className="pointer-events-none absolute -top-24 -right-24 w-[600px] h-[600px] rounded-full bg-emerald-500/[0.035] blur-[100px]"
+        aria-hidden="true"
+      />
+
+      <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        {/* Left Column: Minimal Typography & Telemetry */}
+        <div className="lg:col-span-6 xl:col-span-5 space-y-7 z-10">
+          {/* Header */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2.5">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-mono font-medium tracking-wide">
+                <Radio className="w-3 h-3 text-emerald-600 animate-pulse" />
+                Live Hub Network · 13 Catching Areas
               </span>
             </div>
-            <h3 className="text-2xl font-bold tracking-tight text-[#0F172A]">Catching Locations</h3>
-            <p className="text-xs sm:text-sm text-[#64748B] max-w-2xl">
-              Click any location on the map to view vacancies in your area. Teams are picked up from
-              home as standard.
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-[1.1]">
+              Catching Locations
+            </h2>
+
+            <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed text-pretty">
+              Operating dedicated poultry catching squads across key agricultural counties. Free
+              door-to-door home collection provided as standard.
             </p>
           </div>
-        </div>
 
-        {/* Region Filter Buttons */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-none border-t border-[#F1F5F9]">
-          <button
-            type="button"
-            onClick={() => handleSelectRegion('ALL')}
-            className={
-              'px-3 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 cursor-pointer border ' +
-              (selectedRegion === 'ALL'
-                ? 'bg-[#0F172A] text-white border-[#0F172A] font-bold shadow-xs'
-                : 'bg-[#F8FAFC] text-[#64748B] border-[#E2E8F0] hover:border-[#0F172A] hover:text-[#0F172A]')
-            }
-          >
-            All Towns ({UK_TOWN_LOCATIONS.length})
-          </button>
-          {REGIONS.map((region) => {
-            const count = UK_TOWN_LOCATIONS.filter((t) => t.regionId === region.id).length;
-            const isSelected = selectedRegion === region.id;
-            return (
+          {/* Minimal Region Filter Strip */}
+          <div className="space-y-2">
+            <div className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
+              Filter County Hubs
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">
               <button
-                key={region.id}
                 type="button"
-                onClick={() => handleSelectRegion(region.id)}
-                className={
-                  'px-3 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 cursor-pointer border flex items-center gap-1.5 ' +
-                  (isSelected
-                    ? 'bg-[#059669] text-white border-[#059669] font-bold shadow-xs'
-                    : 'bg-white text-[#475569] border-[#E2E8F0] hover:border-[#059669]')
-                }
+                onClick={() => handleSelectRegion('ALL')}
+                className={`px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-150 cursor-pointer ${
+                  selectedRegion === 'ALL'
+                    ? 'bg-slate-900 text-white font-medium shadow-xs'
+                    : 'bg-white/80 text-slate-600 hover:text-slate-900 hover:bg-white shadow-2xs'
+                }`}
               >
-                <MapPin className={'w-3 h-3 ' + (isSelected ? 'text-white' : 'text-[#059669]')} />
-                <span>{region.name}</span>
-                <span
-                  className={
-                    'text-[10px] px-1.5 py-0.2 rounded-full ' +
-                    (isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600')
-                  }
-                >
-                  {count}
-                </span>
+                All ({UK_TOWN_LOCATIONS.length})
               </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Main Split Presentation: Interactive Vector Map & Location Card */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Left: Clean SVG Vector Map of UK Locations */}
-        <div className="lg:col-span-6 xl:col-span-7 bg-[#0F172A] text-white rounded-2xl p-5 sm:p-6 border border-slate-800 flex flex-col justify-between relative overflow-hidden min-h-[420px] shadow-sm">
-          {/* Map Header */}
-          <div className="flex items-center justify-between z-10">
-            <div className="flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
-                UK Locations Map
-              </span>
-            </div>
-            <div className="text-[11px] font-mono text-slate-300">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]" /> Click a location dot
-              </span>
-            </div>
-          </div>
-
-          {/* SVG Map Canvas Container */}
-          <div className="relative w-full h-[340px] sm:h-[380px] my-2 flex items-center justify-center">
-            <svg
-              viewBox="0 0 100 100"
-              className="w-full h-full max-h-[360px] drop-shadow-lg select-none"
-              preserveAspectRatio="xMidYMid meet"
-            >
-              <defs>
-                <linearGradient id="ukGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#1E293B" stopOpacity="0.8" />
-                  <stop offset="100%" stopColor="#0F172A" stopOpacity="0.95" />
-                </linearGradient>
-                <radialGradient id="hubGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#10B981" stopOpacity="0.6" />
-                  <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
-                </radialGradient>
-              </defs>
-
-              {/* Stylized UK Landmass Silhouette */}
-              <path
-                d="M 38 12 L 48 8 L 56 12 L 58 20 L 53 28 L 56 34 L 64 36 L 70 42 L 66 50 L 80 54 L 86 58 L 84 68 L 74 72 L 66 74 L 56 75 L 42 74 L 32 76 L 24 74 L 28 66 L 36 62 L 36 50 L 46 44 L 42 34 L 34 26 L 38 12 Z"
-                fill="url(#ukGradient)"
-                stroke="#334155"
-                strokeWidth="1.2"
-                strokeLinejoin="round"
-              />
-
-              {/* Clickable Location Markers */}
-              {displayedTowns.map((town) => {
-                const isSelected = selectedTown?.id === town.id;
+              {REGIONS.map((region) => {
+                const isSelected = selectedRegion === region.id;
+                const count = UK_TOWN_LOCATIONS.filter((t) => t.regionId === region.id).length;
                 return (
-                  <g
-                    key={town.id}
-                    onClick={() => handleSelectTown(town)}
-                    className="cursor-pointer group"
+                  <button
+                    key={region.id}
+                    type="button"
+                    onClick={() => handleSelectRegion(region.id)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${
+                      isSelected
+                        ? 'bg-emerald-600 text-white font-medium shadow-xs'
+                        : 'bg-white/80 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/70 shadow-2xs'
+                    }`}
                   >
-                    {/* Ring for selected */}
-                    {isSelected && (
-                      <circle cx={town.svgX} cy={town.svgY} r="6.5" fill="url(#hubGlow)" />
-                    )}
-
-                    {/* Outer marker circle */}
-                    <circle
-                      cx={town.svgX}
-                      cy={town.svgY}
-                      r={isSelected ? 3.6 : 2.4}
-                      fill={isSelected ? '#10B981' : '#059669'}
-                      stroke="#FFFFFF"
-                      strokeWidth={isSelected ? 1.0 : 0.6}
-                      className="transition-all duration-200 group-hover:r-3.8"
-                    />
-
-                    {/* Inner dot */}
-                    <circle
-                      cx={town.svgX}
-                      cy={town.svgY}
-                      r={isSelected ? 1.4 : 0.9}
-                      fill="#FFFFFF"
-                    />
-
-                    {/* Town text label */}
-                    <text
-                      x={town.svgX + 4}
-                      y={town.svgY + 1}
-                      fill={isSelected ? '#34D399' : '#E2E8F0'}
-                      fontSize={isSelected ? '3.2' : '2.6'}
-                      fontWeight={isSelected ? 'bold' : 'normal'}
-                      fontFamily="monospace"
-                      className="transition-colors pointer-events-none drop-shadow"
+                    <span>{region.name}</span>
+                    <span
+                      className={`text-[10px] ${
+                        isSelected ? 'text-emerald-100' : 'text-slate-400'
+                      }`}
                     >
-                      {town.name}
-                    </text>
-                  </g>
+                      {count}
+                    </span>
+                  </button>
                 );
               })}
-            </svg>
+            </div>
           </div>
 
-          {/* Lower hint */}
-          <div className="text-[11px] font-mono text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-2.5 z-10">
-            <span>Click any location dot</span>
-            <span className="text-emerald-400 font-semibold">{selectedTown.name} Selected</span>
-          </div>
-        </div>
-
-        {/* Right: Selected Location Card */}
-        <div className="lg:col-span-6 xl:col-span-5 bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs flex flex-col justify-between space-y-6">
-          <div className="space-y-5">
-            {/* Header */}
-            <div className="flex items-start justify-between gap-3 border-b border-[#F1F5F9] pb-4">
+          {/* Active Hub Card (Refined Minimal Card) */}
+          <div className="bg-white/70 backdrop-blur-xs rounded-2xl p-6 space-y-5 ring-1 ring-black/[0.04] shadow-xs">
+            {/* Hub Header */}
+            <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
               <div className="space-y-1">
-                <div className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[#059669] bg-[#ECFDF5] px-2.5 py-0.5 rounded border border-[#A7F3D0]">
-                  <MapPin className="w-3 h-3" />
-                  <span>{selectedTown.regionName}</span>
+                <div className="flex items-center gap-1.5 text-xs font-mono text-emerald-700 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span>{activeTown.regionName} Division</span>
                 </div>
-                <h4 className="text-2xl font-bold text-[#0F172A]">{selectedTown.name}</h4>
-                <p className="text-xs text-[#64748B] font-mono">{selectedTown.county}</p>
+                <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+                  {activeTown.name}
+                </h3>
+              </div>
+
+              <div className="text-right space-y-1">
+                <div className="text-[11px] font-mono text-slate-500">{activeTown.coords}</div>
+                <div className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                  <span>{activeTown.activeCrews} Active Crews</span>
+                </div>
               </div>
             </div>
 
-            {/* Transport Note */}
-            <div className="space-y-2 text-xs font-mono bg-[#F8FAFC] border border-[#E2E8F0] p-4 rounded-xl">
-              <div className="text-[#0F172A] font-semibold flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#059669]" />
-                <span>Transport Included</span>
+            {/* Transport Feature */}
+            <div className="flex items-center gap-3 text-xs font-mono text-slate-700 bg-emerald-50/50 px-3.5 py-2.5 rounded-xl border border-emerald-100/60">
+              <div className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                <Check className="w-3 h-3" />
               </div>
-              <p className="text-[#64748B] leading-relaxed">
-                Catching team members in {selectedTown.name} and surrounding areas are picked up
-                from home free of charge.
-              </p>
+              <div className="leading-relaxed">
+                <span className="font-semibold text-slate-900">Free Home Collection:</span> Crews
+                collected directly from home in {activeTown.name} & surrounding areas.
+              </div>
             </div>
 
             {/* Surrounding Areas */}
-            {selectedTown.surrounding && selectedTown.surrounding.length > 0 && (
-              <div className="space-y-2 text-xs font-mono">
-                <div className="text-[#64748B] font-semibold">Surrounding Areas:</div>
+            {activeTown.surrounding && activeTown.surrounding.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                  Pickup coverage:
+                </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {selectedTown.surrounding.map((area) => (
+                  {activeTown.surrounding.map((area) => (
                     <span
                       key={area}
-                      className="bg-slate-100 text-[#334155] px-2.5 py-1 rounded text-[11px]"
+                      className="text-xs font-mono text-slate-600 bg-slate-100/70 px-2.5 py-1 rounded-md text-[11px]"
                     >
                       {area}
                     </span>
@@ -417,54 +373,235 @@ export function RegionalCatchingMap({
                 </div>
               </div>
             )}
-          </div>
 
-          {/* Action CTAs */}
-          <div className="pt-4 border-t border-[#F1F5F9] grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <Link
-              to={'/chickens/' + selectedTown.id}
-              className="inline-flex items-center justify-center gap-1.5 bg-[#059669] hover:bg-[#047857] text-white font-mono text-xs font-semibold py-2.5 px-3 rounded-lg transition-colors shadow-xs no-underline"
-            >
-              <span>{selectedTown.name} Chickens</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-
-            <Link
-              to={'/turkeys/' + selectedTown.id}
-              className="inline-flex items-center justify-center gap-1.5 bg-[#0F172A] hover:bg-slate-800 text-white font-mono text-xs font-semibold py-2.5 px-3 rounded-lg transition-colors no-underline"
-            >
-              <span>{selectedTown.name} Turkeys</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Fast Town Navigator */}
-      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs space-y-3">
-        <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#64748B]">
-          Quick Town Selector:
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-          {UK_TOWN_LOCATIONS.map((town) => {
-            const isSelected = selectedTown.id === town.id;
-            return (
-              <button
-                key={town.id}
-                type="button"
-                onClick={() => handleSelectTown(town)}
-                className={
-                  'px-3 py-2 rounded-lg text-xs font-mono text-left transition-all border cursor-pointer ' +
-                  (isSelected
-                    ? 'bg-[#ECFDF5] border-[#059669] text-[#065F46] font-bold shadow-xs ring-1 ring-[#059669]'
-                    : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#334155] hover:bg-white hover:border-[#0F172A]')
-                }
+            {/* Action CTAs */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              <Link
+                to={`/chickens/${activeTown.id}`}
+                className="group relative inline-flex items-center justify-between bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-mono text-xs font-semibold px-4 py-2.5 rounded-xl transition-all duration-150 shadow-xs no-underline"
               >
-                <div className="font-semibold">{town.name}</div>
-                <div className="text-[10px] text-[#64748B]">{town.regionName}</div>
-              </button>
-            );
-          })}
+                <span>{activeTown.name} Chickens</span>
+                <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+                  <ArrowRight className="w-3 h-3 text-white" />
+                </div>
+              </Link>
+
+              <Link
+                to={`/turkeys/${activeTown.id}`}
+                className="group relative inline-flex items-center justify-between bg-slate-900 hover:bg-slate-800 active:scale-[0.98] text-white font-mono text-xs font-semibold px-4 py-2.5 rounded-xl transition-all duration-150 shadow-xs no-underline"
+              >
+                <span>{activeTown.name} Turkeys</span>
+                <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+                  <ArrowUpRight className="w-3 h-3 text-white" />
+                </div>
+              </Link>
+            </div>
+          </div>
+
+          {/* Quick Town Ticker */}
+          <div className="space-y-1.5 pt-1">
+            <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 uppercase tracking-widest">
+              <span>Quick Select Town</span>
+              <span>Hover node on map</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {UK_TOWN_LOCATIONS.map((town) => {
+                const isSelected = selectedTown.id === town.id;
+                return (
+                  <button
+                    key={town.id}
+                    type="button"
+                    onClick={() => handleSelectTown(town)}
+                    onMouseEnter={() => setHoveredTown(town)}
+                    onMouseLeave={() => setHoveredTown(null)}
+                    className={`px-2.5 py-1 rounded-md text-xs font-mono transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-emerald-600 text-white font-semibold shadow-xs'
+                        : 'bg-white/80 text-slate-600 hover:bg-white hover:text-slate-900 shadow-2xs'
+                    }`}
+                  >
+                    {town.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: High-End Architectural Vector Map Canvas */}
+        <div className="lg:col-span-6 xl:col-span-7 relative flex items-center justify-center lg:justify-end min-h-[460px] sm:min-h-[540px]">
+          <div className="relative w-full max-w-[620px] aspect-[4/5] sm:aspect-square flex items-center justify-center select-none">
+            <svg
+              viewBox="0 0 100 100"
+              className="w-full h-full overflow-visible select-none"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <defs>
+                {/* Landmass Subtle Surface Gradient */}
+                <linearGradient id="ukLandGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#0F172A" stopOpacity="0.03" />
+                  <stop offset="50%" stopColor="#059669" stopOpacity="0.05" />
+                  <stop offset="100%" stopColor="#0F172A" stopOpacity="0.06" />
+                </linearGradient>
+
+                {/* Pulsing Radar Glow */}
+                <radialGradient id="activeRadarGlow2" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#10B981" stopOpacity="0.5" />
+                  <stop offset="50%" stopColor="#059669" stopOpacity="0.2" />
+                  <stop offset="100%" stopColor="#059669" stopOpacity="0" />
+                </radialGradient>
+
+                {/* Transit Line Gradient */}
+                <linearGradient id="transitLineGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#059669" stopOpacity="0.15" />
+                  <stop offset="50%" stopColor="#059669" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#059669" stopOpacity="0.15" />
+                </linearGradient>
+              </defs>
+
+              {/* Minimal Topographic Grid & Latitude Lines */}
+              <g stroke="#CBD5E1" strokeWidth="0.25" strokeDasharray="1.5,3" opacity="0.4">
+                <line x1="15" y1="20" x2="95" y2="20" />
+                <line x1="15" y1="40" x2="95" y2="40" />
+                <line x1="15" y1="60" x2="95" y2="60" />
+                <line x1="15" y1="80" x2="95" y2="80" />
+                <line x1="25" y1="10" x2="25" y2="90" />
+                <line x1="50" y1="10" x2="50" y2="90" />
+                <line x1="75" y1="10" x2="75" y2="90" />
+              </g>
+
+              {/* UK Coastline Silhouette */}
+              <path
+                d="M 38 12 L 48 8 L 56 12 L 58 20 L 53 28 L 56 34 L 64 36 L 70 42 L 66 50 L 80 54 L 86 58 L 84 68 L 74 72 L 66 74 L 56 75 L 42 74 L 32 76 L 24 74 L 28 66 L 36 62 L 36 50 L 46 44 L 42 34 L 34 26 L 38 12 Z"
+                fill="url(#ukLandGrad2)"
+                stroke="#64748B"
+                strokeWidth="0.75"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
+
+              {/* Inter-Hub Logistics Fleet Transit Network Lines */}
+              <g>
+                {LOGISTICS_TRANSIT_ARCS.map((route, idx) => {
+                  const fromTown = UK_TOWN_LOCATIONS.find((t) => t.id === route.from);
+                  const toTown = UK_TOWN_LOCATIONS.find((t) => t.id === route.to);
+                  if (!fromTown || !toTown) return null;
+                  const isRouteActive =
+                    activeTown.id === fromTown.id || activeTown.id === toTown.id;
+
+                  return (
+                    <line
+                      key={`transit-${idx}`}
+                      x1={fromTown.svgX}
+                      y1={fromTown.svgY}
+                      x2={toTown.svgX}
+                      y2={toTown.svgY}
+                      stroke={isRouteActive ? '#059669' : 'url(#transitLineGrad2)'}
+                      strokeWidth={isRouteActive ? '1.0' : '0.45'}
+                      strokeDasharray={isRouteActive ? 'none' : '1.5,2'}
+                      className="transition-all duration-300"
+                    />
+                  );
+                })}
+              </g>
+
+              {/* Interactive Location Hub Markers */}
+              {displayedTowns.map((town) => {
+                const isSelected = selectedTown.id === town.id;
+                const isHovered = hoveredTown?.id === town.id;
+                const isActive = isSelected || isHovered;
+
+                // Major regional anchors that show labels by default
+                const isMajorAnchor = ['lincoln', 'norwich', 'york', 'shrewsbury'].includes(
+                  town.id,
+                );
+                const showLabel = isActive || isMajorAnchor;
+
+                return (
+                  <g
+                    key={town.id}
+                    onClick={() => handleSelectTown(town)}
+                    onMouseEnter={() => setHoveredTown(town)}
+                    onMouseLeave={() => setHoveredTown(null)}
+                    className="cursor-pointer group focus:outline-none"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        handleSelectTown(town);
+                      }
+                    }}
+                  >
+                    {/* Radar Pulse for Active Hub */}
+                    {isActive && (
+                      <circle
+                        cx={town.svgX}
+                        cy={town.svgY}
+                        r="8"
+                        fill="url(#activeRadarGlow2)"
+                        className="animate-pulse"
+                      />
+                    )}
+
+                    {/* Outer Target Circle */}
+                    <circle
+                      cx={town.svgX}
+                      cy={town.svgY}
+                      r={isActive ? 3.8 : 2.2}
+                      fill={isActive ? '#059669' : '#0F172A'}
+                      stroke="#FFFFFF"
+                      strokeWidth={isActive ? 1.4 : 0.8}
+                      className="transition-all duration-200"
+                    />
+
+                    {/* Inner Core */}
+                    <circle cx={town.svgX} cy={town.svgY} r={isActive ? 1.4 : 0.7} fill="#FFFFFF" />
+
+                    {/* Town Typography Label (Cleanly positioned on active/anchor) */}
+                    {showLabel && (
+                      <g className="pointer-events-none select-none">
+                        {isActive && (
+                          <rect
+                            x={town.svgX + 3.2}
+                            y={town.svgY - 2.8}
+                            width={town.name.length * 2.2 + 4}
+                            height="4.6"
+                            rx="1.2"
+                            fill="#0F172A"
+                            className="shadow-xs"
+                          />
+                        )}
+                        <text
+                          x={town.svgX + (isActive ? 5.2 : 4.2)}
+                          y={town.svgY + 0.6}
+                          fill={isActive ? '#FFFFFF' : '#475569'}
+                          fontSize={isActive ? '2.8' : '2.4'}
+                          fontWeight={isActive ? '700' : '500'}
+                          fontFamily="monospace"
+                          className="transition-all duration-150"
+                        >
+                          {town.name}
+                        </text>
+                      </g>
+                    )}
+                  </g>
+                );
+              })}
+            </svg>
+
+            {/* Bottom Floating Telemetry Bar */}
+            <div className="absolute bottom-1 right-2 flex items-center gap-4 text-[11px] font-mono text-slate-500 bg-white/85 backdrop-blur-md px-3.5 py-1.5 rounded-full ring-1 ring-black/[0.04] shadow-xs">
+              <div className="flex items-center gap-1.5">
+                <Compass className="w-3 h-3 text-emerald-600" />
+                <span>UK Corridor</span>
+              </div>
+              <span className="text-slate-200">|</span>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                <span className="text-emerald-700 font-medium">{activeTown.name}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

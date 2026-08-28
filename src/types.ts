@@ -45,6 +45,13 @@ export interface TownData {
   localizedCopy: string;
   description?: string | null;
   phoneNumber?: string | null;
+  isRegionHub?: boolean;
+  towns?: Array<{
+    id: string;
+    name: string;
+    pickupPoint: string;
+    surrounding?: string;
+  }>;
   region: {
     id: string;
     name: string;

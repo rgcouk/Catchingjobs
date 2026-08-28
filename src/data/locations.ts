@@ -64,25 +64,30 @@ export function resolveTown(sectorParam: string, townSlug: string): TownLoaderDa
       }
     }
 
-    // Fallback: If slug matches region ID, map to primary hub town or regional context
+    // Fallback: If slug matches region ID, map to dedicated County / Region Hub
     if (
       region.id.toLowerCase() === normalizedSlug ||
       region.name.toLowerCase() === normalizedSlug
     ) {
-      const primaryTown = region.towns?.[0];
+      const townList = (region.towns || []).map((t) => ({
+        id: t.id,
+        name: t.name,
+        pickupPoint: t.pickupPoint,
+        surrounding: t.surroundingAreas.join(', '),
+      }));
+      const townNames = townList.map((t) => t.name).join(', ');
+
       return {
         town: {
           id: region.id,
-          name: primaryTown ? primaryTown.name : region.name,
-          pickupPoint: primaryTown
-            ? primaryTown.pickupPoint
-            : `${region.name} Area (Free home pickup)`,
-          surrounding: primaryTown
-            ? primaryTown.surroundingAreas.join(', ')
-            : `${region.county} Area`,
-          localizedCopy: primaryTown ? primaryTown.localizedCopy : region.seoCopy,
+          name: region.name,
+          pickupPoint: `${region.name} County Hub (Free home pickup across ${townNames})`,
+          surrounding: townNames || `${region.county} Area`,
+          localizedCopy: region.seoCopy,
           description: region.description || null,
           phoneNumber: region.phoneNumber || null,
+          isRegionHub: true,
+          towns: townList,
           region: {
             id: region.id,
             name: region.name,

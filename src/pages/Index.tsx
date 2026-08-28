@@ -543,10 +543,10 @@ export default function Index({ onNavigate }: IndexProps) {
                       Active Crews
                     </span>
                     <Link
-                      to={`/chickens/${region.towns?.[0]?.id || region.id}`}
+                      to={`/chickens/${region.id}`}
                       className="group/hub inline-flex items-center gap-1 text-xs font-mono font-semibold text-[#059669] hover:underline transition-colors"
                     >
-                      <span>View Hub</span>
+                      <span>View {region.name} Hub</span>
                       <ChevronRight className="w-4 h-4 group-hover/hub:translate-x-0.5 transition-transform" />
                     </Link>
                   </div>
