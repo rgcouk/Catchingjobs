@@ -38,6 +38,7 @@ export function PublicHeader() {
             <svg className="w-3.5 h-3.5 opacity-70 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
           </span>
           <div className="absolute left-0 mt-2 w-56 rounded-md bg-white shadow-xl border border-slate-100 p-2 hidden group-hover:block transition-all z-50">
+            <Link to="/jobs" className="block px-3 py-2 rounded-sm text-xs font-bold text-slate-800 hover:bg-[#FFFDF0] hover:text-black">📋 All Open Vacancies</Link>
             <Link to="/chickens" className="block px-3 py-2 rounded-sm text-xs font-bold text-slate-800 hover:bg-[#FFFDF0] hover:text-black">
               🍗 Broiler Chicken Catching
             </Link>
@@ -46,7 +47,7 @@ export function PublicHeader() {
             </Link>
           </div>
         </div>
-        <Link to="/corporate" className="hover:text-black transition-colors">Locations</Link>
+        <Link to="/locations" className="hover:text-black transition-colors">Locations</Link>
         <Link to="/corporate" className="hover:text-black transition-colors">About</Link>
         <a href="tel:01205330190" className="hover:text-black transition-colors">Contact</a>
       </nav>
@@ -77,10 +78,11 @@ export function PublicHeader() {
               <Link to="/" className="text-black pb-2 border-b border-gray-100">Home</Link>
               <div className="flex flex-col space-y-2 pb-2 border-b border-gray-100">
                 <span className="text-black font-bold">Catching Jobs</span>
+                <Link to="/jobs" className="pl-4 text-slate-600 hover:text-black">📋 All Open Vacancies</Link>
                 <Link to="/chickens" className="pl-4 text-slate-600 hover:text-black">🍗 Broiler Chicken Catching</Link>
                 <Link to="/turkeys" className="pl-4 text-slate-600 hover:text-black">🦃 Commercial Turkey Catching</Link>
               </div>
-              <Link to="/corporate" className="text-black pb-2 border-b border-gray-100">Locations</Link>
+              <Link to="/locations" className="text-black pb-2 border-b border-gray-100">Locations</Link>
               <Link to="/corporate" className="text-black pb-2 border-b border-gray-100">About</Link>
               <a href="tel:01205330190" className="text-black pb-2 border-b border-gray-100">Contact</a>
               

@@ -59,6 +59,8 @@ import {
 } from 'lucide-react';
 
 import { ApplicationData } from './types';
+import JobsListPage from './pages/jobs/JobsListPage';
+import LocationsPage from './pages/locations/LocationsPage';
 
 export interface SubmittedApplication extends ApplicationData {
   id?: string;
@@ -248,6 +250,8 @@ function App() {
             <Routes>
               <Route path="/" element={<Index onNavigate={handleNavigate} />} />
               <Route path="/corporate" element={<CorporateLander onNavigate={handleNavigate} />} />
+              <Route path="/jobs" element={<JobsListPage />} />
+              <Route path="/locations" element={<LocationsPage />} />
               <Route path="/login/*" element={<Login />} />
               <Route path="/register/*" element={<Register />} />
               <Route
