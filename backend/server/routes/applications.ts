@@ -3,7 +3,7 @@ import { handle } from 'hono/vercel';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
 import { getPrisma } from '../db.js';
 import { ManageApplications } from '../../../frontend/src/services/ManageApplications.js';
-import { emailService } from '../../../frontend/src/services/EmailService.js';
+import { emailService } from '../services/EmailService.js';
 import { DomainError } from '../../../frontend/src/services/exceptions.js';
 import { requireAdmin } from '../middleware/auth.js';
 

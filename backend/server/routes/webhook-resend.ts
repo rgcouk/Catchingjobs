@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { Webhook } from 'svix';
-import { emailService } from '../../../frontend/src/services/EmailService.js';
+import { emailService } from '../services/EmailService.js';
 
 const app = new Hono();
 

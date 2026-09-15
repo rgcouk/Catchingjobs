@@ -6,7 +6,7 @@ import { ManageLocations } from '../../../frontend/src/services/ManageLocations.
 import { ManageApplications } from '../../../frontend/src/services/ManageApplications.js';
 import { ManageJobPostings } from '../../../frontend/src/services/ManageJobPostings.js';
 import { ManageUsers } from '../../../frontend/src/services/ManageUsers.js';
-import { emailService } from '../../../frontend/src/services/EmailService.js';
+import { emailService } from '../services/EmailService.js';
 import { DomainError } from '../../../frontend/src/services/exceptions.js';
 import { requireAdmin } from '../middleware/auth.js';
 

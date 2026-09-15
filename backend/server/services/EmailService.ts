@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { getPrisma } from '../../server/db.js';
+import { getPrisma } from '../db.js';
 
 export interface EmailApplicantPayload {
   name: string;
