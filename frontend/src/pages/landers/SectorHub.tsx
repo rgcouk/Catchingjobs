@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { PublicHeader } from '../../components/layout/PublicHeader';
 
-export default function SectorHub({ onNavigate }: any) {
+export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any) {
   const [jobs, setJobs] = useState<any[]>([]);
   const [locations, setLocations] = useState<any[]>([]);
 
