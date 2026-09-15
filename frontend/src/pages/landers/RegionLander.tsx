@@ -112,7 +112,7 @@ export default function RegionLander({ onNavigate, regionId, sectorId, onBackToS
               </p>
             </div>
 
-            <a href="brand-2026.html#vacancies" className="block text-center w-full py-3.5 bg-[#FFC72C] hover:bg-[#E5B800] text-black font-display font-bold text-xs uppercase tracking-wider rounded-md transition-all shadow-md active:scale-95">
+            <a href="#vacancies" className="block text-center w-full py-3.5 bg-[#FFC72C] hover:bg-[#E5B800] text-black font-display font-bold text-xs uppercase tracking-wider rounded-md transition-all shadow-md active:scale-95">
               Apply for Shifts in This Region →
             </a>
           </div>
