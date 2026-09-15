@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
+import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
 import { Menu } from "lucide-react";
 import {
   Sheet,
@@ -54,12 +55,20 @@ export function PublicHeader() {
 
       {/*  Header CTAs  */}
       <div className="flex items-center space-x-5 font-display">
-        <Link to="/login" className="hidden sm:inline-block text-sm font-bold text-black hover:opacity-80 transition-opacity">
-          Log In
-        </Link>
-        <button onClick={() => {}} className="px-5 py-2.5 rounded-full bg-black hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95">
-          Quick Apply
-        </button>
+        <SignedOut>
+          <Link to="/login" className="hidden sm:inline-block text-sm font-bold text-black hover:opacity-80 transition-opacity">
+            Log In
+          </Link>
+          <Link to="/register" className="px-5 py-2.5 rounded-sm bg-black hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95 text-center">
+            Quick Apply
+          </Link>
+        </SignedOut>
+        <SignedIn>
+          <Link to="/employee" className="hidden sm:inline-block text-sm font-bold text-black hover:opacity-80 transition-opacity mr-2">
+            Portal
+          </Link>
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn>
       </div>
 
       {/* Mobile Menu */}
@@ -87,8 +96,16 @@ export function PublicHeader() {
               <a href="tel:01205330190" className="text-black pb-2 border-b border-gray-100">Contact</a>
               
               <div className="pt-4 flex flex-col space-y-3">
-                <Link to="/login" className="px-5 py-2.5 rounded-full border border-black text-black font-bold text-xs uppercase tracking-wider text-center">Log In</Link>
-                <button className="px-5 py-2.5 rounded-full bg-black text-white font-bold text-xs uppercase tracking-wider shadow-sm">Quick Apply</button>
+                <SignedOut>
+                  <Link to="/login" className="px-5 py-2.5 rounded-sm border border-black text-black font-bold text-xs uppercase tracking-wider text-center">Log In</Link>
+                  <Link to="/register" className="px-5 py-2.5 rounded-sm bg-black text-white font-bold text-xs uppercase tracking-wider shadow-sm text-center">Quick Apply</Link>
+                </SignedOut>
+                <SignedIn>
+                  <Link to="/employee" className="px-5 py-2.5 rounded-sm border border-black text-black font-bold text-xs uppercase tracking-wider text-center">Worker Portal</Link>
+                  <div className="flex justify-center mt-2">
+                    <UserButton afterSignOutUrl="/" />
+                  </div>
+                </SignedIn>
               </div>
             </nav>
           </SheetContent>
