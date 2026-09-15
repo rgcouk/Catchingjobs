@@ -1,95 +1,101 @@
 # Design — CatchingJobs (Pullum Ltd)
 
-Locked design system for Catchingjobs.co.uk. Future Hallmark runs and AI agents read this file first; public pages and UI components defer to it. Amend intentionally — the file is the rule.
+> **LOCKED DESIGN SYSTEM — CADMIUM YELLOW V2 (ANTI-SLOP TRADE SPECIFICATION)**
+> This file is the single canonical source of truth for CatchingJobs.co.uk. All AI agents, skills, and code generators must strictly adhere to these specifications. Do NOT revert to green or orange tokens.
 
 ---
 
-## System
+## 1. Brand Identity & The Chicken-C Monogram
 
-- **Brand**: Catchingjobs.co.uk (Operated by Pullum Ltd)
-- **Genre**: Modern-Minimal / Clean Agricultural Trade SaaS (grounded in Dribbble Design DNA References 23963312, 19351493, 16062197, 27504183)
-- **Primary Macrostructures**: Bento Grid (`bento-grid`), Split Diptych Hero (`h2-split-diptych`), Numbered Stat Strip (`t4-stat-strip`), Structured Index Footer (`ft3-structured-footer`)
-- **Theme**: Clean Modern Minimal Trade
-- **Axes**:
-  - **Paper band**: Crisp Light Slate Canvas (`--color-paper`: `#F8FAFC` / `oklch(98.5% 0.005 240)`), Pure White Surfaces (`#FFFFFF`) with precise 1px hairline borders (`#E2E8F0` / `oklch(92% 0.005 260)`).
-  - **Display style**: Clean Bold Sans (`Plus Jakarta Sans`, 700 bold, tracking `-0.03em`)
-  - **Body style**: Readable Neutral Sans (`Inter`, 400/500, leading relaxed `1.55`)
-  - **Mono style**: Tabular Monospace (`JetBrains Mono` / `Geist Mono`, 500 medium, uppercase tracking `+0.04em`)
-  - **Accent hue**: Disciplined Emerald Green (`#059669` / `oklch(62% 0.17 150)`) as primary anchor action & compliance badge, paired with Harvest Orange (`#EA580C` / `oklch(65% 0.18 45)`) for Friday payroll highlights (≤ 6% total viewport footprint).
+### Vector Brand Mark
+The brand mark is the custom Chicken-C vector monogram (`public/assets/chicken-c-logo.svg`, ViewBox `0 0 416 394`). The circular body of the letter "C" forms the body of the rooster, complete with a natural 3-point comb, beak, wattle, and internal circular eye aperture.
 
----
+### The One-Color Rule
+The vector mark, wordmark, and eye circle share identical fills. Never apply two-tone fills to the mark itself.
 
-## Component Boundaries (Critical Architecture)
+### The Wordmark Lockup & Spacing Rule
+- **Text Assembly**: The SVG mark acts directly as the letter "C" in CatchingJobs, placed flush against `atchingJobs.`.
+- **Negative Margin**: The flex container holding the SVG and text must have `gap-0`. The SVG element itself must carry a mandatory negative right margin: `-mr-1` (or `-4px`) to seamlessly bridge the rooster crest into the wordmark baseline.
+- **Terminal Period**: The wordmark ends with a period: `CatchingJobs.`
 
-1. **Public Marketing & Regional Landers** (`src/pages/landers/*`, `src/pages/Index.tsx`):
-   - **MUST** enforce the clean minimal OKLCH / Slate tokens, hairline borders, and disciplined green/orange accents.
-   - Zero faux 3D bloat, zero hyperbolic marketing slop copy, zero decorative serif headings.
-2. **Internal Portals, Auth & Dashboards** (`src/pages/admin/*`, `src/pages/portals/*`, `src/pages/wizard/*`):
-   - **MUST** use **shadcn/ui** components (`@/components/ui/`) with standard dashboard variables.
-   - Do NOT mix public marketing styling into internal operational tables or kanban boards.
+### The 4 Contextual Lockups
+1. **Yellow Nav Context**: `#000000` on `#FFCC00` (Header / Hero TopNav)
+2. **Dark Sector Context**: `#FFCC00` on `#000000` (Turkey Sector Card, Admin / Dark mode)
+3. **Scrolled Nav Context**: `#000000` on `#FFFFFF` (Scrolled Sticky Navigation)
+4. **Universal Footer Context**: `#FFFFFF` on `#000000` (Platform Footer)
 
 ---
 
-## Tokens (Canonical Source of Truth)
+## 2. Color System (Locked 3-Tone Palette)
 
-```css
-:root {
-  /* Clean Minimal Slate & Trade Palette */
-  --color-paper: oklch(98.5% 0.005 240);     /* Crisp light slate canvas (#F8FAFC) */
-  --color-surface: #FFFFFF;                  /* Elevated crisp white card surfaces */
-  --color-rule: oklch(92% 0.005 260);        /* 1px hairline card borders (#E2E8F0) */
-  --color-ink: oklch(20% 0.02 260);          /* High-contrast deep slate ink (#0F172A) */
-  --color-ink-muted: oklch(52% 0.02 260);    /* Secondary muted slate (#64748B) */
-  --color-accent-green: oklch(62% 0.17 150); /* Emerald Green (#059669) */
-  --color-accent-orange: oklch(65% 0.18 45); /* Harvest Orange (#EA580C) */
-  --color-focus: oklch(62% 0.17 150);
+| Token | Hex Value | Role & Usage |
+|---|---|---|
+| **brand-yellow** | `#FFCC00` | Signature Cadmium Yellow — Top nav background, Hero background, active region tab, primary action hover, accent bars |
+| **brand-yellow-hover** | `#E6B800` | Darkened yellow for pressed and focused states |
+| **brand-broiler-gold** | `#F5E6A3` | Warm light golden-yellow card background for Broiler Chicken Catching division |
+| **brand-obsidian** | `#090D14` | High-contrast dark ink for body text, headings, Turkey Sector card |
+| **brand-black** | `#000000` | Universal Footer background, primary action buttons, dark division cards |
+| **brand-surface** | `#FFFFFF` | Job vacancy cards, sticky scrolled nav, clean contrast surfaces |
+| **brand-mist** | `#F8FAFC` | Alternating section backgrounds, data callout boxes, input backgrounds |
+| **brand-border** | `#E2E8F0` | Subtle card dividers on light backgrounds |
+| **brand-border-dark** | `#1E293B` | Footer dividers, dark card borders |
 
-  /* Typography Stack */
-  --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-
-  /* Spacing Scale (4-pt grid) */
-  --space-3xs: 2px;
-  --space-2xs: 4px;
-  --space-xs:  8px;
-  --space-sm:  12px;
-  --space-md:  16px;
-  --space-lg:  24px;
-  --space-xl:  32px;
-  --space-2xl: 48px;
-  --space-3xl: 64px;
-  --space-4xl: 96px;
-
-  /* Motion & Easing */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --dur-fast: 150ms;
-  --dur-base: 220ms;
-
-  /* Radii */
-  --radius-card: 16px;   /* Clean rounded card corners */
-  --radius-pill: 9999px; /* Status tags & badges */
-  --radius-input: 8px;   /* Crisp form inputs */
-}
-```
+> [!IMPORTANT]
+> **Strictly Banned Colors**: Emerald Green (`#059669`), Harvest Orange (`#EA580C`), or any off-palette blues/purples in public marketing headers and hero sections.
 
 ---
 
-## Typography & Copy Rules
+## 3. Typography Hierarchy
 
-1. **Clean Display Headlines**:
-   - Display headlines use `Plus Jakarta Sans` in weight 700 with letter-spacing `-0.03em`.
-   - Never use serif display fonts or italicized headers.
-2. **Utilitarian Agricultural Copy**:
-   - Write factual, direct, and authoritative copy centered on real agricultural logistics.
-   - Mention legitimate compliance credentials: **Lantra Level 2 Animal Welfare**, **GLAA Licensed**, **AHVLA Certified**, **Weekly Friday Payroll**, and **Door-to-door minibus transport**.
-   - No hyperbolic marketing buzzwords (*"seamless synergy"*, *"revolutionary platform"*, *"10x faster"*).
+- **Display (Headings & Wordmarks)**: `Plus Jakarta Sans` (700 bold, 800 extrabold, 900 black, tracking `-0.03em`)
+- **Body UI (Content & Descriptions)**: `Inter` (400 normal, 500 medium, 600 semibold, leading `1.55`)
+- **Technical / Statutory / Data**: `JetBrains Mono` (500 medium, 600 semibold, uppercase tracking `+0.04em`)
 
 ---
 
-## CTA Voice & Interactive States
+## 4. Key Page Sections & Architecture (From Canonical Brand Spec)
 
-- **Primary Action**: Solid Emerald Green (`bg-[#059669] hover:bg-[#047857] text-white`), clean rounded corners (`rounded-lg`), uppercase tracking-wider font-mono text.
-- **Secondary Action**: White Card Hairline (`border border-[#E2E8F0] bg-white hover:border-[#0F172A] text-[#0F172A]`).
-- **8-State Coverage**: All interactive inputs and buttons must implement styling for: `default`, `hover`, `:focus-visible`, `:active`, `disabled`, `loading`, `error`, and `success`.
-- **Touch Target Floor**: All clickable controls must maintain >= 44px touch targets.
+### 4.1. Top Header Navigation
+- Background: Full Cadmium Yellow (`#FFCC00`), `border-b border-black/10`.
+- Left: Chicken-C Monogram (`#000000`) with `-mr-1` margin flush into `atchingJobs.`.
+- Center: `Home`, `Catching Jobs ∨`, `Locations`, `About`, `Contact (01205 330190)`.
+- Right: `Log In` (ghost/text link), `Quick Apply` (black pill button `bg-black text-white px-4 py-2 rounded text-xs font-bold`).
+
+### 4.2. Hero Section
+- Background: Solid Cadmium Yellow (`#FFCC00`) with subtle photo overlay (`homepage-hero.jpg` at 15–20% opacity with blend).
+- Badge: `• CATCHINGJOBS.CO.UK • 18 UK LOCATIONS`.
+- Headline: `UK poultry catching jobs with free home pickup.`.
+- Subheadline: `CatchingJobs connects you with professional broiler chicken and commercial turkey catching teams across England. Free door-to-door heated minibus transit, guaranteed weekly Friday payroll direct to your bank.`.
+- Primary CTA: `Find Catching Jobs Near You →` (Black rounded button with yellow text).
+- Secondary CTA: `Apply in 60 Seconds (No CV)` (Subtle bordered pill button).
+- Propositions row: `✓ Door Home Pickup` · `✓ Friday Direct Pay` · `✓ No CV Required`.
+- Carousel dots: `• • •`.
+
+### 4.3. Split Sector Cards (Broiler vs Turkey)
+- **Broiler Chicken Catching Jobs**:
+  - Background: Light warm golden-yellow (`#F5E6A3`).
+  - Badges: `BROILER & BREEDER TEAMS` (black pill) and `Weekly Friday Payroll` (white pill).
+  - Shifts: Night Shifts (20:00 – 05:00) · 5 Shifts / Week (~45 hrs) · Full PPE & Gear Provided.
+  - CTA: `VIEW CHICKEN CATCHING ROLES →` (Black rounded button).
+- **Commercial Turkey Catching Jobs**:
+  - Background: Deep Obsidian (`#090D14`).
+  - Badges: `COMMERCIAL TURKEY TEAMS` (dark pill) and `Seasonal Peak Pay` (yellow pill).
+  - Shifts: Day & Night Rotation Schedules · Seasonal Piece-Rate Bonuses · Free Door-to-Door Home Pickup.
+  - CTA: `VIEW TURKEY CATCHING ROLES →` (Yellow rounded button).
+
+### 4.4. Live Catching Jobs Directory
+- Background: Crisp White (`#FFFFFF`).
+- Filter Tabs: `All Jobs (4)` (active black pill), `Chicken Catching (2)`, `Turkey Catching (1)`, `Driver-Catchers (1)`.
+- 4 Clean White Cards: `Senior Broiler Catcher`, `Commercial Turkey Catcher`, `Minibus Driver & Catcher`, `Piece-Rate Broiler Catcher`.
+- Each with shift rotations, location, free door-to-door transit guarantee, PPE status, and black `Apply Now →` button.
+
+### 4.5. Our Locations & Regional Map
+- Two-column layout:
+  - Left: `SELECT REGION:` with `Lincolnshire (4 Teams)` active in `#FFCC00`, `Norfolk`, `Yorkshire`, `Shropshire`, `Suffolk`.
+  - Right: Clean England interactive transit map with yellow markers, floating `✓ OPERATING TOWNS IN REGION:` strip (`Lincoln`, `Boston`, `Sleaford`, `Grantham`, `Spalding`, `Washingborough`), and buttons `Apply Chicken Squad →` & `Apply Turkey Squad →`.
+
+### 4.6. Universal Footer
+- Background: Deep Obsidian Black (`#000000`).
+- Logo: White Chicken-C vector monogram + `atchingJobs.` with period.
+- Operating Entity: `Pullum Ltd`, GLAA Licence `PULL0001`, Lantra Level 2 Animal Welfare.
+- Navigation links, 24/7 Hotline (`01205 330 190`), and statutory zero worker deductions guarantee.

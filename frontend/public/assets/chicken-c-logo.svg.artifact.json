@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "kind": "svg",
+  "title": "assets/chicken-c-logo.svg",
+  "entry": "assets/chicken-c-logo.svg",
+  "renderer": "svg",
+  "status": "complete",
+  "exports": [
+    "svg",
+    "zip"
+  ],
+  "createdAt": "2026-09-06T20:14:54.937Z",
+  "updatedAt": "2026-09-06T20:14:54.937Z",
+  "metadata": {
+    "inferred": true
+  }
+}

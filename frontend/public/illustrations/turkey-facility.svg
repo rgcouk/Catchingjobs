@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 360" width="100%" height="100%" fill="none" shape-rendering="geometricPrecision">
+  <!-- Deep Obsidian Canvas Background (Inverted High-Contrast Dark Mode) -->
+  <rect width="500" height="360" fill="#090D14" rx="12"/>
+
+  <!-- Cadmium Yellow Technical Grid Lines -->
+  <g opacity="0.12" stroke="#FFCC00" stroke-width="1" stroke-dasharray="3 3">
+    <line x1="30" y1="60" x2="470" y2="60"/>
+    <line x1="30" y1="120" x2="470" y2="120"/>
+    <line x1="30" y1="180" x2="470" y2="180"/>
+    <line x1="30" y1="240" x2="470" y2="240"/>
+    <line x1="30" y1="300" x2="470" y2="300"/>
+    <line x1="100" y1="30" x2="100" y2="330"/>
+    <line x1="250" y1="30" x2="250" y2="330"/>
+    <line x1="400" y1="30" x2="400" y2="330"/>
+  </g>
+
+  <!-- Header Technical Badge -->
+  <g font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#FFCC00">
+    <rect x="35" y="32" width="160" height="22" rx="4" fill="#FFCC00"/>
+    <text x="115" y="46" fill="#090D14" text-anchor="middle">FACILITY SPEC: TURKEY</text>
+    <text x="465" y="46" text-anchor="end" fill="#94A3B8">SEASONAL INTENSIVE // 180M HEAVY SPAN</text>
+  </g>
+
+  <!-- Concrete High-Load Staging Base -->
+  <polygon points="70,220 310,120 440,170 200,280" fill="#18181B" stroke="#FFCC00" stroke-width="1.5"/>
+
+  <!-- High-Span Industrial Turkey Pavilion Shed -->
+  <g id="turkey-shed">
+    <polygon points="100,210 100,165 140,140 180,160 180,205 140,225" fill="#FFCC00" stroke="#090D14" stroke-width="2"/>
+    <polygon points="180,205 180,160 370,80 370,125" fill="#121722" stroke="#FFCC00" stroke-width="2"/>
+    <polygon points="140,140 180,160 370,80 330,60" fill="#27272A" stroke="#FFCC00" stroke-width="1.5"/>
+    <polygon points="100,165 140,140 330,60 290,85" fill="#090D14" stroke="#FFCC00" stroke-width="1.5"/>
+
+    <rect x="220" y="70" width="16" height="22" fill="#FFCC00" stroke="#090D14" stroke-width="1"/>
+    <polygon points="216,70 240,70 228,62" fill="#FFFFFF"/>
+    
+    <rect x="280" y="45" width="16" height="22" fill="#FFCC00" stroke="#090D14" stroke-width="1"/>
+    <polygon points="276,45 300,45 288,37" fill="#FFFFFF"/>
+
+    <g stroke="#FFCC00" stroke-width="1.5" opacity="0.8">
+      <line x1="200" y1="180" x2="350" y2="115"/>
+      <line x1="200" y1="187" x2="350" y2="122"/>
+      <line x1="200" y1="194" x2="350" y2="129"/>
+    </g>
+
+    <polygon points="120,217 120,190 160,172 160,200" fill="#090D14" stroke="#FFCC00" stroke-width="1.5"/>
+    <polygon points="110,240 170,210 160,200 120,217" fill="#FFCC00" opacity="0.8"/>
+  </g>
+
+  <!-- Heavy Logistics Minibus / Staging Node -->
+  <g id="staging-van" transform="translate(230, 210)">
+    <polygon points="0,18 40,0 65,10 25,28" fill="#FFCC00"/>
+    <polygon points="25,28 65,10 65,22 25,40" fill="#E5B800"/>
+    <polygon points="0,18 25,28 25,40 0,30" fill="#FFFFFF"/>
+    <circle cx="10" cy="34" r="4" fill="#090D14"/>
+    <circle cx="50" cy="34" r="4" fill="#090D14"/>
+  </g>
+
+  <!-- Technical Metric Callouts (Cadmium / Slate) -->
+  <g font-family="JetBrains Mono, monospace" font-size="8.5" font-weight="700">
+    <rect x="40" y="295" width="135" height="26" rx="4" fill="#121722" stroke="#222938" stroke-width="1.5"/>
+    <circle cx="54" cy="308" r="4" fill="#FFCC00"/>
+    <text x="65" y="311" fill="#FFFFFF">PEAK RATE: £1,200/WK</text>
+
+    <rect x="185" y="295" width="135" height="26" rx="4" fill="#121722" stroke="#222938" stroke-width="1.5"/>
+    <circle cx="199" cy="308" r="4" fill="#FFCC00"/>
+    <text x="210" y="311" fill="#FFFFFF">ACCOMMODATION AVAIL</text>
+
+    <rect x="330" y="295" width="135" height="26" rx="4" fill="#121722" stroke="#222938" stroke-width="1.5"/>
+    <circle cx="344" cy="308" r="4" fill="#10B981"/>
+    <text x="355" y="311" fill="#FFFFFF">OCT - DEC INTENSIVE</text>
+  </g>
+</svg>

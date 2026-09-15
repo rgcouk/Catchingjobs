@@ -4,15 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"tsx api/index.ts\" \"vite --port=3000 --host=0.0.0.0\"",
-    "build": "prisma generate && vite build && vite build --ssr src/entry.server.tsx --outDir dist/server",
+    "dev": "concurrently \"tsx backend/api/index.ts\" \"vite --port=3000 --host=0.0.0.0\"",
+    "build": "prisma generate --schema=backend/prisma/schema.prisma && vite build && vite build --ssr frontend/src/entry.server.tsx --outDir dist/server",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "seed": "tsx prisma/scripts/auto-seed.ts",
+    "seed": "tsx backend/prisma/scripts/auto-seed.ts",
     "quality-check": "npm run format && npm run lint && npm run test && npm run build"
   },
   "dependencies": {

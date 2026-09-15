@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 360" width="100%" height="100%" fill="none" shape-rendering="geometricPrecision">
+  <!-- Cadmium Yellow Canvas Background -->
+  <rect width="500" height="360" fill="#FFCC00" rx="12"/>
+
+  <!-- 30-Degree Isometric Grid Lines (Subtle Obsidian) -->
+  <g opacity="0.15" stroke="#090D14" stroke-width="1" stroke-dasharray="4 4">
+    <line x1="50" y1="300" x2="450" y2="70"/>
+    <line x1="50" y1="70" x2="450" y2="300"/>
+    <line x1="150" y1="340" x2="450" y2="165"/>
+    <line x1="50" y1="165" x2="350" y2="340"/>
+  </g>
+
+  <!-- Technical Dimension Callouts -->
+  <g font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#090D14">
+    <rect x="35" y="32" width="150" height="22" rx="4" fill="#090D14"/>
+    <text x="110" y="46" fill="#FFCC00" text-anchor="middle">FACILITY SPEC: BROILER</text>
+    <text x="465" y="46" text-anchor="end" opacity="0.7">HARVESTING ZONE // 120M SPAN</text>
+
+    <!-- Length Dimension Line -->
+    <line x1="120" y1="285" x2="370" y2="335" stroke="#090D14" stroke-width="1.5"/>
+    <circle cx="120" cy="285" r="2.5" fill="#090D14"/>
+    <circle cx="370" cy="335" r="2.5" fill="#090D14"/>
+    <text x="245" y="325" text-anchor="middle" transform="rotate(11 245 325)">OVERALL LENGTH: 120M</text>
+
+    <!-- Biosecurity Tag -->
+    <rect x="345" y="70" width="120" height="22" rx="4" fill="#090D14"/>
+    <text x="405" y="84" fill="#FFCC00" text-anchor="middle" font-size="8.5">BIOSECURE ZONE A</text>
+    <line x1="345" y1="81" x2="320" y2="105" stroke="#090D14" stroke-width="1.5" stroke-dasharray="2 2"/>
+  </g>
+
+  <!-- Main Isometric Concrete Apron Base -->
+  <polygon points="90,210 320,110 420,165 190,270" fill="#FFFFFF" stroke="#090D14" stroke-width="2.5"/>
+
+  <!-- Simplified Isometric Poultry House 01 (Main Shed) -->
+  <g id="main-shed">
+    <polygon points="120,200 120,160 150,140 180,155 180,195 150,215" fill="#090D14" stroke="#090D14" stroke-width="2"/>
+    <polygon points="180,195 180,155 350,85 350,125" fill="#FFFFFF" stroke="#090D14" stroke-width="2"/>
+    <polygon points="150,140 180,155 350,85 320,70" fill="#090D14" stroke="#090D14" stroke-width="2"/>
+    <polygon points="120,160 150,140 320,70 290,90" fill="#FFFFFF" stroke="#090D14" stroke-width="2"/>
+    <polygon points="148,137 322,67 325,70 151,140" fill="#FFCC00" stroke="#090D14" stroke-width="1.5"/>
+
+    <polygon points="140,210 140,185 160,175 160,200" fill="#FFCC00" stroke="#090D14" stroke-width="1.5"/>
+    <line x1="150" y1="180" x2="150" y2="205" stroke="#090D14" stroke-width="1.5"/>
+
+    <polygon points="190,165 340,105 340,112 190,172" fill="#090D14"/>
+    <line x1="190" y1="168" x2="340" y2="108" stroke="#FFCC00" stroke-width="1.5"/>
+  </g>
+
+  <!-- Simplified Twin Grain Storage Silos -->
+  <g id="grain-silos" transform="translate(40, -10)">
+    <line x1="300" y1="160" x2="300" y2="185" stroke="#090D14" stroke-width="2"/>
+    <line x1="320" y1="168" x2="320" y2="192" stroke="#090D14" stroke-width="2"/>
+    <line x1="335" y1="160" x2="335" y2="185" stroke="#090D14" stroke-width="2"/>
+    <polygon points="295,160 340,160 318,185" fill="#090D14"/>
+    <rect x="295" y="105" width="45" height="55" rx="3" fill="#FFFFFF" stroke="#090D14" stroke-width="2"/>
+    <path d="M295 105 C295 88 340 88 340 105 Z" fill="#090D14"/>
+    <circle cx="318" cy="90" r="3" fill="#FFCC00"/>
+    <line x1="295" y1="122" x2="340" y2="122" stroke="#090D14" stroke-width="1.5"/>
+    <line x1="295" y1="140" x2="340" y2="140" stroke="#090D14" stroke-width="1.5"/>
+
+    <rect x="345" y="85" width="40" height="50" rx="3" fill="#090D14" stroke="#090D14" stroke-width="1.5"/>
+    <path d="M345 85 C345 72 385 72 385 85 Z" fill="#FFFFFF"/>
+    <path d="M318 185 L280 170 L250 175" stroke="#090D14" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Simplified Isometric Minibus on Apron -->
+  <g id="iso-minibus" transform="translate(195, 205)">
+    <polygon points="0,20 45,0 70,12 25,32" fill="#090D14" stroke="#090D14" stroke-width="1.5"/>
+    <polygon points="25,32 70,12 70,26 25,46" fill="#090D14" stroke="#090D14" stroke-width="1.5"/>
+    <polygon points="0,20 25,32 25,46 0,34" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <polygon points="4,22 22,31 22,26 4,17" fill="#FFCC00"/>
+    <polygon points="28,30 65,13 65,18 28,35" fill="#FFCC00"/>
+    <circle cx="10" cy="38" r="4.5" fill="#090D14"/>
+    <circle cx="55" cy="38" r="4.5" fill="#090D14"/>
+  </g>
+
+  <!-- Compass / Orientation Indicator -->
+  <g transform="translate(45, 75)" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" fill="#090D14">
+    <circle cx="20" cy="20" r="16" stroke="#090D14" stroke-width="1.5" stroke-dasharray="2 2"/>
+    <polygon points="20,6 24,20 20,18 16,20" fill="#090D14"/>
+    <polygon points="20,34 24,20 20,22 16,20" fill="#FFFFFF" stroke="#090D14" stroke-width="1"/>
+    <text x="20" y="3" text-anchor="middle">N</text>
+  </g>
+</svg>

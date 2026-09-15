@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 360" width="100%" height="100%" fill="none" shape-rendering="geometricPrecision">
+  <!-- Cadmium Yellow Canvas Background -->
+  <rect width="500" height="360" fill="#FFCC00" rx="12"/>
+
+  <!-- Technical Coordinate Grid -->
+  <g opacity="0.15" stroke="#090D14" stroke-width="1" stroke-dasharray="3 3">
+    <line x1="30" y1="60" x2="470" y2="60"/>
+    <line x1="30" y1="120" x2="470" y2="120"/>
+    <line x1="30" y1="180" x2="470" y2="180"/>
+    <line x1="30" y1="240" x2="470" y2="240"/>
+    <line x1="30" y1="300" x2="470" y2="300"/>
+    <line x1="100" y1="30" x2="100" y2="330"/>
+    <line x1="200" y1="30" x2="200" y2="330"/>
+    <line x1="300" y1="30" x2="300" y2="330"/>
+    <line x1="400" y1="30" x2="400" y2="330"/>
+  </g>
+
+  <!-- Technical Telemetry Header -->
+  <g font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#090D14">
+    <rect x="35" y="32" width="160" height="22" rx="4" fill="#090D14"/>
+    <text x="115" y="46" fill="#FFCC00" text-anchor="middle">ENGLAND TRANSIT MATRIX</text>
+    <text x="465" y="46" text-anchor="end" opacity="0.7">ACTIVE ROUTES: 4 CORRIDORS</text>
+  </g>
+
+  <!-- Stylized Minimalist Map Geometry of England Coastline / Regions -->
+  <g opacity="0.25" fill="#090D14">
+    <polygon points="120,60 220,60 280,100 350,140 370,210 320,280 200,290 140,240 110,150"/>
+  </g>
+
+  <!-- Transit Network Corridors (High-Contrast Obsidian Lines) -->
+  <g stroke="#090D14" stroke-width="2.5" stroke-linecap="round">
+    <line x1="230" y1="90" x2="270" y2="150"/>
+    <line x1="270" y1="150" x2="350" y2="180"/>
+    <line x1="350" y1="180" x2="340" y2="240"/>
+    <line x1="270" y1="150" x2="160" y2="180"/>
+  </g>
+
+  <!-- Animated-Style Minibus Fleet Icons on Routes -->
+  <g transform="translate(300, 155)">
+    <rect x="0" y="0" width="22" height="12" rx="2" fill="#090D14"/>
+    <rect x="3" y="2" width="6" height="4" fill="#FFCC00"/>
+    <rect x="11" y="2" width="8" height="4" fill="#FFCC00"/>
+    <circle cx="5" cy="12" r="2.5" fill="#090D14"/>
+    <circle cx="17" cy="12" r="2.5" fill="#090D14"/>
+  </g>
+
+  <g transform="translate(240, 105)">
+    <rect x="0" y="0" width="22" height="12" rx="2" fill="#090D14"/>
+    <rect x="3" y="2" width="6" height="4" fill="#FFCC00"/>
+    <rect x="11" y="2" width="8" height="4" fill="#FFCC00"/>
+    <circle cx="5" cy="12" r="2.5" fill="#090D14"/>
+    <circle cx="17" cy="12" r="2.5" fill="#090D14"/>
+  </g>
+
+  <!-- Node Waypoints with Rings & Labels -->
+  <g transform="translate(270, 150)" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700">
+    <circle cx="0" cy="0" r="14" fill="#FFCC00" stroke="#090D14" stroke-width="2"/>
+    <circle cx="0" cy="0" r="6" fill="#090D14"/>
+    <rect x="16" y="-12" width="105" height="24" rx="4" fill="#090D14"/>
+    <text x="24" y="3" fill="#FFFFFF">LINCOLNSHIRE</text>
+    <text x="24" y="10" font-size="6.5" fill="#FFCC00">BOSTON · LINCOLN</text>
+  </g>
+
+  <g transform="translate(350, 180)" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700">
+    <circle cx="0" cy="0" r="10" fill="#FFFFFF" stroke="#090D14" stroke-width="2"/>
+    <circle cx="0" cy="0" r="4" fill="#090D14"/>
+    <rect x="-85" y="16" width="95" height="24" rx="4" fill="#090D14"/>
+    <text x="-77" y="30" fill="#FFFFFF">NORFOLK / EAST</text>
+    <text x="-77" y="38" font-size="6.5" fill="#FFCC00">NORWICH · KING'S LYNN</text>
+  </g>
+
+  <g transform="translate(230, 90)" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700">
+    <circle cx="0" cy="0" r="10" fill="#FFFFFF" stroke="#090D14" stroke-width="2"/>
+    <circle cx="0" cy="0" r="4" fill="#090D14"/>
+    <rect x="-105" y="-12" width="95" height="24" rx="4" fill="#090D14"/>
+    <text x="-97" y="3" fill="#FFFFFF">YORKSHIRE</text>
+    <text x="-97" y="10" font-size="6.5" fill="#FFCC00">YORK · SELBY · HULL</text>
+  </g>
+
+  <g transform="translate(160, 180)" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700">
+    <circle cx="0" cy="0" r="10" fill="#FFFFFF" stroke="#090D14" stroke-width="2"/>
+    <circle cx="0" cy="0" r="4" fill="#090D14"/>
+    <rect x="-115" y="16" width="105" height="24" rx="4" fill="#090D14"/>
+    <text x="-107" y="30" fill="#FFFFFF">WEST MIDLANDS</text>
+    <text x="-107" y="38" font-size="6.5" fill="#FFCC00">SHREWSBURY · TELFORD</text>
+  </g>
+
+  <!-- Bottom Badges Bar -->
+  <g font-family="JetBrains Mono, monospace" font-size="8.5" font-weight="700" fill="#090D14">
+    <rect x="40" y="295" width="135" height="26" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <circle cx="54" cy="308" r="4" fill="#10B981"/>
+    <text x="65" y="311">DAILY ROUTE ACTIVE</text>
+
+    <rect x="185" y="295" width="135" height="26" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <circle cx="199" cy="308" r="4" fill="#090D14"/>
+    <text x="210" y="311">HOME DOOR PICKUP</text>
+
+    <rect x="330" y="295" width="135" height="26" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <circle cx="344" cy="308" r="4" fill="#10B981"/>
+    <text x="355" y="311">RETURN HOME DAILY</text>
+  </g>
+</svg>

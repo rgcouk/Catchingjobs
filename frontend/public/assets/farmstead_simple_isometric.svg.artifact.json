@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "kind": "svg",
+  "title": "assets/farmstead_simple_isometric.svg",
+  "entry": "assets/farmstead_simple_isometric.svg",
+  "renderer": "svg",
+  "status": "complete",
+  "exports": [
+    "svg",
+    "zip"
+  ],
+  "createdAt": "2026-09-06T20:14:54.984Z",
+  "updatedAt": "2026-09-06T20:14:54.984Z",
+  "metadata": {
+    "inferred": true
+  }
+}

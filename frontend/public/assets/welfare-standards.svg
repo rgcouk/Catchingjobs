@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 360" width="100%" height="100%" fill="none" shape-rendering="geometricPrecision">
+  <!-- Cadmium Yellow Canvas Background -->
+  <rect width="500" height="360" fill="#FFCC00" rx="12"/>
+
+  <!-- Concentric Geometric Safety Circles -->
+  <g opacity="0.15" stroke="#090D14" stroke-width="1.5">
+    <circle cx="250" cy="175" r="140" stroke-dasharray="4 4"/>
+    <circle cx="250" cy="175" r="110"/>
+    <circle cx="250" cy="175" r="80" stroke-dasharray="2 2"/>
+  </g>
+
+  <!-- Technical Telemetry Header -->
+  <g font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#090D14">
+    <rect x="35" y="32" width="165" height="22" rx="4" fill="#090D14"/>
+    <text x="117" y="46" fill="#FFCC00" text-anchor="middle">ACCREDITATION // LANTRA</text>
+    <text x="465" y="46" text-anchor="end" opacity="0.7">GLAA LICENCE: PULL0001</text>
+  </g>
+
+  <!-- Central Humane Welfare Shield Emblem -->
+  <g id="welfare-shield" transform="translate(170, 75)">
+    <!-- Base Obsidian Shield -->
+    <path d="M 80 0 L 155 25 C 155 110, 120 165, 80 190 C 40 165, 5 110, 5 25 Z" fill="#090D14" stroke="#090D14" stroke-width="2"/>
+    
+    <!-- Inset White Shield -->
+    <path d="M 80 12 L 143 32 C 143 103, 113 151, 80 174 C 47 151, 17 103, 17 32 Z" fill="#FFFFFF"/>
+
+    <!-- Certified Gold Ribbon / Star -->
+    <path d="M 80 25 L 90 45 L 112 48 L 96 63 L 100 85 L 80 74 L 60 85 L 64 63 L 48 48 L 70 45 Z" fill="#FFCC00" stroke="#090D14" stroke-width="1.5"/>
+
+    <!-- Two-Leg Lift with Breast Support Minimal Vector Icon -->
+    <g transform="translate(35, 75)">
+      <!-- Supportive Cradle Hands (Minimal Geometric Arcs) -->
+      <path d="M 10 40 C 20 65, 70 65, 80 40" stroke="#090D14" stroke-width="3" stroke-linecap="round"/>
+      <path d="M 2 32 C 12 55, 30 65, 45 65" stroke="#090D14" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M 88 32 C 78 55, 60 65, 45 65" stroke="#090D14" stroke-width="2.5" stroke-linecap="round"/>
+
+      <!-- Stylized Bird Silhouette with Secure Breast Rest -->
+      <path d="M 45 10 C 35 10, 28 18, 30 28 C 32 38, 40 45, 45 45 C 50 45, 58 38, 60 28 C 62 18, 55 10, 45 10 Z" fill="#FFCC00" stroke="#090D14" stroke-width="2"/>
+      <!-- Dual Leg Grips (Secure 2-Leg Rule) -->
+      <line x1="38" y1="45" x2="36" y2="58" stroke="#090D14" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="52" y1="45" x2="54" y2="58" stroke="#090D14" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- Side Technical Callout Badges -->
+  <g font-family="JetBrains Mono, monospace" font-size="8.5" font-weight="700" fill="#090D14">
+    <!-- Left Callout -->
+    <rect x="35" y="140" width="120" height="42" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <text x="45" y="157" font-size="7.5" fill="#64748B">STANDARD 01</text>
+    <text x="45" y="172">TWO-LEG LIFT ONLY</text>
+
+    <rect x="35" y="195" width="120" height="42" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <text x="45" y="212" font-size="7.5" fill="#64748B">STANDARD 02</text>
+    <text x="45" y="227">BREAST SUPPORT</text>
+
+    <!-- Right Callout -->
+    <rect x="345" y="140" width="120" height="42" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <text x="355" y="157" font-size="7.5" fill="#64748B">STANDARD 03</text>
+    <text x="355" y="172">0% DROP TOLERANCE</text>
+
+    <rect x="345" y="195" width="120" height="42" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <text x="355" y="212" font-size="7.5" fill="#64748B">STANDARD 04</text>
+    <text x="355" y="227">100% GLAA AUDITED</text>
+  </g>
+
+  <!-- Bottom Badges Bar -->
+  <g font-family="JetBrains Mono, monospace" font-size="8.5" font-weight="700" fill="#090D14">
+    <rect x="40" y="295" width="135" height="26" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <circle cx="54" cy="308" r="4" fill="#10B981"/>
+    <text x="65" y="311">LANTRA ACCREDITED</text>
+
+    <rect x="185" y="295" width="135" height="26" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <circle cx="199" cy="308" r="4" fill="#090D14"/>
+    <text x="210" y="311">PULLUM LTD AUDITED</text>
+
+    <rect x="330" y="295" width="135" height="26" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <circle cx="344" cy="308" r="4" fill="#10B981"/>
+    <text x="355" y="311">CERTIFICATE ISSUED</text>
+  </g>
+</svg>

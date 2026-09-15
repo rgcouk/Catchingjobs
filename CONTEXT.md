@@ -33,6 +33,8 @@ Catchingjobs is a UK poultry catching workforce platform managed by Pullum Ltd (
 | **Interactive Location Map**              | Instant-loading vector map (`RegionalCatchingMap`) with clickable location markers linking to chicken and turkey job pages.           |
 | **Email Log (`EmailLog`)**                | A record tracking every automated email sent to candidates (receipts, status updates, safety packs) and its delivery status.          |
 
+| **Forbidden Terminology**                 | Strict lexical bans: Never use **"squad"** (use **"team"** or **"crew"**). Never use **"pickup point"**, **"bus station"**, or **"corridor"** (use **"home pickup"**, **"coverage area"**, or **"county hub"**). |
+
 ---
 
 ## 3. Candidate & Application Workflow
@@ -96,11 +98,17 @@ Located in `src/services/` with domain exceptions in `src/services/exceptions.ts
 
 The project uses two separate design systems based on the page type:
 
-### 1. Public Marketing & Local Landing Pages (Hallmark Design)
+### 1. Public Marketing & Local Landing Pages (Cadmium Yellow v2)
 
 - **Pages**: Home (`/`), Sector pages (`/chickens`, `/turkeys`), Town pages (`/chickens/:town`, `/turkeys/:town`), and Corporate (`/corporate`).
-- **Style**: Warm, readable editorial design using OKLCH CSS variables (`--color-paper`, `--color-ink`, `--color-rule`, `--color-accent`).
-- **Focus**: High trust, clear benefits (free minibus transport, weekly pay, GLAA licensing), simple language, and prominent triage forms.
+- **Style**: Enforces **Cadmium Yellow v2** design tokens:
+  - Primary Accent: `#FFCC00` (Cadmium Yellow)
+  - Dominant Background: `#090D14` (Deep Obsidian Dark)
+  - Pure Surface / Contrast: `#FFFFFF` (Clean White)
+  - Secondary Tint: `#F5E6A3` (Broiler Gold)
+  - Monogram: Chicken-C vector mark (`viewBox="0 0 416 394"`) with mandatory `-mr-1` (`-4px`) negative margin flush against wordmark (`atchingJobs.`).
+  - Strict Rule: Do NOT use Hallmark green/orange rules for marketing landers.
+- **Focus**: High trust, verified statutory standards (GLAA Licence `PULL0001`, Lantra Level 2 Animal Welfare), clear worker benefits (free door-to-door heated minibus pickup, guaranteed Friday BACS pay), and instant Right to Work screening.
 
 ### 2. Dashboards & Authentication (shadcn/ui)
 

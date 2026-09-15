@@ -28,7 +28,7 @@ function ssrDevPlugin(): Plugin {
           let template = fs.readFileSync(templatePath, 'utf-8');
           template = await server.transformIndexHtml(url, template);
 
-          const { render } = await server.ssrLoadModule('/src/entry.server.tsx');
+          const { render } = await server.ssrLoadModule('/frontend/src/entry.server.tsx');
           const { html: appHtml, head: headHtml, statusCode } = await render(url);
 
           const fullHtml = template
@@ -52,7 +52,7 @@ export default defineConfig(() => {
     plugins: [react(), tailwindcss(), ssrDevPlugin()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
+        '@': path.resolve(__dirname, './frontend/src'),
         'react-router-dom': 'react-router',
       },
     },

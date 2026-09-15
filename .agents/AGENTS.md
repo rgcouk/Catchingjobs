@@ -30,8 +30,8 @@
 - **Sidebar Standard**: Dashboards use the official shadcn sidebar system (`SidebarProvider`, `AppSidebar`, `SidebarInset`, `SidebarTrigger`) configured with CSS variables (`var(--sidebar)`, `var(--sidebar-foreground)`, `var(--sidebar-border)`, `var(--sidebar-accent)`).
 - **Logins & Auth Styling**: Auth pages use shadcn UI containers (`Card`, `Input`, `Button`, `Label`) with Clerk integrated cleanly into shadcn tokens (`bg-card`, `border-border`, `text-card-foreground`).
 
-### 2. Marketing & Landing Pages (Hallmark)
-- **Scope**: Public landers and marketing sections enforce Hallmark anti-AI-slop design system using OKLCH tokens (`var(--color-paper)`, `var(--color-ink)`, `var(--color-rule)`, `var(--color-accent)`).
+### 2. Marketing & Landing Pages (Cadmium Yellow v2)
+- **Scope**: Public landers and marketing sections enforce the **Cadmium Yellow v2** design system using tokens (`#FFCC00`, `#090D14`, `#FFFFFF`, Chicken-C monogram) as locked in `design.md`. Do NOT use Hallmark green/orange rules.
 
 ## Commands
 - `npm run dev` - Starts the development server.

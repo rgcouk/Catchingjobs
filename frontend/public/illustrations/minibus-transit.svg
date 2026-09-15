@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 360" width="100%" height="100%" fill="none" shape-rendering="geometricPrecision">
+  <!-- Cadmium Yellow Canvas Background -->
+  <rect width="500" height="360" fill="#FFCC00" rx="12"/>
+
+  <!-- Technical Coordinate Grid -->
+  <g opacity="0.18" stroke="#090D14" stroke-width="1" stroke-dasharray="3 3">
+    <line x1="30" y1="60" x2="470" y2="60"/>
+    <line x1="30" y1="120" x2="470" y2="120"/>
+    <line x1="30" y1="180" x2="470" y2="180"/>
+    <line x1="30" y1="240" x2="470" y2="240"/>
+    <line x1="30" y1="300" x2="470" y2="300"/>
+    <line x1="100" y1="30" x2="100" y2="330"/>
+    <line x1="200" y1="30" x2="200" y2="330"/>
+    <line x1="300" y1="30" x2="300" y2="330"/>
+    <line x1="400" y1="30" x2="400" y2="330"/>
+  </g>
+
+  <!-- Technical Telemetry & Route Header -->
+  <g font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#090D14">
+    <rect x="35" y="32" width="138" height="22" rx="4" fill="#090D14"/>
+    <text x="104" y="46" fill="#FFCC00" text-anchor="middle">FLEET TRANSIT UNIT</text>
+    <text x="465" y="46" text-anchor="end" opacity="0.7">ROUTE DISPATCH: ACTIVE // LN1-PE21</text>
+  </g>
+
+  <!-- GPS Route Pulse Arc (Home to Farmstead) -->
+  <g opacity="0.35">
+    <path d="M 60 260 C 140 160, 280 140, 440 200" stroke="#090D14" stroke-width="2" stroke-dasharray="6 4"/>
+    <circle cx="60" cy="260" r="6" fill="#090D14"/>
+    <circle cx="60" cy="260" r="10" stroke="#090D14" stroke-width="1.5" stroke-dasharray="2 2"/>
+    <circle cx="440" cy="200" r="6" fill="#090D14"/>
+  </g>
+
+  <!-- Ground Shadow Platform -->
+  <ellipse cx="250" cy="272" rx="195" ry="16" fill="#090D14" opacity="0.12"/>
+  <rect x="55" y="270" width="390" height="3" fill="#090D14" opacity="0.4"/>
+
+  <!-- Sleek Mercedes Sprinter High-Top Minibus Silhouette -->
+  <g id="minibus" transform="translate(60, 105)">
+    <!-- Main Chassis & Body -->
+    <path d="M 55 125 L 30 125 C 20 125 15 120 15 110 L 15 65 C 15 50 25 35 45 28 L 105 18 C 115 16 125 15 140 15 L 340 15 C 352 15 360 22 360 35 L 360 115 C 360 122 355 125 345 125 L 325 125 C 325 105 305 90 285 90 C 265 90 245 105 245 125 L 145 125 C 145 105 125 90 105 90 C 85 90 65 105 55 125 Z" fill="#090D14" stroke="#090D14" stroke-width="2"/>
+
+    <!-- Cab Front Hood Slant -->
+    <path d="M 15 72 L 40 70 L 65 30 L 45 28 C 25 35 15 50 15 72 Z" fill="#18181B"/>
+
+    <!-- Panoramic Tinted Cabin Window Ribbon -->
+    <g id="windows">
+      <polygon points="43,65 67,28 105,25 100,65" fill="#FFCC00" opacity="0.95"/>
+      <polygon points="106,25 150,25 147,65 106,65" fill="#FFCC00" opacity="0.95"/>
+      <rect x="156" y="25" width="55" height="40" rx="3" fill="#FFCC00" opacity="0.95"/>
+      <rect x="217" y="25" width="55" height="40" rx="3" fill="#FFCC00" opacity="0.95"/>
+      <path d="M 278 25 L 340 25 C 346 25 350 28 350 35 L 350 65 L 278 65 Z" fill="#FFCC00" opacity="0.95"/>
+    </g>
+
+    <g stroke="#090D14" stroke-width="1.5" opacity="0.4">
+      <line x1="170" y1="35" x2="195" y2="35"/>
+      <line x1="230" y1="35" x2="255" y2="35"/>
+      <line x1="290" y1="35" x2="330" y2="35"/>
+    </g>
+
+    <line x1="152" y1="20" x2="152" y2="120" stroke="#FFCC00" stroke-width="2"/>
+    <line x1="103" y1="68" x2="103" y2="120" stroke="#FFCC00" stroke-width="1.5" opacity="0.6"/>
+    <line x1="15" y1="78" x2="358" y2="78" stroke="#27272A" stroke-width="2"/>
+
+    <g transform="translate(162, 84)">
+      <rect width="64" height="20" rx="3" fill="#FFCC00"/>
+      <text x="32" y="14" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="8" fill="#090D14" text-anchor="middle">CATCHINGJOBS</text>
+    </g>
+
+    <polygon points="15,75 22,75 20,86 15,86" fill="#FFFFFF"/>
+    <rect x="356" y="70" width="4" height="18" fill="#EF4444" rx="1"/>
+
+    <g transform="translate(105, 125)">
+      <circle cx="0" cy="0" r="28" fill="#090D14"/>
+      <circle cx="0" cy="0" r="18" fill="#27272A"/>
+      <circle cx="0" cy="0" r="14" fill="#FFFFFF" stroke="#090D14" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="#090D14"/>
+    </g>
+    <g transform="translate(285, 125)">
+      <circle cx="0" cy="0" r="28" fill="#090D14"/>
+      <circle cx="0" cy="0" r="18" fill="#27272A"/>
+      <circle cx="0" cy="0" r="14" fill="#FFFFFF" stroke="#090D14" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="#090D14"/>
+    </g>
+  </g>
+
+  <g font-family="JetBrains Mono, monospace" font-size="8.5" font-weight="700" fill="#090D14">
+    <rect x="40" y="295" width="135" height="26" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <circle cx="54" cy="308" r="4" fill="#10B981"/>
+    <text x="65" y="311">DOOR-TO-DOOR PICKUP</text>
+
+    <rect x="185" y="295" width="135" height="26" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <circle cx="199" cy="308" r="4" fill="#090D14"/>
+    <text x="210" y="311">HEATED CABIN FLEET</text>
+
+    <rect x="330" y="295" width="135" height="26" rx="4" fill="#FFFFFF" stroke="#090D14" stroke-width="1.5"/>
+    <circle cx="344" cy="308" r="4" fill="#090D14"/>
+    <text x="355" y="311">ZERO DEDUCTION £0</text>
+  </g>
+</svg>

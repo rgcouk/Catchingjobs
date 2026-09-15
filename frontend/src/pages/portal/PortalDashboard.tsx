@@ -1,0 +1,911 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+/* CatchingJobs · 2026 Brand Design System
+ * Candidate & Worker Onboarding Portal
+ * Palette: Cadmium Yellow (#FFCC00), Deep Obsidian (#090D14), Crisp White, Ivory (brand-ivory)
+ * Typography: Plus Jakarta Sans (Headlines), Inter (Body), JetBrains Mono (Badges/Data)
+ */
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { useUser, useAuth } from '@clerk/clerk-react';
+import { useSearchParams } from 'react-router';
+import { Helmet } from 'react-helmet-async';
+import {
+  CheckCircle2,
+  Briefcase,
+  Loader2,
+  User,
+  ShieldCheck,
+  Mail,
+  Phone,
+  FileText,
+  Truck,
+  Coins,
+  Edit3,
+  Eye,
+  Calendar,
+  MapPin,
+  HelpCircle,
+  X,
+  Save,
+  Clock,
+  HeartPulse,
+  Download,
+  Send,
+  Sparkles,
+  RotateCcw,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import IntakeWizard from '../wizard/IntakeWizard';
+import { SubmittedApplication } from '../../App';
+
+const PortalDashboard = () => {
+  const [profile, setProfile] = useState<{
+    application?: SubmittedApplication;
+    [key: string]: any;
+  } | null>(null);
+  const [applications, setApplications] = useState<SubmittedApplication[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Modals
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditingWizard, setIsEditingWizard] = useState(false);
+
+  // Edit form state
+  const [editPhone, setEditPhone] = useState('');
+  const [editAddress, setEditAddress] = useState('');
+  const [editPostcode, setEditPostcode] = useState('');
+  const [editEmergencyName, setEditEmergencyName] = useState('');
+  const [editEmergencyPhone, setEditEmergencyPhone] = useState('');
+  const [editBankName, setEditBankName] = useState('');
+  const [editSortCode, setEditSortCode] = useState('');
+  const [editAccountNum, setEditAccountNum] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+
+  // Dispatch Contact Form state
+  const [dispatchMessage, setDispatchMessage] = useState('');
+  const [dispatchTopic, setDispatchTopic] = useState('shift-change');
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [messageSent, setMessageSent] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const { user, isLoaded } = useUser();
+  const { getToken } = useAuth();
+
+  const USER_ID = user?.id || '';
+
+  const fetchData = useCallback(async () => {
+    if (!isLoaded || !USER_ID) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      const token = await getToken();
+      const headers = { Authorization: `Bearer ${token}` };
+
+      // 1. Fetch Profile
+      const profileRes = await fetch(`/api/portal/me?userId=${USER_ID}`, { headers });
+      if (profileRes.ok) {
+        const pData = await profileRes.json();
+        setProfile(pData);
+
+        const app = pData.application;
+        if (app) {
+          setEditPhone(app.phone || '');
+          setEditAddress(app.addressLine1 || '');
+          setEditPostcode(app.postcode || '');
+          setEditEmergencyName(app.emergencyName || '');
+          setEditEmergencyPhone(app.emergencyPhone || '');
+          setEditBankName(app.bankName || '');
+          setEditSortCode(app.bankSortCode || '');
+          setEditAccountNum(app.bankAccountNumber || '');
+        }
+      }
+
+      // 2. Fetch Applications
+      const appsRes = await fetch(`/api/portal/applications?userId=${USER_ID}`, { headers });
+      if (appsRes.ok) {
+        setApplications(await appsRes.json());
+      }
+    } catch (error) {
+      const err = error as Error;
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [USER_ID, getToken, isLoaded]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleQuickUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsUpdating(true);
+    try {
+      const token = await getToken();
+      const res = await fetch('/api/portal/onboarding', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          phone: editPhone,
+          addressLine1: editAddress,
+          postcode: editPostcode,
+          emergencyName: editEmergencyName,
+          emergencyPhone: editEmergencyPhone,
+          bankName: editBankName,
+          bankSortCode: editSortCode,
+          bankAccountNumber: editAccountNum,
+        }),
+      });
+
+      if (res.ok) {
+        setUpdateSuccess(true);
+        setTimeout(() => {
+          setUpdateSuccess(false);
+          setIsEditModalOpen(false);
+        }, 1200);
+        await fetchData();
+      }
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleSendMessageToDispatch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSendingMessage(true);
+    setTimeout(() => {
+      setIsSendingMessage(false);
+      setMessageSent(true);
+      setDispatchMessage('');
+      setTimeout(() => setMessageSent(false), 4000);
+    }, 800);
+  };
+
+  if (loading && !profile) {
+    return (
+      <div className="flex flex-col items-center justify-center py-28 space-y-4 bg-white min-h-[60vh]">
+        <Loader2 className="w-8 h-8 animate-spin text-black" />
+        <p className="text-xs font-mono text-slate-500 font-bold uppercase tracking-wider">
+          Loading Candidate &amp; Worker Portal...
+        </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-2xl mx-auto mt-12 p-6 bg-red-50 border border-red-200 text-red-600 rounded-sm text-xs font-mono">
+        Error loading profile: {error}
+      </div>
+    );
+  }
+
+  const app = profile?.application;
+  const rosterRef = app?.rosterRef || 'PL-CHI-ACTIVE';
+  const sectorName = app?.sector === 'turkey' ? 'Turkey Catching' : 'Chicken Catching';
+
+  return (
+    <div className="flex w-full min-h-[calc(100vh-64px)] bg-slate-50">
+      <Helmet>
+        <title>Candidate &amp; Worker Portal | CatchingJobs</title>
+        <meta
+          name="description"
+          content="Employee crew management and onboarding portal for CatchingJobs operatives."
+        />
+      </Helmet>
+
+      {/* Simple Minimal Sidebar */}
+      <aside className="hidden md:flex flex-col w-64 border-r border-slate-200 bg-white px-4 py-10 shrink-0">
+        <div className="mb-6 px-3">
+          <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
+            Operative Menu
+          </h2>
+        </div>
+        <nav className="flex-1 space-y-1.5 font-display">
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-black bg-brand-yellow hover:bg-[#E5B800] font-bold text-sm rounded-sm"
+          >
+            <User className="w-4 h-4 mr-3" />
+            Dashboard
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-slate-600 hover:text-black hover:bg-slate-100 font-medium text-sm rounded-sm"
+          >
+            <Calendar className="w-4 h-4 mr-3" />
+            Schedule
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-slate-600 hover:text-black hover:bg-slate-100 font-medium text-sm rounded-sm"
+          >
+            <FileText className="w-4 h-4 mr-3" />
+            Documents
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-slate-600 hover:text-black hover:bg-slate-100 font-medium text-sm rounded-sm"
+          >
+            <HelpCircle className="w-4 h-4 mr-3" />
+            Support
+          </Button>
+        </nav>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-8 text-brand-obsidian font-sans antialiased">
+        {searchParams.get('applied') === 'true' && (
+          <div className="p-5 rounded-sm bg-brand-ivory border border-amber-200 text-black flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-black shrink-0" />
+              <div>
+                <h4 className="font-black font-display text-sm">Application Submitted Successfully!</h4>
+                <p className="text-xs text-slate-600 font-sans">
+                  Your application for{' '}
+                  {searchParams.get('town')
+                    ? `${searchParams.get('town')} crew`
+                    : 'the catching team'}{' '}
+                  has been registered with Pullum Ltd. Complete your induction details below.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Header Banner */}
+        <header className="rounded-sm border border-slate-200 bg-white p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-black bg-brand-yellow px-3 py-1 rounded">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                Verified Candidate Portal
+              </span>
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-black bg-slate-100 px-3 py-1 rounded border border-slate-200">
+                {app?.rosterRef || rosterRef || 'Candidate Hub'}
+              </span>
+              <span className="text-xs font-mono text-slate-600 flex items-center gap-1.5 font-bold">
+                <MapPin className="w-3.5 h-3.5 text-black" />
+                {app?.town ? `${app.town} Catching Area` : 'Regional Operations'}
+              </span>
+            </div>
+            <h1 className="text-3xl font-black font-display tracking-tight text-black">
+              Welcome back, {user?.firstName || user?.fullName || app?.name || 'Operative'}
+            </h1>
+            <p className="text-sm text-slate-600 max-w-xl leading-relaxed font-sans">
+              Pullum Ltd Employee &amp; Compliance Portal. View your roster status, manage door-to-door
+              transit address, verify licenses, and message dispatch.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            {app && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsViewModalOpen(true)}
+                  className="border-slate-200 hover:border-black text-black font-display font-bold text-xs uppercase tracking-wider rounded-sm flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Eye className="w-3.5 h-3.5 text-black" />
+                  <span>View Application</span>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="border-slate-200 hover:border-black text-black font-display font-bold text-xs uppercase tracking-wider rounded-sm flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Edit3 className="w-3.5 h-3.5 text-black" />
+                  <span>Edit Details</span>
+                </Button>
+              </>
+            )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                fetchData();
+              }}
+              className="text-xs font-mono border-slate-200 hover:border-black text-black rounded-sm h-9 px-3 font-bold"
+            >
+              <RotateCcw className="w-3.5 h-3.5 mr-1" /> Refresh Roster
+            </Button>
+          </div>
+        </header>
+
+        {/* Roster & Transit Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="p-6 rounded-sm bg-white border border-slate-200 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-mono font-bold uppercase text-black">
+                Division Assignment
+              </span>
+              <div className="w-9 h-9 rounded-sm bg-brand-yellow text-black font-black flex items-center justify-center text-sm">
+                CH
+              </div>
+            </div>
+            <h3 className="text-lg font-black font-display text-black">{sectorName}</h3>
+            <p className="text-xs text-slate-600 leading-relaxed font-sans">
+              Active rostered crew member with Pullum Ltd catching operations.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-sm bg-white border border-slate-200 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-mono font-bold uppercase text-black">
+                Door-to-Door Transit
+              </span>
+              <div className="w-9 h-9 rounded-sm bg-black text-brand-yellow flex items-center justify-center">
+                <Truck className="w-4 h-4" />
+              </div>
+            </div>
+            <h3 className="text-lg font-black font-display text-black">Home Pickup Active</h3>
+            <p className="text-xs text-slate-600 leading-relaxed font-sans">
+              {app?.addressLine1
+                ? `${app.addressLine1}, ${app.postcode || ''}`
+                : 'Registered home collection address'}
+            </p>
+          </div>
+
+          <div className="p-6 rounded-sm bg-white border border-slate-200 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-mono font-bold uppercase text-black">
+                Weekly Payroll
+              </span>
+              <div className="w-9 h-9 rounded-sm bg-brand-yellow text-black flex items-center justify-center">
+                <Coins className="w-4 h-4" />
+              </div>
+            </div>
+            <h3 className="text-lg font-black font-display text-black">Friday BACS Deposit</h3>
+            <p className="text-xs text-slate-600 leading-relaxed font-sans">
+              {app?.bankName
+                ? `${app.bankName} (Sort: ${app.bankSortCode || '**-**-**'})`
+                : 'Guaranteed weekly Friday BACS pay (£750–£1,050/wk)'}
+            </p>
+          </div>
+        </div>
+
+        {/* Onboarding Intake Wizard Section */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-black font-display tracking-tight text-black flex items-center gap-2.5">
+              <User className="w-5 h-5 text-black" />
+              Onboarding &amp; Profile Status
+            </h2>
+
+            {app?.profileFormCompleted && !isEditingWizard && (
+              <button
+                onClick={() => setIsEditingWizard(true)}
+                className="text-xs font-mono font-bold text-black hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <Edit3 className="w-3.5 h-3.5" /> Re-open Full Induction Wizard
+              </button>
+            )}
+          </div>
+
+          {app?.profileFormCompleted && !isEditingWizard ? (
+            <div className="rounded-sm border border-amber-200/80 bg-brand-ivory p-6 sm:p-8 flex items-start gap-4 shadow-xs">
+              <CheckCircle2 className="w-6 h-6 text-black shrink-0 mt-0.5" />
+              <div className="space-y-2 flex-1">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-black font-display text-lg text-black">Induction Profile Verified</h3>
+                  <span className="text-xs font-mono font-bold uppercase text-black bg-brand-yellow px-3 py-1 rounded">
+                    Active Crew Member
+                  </span>
+                </div>
+                <p className="text-sm text-slate-700 leading-relaxed font-sans">
+                  All 3 stages of candidate induction (Right to Work compliance, Door-to-Door
+                  transit address, and Animal Welfare declarations) are verified on file. Shift
+                  schedules are dispatched directly via SMS and crew lead WhatsApp channels.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {isEditingWizard && (
+                <div className="flex items-center justify-between bg-white p-4 rounded-sm border border-slate-200">
+                  <span className="text-xs font-mono font-bold text-black">
+                    Editing full 3-step application wizard
+                  </span>
+                  <button
+                    onClick={() => setIsEditingWizard(false)}
+                    className="text-xs font-mono text-slate-500 hover:text-black flex items-center gap-1 cursor-pointer"
+                  >
+                    Cancel Editing
+                  </button>
+                </div>
+              )}
+
+              <IntakeWizard
+                sectorId={app?.sector || 'chicken'}
+                initialData={app}
+                onSuccess={async (data) => {
+                  try {
+                    const token = await getToken();
+                    const res = await fetch(`/api/portal/onboarding`, {
+                      method: 'PATCH',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                      },
+                      body: JSON.stringify({ ...data, profileFormCompleted: true }),
+                    });
+                    if (!res.ok) throw new Error('Failed to submit application');
+                    setIsEditingWizard(false);
+                    await fetchData();
+                  } catch (error) {
+                    const err = error as Error;
+                    alert(err.message);
+                  }
+                }}
+                onClose={() => setIsEditingWizard(false)}
+              />
+            </div>
+          )}
+        </section>
+
+        {/* Safety Resources & Welfare Downloads */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-black font-display tracking-tight text-black flex items-center gap-2.5">
+            <ShieldCheck className="w-5 h-5 text-black" />
+            Lantra &amp; Animal Welfare Documentation
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="rounded-sm border border-slate-200 bg-white p-6 space-y-3 shadow-xs">
+              <div className="w-9 h-9 rounded-sm bg-black text-brand-yellow flex items-center justify-center">
+                <FileText className="w-4 h-4" />
+              </div>
+              <h4 className="font-bold font-display text-sm text-black">Lantra Poultry Catching Standard</h4>
+              <p className="text-xs text-slate-600 leading-relaxed font-sans">
+                Official humane poultry handling techniques, cage loading ratios, and thermal
+                welfare guidance.
+              </p>
+              <div className="pt-2 text-xs font-mono font-bold text-black flex items-center gap-1">
+                <Download className="w-3.5 h-3.5" /> PDF Guide (Verified)
+              </div>
+            </div>
+
+            <div className="rounded-sm border border-slate-200 bg-white p-6 space-y-3 shadow-xs">
+              <div className="w-9 h-9 rounded-sm bg-black text-brand-yellow flex items-center justify-center">
+                <HeartPulse className="w-4 h-4" />
+              </div>
+              <h4 className="font-bold font-display text-sm text-black">
+                PPE &amp; Particulate Safety Protocol
+              </h4>
+              <p className="text-xs text-slate-600 leading-relaxed font-sans">
+                Standard operating procedures for FFP3 masks, protective overalls, and steel toe-cap
+                safety footwear.
+              </p>
+              <div className="pt-2 text-xs font-mono font-bold text-black flex items-center gap-1">
+                <Download className="w-3.5 h-3.5" /> PDF Protocol (Verified)
+              </div>
+            </div>
+
+            <div className="rounded-sm border border-slate-200 bg-white p-6 space-y-3 shadow-xs">
+              <div className="w-9 h-9 rounded-sm bg-black text-brand-yellow flex items-center justify-center">
+                <Truck className="w-4 h-4" />
+              </div>
+              <h4 className="font-bold font-display text-sm text-black">Door-to-Door Transit Guidelines</h4>
+              <p className="text-xs text-slate-600 leading-relaxed font-sans">
+                Minibus collection readiness, route pickup tracking, and night shift dispatch
+                protocols.
+              </p>
+              <div className="pt-2 text-xs font-mono font-bold text-black flex items-center gap-1">
+                <Download className="w-3.5 h-3.5" /> PDF Guide (Verified)
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Dispatch Coordination Desk & Helpline */}
+        <section className="rounded-sm border border-slate-200 bg-white p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+            <div>
+              <h3 className="font-black font-display text-lg text-black flex items-center gap-2">
+                <Phone className="w-4 h-4 text-black" />
+                24/7 Operations Desk &amp; Shift Coordination
+              </h3>
+              <p className="text-xs text-slate-600 font-sans">
+                Need to report an emergency pickup change, check night schedule, or request
+                assistance?
+              </p>
+            </div>
+
+            <a
+              href="tel:01205330190"
+              className="bg-black hover:bg-neutral-800 text-white px-5 py-2.5 rounded-sm text-xs font-mono font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs shrink-0 no-underline"
+            >
+              <Phone className="w-3.5 h-3.5 text-brand-yellow" />
+              <span>Call 01205 330 190</span>
+            </a>
+          </div>
+
+          {messageSent ? (
+            <div className="p-4 rounded-sm bg-brand-ivory border border-amber-200 text-black flex items-center gap-3 text-xs font-mono font-bold">
+              <CheckCircle2 className="w-4 h-4 text-black" />
+              <span>
+                Message received by Lincolnshire Operations Desk. Squad leader will respond shortly.
+              </span>
+            </div>
+          ) : (
+            <form onSubmit={handleSendMessageToDispatch} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-mono uppercase text-slate-500 font-bold">Topic</Label>
+                  <select
+                    value={dispatchTopic}
+                    onChange={(e) => setDispatchTopic(e.target.value)}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-black text-xs rounded-sm font-mono"
+                  >
+                    <option value="shift-change">Shift Availability Change</option>
+                    <option value="transit-pickup">Door Pickup Address Update</option>
+                    <option value="payroll-query">Payroll / Payslip Query</option>
+                    <option value="equipment">PPE / Safety Equipment Request</option>
+                  </select>
+                </div>
+
+                <div className="sm:col-span-2 space-y-1.5">
+                  <Label className="text-xs font-mono uppercase text-slate-500 font-bold">
+                    Message Details
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Enter your message for the crew leader or payroll team..."
+                      value={dispatchMessage}
+                      onChange={(e) => setDispatchMessage(e.target.value)}
+                      className="bg-slate-50 border-slate-200 focus:border-black text-xs rounded-sm"
+                      required
+                    />
+                    <Button
+                      type="submit"
+                      disabled={isSendingMessage}
+                      className="bg-black hover:bg-neutral-800 text-white text-xs font-display font-bold uppercase shrink-0 rounded-sm px-5"
+                    >
+                      {isSendingMessage ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-brand-yellow" />
+                      ) : (
+                        <Send className="w-3.5 h-3.5 text-brand-yellow" />
+                      )}
+                      <span>Send</span>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          )}
+        </section>
+
+        {/* 1. VIEW FULL APPLICATION MODAL */}
+        <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
+          <DialogContent className="max-w-2xl bg-white rounded-sm border border-slate-200 p-6 sm:p-8 max-h-[85vh] overflow-y-auto">
+            <DialogHeader className="space-y-2 border-b border-slate-100 pb-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold uppercase text-black bg-brand-yellow px-2.5 py-0.5 rounded">
+                  Roster File: {rosterRef}
+                </span>
+                <span className="text-xs font-mono text-slate-500 font-bold">{sectorName}</span>
+              </div>
+              <DialogTitle className="text-xl font-black font-display text-black">
+                Full Candidate Application Record
+              </DialogTitle>
+              <DialogDescription className="text-xs text-slate-600 font-sans">
+                Verified application information on file with Pullum Ltd recruitment.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-6 pt-4 text-xs font-sans">
+              {/* Personal Details */}
+              <div className="space-y-2">
+                <h4 className="font-black text-sm text-black uppercase font-display">
+                  1. Personal &amp; Contact Information
+                </h4>
+                <div className="grid grid-cols-2 gap-3 p-4 rounded-sm bg-slate-50 border border-slate-200">
+                  <div>
+                    <span className="text-slate-500 block">Full Name:</span>
+                    <span className="font-bold text-black">
+                      {app?.name || user?.fullName || '-'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Email Address:</span>
+                    <span className="font-bold text-black">
+                      {app?.email || user?.primaryEmailAddress?.emailAddress || '-'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Mobile Phone:</span>
+                    <span className="font-bold text-black font-mono">
+                      {app?.phone || '-'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Date of Birth:</span>
+                    <span className="font-bold text-black font-mono">
+                      {app?.dateOfBirth || '-'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">National Insurance (NI):</span>
+                    <span className="font-bold text-black font-mono">
+                      {app?.niNumber || '-'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">UK Right to Work:</span>
+                    <span className="font-bold text-black">Verified (Yes)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Transit & Home Pickup Address */}
+              <div className="space-y-2">
+                <h4 className="font-black text-sm text-black uppercase font-display">
+                  2. Door-to-Door Home Pickup Address
+                </h4>
+                <div className="p-4 rounded-sm bg-slate-50 border border-slate-200 space-y-1">
+                  <p className="font-bold text-black">
+                    {app?.addressLine1 || 'Address not entered'}
+                  </p>
+                  <p className="text-slate-600 font-mono">
+                    {app?.postcode || ''} • Town Hub: {app?.town || 'Lincolnshire'}
+                  </p>
+                  <p className="text-[11px] text-black font-bold pt-1 font-sans">
+                    ✓ Heated minibus dispatch configured for direct front-door collection.
+                  </p>
+                </div>
+              </div>
+
+              {/* Emergency & Payroll Details */}
+              <div className="space-y-2">
+                <h4 className="font-black text-sm text-black uppercase font-display">
+                  3. Emergency Contact &amp; Friday Payroll
+                </h4>
+                <div className="grid grid-cols-2 gap-3 p-4 rounded-sm bg-slate-50 border border-slate-200">
+                  <div>
+                    <span className="text-slate-500 block">Emergency Name:</span>
+                    <span className="font-bold text-black">
+                      {app?.emergencyName || '-'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Emergency Phone:</span>
+                    <span className="font-bold text-black font-mono">
+                      {app?.emergencyPhone || '-'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Bank Name:</span>
+                    <span className="font-bold text-black">{app?.bankName || '-'}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Account Holder:</span>
+                    <span className="font-bold text-black">
+                      {app?.bankAccountName || '-'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Sort Code:</span>
+                    <span className="font-bold text-black font-mono">
+                      {app?.bankSortCode || '-'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Account Number:</span>
+                    <span className="font-bold text-black font-mono">
+                      {app?.bankAccountNumber ? `••••${app.bankAccountNumber.slice(-4)}` : '-'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Qualifications & Welfare */}
+              <div className="space-y-2">
+                <h4 className="font-black text-sm text-black uppercase font-display">
+                  4. Qualifications &amp; Welfare Declarations
+                </h4>
+                <div className="grid grid-cols-2 gap-3 p-4 rounded-sm bg-slate-50 border border-slate-200">
+                  <div>
+                    <span className="text-slate-500 block">Driving License:</span>
+                    <span className="font-bold text-black">
+                      {app?.hasDrivingLicense ? 'Yes (Full UK)' : 'No'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Forklift License:</span>
+                    <span className="font-bold text-black">
+                      {app?.hasForkliftLicense ? 'Yes (Certified)' : 'No'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Physical Lifting Fit:</span>
+                    <span className="font-bold text-black">Confirmed</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Lantra Welfare Signed:</span>
+                    <span className="font-bold text-black">Confirmed</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <Button
+                variant="outline"
+                onClick={() => setIsViewModalOpen(false)}
+                className="border-slate-200 hover:border-black text-black text-xs font-display font-bold uppercase rounded-sm"
+              >
+                Close
+              </Button>
+              <Button
+                onClick={() => {
+                  setIsViewModalOpen(false);
+                  setIsEditModalOpen(true);
+                }}
+                className="bg-black hover:bg-neutral-800 text-white text-xs font-display font-bold uppercase rounded-sm"
+              >
+                Edit Information
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* 2. QUICK EDIT APPLICATION MODAL */}
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogContent className="max-w-lg bg-white rounded-sm border border-slate-200 p-6 sm:p-8">
+            <DialogHeader className="space-y-2 border-b border-slate-100 pb-4">
+              <DialogTitle className="text-xl font-black font-display text-black">
+                Update Application Details
+              </DialogTitle>
+              <DialogDescription className="text-xs text-slate-600 font-sans">
+                Update your contact numbers, home collection address, or banking information.
+              </DialogDescription>
+            </DialogHeader>
+
+            {updateSuccess ? (
+              <div className="py-8 flex flex-col items-center justify-center space-y-2 text-black">
+                <CheckCircle2 className="w-10 h-10" />
+                <p className="font-black font-display text-sm">Details Updated Successfully!</p>
+              </div>
+            ) : (
+              <form onSubmit={handleQuickUpdate} className="space-y-4 pt-2">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-mono uppercase text-slate-500 font-bold">Mobile Phone</Label>
+                  <Input
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    className="bg-slate-50 border-slate-200 focus:border-black text-sm rounded-sm font-mono"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-mono uppercase text-slate-500 font-bold">
+                    Home Collection Address
+                  </Label>
+                  <Input
+                    value={editAddress}
+                    onChange={(e) => setEditAddress(e.target.value)}
+                    className="bg-slate-50 border-slate-200 focus:border-black text-sm rounded-sm"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-mono uppercase text-slate-500 font-bold">Postcode</Label>
+                  <Input
+                    value={editPostcode}
+                    onChange={(e) => setEditPostcode(e.target.value)}
+                    className="bg-slate-50 border-slate-200 focus:border-black text-sm rounded-sm font-mono uppercase"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-mono uppercase text-slate-500 font-bold">
+                      Emergency Contact
+                    </Label>
+                    <Input
+                      value={editEmergencyName}
+                      onChange={(e) => setEditEmergencyName(e.target.value)}
+                      className="bg-slate-50 border-slate-200 focus:border-black text-sm rounded-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-mono uppercase text-slate-500 font-bold">
+                      Emergency Phone
+                    </Label>
+                    <Input
+                      value={editEmergencyPhone}
+                      onChange={(e) => setEditEmergencyPhone(e.target.value)}
+                      className="bg-slate-50 border-slate-200 focus:border-black text-sm rounded-sm font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-mono uppercase text-slate-500 font-bold">
+                      Bank Sort Code
+                    </Label>
+                    <Input
+                      value={editSortCode}
+                      onChange={(e) => setEditSortCode(e.target.value)}
+                      className="bg-slate-50 border-slate-200 focus:border-black text-sm rounded-sm font-mono"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-mono uppercase text-slate-500 font-bold">
+                      Bank Account No
+                    </Label>
+                    <Input
+                      value={editAccountNum}
+                      onChange={(e) => setEditAccountNum(e.target.value)}
+                      className="bg-slate-50 border-slate-200 focus:border-black text-sm rounded-sm font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsEditModalOpen(false)}
+                    className="border-slate-200 hover:border-black text-black text-xs font-display font-bold uppercase rounded-sm"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isUpdating}
+                    className="bg-black hover:bg-neutral-800 text-white text-xs font-display font-bold uppercase shadow-xs flex items-center gap-1.5 rounded-sm"
+                  >
+                    {isUpdating ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-brand-yellow" />
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-3.5 h-3.5 text-brand-yellow" />
+                        <span>Save Changes</span>
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>
+  );
+};
+
+export default PortalDashboard;
