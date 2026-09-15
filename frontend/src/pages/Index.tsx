@@ -226,7 +226,7 @@ export default function Index({ onNavigate }: any) {
           Commercial Turkey Catching ({jobs.filter(j => j.sector === 'turkey').length})
         </button>
         <button onClick={() => {}} className="px-5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all">
-          Driver–Catchers ({jobs.filter(j => j.id.includes('driver') || j.title.toLowerCase().includes('driver')).length})
+          Driver–Catchers ({jobs.filter(j => j.title.toLowerCase().includes('driver')).length})
         </button>
       </div>
 
