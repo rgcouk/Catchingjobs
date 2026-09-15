@@ -111,7 +111,7 @@ export default function SectorHub({ onNavigate }: any) {
               <div className="flex justify-between"><span>Typical Hours:</span><strong className="font-mono text-white">20:00 – 04:30</strong></div>
               <div className="flex justify-between"><span>Active Crews:</span><strong className="font-mono text-[#FFC72C]">{totalCrews || 34} Crews Live</strong></div>
             </div>
-            <a href="brand-2026.html#vacancies" className="block text-center w-full py-3 bg-[#FFC72C] hover:bg-[#E5B800] text-black font-display font-bold text-xs uppercase rounded-md transition-all shadow-sm">
+            <a href="#vacancies" className="block text-center w-full py-3 bg-[#FFC72C] hover:bg-[#E5B800] text-black font-display font-bold text-xs uppercase rounded-md transition-all shadow-sm">
               View {jobs.filter(j => j.sector === 'chicken').length || 'Broiler'} Vacancies →
             </a>
           </div>
@@ -185,7 +185,7 @@ export default function SectorHub({ onNavigate }: any) {
               <div className="flex justify-between"><span>Typical Hours:</span><strong className="font-mono text-white">21:00 – 05:00</strong></div>
               <div className="flex justify-between"><span>Active Hubs:</span><strong className="font-mono text-[#FFC72C]">Norfolk &amp; Lincs</strong></div>
             </div>
-            <a href="brand-2026.html#vacancies" className="block text-center w-full py-3 bg-[#FFC72C] hover:bg-[#E5B800] text-black font-display font-bold text-xs uppercase rounded-md transition-all shadow-sm">
+            <a href="#vacancies" className="block text-center w-full py-3 bg-[#FFC72C] hover:bg-[#E5B800] text-black font-display font-bold text-xs uppercase rounded-md transition-all shadow-sm">
               View {jobs.filter(j => j.sector === 'turkey').length || 'Turkey'} Vacancies →
             </a>
           </div>
@@ -224,6 +224,49 @@ export default function SectorHub({ onNavigate }: any) {
   </main>
 
   {/*  4. STATUTORY FOOTER  */}
+  
+      <section className="py-16 bg-slate-50 border-t border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl font-display font-black text-slate-900">
+              Live {sectorId === 'chicken' ? 'Broiler' : 'Turkey'} Vacancies
+            </h2>
+            <p className="text-slate-600 font-sans max-w-2xl mx-auto">
+              Ready to deploy? Apply now to join our {sectorId === 'chicken' ? 'Broiler' : 'Turkey'} squads with guaranteed Friday pay.
+            </p>
+          </div>
+          
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {jobs.filter(j => j.sector === sectorId).length > 0 ? (
+              jobs.filter(j => j.sector === sectorId).map(job => (
+                <Link to={`/jobs/${job.id}`} key={job.id} className="block group">
+                  <div className="bg-white rounded-sm border border-slate-200 p-6 h-full flex flex-col transition-shadow hover:shadow-md">
+                    <div className="mb-4">
+                      <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded-sm mb-3">
+                        {job.sector === 'chicken' ? 'Broiler Chicken' : 'Commercial Turkey'}
+                      </span>
+                      <h3 className="text-lg font-bold font-display text-slate-900 group-hover:text-brand-yellow transition-colors leading-tight">
+                        {job.title}
+                      </h3>
+                      <p className="text-sm text-slate-500 mt-1">{job.townName || job.townId}</p>
+                    </div>
+                    
+                    <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
+                      <span className="font-bold text-slate-900">{job.payRate}</span>
+                      <span className="text-[#FFC72C] font-bold group-hover:underline">View details</span>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12 text-slate-500">
+                No active vacancies found for this sector. Check back later.
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
   <footer className="bg-black text-white pt-16 pb-12 border-t border-neutral-900">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 pb-8 border-b border-neutral-800">

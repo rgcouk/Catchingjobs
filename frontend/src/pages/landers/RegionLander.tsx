@@ -2,19 +2,30 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { PublicHeader } from '../../components/layout/PublicHeader';
 
-export default function RegionLander({ onNavigate }: any) {
+export default function RegionLander({ onNavigate, regionId, sectorId, onBackToSector }: any) {
+  
   const [locations, setLocations] = useState<any[]>([]);
   const [activeRegion, setActiveRegion] = useState<any>(null);
+  const [jobs, setJobs] = useState<any[]>([]);
 
   useEffect(() => {
     fetch('/api/locations')
       .then(res => res.json())
       .then(data => {
         setLocations(data);
-        if (data.length > 0) setActiveRegion(data[0]);
+        if (data.length > 0) {
+          const matchedRegion = data.find((r: any) => r.id === regionId);
+          setActiveRegion(matchedRegion || data[0]);
+        }
       })
       .catch(console.error);
-  }, []);
+
+    fetch(`/api/jobs?sector=${sectorId}&regionId=${regionId}`)
+      .then(res => res.json())
+      .then(data => setJobs(data))
+      .catch(console.error);
+  }, [regionId, sectorId]);
+
 
   return (
     <div className="bg-white min-h-screen">
@@ -127,6 +138,49 @@ export default function RegionLander({ onNavigate }: any) {
   </main>
 
   {/*  4. STATUTORY FOOTER  */}
+  
+      <section id="vacancies" className="py-16 bg-slate-50 border-t border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl font-display font-black text-slate-900">
+              Live Vacancies in {activeRegion?.name || 'this Region'}
+            </h2>
+            <p className="text-slate-600 font-sans max-w-2xl mx-auto">
+              Join our local {sectorId === 'chicken' ? 'Broiler' : 'Turkey'} squads. Free minibus transport provided from all listed depots.
+            </p>
+          </div>
+          
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {jobs.length > 0 ? (
+              jobs.map((job: any) => (
+                <Link to={`/jobs/${job.id}`} key={job.id} className="block group">
+                  <div className="bg-white rounded-sm border border-slate-200 p-6 h-full flex flex-col transition-shadow hover:shadow-md">
+                    <div className="mb-4">
+                      <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded-sm mb-3">
+                        {job.sector === 'chicken' ? 'Broiler Chicken' : 'Commercial Turkey'}
+                      </span>
+                      <h3 className="text-lg font-bold font-display text-slate-900 group-hover:text-brand-yellow transition-colors leading-tight">
+                        {job.title}
+                      </h3>
+                      <p className="text-sm text-slate-500 mt-1">{job.townName || job.townId}</p>
+                    </div>
+                    
+                    <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
+                      <span className="font-bold text-slate-900">{job.payRate}</span>
+                      <span className="text-[#FFC72C] font-bold group-hover:underline">View details</span>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12 text-slate-500">
+                No active vacancies found for this region right now. Check back later.
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
   <footer className="bg-black text-white pt-16 pb-12 border-t border-neutral-900">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 pb-8 border-b border-neutral-800">
