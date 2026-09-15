@@ -28,8 +28,6 @@ import { Input } from '@/components/ui/input';
 import { Loader2, ShieldCheck, Truck, Coins, ArrowRight, Lock, ArrowLeft } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import BrandLogo from '../../components/brand/BrandLogo';
-import { PublicHeader } from '../../components/layout/PublicHeader';
-import { PublicFooter } from '../../components/layout/PublicFooter';
 
 
 const loginSchema = z.object({
@@ -90,10 +88,9 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-brand-obsidian selection:bg-brand-yellow selection:text-black antialiased">
-      <PublicHeader />
-      <div className="flex-1 flex flex-col md:flex-row">
+            <div className="flex-1 flex flex-col md:flex-row">
       <Helmet>
-        <title>Candidate Log In | CatchingJobs</title>
+        <title>Log In | CatchingJobs</title>
         <meta name="description" content="Sign in to your CatchingJobs operative portal account." />
       </Helmet>
 
@@ -111,7 +108,7 @@ export default function Login() {
 
           <div className="space-y-4">
             <h1 className="text-3xl sm:text-4xl font-black font-display tracking-tight text-white leading-tight">
-              Sign in to manage your catching roster.
+              Sign in to your account.
             </h1>
             <p className="text-sm text-slate-300 leading-relaxed font-sans">
               Access your door-to-door heated minibus schedule, verify weekly Friday payroll details, and
@@ -165,7 +162,7 @@ export default function Login() {
         <div className="w-full max-w-md bg-white rounded-sm border border-slate-200 p-8 shadow-md space-y-6">
           <div className="space-y-2 text-center">
             <h2 className="text-2xl font-black font-display tracking-tight text-black">
-              Candidate Log In
+              Log In
             </h2>
             <p className="text-xs text-slate-600 font-sans">
               Enter your registered email address and password to sign in.
@@ -261,13 +258,12 @@ export default function Login() {
           <div className="text-center text-xs text-slate-600 pt-2 font-sans">
             Don't have an account?{' '}
             <Link to="/register" className="font-bold text-black hover:underline">
-              Apply to join roster
+              Create an account
             </Link>
   </div>
   </div>
   </div>
     </div>
-      <PublicFooter />
-    </div>
+          </div>
   );
 }

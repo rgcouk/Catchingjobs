@@ -28,8 +28,6 @@ import { Input } from '@/components/ui/input';
 import { Loader2, ShieldCheck, Truck, Coins, ArrowRight, ArrowLeft } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import BrandLogo from '../../components/brand/BrandLogo';
-import { PublicHeader } from '../../components/layout/PublicHeader';
-import { PublicFooter } from '../../components/layout/PublicFooter';
 
 
 const registerSchema = z.object({
@@ -209,7 +207,7 @@ export default function Register() {
             <p className="text-xs text-slate-600 font-sans">
               {pendingVerification
                 ? 'Enter the 6-digit verification code sent to your email.'
-                : 'Fill in your details below to join the candidate roster.'}
+                : 'Fill in your details below to create an account.'}
             </p>
           </div>
 
@@ -392,7 +390,6 @@ export default function Register() {
   </div>
   </div>
   </div>
-      <PublicFooter />
-    </div>
+          </div>
   );
 }
