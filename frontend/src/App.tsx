@@ -4,6 +4,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import NoiseOverlay from './components/layout/NoiseOverlay';
+import { LazyMotion, domAnimation, AnimatePresence } from 'framer-motion';
 import { Routes, Route, useNavigate, useLocation, Navigate, useParams, Link } from 'react-router';
 
 import {
