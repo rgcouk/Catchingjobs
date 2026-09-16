@@ -50,8 +50,16 @@ export default function JobsListPage() {
       <PublicHeader />
 
       <main className="flex-1 bg-slate-50 flex flex-col">
-        <section className="bg-black py-16 border-b border-black text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+        <section className="relative bg-black py-16 border-b border-black text-white overflow-hidden">
+          {/* Faded Background Image */}
+          <div 
+            className="absolute inset-0 z-0 bg-cover bg-center opacity-30 mix-blend-luminosity"
+            style={{ backgroundImage: `url('/images/homepage-hero.jpg')` }}
+          />
+          <div className="absolute inset-0 bg-black/60 z-0"></div>
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 relative z-10">
+          
             <h1 className="text-3xl md:text-5xl font-black font-display tracking-tight text-[#ff7c20]">
               Catching Vacancies
             </h1>
