@@ -245,10 +245,26 @@ export default function LandingPage({
                       <form
                         id={formId}
                         className="space-y-4"
-                        onSubmit={(e) => {
+                        onSubmit={async (e) => {
                           e.preventDefault();
-                          // In a real implementation, this would integrate with Clerk's passwordless auth
-                          alert('Form submitted! Redirecting to verification...');
+                          const form = e.currentTarget;
+                          const email = (form.querySelector('input[type="email"]') as HTMLInputElement).value;
+                          const phone = (form.querySelector('input[type="tel"]') as HTMLInputElement).value;
+                          try {
+                            const res = await fetch('/api/triage', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ email, phone, sector: campaignId || 'chicken', hasRightToWork: true })
+                            });
+                            if (res.ok) {
+                              alert('Application submitted! Our team will contact you shortly.');
+                              form.reset();
+                            } else {
+                              alert('Failed to submit application. Please try again.');
+                            }
+                          } catch (err) {
+                            console.error(err);
+                          }
                         }}
                       >
                         <Input

@@ -225,7 +225,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
 
   {/*  4. STATUTORY FOOTER  */}
   
-      <section className="py-16 bg-slate-50 border-t border-slate-200">
+      <section id="vacancies" className="py-16 bg-slate-50 border-t border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-display font-black text-slate-900">

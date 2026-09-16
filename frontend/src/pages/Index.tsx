@@ -601,25 +601,49 @@ export default function Index({ onNavigate }: any) {
         </p>
       </div>
 
-      <form onSubmit={(e) => e.preventDefault()} className="space-y-4 text-xs font-sans">
+      <form onSubmit={async (e) => {
+        e.preventDefault();
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        const data = {
+          name: formData.get('name'),
+          phone: formData.get('phone'),
+          town: formData.get('town'),
+          hasRightToWork: formData.get('rightToWork') === 'on',
+          sector: 'chicken',
+        };
+        try {
+          const res = await fetch('/api/triage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          if (res.ok) {
+            document.getElementById('modal-success')?.classList.remove('hidden');
+            form.style.display = 'none';
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }} className="space-y-4 text-xs font-sans">
         <div>
           <label className="block font-bold text-slate-800 mb-1">Full Name *</label>
-          <input type="text" required={true} placeholder="e.g. David Jones" className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition text-sm" />
+          <input name="name" type="text" required={true} placeholder="e.g. David Jones" className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition text-sm" />
         </div>
 
         <div>
           <label className="block font-bold text-slate-800 mb-1">UK Mobile Phone Number *</label>
-          <input type="tel" required={true} placeholder="e.g. 07123 456789" className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition text-sm font-mono" />
+          <input name="phone" type="tel" required={true} placeholder="e.g. 07123 456789" className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition text-sm font-mono" />
         </div>
 
         <div>
           <label className="block font-bold text-slate-800 mb-1">Home Town / Postcode (For Free Minibus Pickup) *</label>
-          <input type="text" required={true} placeholder="e.g. Boston, PE21 8TR" className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition text-sm" />
+          <input name="town" type="text" required={true} placeholder="e.g. Boston, PE21 8TR" className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition text-sm" />
         </div>
 
         <div>
           <label className="flex items-start gap-2.5 cursor-pointer pt-1">
-            <input type="checkbox" required={true} className="mt-0.5 rounded text-black focus:ring-black" />
+            <input name="rightToWork" type="checkbox" required={true} className="mt-0.5 rounded text-black focus:ring-black" />
             <span className="text-[11px] text-slate-600 leading-snug">
               I confirm that I have legal Right to Work in the UK and am 18+ years of age.
             </span>

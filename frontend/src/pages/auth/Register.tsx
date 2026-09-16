@@ -117,8 +117,8 @@ export default function Register() {
     if (!isLoaded) return;
     signUp.authenticateWithRedirect({
       strategy: 'oauth_google',
-      fallbackRedirectUrl: '/sso-callback',
-      forceRedirectUrl: '/employee',
+      redirectUrl: '/sso-callback',
+      redirectUrlComplete: '/employee',
     });
   };
 

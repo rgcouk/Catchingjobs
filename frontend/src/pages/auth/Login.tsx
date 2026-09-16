@@ -81,8 +81,8 @@ export default function Login() {
     if (!isLoaded) return;
     signIn.authenticateWithRedirect({
       strategy: 'oauth_google',
-      fallbackRedirectUrl: '/sso-callback',
-      forceRedirectUrl: '/employee',
+      redirectUrl: '/sso-callback',
+      redirectUrlComplete: '/employee',
     });
   };
 
