@@ -27,7 +27,7 @@ export default function Index({ onNavigate }: any) {
   <PublicHeader />
 
   {/*  2. HERO SECTION (Continuous Cadmium Yellow with Real Blended Fleet Van matching index.jpg)  */}
-  <section id="home" data-od-id="hero-section" className="relative bg-[#fe9320] pt-12 pb-20 lg:pt-16 lg:pb-28 overflow-hidden border-b border-black/10">
+  <section id="home" data-od-id="hero-section" className="relative bg-[linear-gradient(160deg,#ff9436_0%,#ff7c20_50%,#e05500_100%)] pt-12 pb-20 lg:pt-16 lg:pb-28 overflow-hidden border-b border-black/10">
     
     {/*  Van Visual on Right: Blended smoothly matching index.jpg  */}
     <div className="absolute right-0 top-0 bottom-0 w-full lg:w-3/5 pointer-events-none hidden md:flex items-center justify-end overflow-hidden">
@@ -155,7 +155,7 @@ export default function Index({ onNavigate }: any) {
               <span className="px-3 py-1 rounded-full bg-neutral-800 text-neutral-300 text-xs font-mono font-bold uppercase tracking-wider">
                 COMMERCIAL TURKEY TEAMS
               </span>
-              <span className="px-3 py-1 rounded-full bg-[#fe9320] text-black text-xs font-mono font-bold uppercase tracking-wider">
+              <span className="px-3 py-1 rounded-full bg-[#ff7c20] text-black text-xs font-mono font-bold uppercase tracking-wider">
                 SEASONAL PEAK PAY
               </span>
             </div>
@@ -173,15 +173,15 @@ export default function Index({ onNavigate }: any) {
             {/*  Benefit Points with Checkmarks  */}
             <ul className="space-y-2.5 text-xs sm:text-sm font-semibold text-slate-200 font-sans">
               <li className="flex items-center gap-2.5">
-                <span className="text-[#fe9320] font-black text-base">✓</span>
+                <span className="text-[#ff7c20] font-black text-base">✓</span>
                 <span>Free Door-to-Door Home Pickup</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <span className="text-[#fe9320] font-black text-base">✓</span>
+                <span className="text-[#ff7c20] font-black text-base">✓</span>
                 <span>Premium Contract Earnings</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <span className="text-[#fe9320] font-black text-base">✓</span>
+                <span className="text-[#ff7c20] font-black text-base">✓</span>
                 <span>Lantra Animal Welfare Trained</span>
               </li>
             </ul>
@@ -189,7 +189,7 @@ export default function Index({ onNavigate }: any) {
 
           {/*  Bottom Button  */}
           <div className="pt-8">
-            <Link to="/turkeys" className="inline-flex items-center justify-center px-6 py-3.5 rounded-md bg-[#fe9320] hover:bg-[#e5841c] text-black font-display font-bold text-xs uppercase tracking-wider transition-all shadow active:scale-95">
+            <Link to="/turkeys" className="inline-flex items-center justify-center px-6 py-3.5 rounded-md bg-[#ff7c20] hover:bg-[#e05500] text-black font-display font-bold text-xs uppercase tracking-wider transition-all shadow active:scale-95">
               <span>View Commercial Turkey Catching Roles</span>
               <span className="ml-2">→</span>
             </Link>
@@ -298,7 +298,7 @@ export default function Index({ onNavigate }: any) {
             SELECT REGION:
           </div>
           {locations.map((loc, idx) => (
-            <button key={loc.id} id={`region-btn-${loc.id}`} onClick={() => {}} className={`w-full text-left p-4 rounded-md transition-all flex items-center justify-between font-display ${idx === 0 ? 'bg-[#fe9320] text-black shadow-md' : 'bg-[#111622] hover:bg-neutral-800 text-white border border-neutral-800'}`}>
+            <button key={loc.id} id={`region-btn-${loc.id}`} onClick={() => {}} className={`w-full text-left p-4 rounded-md transition-all flex items-center justify-between font-display ${idx === 0 ? 'bg-[#ff7c20] text-black shadow-md' : 'bg-[#111622] hover:bg-neutral-800 text-white border border-neutral-800'}`}>
               <div>
                 <div className="font-bold text-base leading-tight">{loc.name}</div>
                 <div className={`text-xs font-sans mt-0.5 ${idx === 0 ? 'font-semibold text-black/80' : 'text-slate-400'}`}>{loc.county} · {loc.activeCrews || 10} Teams</div>
@@ -335,7 +335,7 @@ export default function Index({ onNavigate }: any) {
             </div>
 
             <div className="flex items-center gap-3">
-              <button onClick={() => {}} className="px-4 py-2 rounded-sm bg-[#fe9320] hover:bg-[#e5841c] text-black font-display font-bold text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95">
+              <button onClick={() => {}} className="px-4 py-2 rounded-sm bg-[#ff7c20] hover:bg-[#e05500] text-black font-display font-bold text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95">
                 Apply Chicken Squad →
               </button>
               <button onClick={() => {}} className="px-4 py-2 rounded-sm bg-black hover:bg-neutral-800 text-white font-display font-bold text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95">
@@ -356,7 +356,7 @@ export default function Index({ onNavigate }: any) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
       
       <div className="max-w-3xl space-y-2">
-        <span className="text-xs font-mono font-bold text-black uppercase tracking-widest bg-[#fe9320]/30 px-2.5 py-1 rounded">
+        <span className="text-xs font-mono font-bold text-black uppercase tracking-widest bg-[#ff7c20]/30 px-2.5 py-1 rounded">
           REGIONAL RECRUITMENT DIRECTORY
         </span>
         <h2 className="text-3xl sm:text-4xl font-black text-black font-display tracking-tight mt-2">
@@ -375,7 +375,7 @@ export default function Index({ onNavigate }: any) {
                 <h3 className="text-xl font-bold font-display text-black">{loc.name}</h3>
                 <p className="text-xs font-mono text-slate-400 uppercase">{loc.county} Central Hub</p>
               </div>
-              <span className="px-3 py-1 rounded-full bg-[#fe9320] text-black font-mono text-xs font-bold">
+              <span className="px-3 py-1 rounded-full bg-[#ff7c20] text-black font-mono text-xs font-bold">
                 {loc.activeCrews || 10} Crews Live
               </span>
             </div>
@@ -392,13 +392,13 @@ export default function Index({ onNavigate }: any) {
         {/*  Fast Intake Callout Card  */}
         <div className="rounded-md border border-black bg-black text-white p-7 space-y-4 flex flex-col justify-between shadow-md">
           <div className="space-y-2">
-            <span className="text-xs font-mono text-[#fe9320] font-bold uppercase">FAST-TRACK ONBOARDING</span>
+            <span className="text-xs font-mono text-[#ff7c20] font-bold uppercase">FAST-TRACK ONBOARDING</span>
             <h3 className="text-xl font-bold font-display text-white">Need Night Shift Work?</h3>
             <p className="text-xs text-slate-300 leading-relaxed font-sans">
               No CV required. If you hold valid UK Right to Work and can commit to night shift agricultural harvesting, you can start this week.
             </p>
           </div>
-          <button onClick={() => {}} className="w-full py-3 bg-[#fe9320] hover:bg-[#e5841c] text-black font-display font-bold text-xs uppercase rounded-md transition-all shadow active:scale-95">
+          <button onClick={() => {}} className="w-full py-3 bg-[#ff7c20] hover:bg-[#e05500] text-black font-display font-bold text-xs uppercase rounded-md transition-all shadow active:scale-95">
             Apply in 60 Seconds →
           </button>
         </div>
@@ -414,7 +414,7 @@ export default function Index({ onNavigate }: any) {
       
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-2 max-w-2xl">
-          <span className="text-xs font-mono font-bold text-black uppercase tracking-widest bg-[#fe9320]/30 px-2.5 py-1 rounded">
+          <span className="text-xs font-mono font-bold text-black uppercase tracking-widest bg-[#ff7c20]/30 px-2.5 py-1 rounded">
             HARVEST OPERATIONS DESK
           </span>
           <h2 className="text-3xl sm:text-4xl font-black text-black font-display tracking-tight mt-2">
@@ -523,7 +523,7 @@ export default function Index({ onNavigate }: any) {
                   <circle cx="253.6" cy="125.4" r="12.4"></circle>
                 </g>
               </svg>
-              <span className="tracking-tight text-white">atchingJobs<span className="text-[#fe9320] font-mono">.</span></span>
+              <span className="tracking-tight text-white">atchingJobs<span className="text-[#ff7c20] font-mono">.</span></span>
             </a>
           </div>
 
@@ -533,12 +533,12 @@ export default function Index({ onNavigate }: any) {
 
           {/*  Navigation Links  */}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-semibold text-neutral-300 pt-2 font-display">
-            <Link to="/" className="hover:text-[#fe9320] transition-colors">Home</Link>
-            <Link to="/chickens" className="hover:text-[#fe9320] transition-colors">Broiler Chicken Catching</Link>
-            <Link to="/turkeys" className="hover:text-[#fe9320] transition-colors">Commercial Turkey Catching</Link>
-            <Link to="/chickens" className="hover:text-[#fe9320] transition-colors">Boston Depot</Link>
-            <Link to="/register" className="hover:text-[#fe9320] transition-colors">Vacancies</Link>
-            <Link to="/login" className="hover:text-[#fe9320] transition-colors">Candidate Portal</Link>
+            <Link to="/" className="hover:text-[#ff7c20] transition-colors">Home</Link>
+            <Link to="/chickens" className="hover:text-[#ff7c20] transition-colors">Broiler Chicken Catching</Link>
+            <Link to="/turkeys" className="hover:text-[#ff7c20] transition-colors">Commercial Turkey Catching</Link>
+            <Link to="/chickens" className="hover:text-[#ff7c20] transition-colors">Boston Depot</Link>
+            <Link to="/register" className="hover:text-[#ff7c20] transition-colors">Vacancies</Link>
+            <Link to="/login" className="hover:text-[#ff7c20] transition-colors">Candidate Portal</Link>
           </div>
 
           {/*  Hotline Number  */}
@@ -550,7 +550,7 @@ export default function Index({ onNavigate }: any) {
         {/*  Right: Statutory Badges  */}
         <div className="space-y-4 text-left md:text-right">
           <div className="flex flex-wrap md:justify-end items-center gap-2 font-mono text-xs">
-            <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-[#fe9320] font-bold">
+            <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-[#ff7c20] font-bold">
               GLAA Licence PULL0001
             </span>
             <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-white font-bold">
@@ -590,7 +590,7 @@ export default function Index({ onNavigate }: any) {
       <button onClick={() => {}} className="absolute top-5 right-5 text-slate-400 hover:text-black text-2xl font-bold leading-none">×</button>
       
       <div>
-        <span className="px-3 py-1 rounded-full bg-[#fe9320] text-black font-mono text-[11px] font-bold uppercase">
+        <span className="px-3 py-1 rounded-full bg-[#ff7c20] text-black font-mono text-[11px] font-bold uppercase">
           Quick Apply · No CV Needed
         </span>
         <h3 id="modal-role-title" className="text-2xl font-black font-display text-black mt-2">
@@ -650,7 +650,7 @@ export default function Index({ onNavigate }: any) {
           </label>
         </div>
 
-        <button type="submit" className="w-full py-3.5 rounded-md bg-[#fe9320] hover:bg-[#e5841c] text-black font-display font-bold text-sm uppercase tracking-wider transition-all shadow-md mt-2 active:scale-95">
+        <button type="submit" className="w-full py-3.5 rounded-md bg-[#ff7c20] hover:bg-[#e05500] text-black font-display font-bold text-sm uppercase tracking-wider transition-all shadow-md mt-2 active:scale-95">
           Submit 60-Second Application →
         </button>
 

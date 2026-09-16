@@ -12,7 +12,7 @@ export default function CorporateLander({ onNavigate }: any) {
   <PublicHeader />
 
   {/*  2. HERO SECTION  */}
-  <section data-od-id="corporate-hero" className="relative bg-[#fe9320] text-black py-16 lg:py-20 border-b border-black/10 overflow-hidden">
+  <section data-od-id="corporate-hero" className="relative bg-[linear-gradient(160deg,#ff9436_0%,#ff7c20_50%,#e05500_100%)] text-black py-16 lg:py-20 border-b border-black/10 overflow-hidden">
     <div className="absolute right-0 top-0 bottom-0 w-full lg:w-1/2 pointer-events-none hidden md:flex items-center justify-end overflow-hidden opacity-30">
       <img src="images/hero-sprinter-blended.png" alt="Minibus fleet" className="w-auto h-full max-h-[500px] object-contain object-right" />
     </div>
@@ -40,7 +40,7 @@ export default function CorporateLander({ onNavigate }: any) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
         <div className="p-8 rounded-md border border-amber-200/60 bg-[#FFFDF0] space-y-4 shadow-sm hover:shadow-md transition-shadow">
-          <div className="inline-block px-3 py-1 rounded-full bg-black text-[#fe9320] font-mono text-xs font-bold">
+          <div className="inline-block px-3 py-1 rounded-full bg-black text-[#ff7c20] font-mono text-xs font-bold">
             LICENCE PULL0001
           </div>
           <h2 className="text-2xl font-black font-display text-black">GLAA Licensed Provider</h2>
@@ -87,7 +87,7 @@ export default function CorporateLander({ onNavigate }: any) {
             <h3 className="text-2xl font-black font-display text-white">Pullum Ltd Statutory Code of Practice</h3>
             <p className="text-xs text-slate-400 font-sans mt-1">Operational standards enforced across all 48 catching crews operating in England.</p>
           </div>
-          <span className="px-3.5 py-1.5 rounded-full bg-[#fe9320] text-black font-mono text-xs font-bold shrink-0">
+          <span className="px-3.5 py-1.5 rounded-full bg-[#ff7c20] text-black font-mono text-xs font-bold shrink-0">
             Updated September 2026
           </span>
         </div>
@@ -96,7 +96,7 @@ export default function CorporateLander({ onNavigate }: any) {
           
           <div className="p-7 grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
             <div className="md:col-span-3 font-display font-bold text-black flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#fe9320]"></span>
+              <span className="w-2 h-2 rounded-full bg-[#ff7c20]"></span>
               Door-to-Door Transit
             </div>
             <div className="md:col-span-9 text-slate-600 text-xs leading-relaxed">
@@ -106,7 +106,7 @@ export default function CorporateLander({ onNavigate }: any) {
 
           <div className="p-7 grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
             <div className="md:col-span-3 font-display font-bold text-black flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#fe9320]"></span>
+              <span className="w-2 h-2 rounded-full bg-[#ff7c20]"></span>
               Weekly Friday Payroll
             </div>
             <div className="md:col-span-9 text-slate-600 text-xs leading-relaxed">
@@ -116,7 +116,7 @@ export default function CorporateLander({ onNavigate }: any) {
 
           <div className="p-7 grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
             <div className="md:col-span-3 font-display font-bold text-black flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#fe9320]"></span>
+              <span className="w-2 h-2 rounded-full bg-[#ff7c20]"></span>
               UK Right to Work
             </div>
             <div className="md:col-span-9 text-slate-600 text-xs leading-relaxed">
@@ -126,7 +126,7 @@ export default function CorporateLander({ onNavigate }: any) {
 
           <div className="p-7 grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
             <div className="md:col-span-3 font-display font-bold text-black flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#fe9320]"></span>
+              <span className="w-2 h-2 rounded-full bg-[#ff7c20]"></span>
               Personal Protective Equipment
             </div>
             <div className="md:col-span-9 text-slate-600 text-xs leading-relaxed">
@@ -154,7 +154,7 @@ export default function CorporateLander({ onNavigate }: any) {
                   <circle cx="253.6" cy="125.4" r="12.4" />
                 </g>
               </svg>
-              <span className="tracking-tight text-white">atchingJobs<span className="text-[#fe9320] font-mono">.</span></span>
+              <span className="tracking-tight text-white">atchingJobs<span className="text-[#ff7c20] font-mono">.</span></span>
             </Link>
           <p className="text-xs text-neutral-400 leading-relaxed font-sans">
             CatchingJobs is operated directly by Pullum Ltd under GLAA Licence PULL0001. Supplying certified agricultural harvesting teams across England with heated minibus transit and guaranteed Friday payroll.
@@ -165,7 +165,7 @@ export default function CorporateLander({ onNavigate }: any) {
         </div>
         <div className="space-y-4 text-left md:text-right font-mono text-xs">
           <div className="flex flex-wrap md:justify-end gap-2">
-            <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-[#fe9320] font-bold">GLAA Licence PULL0001</span>
+            <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-[#ff7c20] font-bold">GLAA Licence PULL0001</span>
             <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-white font-bold">UK Right to Work</span>
             <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-slate-300 font-bold">Lantra Welfare Level 2</span>
           </div>

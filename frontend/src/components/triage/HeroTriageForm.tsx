@@ -216,7 +216,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
       {/* Header */}
       <div className="space-y-1.5 pb-4 border-b border-slate-100">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-black bg-[#fe9320] px-2.5 py-0.5 rounded">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-black bg-[#ff7c20] px-2.5 py-0.5 rounded">
             {isSignedIn ? '1-Click Fast Apply' : 'Fast-Track Onboarding'}
           </span>
           <span className="text-xs font-mono text-slate-500 font-bold">{town.name} Roster</span>
@@ -248,7 +248,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
                   <span className="text-[10px] text-slate-600 font-bold">Logged In Employee</span>
                 </div>
               </div>
-              <span className="text-[9px] font-mono font-bold bg-black text-[#fe9320] px-1.5 py-0.5 rounded uppercase">
+              <span className="text-[9px] font-mono font-bold bg-black text-[#ff7c20] px-1.5 py-0.5 rounded uppercase">
                 Active
               </span>
             </div>
@@ -374,7 +374,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
                   onClick={() => setValue('hasRightToWork', true)}
                   className={`px-3 py-1 text-xs font-mono uppercase rounded-md transition-colors cursor-pointer ${
                     watchRtw === true
-                      ? 'bg-black text-[#fe9320] font-bold shadow-xs'
+                      ? 'bg-black text-[#ff7c20] font-bold shadow-xs'
                       : 'text-slate-600 hover:text-black'
                   }`}
                 >
@@ -412,7 +412,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-[#fe9320]" />
+                  <Loader2 className="w-4 h-4 animate-spin text-[#ff7c20]" />
                   <span>{isSignedIn ? 'Confirming Roster Slot...' : 'Verifying Candidate...'}</span>
                 </>
               ) : (
@@ -422,7 +422,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
                       ? `1-Click Apply for ${town.name} Crew`
                       : `Join ${town.name} Roster`}
                   </span>
-                  <ArrowRight className="w-4 h-4 text-[#fe9320]" />
+                  <ArrowRight className="w-4 h-4 text-[#ff7c20]" />
                 </>
               )}
             </button>

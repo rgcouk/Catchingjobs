@@ -20,7 +20,7 @@ export function PublicFooter() {
                   <circle cx="253.6" cy="125.4" r="12.4"></circle>
                 </g>
               </svg>
-              <span className="tracking-tight text-white">atchingJobs<span className="text-[#fe9320] font-mono">.</span></span>
+              <span className="tracking-tight text-white">atchingJobs<span className="text-[#ff7c20] font-mono">.</span></span>
             </a>
           </div>
 
@@ -30,12 +30,12 @@ export function PublicFooter() {
 
           {/*  Navigation Links  */}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-semibold text-neutral-300 pt-2 font-display">
-            <Link to="/" className="hover:text-[#fe9320] transition-colors">Home</Link>
-            <Link to="/chickens" className="hover:text-[#fe9320] transition-colors">Broiler Chicken Catching</Link>
-            <Link to="/turkeys" className="hover:text-[#fe9320] transition-colors">Commercial Turkey Catching</Link>
-            <Link to="/chickens" className="hover:text-[#fe9320] transition-colors">Boston Depot</Link>
-            <Link to="/register" className="hover:text-[#fe9320] transition-colors">Vacancies</Link>
-            <Link to="/login" className="hover:text-[#fe9320] transition-colors">Candidate Portal</Link>
+            <Link to="/" className="hover:text-[#ff7c20] transition-colors">Home</Link>
+            <Link to="/chickens" className="hover:text-[#ff7c20] transition-colors">Broiler Chicken Catching</Link>
+            <Link to="/turkeys" className="hover:text-[#ff7c20] transition-colors">Commercial Turkey Catching</Link>
+            <Link to="/chickens" className="hover:text-[#ff7c20] transition-colors">Boston Depot</Link>
+            <Link to="/register" className="hover:text-[#ff7c20] transition-colors">Vacancies</Link>
+            <Link to="/login" className="hover:text-[#ff7c20] transition-colors">Candidate Portal</Link>
           </div>
 
           {/*  Hotline Number  */}
@@ -47,7 +47,7 @@ export function PublicFooter() {
         {/*  Right: Statutory Badges  */}
         <div className="space-y-4 text-left md:text-right">
           <div className="flex flex-wrap md:justify-end items-center gap-2 font-mono text-xs">
-            <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-[#fe9320] font-bold">
+            <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-[#ff7c20] font-bold">
               GLAA Licence PULL0001
             </span>
             <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-white font-bold">

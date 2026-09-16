@@ -36,7 +36,7 @@ export default function RegionLander({ onNavigate, regionId, sectorId, onBackToS
   <PublicHeader />
 
   {/*  2. HERO SECTION  */}
-  <section data-od-id="regional-hero" className="relative bg-[#fe9320] text-black py-16 lg:py-20 border-b border-black/10 overflow-hidden">
+  <section data-od-id="regional-hero" className="relative bg-[linear-gradient(160deg,#ff9436_0%,#ff7c20_50%,#e05500_100%)] text-black py-16 lg:py-20 border-b border-black/10 overflow-hidden">
     <div className="absolute right-0 top-0 bottom-0 w-full lg:w-1/2 pointer-events-none hidden md:flex items-center justify-end overflow-hidden opacity-30">
       <img src="images/hero-sprinter-blended.png" alt="Minibus fleet" className="w-auto h-full max-h-[500px] object-contain object-right" />
     </div>
@@ -66,7 +66,7 @@ export default function RegionLander({ onNavigate, regionId, sectorId, onBackToS
           <button 
             key={loc.id} 
             onClick={() => setActiveRegion(loc)} 
-            className={`px-5 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider shadow transition-all active:scale-95 ${activeRegion?.id === loc.id ? 'bg-[#fe9320] text-black' : 'bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-800'}`}
+            className={`px-5 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider shadow transition-all active:scale-95 ${activeRegion?.id === loc.id ? 'bg-[#ff7c20] text-black' : 'bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-800'}`}
           >
             {loc.name} ({loc.activeCrews || 10} Crews)
           </button>
@@ -81,7 +81,7 @@ export default function RegionLander({ onNavigate, regionId, sectorId, onBackToS
         <div className="lg:col-span-5 space-y-6">
           <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-8 space-y-6 shadow-xl">
             <div>
-              <span className="text-xs font-mono text-[#fe9320] font-bold uppercase tracking-wider" id="reg-status">PRIMARY OPERATIONAL HUB</span>
+              <span className="text-xs font-mono text-[#ff7c20] font-bold uppercase tracking-wider" id="reg-status">PRIMARY OPERATIONAL HUB</span>
               <h2 className="text-3xl font-black font-display text-white mt-1" id="reg-title">{activeRegion?.name || 'Loading...'}</h2>
               <p className="text-xs text-slate-400 font-sans mt-2 leading-relaxed" id="reg-copy">
                 {activeRegion?.seoCopy || `${activeRegion?.name} is a key operational hub. We supply catching teams with door-to-door transit and guaranteed weekly pay.`}
@@ -112,7 +112,7 @@ export default function RegionLander({ onNavigate, regionId, sectorId, onBackToS
               </p>
             </div>
 
-            <a href="#vacancies" className="block text-center w-full py-3.5 bg-[#fe9320] hover:bg-[#e5841c] text-black font-display font-bold text-xs uppercase tracking-wider rounded-md transition-all shadow-md active:scale-95">
+            <a href="#vacancies" className="block text-center w-full py-3.5 bg-[#ff7c20] hover:bg-[#e05500] text-black font-display font-bold text-xs uppercase tracking-wider rounded-md transition-all shadow-md active:scale-95">
               Apply for Shifts in This Region →
             </a>
           </div>
@@ -167,7 +167,7 @@ export default function RegionLander({ onNavigate, regionId, sectorId, onBackToS
                     
                     <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
                       <span className="font-bold text-slate-900">{job.payRate}</span>
-                      <span className="text-[#fe9320] font-bold group-hover:underline">View details</span>
+                      <span className="text-[#ff7c20] font-bold group-hover:underline">View details</span>
                     </div>
                   </div>
                 </Link>
@@ -194,7 +194,7 @@ export default function RegionLander({ onNavigate, regionId, sectorId, onBackToS
                   <circle cx="253.6" cy="125.4" r="12.4" />
                 </g>
               </svg>
-              <span className="tracking-tight text-white">atchingJobs<span className="text-[#fe9320] font-mono">.</span></span>
+              <span className="tracking-tight text-white">atchingJobs<span className="text-[#ff7c20] font-mono">.</span></span>
             </Link>
           <p className="text-xs text-neutral-400 leading-relaxed font-sans">
             Operated by Pullum Ltd under GLAA Licence PULL0001. UK's primary agricultural catching contractor supplying verified poultry harvesting crews across Lincolnshire, Norfolk, Yorkshire, Shropshire, and Suffolk.
@@ -205,7 +205,7 @@ export default function RegionLander({ onNavigate, regionId, sectorId, onBackToS
         </div>
         <div className="space-y-4 text-left md:text-right font-mono text-xs">
           <div className="flex flex-wrap md:justify-end gap-2">
-            <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-[#fe9320] font-bold">GLAA Licence PULL0001</span>
+            <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-[#ff7c20] font-bold">GLAA Licence PULL0001</span>
             <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-white font-bold">UK Right to Work</span>
             <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-slate-300 font-bold">Lantra Welfare Level 2</span>
           </div>

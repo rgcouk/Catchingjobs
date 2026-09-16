@@ -4,7 +4,7 @@
  */
 /* CatchingJobs · 2026 Brand Design System
  * Job Details & Public Ad Lander
- * Palette: Cadmium Yellow (#fe9320), Deep Obsidian (#090D14), Crisp White, Ivory (#FFFDF0)
+ * Palette: Cadmium Yellow (#ff7c20), Deep Obsidian (#090D14), Crisp White, Ivory (#FFFDF0)
  * Typography: Plus Jakarta Sans (Headlines), Inter (Body), JetBrains Mono (Badges/Data)
  */
 
@@ -243,7 +243,7 @@ export default function JobDetailsPage() {
   if (loading && !job) {
     return (
       <div className="font-sans w-full min-h-[60vh] bg-white text-[#090D14] flex flex-col items-center justify-center p-8 space-y-4">
-        <div className="w-10 h-10 border-3 border-black border-t-[#fe9320] rounded-full animate-spin" />
+        <div className="w-10 h-10 border-3 border-black border-t-[#ff7c20] rounded-full animate-spin" />
         <p className="text-xs font-mono text-slate-500 font-bold uppercase tracking-wider">
           Loading vacancy details...
         </p>
@@ -276,7 +276,7 @@ export default function JobDetailsPage() {
             to="/chickens"
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-black text-white text-xs font-display font-bold uppercase hover:bg-neutral-800 transition-colors no-underline"
           >
-            Explore Chicken Vacancies <ArrowRight className="w-4 h-4 text-[#fe9320]" />
+            Explore Chicken Vacancies <ArrowRight className="w-4 h-4 text-[#ff7c20]" />
           </Link>
         </div>
       </div>
@@ -289,7 +289,7 @@ export default function JobDetailsPage() {
   const metaDescription = `Apply for ${job.title} in ${locationDisplay}. Hourly pay: ${job.payRate}. Guaranteed door-to-door home pickup, weekly Friday payroll, and certified Lantra welfare standards with Pullum Ltd.`;
 
   return (
-    <div className="font-sans w-full bg-white text-[#090D14] selection:bg-[#fe9320] selection:text-black antialiased">
+    <div className="font-sans w-full bg-white text-[#090D14] selection:bg-[#ff7c20] selection:text-black antialiased">
       <PublicHeader />
       <Helmet>
         <title>{pageTitle}</title>
@@ -366,7 +366,7 @@ export default function JobDetailsPage() {
               onClick={handleNativeShare}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-black hover:bg-neutral-800 text-white text-xs font-display font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
             >
-              <Share2 className="w-3.5 h-3.5 text-[#fe9320]" />
+              <Share2 className="w-3.5 h-3.5 text-[#ff7c20]" />
               <span>Share</span>
             </button>
           </div>
@@ -384,16 +384,16 @@ export default function JobDetailsPage() {
           <div className="max-w-3xl space-y-5">
             {/* Badges */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase px-3 py-1 rounded bg-[#fe9320] text-black shadow-xs">
+              <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase px-3 py-1 rounded bg-[#ff7c20] text-black shadow-xs">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 {sectorName}
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-white bg-white/10 border border-white/20 px-3 py-1 rounded">
-                <Flame className="w-3.5 h-3.5 text-[#fe9320]" />
+                <Flame className="w-3.5 h-3.5 text-[#ff7c20]" />
                 Immediate Start Available
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs font-mono text-slate-300 bg-white/5 border border-white/10 px-3 py-1 rounded">
-                <Truck className="w-3.5 h-3.5 text-[#fe9320]" />
+                <Truck className="w-3.5 h-3.5 text-[#ff7c20]" />
                 Free Door-to-Door Pickup
               </span>
             </div>
@@ -403,7 +403,7 @@ export default function JobDetailsPage() {
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-display tracking-tight text-white leading-tight">
                 {job.title}
               </h1>
-              <p className="text-xl sm:text-2xl text-[#fe9320] font-mono font-bold">
+              <p className="text-xl sm:text-2xl text-[#ff7c20] font-mono font-bold">
                 {job.payRate}{' '}
                 <span className="text-xs font-normal text-slate-300 font-sans">
                   • Guaranteed Weekly Friday BACS Payroll (£750–£1,050/wk)
@@ -414,15 +414,15 @@ export default function JobDetailsPage() {
             {/* Quick Meta Badges */}
             <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm font-mono text-slate-200 pt-2">
               <div className="flex items-center gap-1.5 bg-black/60 px-3 py-1.5 rounded-md border border-white/15 font-bold">
-                <MapPin className="w-4 h-4 text-[#fe9320]" />
+                <MapPin className="w-4 h-4 text-[#ff7c20]" />
                 <span>{locationDisplay}</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-black/60 px-3 py-1.5 rounded-md border border-white/15 text-[#fe9320] font-bold">
+              <div className="flex items-center gap-1.5 bg-black/60 px-3 py-1.5 rounded-md border border-white/15 text-[#ff7c20] font-bold">
                 <Coins className="w-4 h-4" />
                 <span>{job.payRate}</span>
               </div>
               <div className="flex items-center gap-1.5 bg-black/60 px-3 py-1.5 rounded-md border border-white/15">
-                <Truck className="w-4 h-4 text-[#fe9320]" />
+                <Truck className="w-4 h-4 text-[#ff7c20]" />
                 <span>Free Heated Minibus Pickup</span>
               </div>
             </div>
@@ -431,7 +431,7 @@ export default function JobDetailsPage() {
             <div className="flex flex-wrap items-center gap-3 pt-3">
               <a
                 href="#hero-triage-form"
-                className="inline-flex items-center gap-2 bg-[#fe9320] hover:bg-[#e5841c] text-black font-display font-black text-xs uppercase tracking-wider px-6 py-3.5 rounded-md transition-all shadow-xs no-underline"
+                className="inline-flex items-center gap-2 bg-[#ff7c20] hover:bg-[#e05500] text-black font-display font-black text-xs uppercase tracking-wider px-6 py-3.5 rounded-md transition-all shadow-xs no-underline"
               >
                 <span>Apply for this Role (60s)</span>
                 <ArrowRight className="w-4 h-4" />
@@ -442,7 +442,7 @@ export default function JobDetailsPage() {
                 className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-display font-bold text-xs uppercase tracking-wider px-4 py-3.5 rounded-md transition-colors cursor-pointer"
                 title="Share this Job Opening"
               >
-                <Share2 className="w-4 h-4 text-[#fe9320]" />
+                <Share2 className="w-4 h-4 text-[#ff7c20]" />
                 <span>Share Role</span>
               </button>
 
@@ -453,8 +453,8 @@ export default function JobDetailsPage() {
               >
                 {copiedLink ? (
                   <>
-                    <Check className="w-4 h-4 text-[#fe9320]" />
-                    <span className="text-[#fe9320]">Copied!</span>
+                    <Check className="w-4 h-4 text-[#ff7c20]" />
+                    <span className="text-[#ff7c20]">Copied!</span>
                   </>
                 ) : (
                   <>
@@ -647,7 +647,7 @@ export default function JobDetailsPage() {
                       className="bg-white border border-slate-200 hover:border-black p-5 rounded-md transition-all shadow-xs group flex flex-col justify-between space-y-3 no-underline"
                     >
                       <div className="space-y-1.5">
-                        <span className="text-[10px] font-mono uppercase font-bold text-black bg-[#fe9320] px-2 py-0.5 rounded">
+                        <span className="text-[10px] font-mono uppercase font-bold text-black bg-[#ff7c20] px-2 py-0.5 rounded">
                           {relJob.townName || relJob.townId}
                         </span>
                         <h4 className="text-sm font-bold font-display text-black group-hover:text-neutral-700 transition-colors leading-snug line-clamp-2">
@@ -674,7 +674,7 @@ export default function JobDetailsPage() {
             >
               <div className="space-y-1.5 border-b border-slate-100 pb-4">
                 <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-black uppercase tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-[#fe9320] animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-[#ff7c20] animate-pulse" />
                   Quick Apply
                 </div>
                 <h3 className="text-xl font-black font-display text-black">Apply for {job.title}</h3>

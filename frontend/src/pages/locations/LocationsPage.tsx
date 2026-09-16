@@ -54,7 +54,7 @@ export default function LocationsPage() {
                         <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Depots / Pickups</p>
                         {region.towns.slice(0, 3).map((town: any) => (
                           <div key={town.id} className="text-sm text-slate-700 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#fe9320]"></span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#ff7c20]"></span>
                             {town.name}
                           </div>
                         ))}

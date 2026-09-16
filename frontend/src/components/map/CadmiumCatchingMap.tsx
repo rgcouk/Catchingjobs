@@ -165,7 +165,7 @@ export function CadmiumCatchingMap() {
       currentRegion.points.forEach((pt) => {
         const yellowIcon = L.divIcon({
           className: 'custom-pin',
-          html: `<div style="background-color:#fe9320; border:2px solid #090D14; border-radius:6px; padding:3px 6px; font-weight:800; font-size:10px; font-family:'JetBrains Mono',monospace; color:#090D14; box-shadow:0 2px 6px rgba(0,0,0,0.2); white-space:nowrap; display:flex; align-items:center; gap:3px;">
+          html: `<div style="background-color:#ff7c20; border:2px solid #090D14; border-radius:6px; padding:3px 6px; font-weight:800; font-size:10px; font-family:'JetBrains Mono',monospace; color:#090D14; box-shadow:0 2px 6px rgba(0,0,0,0.2); white-space:nowrap; display:flex; align-items:center; gap:3px;">
                   <span>📍</span><span>${pt.name.toUpperCase()}</span>
                  </div>`,
           iconSize: [80, 24],
@@ -199,7 +199,7 @@ export function CadmiumCatchingMap() {
               onClick={() => setSelectedRegionKey(key)}
               className={`w-full text-left p-4 rounded transition-all flex items-center justify-between cursor-pointer ${
                 isSelected
-                  ? 'bg-[#fe9320] text-black font-display font-bold border-l-4 border-black shadow-xs'
+                  ? 'bg-[#ff7c20] text-black font-display font-bold border-l-4 border-black shadow-xs'
                   : 'bg-[#121824] text-slate-300 hover:text-white hover:bg-slate-800 font-display font-medium border border-slate-800'
               }`}
             >
@@ -264,7 +264,7 @@ export function CadmiumCatchingMap() {
           <div className="flex items-center gap-3">
             <Link
               to="/chickens"
-              className="bg-[#fe9320] hover:bg-[#E6B800] text-black font-display font-bold text-xs px-4 py-2.5 rounded transition-colors shadow-xs no-underline inline-flex items-center gap-1"
+              className="bg-[#ff7c20] hover:bg-[#E6B800] text-black font-display font-bold text-xs px-4 py-2.5 rounded transition-colors shadow-xs no-underline inline-flex items-center gap-1"
             >
               <span>Apply Chicken Squad</span>
               <span>→</span>

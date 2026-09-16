@@ -12,7 +12,7 @@ import {
 
 export function PublicHeader() {
   return (
-    <header className="bg-[#fe9320] border-b border-black/10 relative z-30">
+    <header className="bg-[linear-gradient(160deg,#ff9436_0%,#ff7c20_50%,#e05500_100%)] border-b border-black/10 relative z-30">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
       
       {/*  Authentic Native SVG Brand Monogram Lockup (Negative Margin -mr-1)  */}
@@ -79,7 +79,7 @@ export function PublicHeader() {
               <Menu className="w-6 h-6" />
             </button>
           </SheetTrigger>
-          <SheetContent side="right" className="bg-white border-l border-[#fe9320]">
+          <SheetContent side="right" className="bg-white border-l border-[#ff7c20]">
             <SheetHeader>
               <SheetTitle className="text-left font-display text-lg">Menu</SheetTitle>
             </SheetHeader>
