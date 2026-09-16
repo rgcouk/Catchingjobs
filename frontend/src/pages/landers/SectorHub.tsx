@@ -30,7 +30,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
   <PublicHeader />
 
   {/*  2. SECTOR HERO SECTION  */}
-  <section data-od-id="sector-hero" className="relative bg-[linear-gradient(160deg,#ff9436_0%,#ff7c20_50%,#e05500_100%)] text-black py-16 lg:py-24 border-b border-black/10 overflow-hidden">
+  <section data-od-id="sector-hero" className="relative bg-[linear-gradient(178deg,#ff7c20,#ea5708,#ff4b00)] text-black py-16 lg:py-24 border-b border-black/10 overflow-hidden">
     {/*  Blended fleet graphic  */}
     <div className="absolute right-0 top-0 bottom-0 w-full lg:w-1/2 pointer-events-none hidden md:flex items-center justify-end overflow-hidden opacity-30">
       <img src="images/hero-sprinter-blended.png" alt="Minibus fleet" className="w-auto h-full max-h-[500px] object-contain object-right" />

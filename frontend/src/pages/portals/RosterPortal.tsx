@@ -12,7 +12,7 @@ export default function RosterPortal({ onNavigate }: any) {
 
   <main className="flex-1">
     
-    <section className="bg-[linear-gradient(160deg,#ff9436_0%,#ff7c20_50%,#e05500_100%)] pt-10 pb-12 border-b border-black/10">
+    <section className="bg-[linear-gradient(178deg,#ff7c20,#ea5708,#ff4b00)] pt-10 pb-12 border-b border-black/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-black text-white text-[11px] font-mono font-bold">

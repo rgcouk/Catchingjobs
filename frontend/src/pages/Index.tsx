@@ -27,7 +27,7 @@ export default function Index({ onNavigate }: any) {
   <PublicHeader />
 
   {/*  2. HERO SECTION (Continuous Cadmium Yellow with Real Blended Fleet Van matching index.jpg)  */}
-  <section id="home" data-od-id="hero-section" className="relative bg-[linear-gradient(160deg,#ff9436_0%,#ff7c20_50%,#e05500_100%)] pt-12 pb-20 lg:pt-16 lg:pb-28 overflow-hidden border-b border-black/10">
+  <section id="home" data-od-id="hero-section" className="relative bg-[linear-gradient(178deg,#ff7c20,#ea5708,#ff4b00)] pt-12 pb-20 lg:pt-16 lg:pb-28 overflow-hidden border-b border-black/10">
     
     {/*  Van Visual on Right: Blended smoothly matching index.jpg  */}
     <div className="absolute right-0 top-0 bottom-0 w-full lg:w-3/5 pointer-events-none hidden md:flex items-center justify-end overflow-hidden">
