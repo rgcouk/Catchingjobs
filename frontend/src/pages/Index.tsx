@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { m } from 'framer-motion';
 import { Link } from 'react-router';
 import { CadmiumCatchingMap } from '../components/map/CadmiumCatchingMap';
 import { PublicHeader } from '../components/layout/PublicHeader';
@@ -20,7 +21,7 @@ export default function Index({ onNavigate }: any) {
   }, []);
 
   return (
-    <div className="bg-white min-h-screen">
+    <m.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.35, ease: 'easeOut' }} className="bg-white min-h-screen">
       
 
   {/*  1. TOP NAVIGATION (CADMIUM YELLOW WITH NATIVE CHICKEN-C SVG MONOGRAM)  */}
@@ -36,6 +37,16 @@ export default function Index({ onNavigate }: any) {
 
     <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
       <div className="max-w-2xl space-y-6">
+        {/* Minimal Abstract Accent */}
+        <div className="absolute right-8 top-1/4 opacity-10 pointer-events-none hidden lg:block">
+          <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="99" stroke="black" strokeWidth="2" strokeDasharray="10 10"/>
+            <path d="M 0 100 L 200 100" stroke="black" strokeWidth="2" strokeDasharray="10 10"/>
+            <path d="M 100 0 L 100 200" stroke="black" strokeWidth="2" strokeDasharray="10 10"/>
+            <circle cx="100" cy="100" r="20" fill="black" />
+          </svg>
+        </div>
+
         
         {/*  Top Pill Badge  */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/10 border border-black/15 text-black text-xs font-mono font-bold tracking-tight">
@@ -676,6 +687,6 @@ export default function Index({ onNavigate }: any) {
 
 
 
-    </div>
+    </m.div>
   );
 }

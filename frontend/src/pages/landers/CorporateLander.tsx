@@ -1,10 +1,11 @@
 import React from 'react';
+import { m } from 'framer-motion';
 import { Link } from 'react-router';
 import { PublicHeader } from '../../components/layout/PublicHeader';
 
 export default function CorporateLander({ onNavigate }: any) {
   return (
-    <div className="bg-white min-h-screen">
+    <m.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.35, ease: 'easeOut' }} className="bg-white min-h-screen">
       {/* Ported from corporate.html */}
       
 
@@ -178,6 +179,6 @@ export default function CorporateLander({ onNavigate }: any) {
     </div>
   </footer>
 
-    </div>
+    </m.div>
   );
 }

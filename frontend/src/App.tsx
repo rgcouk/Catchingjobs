@@ -240,6 +240,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white text-[#090D14] flex flex-col font-sans selection:bg-[#ff7c20] selection:text-black antialiased relative">
+      <NoiseOverlay />
       
 
       <main
@@ -247,7 +248,9 @@ function App() {
       >
         <div className="flex-1">
           <ErrorBoundary>
-            <Routes>
+            <LazyMotion features={domAnimation}>
+              <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
               <Route path="/" element={<Index onNavigate={handleNavigate} />} />
               <Route path="/corporate" element={<CorporateLander onNavigate={handleNavigate} />} />
               <Route path="/jobs" element={<JobsListPage />} />
@@ -316,6 +319,8 @@ function App() {
               <Route path="/landings/test-landing" element={<TestLandingPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+              </AnimatePresence>
+              </LazyMotion>
           </ErrorBoundary>
         </div>
       </main>
