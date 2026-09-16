@@ -40,8 +40,8 @@ export default function RegionLander({ onNavigate, regionId, sectorId, onBackToS
   <section data-od-id="regional-hero" className="relative bg-[linear-gradient(178deg,#ff7c20,#ea5708,#ff4b00)] text-black py-16 lg:py-20 border-b border-black/10 overflow-hidden">
     {/* Faded Background Image */}
     <div 
-      className="absolute inset-0 z-0 bg-cover bg-center opacity-15 mix-blend-multiply transition-all"
-      style={{ backgroundImage: `url(${sectorId === 'chicken' ? "'/images/chicken-sector-hero.jpg'" : "'/images/turkey-sector-hero.jpg'"})` }}
+      className="absolute inset-0 z-0 bg-cover bg-center opacity-40 mix-blend-overlay transition-all"
+      style={{ backgroundImage: `url(/images/${sectorId}-sector-hero.jpg)` }}
     />
     <div className="absolute right-0 top-0 bottom-0 w-full lg:w-1/2 pointer-events-none hidden md:flex items-center justify-end overflow-hidden opacity-30">
       <img src="images/hero-sprinter-blended.png" alt="Minibus fleet" className="w-auto h-full max-h-[500px] object-contain object-right" />

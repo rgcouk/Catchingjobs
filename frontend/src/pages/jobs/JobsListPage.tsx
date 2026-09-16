@@ -53,8 +53,8 @@ export default function JobsListPage() {
         <section className="relative bg-black py-16 border-b border-black text-white overflow-hidden">
           {/* Faded Background Image */}
           <div 
-            className="absolute inset-0 z-0 bg-cover bg-center opacity-30 mix-blend-luminosity"
-            style={{ backgroundImage: `url('/images/homepage-hero.jpg')` }}
+            className="absolute inset-0 z-0 bg-cover bg-center opacity-40 mix-blend-overlay"
+            style={{ backgroundImage: `url(/images/homepage-hero.jpg)` }}
           />
           <div className="absolute inset-0 bg-black/60 z-0"></div>
           

@@ -15,7 +15,7 @@ export default function Index({ onNavigate }: any) {
       desc: "CatchingJobs connects you with professional broiler and commercial turkey catching teams across England. Free door-to-door heated minibus transit, guaranteed weekly Friday payroll direct to your bank.",
       btn1: "Find Catching Jobs Near You",
       btn2: "Apply in 60 Seconds (No CV)",
-      bgImg: "images/homepage-hero.jpg",
+      bgImg: "/images/homepage-hero.jpg",
       sideImg: "images/hero-sprinter-blended.png"
     },
     {
@@ -24,7 +24,7 @@ export default function Index({ onNavigate }: any) {
       desc: "Join highly trained catching squads operating across the UK with Lantra-certified welfare protocols.",
       btn1: "View Chicken Catching Jobs",
       btn2: "Explore Welfare Standards",
-      bgImg: "images/chicken-sector-hero.jpg",
+      bgImg: "/images/chicken-sector-hero.jpg",
       sideImg: "images/chicken-sector-hero.jpg"
     },
     {
@@ -33,7 +33,7 @@ export default function Index({ onNavigate }: any) {
       desc: "No umbrella companies. No transport deductions. Get paid every Friday directly into your bank account.",
       btn1: "Register For Work Today",
       btn2: "View Corporate Transport",
-      bgImg: "images/corporate-logistics.jpg",
+      bgImg: "/images/corporate-logistics.jpg",
       sideImg: "images/door-pickup-fleet.jpg"
     }
   ];
@@ -75,7 +75,7 @@ export default function Index({ onNavigate }: any) {
       <m.div 
         key={currentSlide}
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.15 }}
+        animate={{ opacity: 0.4 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 1 }}
         className="absolute inset-0 z-0 bg-cover bg-center mix-blend-multiply"
