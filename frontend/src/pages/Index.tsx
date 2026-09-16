@@ -68,9 +68,10 @@ export default function Index({ onNavigate }: any) {
   <PublicHeader />
 
   {/*  2. HERO SECTION (Slider) */}
-  <section id="home" data-od-id="hero-section" className="relative bg-[linear-gradient(178deg,#ff7c20,#ea5708,#ff4b00)] overflow-hidden border-b border-black/10 transition-colors duration-1000">
+  <section id="home" data-od-id="hero-section" className="relative overflow-hidden border-b border-black/10 transition-colors duration-1000 bg-black">
     
-    {/* Faded Background Image */}
+    {/* Background Image and Gradient Overlay */}
+    <div className="absolute inset-0 bg-black z-0" />
     <AnimatePresence mode="wait">
       <m.div 
         key={currentSlide}
@@ -78,10 +79,11 @@ export default function Index({ onNavigate }: any) {
         animate={{ opacity: 0.4 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 1 }}
-        className="absolute inset-0 z-0 bg-cover bg-center mix-blend-multiply"
+        className="absolute inset-0 z-0 bg-cover bg-center mix-blend-luminosity"
         style={{ backgroundImage: `url(${slides[currentSlide].bgImg})` }}
       />
     </AnimatePresence>
+    <div className="absolute inset-0 z-0 bg-[linear-gradient(178deg,#ff7c20,#ea5708,#ff4b00)] opacity-90" />
 
     {/* Minimal Abstract Accent */}
     <div className="absolute right-8 top-1/4 opacity-10 pointer-events-none hidden lg:block z-0">

@@ -52,11 +52,13 @@ export default function JobsListPage() {
       <main className="flex-1 bg-slate-50 flex flex-col">
         <section className="relative bg-black py-16 border-b border-black text-white overflow-hidden">
           {/* Faded Background Image */}
-          <div 
-            className="absolute inset-0 z-0 bg-cover bg-center opacity-40 mix-blend-overlay"
-            style={{ backgroundImage: `url(/images/homepage-hero.jpg)` }}
-          />
-          <div className="absolute inset-0 bg-black/60 z-0"></div>
+          <div className="absolute inset-0 bg-black z-0" />
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center mix-blend-luminosity opacity-40"
+        style={{ backgroundImage: `url(/images/homepage-hero.jpg)` }}
+      />
+      {/* Dark overlay for Jobs page instead of bright orange */}
+      <div className="absolute inset-0 bg-black/85 z-0"></div>
           
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 relative z-10">
           
