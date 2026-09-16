@@ -1,6 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+
 import { Menu } from "lucide-react";
 import {
   Sheet,
@@ -33,21 +40,23 @@ export function PublicHeader() {
       {/*  Desktop Navigation Links  */}
       <nav className="hidden md:flex items-center space-x-7 text-sm font-semibold text-black/90 font-display">
         <Link to="/" className="text-black border-b-2 border-black pb-0.5 font-bold">Home</Link>
-        <div className="relative group">
-          <span className="hover:text-black flex items-center gap-1 cursor-pointer">
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-1 hover:text-black cursor-pointer outline-none group">
             Catching Jobs
-            <svg className="w-3.5 h-3.5 opacity-70 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-          </span>
-          <div className="absolute left-0 mt-2 w-56 rounded-md bg-white shadow-xl border border-slate-100 p-2 hidden group-hover:block transition-all z-50">
-            <Link to="/jobs" className="block px-3 py-2 rounded-sm text-xs font-bold text-slate-800 hover:bg-[#FFFDF0] hover:text-black">📋 All Open Vacancies</Link>
-            <Link to="/chickens" className="block px-3 py-2 rounded-sm text-xs font-bold text-slate-800 hover:bg-[#FFFDF0] hover:text-black">
-              🍗 Broiler Chicken Catching
-            </Link>
-            <Link to="/turkeys" className="block px-3 py-2 rounded-sm text-xs font-bold text-slate-800 hover:bg-[#FFFDF0] hover:text-black">
-              🦃 Commercial Turkey Catching
-            </Link>
-          </div>
-        </div>
+            <svg className="w-3.5 h-3.5 opacity-70 transition-transform group-data-[state=open]:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-56 p-1.5 rounded-sm border-black/10 shadow-xl bg-white z-50 mt-1">
+            <DropdownMenuItem asChild className="cursor-pointer font-bold text-xs text-slate-800 hover:bg-[#FFFDF0] hover:text-black focus:bg-[#FFFDF0] focus:text-black rounded-sm py-2">
+              <Link to="/jobs">📋 All Open Vacancies</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer font-bold text-xs text-slate-800 hover:bg-[#FFFDF0] hover:text-black focus:bg-[#FFFDF0] focus:text-black rounded-sm py-2">
+              <Link to="/chickens">🍗 Broiler Chicken Catching</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer font-bold text-xs text-slate-800 hover:bg-[#FFFDF0] hover:text-black focus:bg-[#FFFDF0] focus:text-black rounded-sm py-2">
+              <Link to="/turkeys">🦃 Commercial Turkey Catching</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <Link to="/locations" className="hover:text-black transition-colors">Locations</Link>
         <Link to="/corporate" className="hover:text-black transition-colors">About</Link>
         <a href="tel:01205330190" className="hover:text-black transition-colors">Contact</a>
