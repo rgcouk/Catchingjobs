@@ -1,10 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import { m } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router';
 import { CadmiumCatchingMap } from '../components/map/CadmiumCatchingMap';
 import { PublicHeader } from '../components/layout/PublicHeader';
 
 export default function Index({ onNavigate }: any) {
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const slides = [
+    {
+      badge: "18 UK LOCATIONS",
+      title: "UK poultry catching jobs with door-to-door home pickup<span className='text-black'>.</span>",
+      desc: "CatchingJobs connects you with professional broiler and commercial turkey catching teams across England. Free door-to-door heated minibus transit, guaranteed weekly Friday payroll direct to your bank.",
+      btn1: "Find Catching Jobs Near You",
+      btn2: "Apply in 60 Seconds (No CV)",
+      bgImg: "images/homepage-hero.jpg",
+      sideImg: "images/hero-sprinter-blended.png"
+    },
+    {
+      badge: "INDUSTRY LEADING",
+      title: "Premium welfare standards & professional teams<span className='text-black'>.</span>",
+      desc: "Join highly trained catching squads operating across the UK with Lantra-certified welfare protocols.",
+      btn1: "View Chicken Catching Jobs",
+      btn2: "Explore Welfare Standards",
+      bgImg: "images/chicken-sector-hero.jpg",
+      sideImg: "images/chicken-sector-hero.jpg"
+    },
+    {
+      badge: "ZERO FEES",
+      title: "Direct employment with weekly payroll<span className='text-black'>.</span>",
+      desc: "No umbrella companies. No transport deductions. Get paid every Friday directly into your bank account.",
+      btn1: "Register For Work Today",
+      btn2: "View Corporate Transport",
+      bgImg: "images/corporate-logistics.jpg",
+      sideImg: "images/door-pickup-fleet.jpg"
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
   const [jobs, setJobs] = useState<any[]>([]);
   const [locations, setLocations] = useState<any[]>([]);
 
@@ -27,79 +67,110 @@ export default function Index({ onNavigate }: any) {
   {/*  1. TOP NAVIGATION (CADMIUM YELLOW WITH NATIVE CHICKEN-C SVG MONOGRAM)  */}
   <PublicHeader />
 
-  {/*  2. HERO SECTION (Continuous Cadmium Yellow with Real Blended Fleet Van matching index.jpg)  */}
-  <section id="home" data-od-id="hero-section" className="relative bg-[linear-gradient(178deg,#ff7c20,#ea5708,#ff4b00)] pt-12 pb-20 lg:pt-16 lg:pb-28 overflow-hidden border-b border-black/10">
+  {/*  2. HERO SECTION (Slider) */}
+  <section id="home" data-od-id="hero-section" className="relative bg-[linear-gradient(178deg,#ff7c20,#ea5708,#ff4b00)] overflow-hidden border-b border-black/10 transition-colors duration-1000">
     
-    {/*  Van Visual on Right: Blended smoothly matching index.jpg  */}
-    <div className="absolute right-0 top-0 bottom-0 w-full lg:w-3/5 pointer-events-none hidden md:flex items-center justify-end overflow-hidden">
-      <img src="images/hero-sprinter-blended.png" alt="Heated Minibus Door-to-Door Fleet" className="w-auto h-full max-h-[580px] object-contain object-right opacity-85 select-none" />
+    {/* Faded Background Image */}
+    <AnimatePresence mode="wait">
+      <m.div 
+        key={currentSlide}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.15 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 1 }}
+        className="absolute inset-0 z-0 bg-cover bg-center mix-blend-multiply"
+        style={{ backgroundImage: `url(${slides[currentSlide].bgImg})` }}
+      />
+    </AnimatePresence>
+
+    {/* Minimal Abstract Accent */}
+    <div className="absolute right-8 top-1/4 opacity-10 pointer-events-none hidden lg:block z-0">
+      <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="99" stroke="black" strokeWidth="2" strokeDasharray="10 10"/>
+        <path d="M 0 100 L 200 100" stroke="black" strokeWidth="2" strokeDasharray="10 10"/>
+        <path d="M 100 0 L 100 200" stroke="black" strokeWidth="2" strokeDasharray="10 10"/>
+        <circle cx="100" cy="100" r="20" fill="black" />
+      </svg>
     </div>
 
-    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-      <div className="max-w-2xl space-y-6">
-        {/* Minimal Abstract Accent */}
-        <div className="absolute right-8 top-1/4 opacity-10 pointer-events-none hidden lg:block">
-          <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="100" cy="100" r="99" stroke="black" strokeWidth="2" strokeDasharray="10 10"/>
-            <path d="M 0 100 L 200 100" stroke="black" strokeWidth="2" strokeDasharray="10 10"/>
-            <path d="M 100 0 L 100 200" stroke="black" strokeWidth="2" strokeDasharray="10 10"/>
-            <circle cx="100" cy="100" r="20" fill="black" />
-          </svg>
-        </div>
-
-        
-        {/*  Top Pill Badge  */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/10 border border-black/15 text-black text-xs font-mono font-bold tracking-tight">
-          <span className="w-1.5 h-1.5 rounded-full bg-black"></span>
-          <span>CATCHINGJOBS.CO.UK</span>
-          <span className="opacity-50">·</span>
-          <span>18 UK LOCATIONS</span>
-        </div>
-
-        {/*  Main Headline  */}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-black tracking-tight font-display leading-[1.08]">
-          UK poultry catching jobs with door-to-door home pickup<span className="text-black">.</span>
-        </h1>
-
-        {/*  Subtitle  */}
-        <p className="text-base sm:text-lg font-medium text-black/85 font-sans leading-relaxed max-w-xl">
-          CatchingJobs connects you with professional broiler and commercial turkey catching teams across England. Free door-to-door heated minibus transit, guaranteed weekly Friday payroll direct to your bank.
-        </p>
-
-        {/*  CTA Buttons  */}
-        <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 font-display">
-          <Link to="/register" className="inline-flex items-center justify-center px-6 py-3.5 rounded-md bg-black hover:bg-neutral-800 text-white font-bold text-sm tracking-tight transition-all shadow-md active:scale-95 group">
-            <span>Find Catching Jobs Near You</span>
-            <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-          </Link>
-          <button onClick={() => {}} className="inline-flex items-center justify-center px-6 py-3.5 rounded-md bg-transparent hover:bg-black/10 text-black border-1.5 border-black/40 font-bold text-sm tracking-tight transition-all">
-            Apply in 60 Seconds (No CV)
-          </button>
-        </div>
-
-        {/*  Trust Checkmarks  */}
-        <div className="pt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm font-bold text-black/90 font-sans">
-          <div className="flex items-center gap-1.5">
-            <span className="text-base">✓</span>
-            <span>Door Home Pickup</span>
+    <div className="relative min-h-[580px] flex items-center pt-12 pb-20 lg:pt-16 lg:pb-28">
+      <AnimatePresence mode="wait">
+        <m.div
+          key={currentSlide}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 20 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="w-full"
+        >
+          {/* Side Image */}
+          <div className="absolute right-0 top-0 bottom-0 w-full lg:w-3/5 pointer-events-none hidden md:flex items-center justify-end overflow-hidden z-0">
+            <img 
+              src={slides[currentSlide].sideImg} 
+              alt="Fleet" 
+              className={`w-auto h-full max-h-[580px] object-contain object-right select-none ${currentSlide > 0 ? 'rounded-l-3xl mix-blend-overlay opacity-40 object-cover w-4/5' : 'opacity-85'}`} 
+            />
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-base">✓</span>
-            <span>Friday Direct Pay</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-base">✓</span>
-            <span>No CV Required</span>
-          </div>
-        </div>
 
-        {/*  Carousel Indicators  */}
-        <div className="pt-4 flex items-center space-x-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-black"></span>
-          <span className="w-2.5 h-2.5 rounded-full border border-black/50 bg-transparent"></span>
-          <span className="w-2.5 h-2.5 rounded-full border border-black/50 bg-transparent"></span>
-        </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div className="max-w-2xl space-y-6">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/10 border border-black/15 text-black text-xs font-mono font-bold tracking-tight">
+                <span className="w-1.5 h-1.5 rounded-full bg-black"></span>
+                <span>CATCHINGJOBS.CO.UK</span>
+                <span className="opacity-50">·</span>
+                <span>{slides[currentSlide].badge}</span>
+              </div>
 
+              <h1 
+                className="text-4xl sm:text-5xl lg:text-6xl font-black text-black tracking-tight font-display leading-[1.08]"
+                dangerouslySetInnerHTML={{ __html: slides[currentSlide].title }}
+              />
+
+              <p className="text-lg text-black/80 font-medium max-w-xl leading-relaxed">
+                {slides[currentSlide].desc}
+              </p>
+
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 font-display">
+                <Link to="/register" className="inline-flex items-center justify-center px-6 py-3.5 rounded-md bg-black hover:bg-neutral-800 text-white font-bold text-sm tracking-tight transition-all shadow-md active:scale-95 group">
+                  <span>{slides[currentSlide].btn1}</span>
+                  <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                </Link>
+                <Link to="/corporate" className="inline-flex items-center justify-center px-6 py-3.5 rounded-md bg-transparent hover:bg-black/10 text-black border-[1.5px] border-black/40 font-bold text-sm tracking-tight transition-all active:scale-95">
+                  {slides[currentSlide].btn2}
+                </Link>
+              </div>
+              
+              {/* Trust Checkmarks */}
+              <div className="pt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm font-bold text-black/90 font-sans">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-base">✓</span>
+                  <span>Door Home Pickup</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-base">✓</span>
+                  <span>Friday Direct Pay</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-base">✓</span>
+                  <span>No CV Required</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </m.div>
+      </AnimatePresence>
+
+      {/* Slider Controls */}
+      <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-20">
+        {slides.map((_, i) => (
+          <button 
+            key={i} 
+            onClick={() => setCurrentSlide(i)}
+            className={`w-2.5 h-2.5 rounded-full transition-all ${currentSlide === i ? 'bg-black' : 'bg-transparent border border-black/50 hover:bg-black/20'}`}
+            aria-label={`Go to slide ${i + 1}`}
+          />
+        ))}
       </div>
     </div>
   </section>
