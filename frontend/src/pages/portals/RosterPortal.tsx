@@ -12,7 +12,7 @@ export default function RosterPortal({ onNavigate }: any) {
 
   <main className="flex-1">
     
-    <section className="bg-[#FFC72C] pt-10 pb-12 border-b border-black/10">
+    <section className="bg-[#fe9320] pt-10 pb-12 border-b border-black/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-black text-white text-[11px] font-mono font-bold">

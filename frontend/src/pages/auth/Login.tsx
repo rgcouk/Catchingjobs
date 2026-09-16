@@ -4,7 +4,7 @@
  */
 /* CatchingJobs · 2026 Brand Design System
  * Candidate & Employee Login
- * Palette: Cadmium Yellow (#FFCC00), Deep Obsidian (#090D14), Crisp White, Ivory (brand-ivory)
+ * Palette: Cadmium Yellow (#fe9320), Deep Obsidian (#090D14), Crisp White, Ivory (brand-ivory)
  * Typography: Plus Jakarta Sans (Headlines), Inter (Body), JetBrains Mono (Badges/Data)
  */
 

@@ -63,12 +63,12 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       period: 'text-black font-mono',
     },
     dark: {
-      text: 'text-[#FFCC00]',
-      period: 'text-[#FFCC00] font-mono',
+      text: 'text-[#fe9320]',
+      period: 'text-[#fe9320] font-mono',
     },
     white: {
       text: 'text-white',
-      period: 'text-[#FFCC00] font-mono',
+      period: 'text-[#fe9320] font-mono',
     },
     scrolled: {
       text: 'text-black',

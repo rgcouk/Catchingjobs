@@ -239,7 +239,7 @@ function App() {
     lowerPath === '/sso-callback';
 
   return (
-    <div className="min-h-screen bg-white text-[#090D14] flex flex-col font-sans selection:bg-[#FFCC00] selection:text-black antialiased relative">
+    <div className="min-h-screen bg-white text-[#090D14] flex flex-col font-sans selection:bg-[#fe9320] selection:text-black antialiased relative">
       
 
       <main

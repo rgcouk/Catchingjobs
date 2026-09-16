@@ -4,7 +4,7 @@
  */
 /* CatchingJobs · 2026 Brand Design System
  * Candidate & Worker Onboarding Portal
- * Palette: Cadmium Yellow (#FFCC00), Deep Obsidian (#090D14), Crisp White, Ivory (brand-ivory)
+ * Palette: Cadmium Yellow (#fe9320), Deep Obsidian (#090D14), Crisp White, Ivory (brand-ivory)
  * Typography: Plus Jakarta Sans (Headlines), Inter (Body), JetBrains Mono (Badges/Data)
  */
 
@@ -226,7 +226,7 @@ const PortalDashboard = () => {
         <nav className="flex-1 space-y-1.5 font-display">
           <Button
             variant="ghost"
-            className="w-full justify-start text-black bg-brand-yellow hover:bg-[#E5B800] font-bold text-sm rounded-sm"
+            className="w-full justify-start text-black bg-brand-yellow hover:bg-[#e5841c] font-bold text-sm rounded-sm"
           >
             <User className="w-4 h-4 mr-3" />
             Dashboard

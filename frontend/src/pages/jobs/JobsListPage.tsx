@@ -56,7 +56,7 @@ export default function JobsListPage() {
                     
                     <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
                       <span className="font-bold text-slate-900">{job.payRate}</span>
-                      <span className="text-[#FFC72C] font-bold group-hover:underline">View details</span>
+                      <span className="text-[#fe9320] font-bold group-hover:underline">View details</span>
                     </div>
                   </div>
                 </Link>

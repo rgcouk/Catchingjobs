@@ -30,7 +30,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
   <PublicHeader />
 
   {/*  2. SECTOR HERO SECTION  */}
-  <section data-od-id="sector-hero" className="relative bg-[#FFC72C] text-black py-16 lg:py-24 border-b border-black/10 overflow-hidden">
+  <section data-od-id="sector-hero" className="relative bg-[#fe9320] text-black py-16 lg:py-24 border-b border-black/10 overflow-hidden">
     {/*  Blended fleet graphic  */}
     <div className="absolute right-0 top-0 bottom-0 w-full lg:w-1/2 pointer-events-none hidden md:flex items-center justify-end overflow-hidden opacity-30">
       <img src="images/hero-sprinter-blended.png" alt="Minibus fleet" className="w-auto h-full max-h-[500px] object-contain object-right" />
@@ -105,13 +105,13 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
           {/*  Stats Box  */}
           <div className="w-full lg:w-80 bg-black text-white rounded-md p-6 space-y-4 shrink-0 shadow-lg">
             <div className="text-xs font-mono uppercase text-slate-400 font-bold">Standard Broiler Crew Pay</div>
-            <div className="text-3xl font-black font-display text-[#FFC72C]">£780 – £920<span className="text-xs text-white font-sans"> / wk</span></div>
+            <div className="text-3xl font-black font-display text-[#fe9320]">£780 – £920<span className="text-xs text-white font-sans"> / wk</span></div>
             <div className="text-xs text-slate-300 space-y-1.5 font-sans border-t border-neutral-800 pt-3">
               <div className="flex justify-between"><span>Night Pay:</span><strong className="font-mono text-white">£175 / shift</strong></div>
               <div className="flex justify-between"><span>Typical Hours:</span><strong className="font-mono text-white">20:00 – 04:30</strong></div>
-              <div className="flex justify-between"><span>Active Crews:</span><strong className="font-mono text-[#FFC72C]">{totalCrews || 34} Crews Live</strong></div>
+              <div className="flex justify-between"><span>Active Crews:</span><strong className="font-mono text-[#fe9320]">{totalCrews || 34} Crews Live</strong></div>
             </div>
-            <a href="#vacancies" className="block text-center w-full py-3 bg-[#FFC72C] hover:bg-[#E5B800] text-black font-display font-bold text-xs uppercase rounded-md transition-all shadow-sm">
+            <a href="#vacancies" className="block text-center w-full py-3 bg-[#fe9320] hover:bg-[#e5841c] text-black font-display font-bold text-xs uppercase rounded-md transition-all shadow-sm">
               View {jobs.filter(j => j.sector === 'chicken').length || 'Broiler'} Vacancies →
             </a>
           </div>
@@ -120,7 +120,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
         {/*  Operating Pillars  */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-7 rounded-md border border-slate-200/80 bg-white space-y-3 shadow-sm">
-            <div className="w-9 h-9 rounded-md bg-[#FFC72C] text-black font-black flex items-center justify-center font-display">1</div>
+            <div className="w-9 h-9 rounded-md bg-[#fe9320] text-black font-black flex items-center justify-center font-display">1</div>
             <h3 className="font-bold text-lg font-display text-black">Heated Minibus Pickup</h3>
             <p className="text-xs text-slate-600 leading-relaxed font-sans">
               Drivers collect crew members directly from their residential addresses across Boston, Lincoln, Sleaford, and Grantham. Never worry about travel expenses or farm navigation.
@@ -128,7 +128,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
           </div>
 
           <div className="p-7 rounded-md border border-slate-200/80 bg-white space-y-3 shadow-sm">
-            <div className="w-9 h-9 rounded-md bg-[#FFC72C] text-black font-black flex items-center justify-center font-display">2</div>
+            <div className="w-9 h-9 rounded-md bg-[#fe9320] text-black font-black flex items-center justify-center font-display">2</div>
             <h3 className="font-bold text-lg font-display text-black">Humane Hand-Catching</h3>
             <p className="text-xs text-slate-600 leading-relaxed font-sans">
               Operate under strict AHVLA bio-security standards. Full personal protective equipment (respirators, coveralls, boots, handling gloves) provided directly upon departure.
@@ -136,7 +136,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
           </div>
 
           <div className="p-7 rounded-md border border-slate-200/80 bg-white space-y-3 shadow-sm">
-            <div className="w-9 h-9 rounded-md bg-[#FFC72C] text-black font-black flex items-center justify-center font-display">3</div>
+            <div className="w-9 h-9 rounded-md bg-[#fe9320] text-black font-black flex items-center justify-center font-display">3</div>
             <h3 className="font-bold text-lg font-display text-black">Guaranteed Friday Pay</h3>
             <p className="text-xs text-slate-600 leading-relaxed font-sans">
               Every completed load is logged on digital timesheets. Wages clear automatically every Friday morning via BACS with full statutory itemized payslips.
@@ -162,16 +162,16 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <div className="flex items-center gap-2 text-xs font-bold text-slate-200">
-                <span className="text-[#FFC72C]">✓</span> Defra &amp; AHVLA Turkey Welfare Compliance
+                <span className="text-[#fe9320]">✓</span> Defra &amp; AHVLA Turkey Welfare Compliance
               </div>
               <div className="flex items-center gap-2 text-xs font-bold text-slate-200">
-                <span className="text-[#FFC72C]">✓</span> Two-Handed Heavy Bird Handling Protocols
+                <span className="text-[#fe9320]">✓</span> Two-Handed Heavy Bird Handling Protocols
               </div>
               <div className="flex items-center gap-2 text-xs font-bold text-slate-200">
-                <span className="text-[#FFC72C]">✓</span> Free Minibus Pickup &amp; Return Service
+                <span className="text-[#fe9320]">✓</span> Free Minibus Pickup &amp; Return Service
               </div>
               <div className="flex items-center gap-2 text-xs font-bold text-slate-200">
-                <span className="text-[#FFC72C]">✓</span> Premium Contract Earnings &amp; Shift Stability
+                <span className="text-[#fe9320]">✓</span> Premium Contract Earnings &amp; Shift Stability
               </div>
             </div>
           </div>
@@ -179,13 +179,13 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
           {/*  Stats Box  */}
           <div className="w-full lg:w-80 bg-neutral-900 border border-neutral-800 text-white rounded-md p-6 space-y-4 shrink-0 shadow-lg">
             <div className="text-xs font-mono uppercase text-slate-400 font-bold">Specialist Turkey Crew Pay</div>
-            <div className="text-3xl font-black font-display text-[#FFC72C]">£850 – £1,050<span className="text-xs text-white font-sans"> / wk</span></div>
+            <div className="text-3xl font-black font-display text-[#fe9320]">£850 – £1,050<span className="text-xs text-white font-sans"> / wk</span></div>
             <div className="text-xs text-slate-300 space-y-1.5 font-sans border-t border-neutral-800 pt-3">
               <div className="flex justify-between"><span>Night Pay:</span><strong className="font-mono text-white">£195 / shift</strong></div>
               <div className="flex justify-between"><span>Typical Hours:</span><strong className="font-mono text-white">21:00 – 05:00</strong></div>
-              <div className="flex justify-between"><span>Active Hubs:</span><strong className="font-mono text-[#FFC72C]">Norfolk &amp; Lincs</strong></div>
+              <div className="flex justify-between"><span>Active Hubs:</span><strong className="font-mono text-[#fe9320]">Norfolk &amp; Lincs</strong></div>
             </div>
-            <a href="#vacancies" className="block text-center w-full py-3 bg-[#FFC72C] hover:bg-[#E5B800] text-black font-display font-bold text-xs uppercase rounded-md transition-all shadow-sm">
+            <a href="#vacancies" className="block text-center w-full py-3 bg-[#fe9320] hover:bg-[#e5841c] text-black font-display font-bold text-xs uppercase rounded-md transition-all shadow-sm">
               View {jobs.filter(j => j.sector === 'turkey').length || 'Turkey'} Vacancies →
             </a>
           </div>
@@ -194,7 +194,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
         {/*  Protocol Breakdown  */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-7 rounded-md border border-neutral-200 bg-white space-y-3 shadow-sm">
-            <div className="w-9 h-9 rounded-md bg-black text-[#FFC72C] font-black flex items-center justify-center font-display">1</div>
+            <div className="w-9 h-9 rounded-md bg-black text-[#fe9320] font-black flex items-center justify-center font-display">1</div>
             <h3 className="font-bold text-lg font-display text-black">Two-Handed Handling</h3>
             <p className="text-xs text-slate-600 leading-relaxed font-sans">
               Due to bird weight (8kg–22kg), turkeys are held by the wing base and lower body to eliminate wing flapping and prevent distress.
@@ -202,7 +202,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
           </div>
 
           <div className="p-7 rounded-md border border-neutral-200 bg-white space-y-3 shadow-sm">
-            <div className="w-9 h-9 rounded-md bg-black text-[#FFC72C] font-black flex items-center justify-center font-display">2</div>
+            <div className="w-9 h-9 rounded-md bg-black text-[#fe9320] font-black flex items-center justify-center font-display">2</div>
             <h3 className="font-bold text-lg font-display text-black">Modular Crate Loading</h3>
             <p className="text-xs text-slate-600 leading-relaxed font-sans">
               Loaded directly into hydraulic multi-tier transport modules with controlled ventilation. High team coordination ensuring swift turnaround.
@@ -210,7 +210,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
           </div>
 
           <div className="p-7 rounded-md border border-neutral-200 bg-white space-y-3 shadow-sm">
-            <div className="w-9 h-9 rounded-md bg-black text-[#FFC72C] font-black flex items-center justify-center font-display">3</div>
+            <div className="w-9 h-9 rounded-md bg-black text-[#fe9320] font-black flex items-center justify-center font-display">3</div>
             <h3 className="font-bold text-lg font-display text-black">Seasonal Premium Bonus</h3>
             <p className="text-xs text-slate-600 leading-relaxed font-sans">
               Guaranteed top-tier load bonuses during peak autumn and winter campaigns, supplemented by reliable year-round commercial maintenance.
@@ -253,7 +253,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
                     
                     <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
                       <span className="font-bold text-slate-900">{job.payRate}</span>
-                      <span className="text-[#FFC72C] font-bold group-hover:underline">View details</span>
+                      <span className="text-[#fe9320] font-bold group-hover:underline">View details</span>
                     </div>
                   </div>
                 </Link>
@@ -280,7 +280,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
                   <circle cx="253.6" cy="125.4" r="12.4" />
                 </g>
               </svg>
-              <span className="tracking-tight text-white">atchingJobs<span className="text-[#FFCC00] font-mono">.</span></span>
+              <span className="tracking-tight text-white">atchingJobs<span className="text-[#fe9320] font-mono">.</span></span>
             </Link>
           <p className="text-xs text-neutral-400 leading-relaxed font-sans">
             CatchingJobs is operated by Pullum Ltd under GLAA Licence PULL0001. UK's poultry catching workforce platform connecting agricultural operatives with commercial broiler and turkey farms with free heated minibus transport and guaranteed Friday pay.
@@ -291,7 +291,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
         </div>
         <div className="space-y-4 text-left md:text-right font-mono text-xs">
           <div className="flex flex-wrap md:justify-end gap-2">
-            <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-[#FFC72C] font-bold">GLAA Licence PULL0001</span>
+            <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-[#fe9320] font-bold">GLAA Licence PULL0001</span>
             <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-white font-bold">UK Right to Work</span>
             <span className="px-3 py-1 rounded-md bg-neutral-900 border border-neutral-700 text-slate-300 font-bold">Lantra Animal Welfare</span>
           </div>
