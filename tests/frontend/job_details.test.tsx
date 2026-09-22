@@ -15,9 +15,9 @@ vi.mock('@clerk/clerk-react', () => ({
   ClerkProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-import JobDetailsPage from '../../src/pages/jobs/JobDetailsPage';
-import JobShareModal from '../../src/components/jobs/JobShareModal';
-import { SSRDataProvider } from '../../src/context/SSRDataContext';
+import JobDetailsPage from '@/pages/jobs/JobDetailsPage';
+import JobShareModal from '@/components/jobs/JobShareModal';
+import { SSRDataProvider } from '@/context/SSRDataContext';
 
 const mockJob = {
   id: 1,

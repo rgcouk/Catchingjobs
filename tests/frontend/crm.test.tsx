@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
-import IntakeWizard from '../../src/pages/wizard/IntakeWizard';
+import IntakeWizard from '@/pages/wizard/IntakeWizard';
 
 // Mock Clerk
 vi.mock('@clerk/clerk-react', () => ({

@@ -1,18 +1,22 @@
 {
-  "name": "react-example",
+  "name": "catchingjobs",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "concurrently \"tsx backend/api/index.ts\" \"vite --port=3000 --host=0.0.0.0\"",
-    "build": "prisma generate --schema=backend/prisma/schema.prisma && vite build && vite build --ssr frontend/src/entry.server.tsx --outDir dist/server",
+    "dev": "concurrently \"tsx apps/api/src/api/index.ts\" \"vite --port=3000 --host=0.0.0.0\"",
+    "build": "prisma generate --schema=apps/api/prisma/schema.prisma && vite build && vite build --ssr apps/web/src/entry.server.tsx --outDir dist/server",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "eslint .",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
+    "format": "prettier --write \"apps/**/*.{ts,tsx,css,json}\" \"packages/**/*.{ts,tsx,json}\"",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "seed": "tsx backend/prisma/scripts/auto-seed.ts",
+    "seed": "tsx apps/api/prisma/scripts/auto-seed.ts",
     "quality-check": "npm run format && npm run lint && npm run test && npm run build"
   },
   "dependencies": {
@@ -50,6 +54,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
+    "framer-motion": "^13.4.0",
     "hono": "^4.13.1",
     "lucide-react": "^0.546.0",
     "maplibre-gl": "^6.6.0",

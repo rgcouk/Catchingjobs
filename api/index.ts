@@ -1,2 +1,2 @@
-export * from '../backend/api/index.js';
-export { default } from '../backend/api/index.js';
+export * from '../apps/api/src/api/index.js';
+export { default } from '../apps/api/src/api/index.js';

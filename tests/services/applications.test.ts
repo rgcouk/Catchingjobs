@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ManageApplications } from '../../src/services/ManageApplications';
+import { ManageApplications } from '@api/server/services/ManageApplications';
 import {
   ValidationError,
   RightToWorkRequiredError,
   ApplicationNotFoundError,
-} from '../../src/services/exceptions';
+} from '@api/server/services/exceptions';
 import type { PrismaClient } from '@prisma/client';
 
 describe('ManageApplications Service - createDraftApplication & linkUserToDraft', () => {

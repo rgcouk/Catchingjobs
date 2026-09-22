@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { resolveTown, getAllRegionsWithTowns } from '../../src/data/locations';
-import { loadRouteData } from '../../server/ssrLoader';
+import { resolveTown, getAllRegionsWithTowns } from '@/data/locations';
+import { loadRouteData } from '@api/server/ssrLoader';
 
 describe('Location & SSR Data Services', () => {
   describe('getAllRegionsWithTowns', () => {
@@ -109,10 +109,10 @@ describe('Location & SSR Data Services', () => {
 
   describe('ManageLocations Service', () => {
     let mockPrisma: any;
-    let service: import('../../src/services/ManageLocations').ManageLocations;
+    let service: import('@api/server/services/ManageLocations').ManageLocations;
 
     beforeEach(async () => {
-      const { ManageLocations } = await import('../../src/services/ManageLocations');
+      const { ManageLocations } = await import('@api/server/services/ManageLocations');
       mockPrisma = {
         region: {
           findMany: vi.fn(),

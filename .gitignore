@@ -1,19 +1,41 @@
+# Dependencies
 node_modules/
+
+# Build Outputs & Bundles
 build/
 dist/
+dist-server/
+dist-ssr/
 coverage/
+playwright-report/
+test-results/
+.turbo/
+.vercel/
+
+# System Files & Caches
 .DS_Store
 **/.DS_Store
 *.log
+
+# Environment & Secrets (NEVER COMMIT)
 .env*
 !.env.example
 
-/src/generated/prisma
+# Local Database Files (NEVER COMMIT)
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
 dev.db
-.vercel
+/src/generated/prisma
+apps/api/prisma/dev.db
+
+# Agent Skills Isolation (Skills live in ~/.gemini/antigravity/skills/)
+.agents/skills/
+skills-lock.json
+
+# Tooling Artifacts & Scratch
 .claude/
-playwright-report/
-test-results/
 .stitch/
 scratch/
 *.diff

@@ -5,23 +5,29 @@
 - **Primary ADE**: Orca ADE (Agentic Development Environment)
 - **Source Control & CI**: GitHub & GitHub Actions (`.github/workflows/ci.yml`)
 - **Deployment & Hosting**: Vercel (`vercel.json` rewrites for SPA & `/api/` serverless functions)
-- **Workspace Customizations Root**: `.agents/`
 
-## Tech Stack
-- **Framework**: Vite + React
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4
-- **Database**: Prisma with SQLite & PostgreSQL drivers
-- **Backend**: Hono (via independent `/api/*` serverless functions, migrating from Express)
-- **Authentication**: Clerk
-- **Version Control & CI/CD**: GitHub & GitHub Actions
-- **Deployment**: Vercel
+## Architecture & Monorepo Layout
+- **`apps/web/`**: Vite + React frontend, shadcn/ui, Tailwind CSS v4, client/SSR entry points
+- **`apps/api/`**: Hono API server, Prisma schema & migrations, database seeds, domain services
+- **`packages/shared/`**: `@catchingjobs/shared` — shared TypeScript types, static datasets, resolvers
+- **Root Purity**: The root directory remains pristine. No ad-hoc Python scripts, test scripts, or scratch notes in root.
 
-## Coding Standards
-- **Formatting**: Always run `npm run format` (Prettier) after making significant changes to ensure code style consistency.
-- **Linting**: Ensure `npm run lint` passes without errors. Fix all ESLint warnings.
-- **Database**: When changing Prisma schema, run `npx prisma db push` (or migrate) to update the SQLite/Postgres database, and restart any running development server.
-- **Helper Scripts**: Database seeding and utility scripts are located under `prisma/scripts/`.
+## Global Agent Skills Isolation
+- Do **NOT** store or create custom project-level `SKILL.md` folders or agent configurations inside Catchingjobs.
+- All custom agent skills, rules, and workflows live globally in `~/.gemini/antigravity/skills/` to remain cross-project and out of version control.
+
+## Task Execution via Makefile
+Operational tasks are driven via the root `Makefile` (or equivalent npm scripts):
+- `make dev` - Starts API and Vite dev servers concurrently
+- `make build` - Builds production client & SSR bundles
+- `make test` - Runs Vitest unit & integration tests
+- `make test-e2e` - Runs Playwright end-to-end tests
+- `make lint` - Runs ESLint across workspaces
+- `make format` - Formats code using Prettier
+- `make seed` - Runs automated database seeding
+- `make db-generate` & `make db-push` - Prisma schema tooling
+- `make clean` - Cleans build outputs, temp caches, and logs
+- `make quality-check` - 1-command pre-flight quality verification (format, lint, test, build)
 
 ## UI & Design Systems
 
@@ -33,25 +39,7 @@
 ### 2. Marketing & Landing Pages (Cadmium Yellow v2)
 - **Scope**: Public landers and marketing sections enforce the **Cadmium Yellow v2** design system using tokens (`#FFCC00`, `#090D14`, `#FFFFFF`, Chicken-C monogram) as locked in `design.md`. Do NOT use Hallmark green/orange rules.
 
-## Commands
-- `npm run dev` - Starts the development server.
-- `npm run build` - Builds the application for production.
-- `npm run lint` - Runs ESLint.
-- `npm run format` - Formats the code using Prettier.
-- `npm run seed` - Runs automated database seeding (`prisma/scripts/auto-seed.ts`).
-- `npm test` - Runs unit tests using Vitest.
-- `npm run quality-check` - Runs 1-command pre-flight quality verification (format, lint, test, build).
-
-## Agent skills
-
-### Issue tracker
-
-GitHub Issues, using the `gh` CLI. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-The default 5 canonical triage roles map directly to identical label strings. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context documentation layout using `CONTEXT.md` at the repo root. See `docs/agents/domain.md`.
+## Agent Reference Documentation
+- **Issue tracker**: GitHub Issues, using the `gh` CLI. See `docs/agents/issue-tracker.md`.
+- **Triage labels**: 5 canonical triage roles. See `docs/agents/triage-labels.md`.
+- **Domain docs**: Single-context documentation layout using `CONTEXT.md` at root. See `docs/agents/domain.md`.

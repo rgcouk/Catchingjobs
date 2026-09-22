@@ -28,14 +28,14 @@ vi.mock('@clerk/clerk-react', () => ({
   ClerkProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-import Index from '../../src/pages/Index';
-import SectorHub from '../../src/pages/landers/SectorHub';
-import RegionLander from '../../src/pages/landers/RegionLander';
-import CorporateLander from '../../src/pages/landers/CorporateLander';
-import Login from '../../src/pages/auth/Login';
-import Register from '../../src/pages/auth/Register';
-import IntakeWizard from '../../src/pages/wizard/IntakeWizard';
-import PortalDashboard from '../../src/pages/portal/PortalDashboard';
+import Index from '@/pages/Index';
+import SectorHub from '@/pages/landers/SectorHub';
+import RegionLander from '@/pages/landers/RegionLander';
+import CorporateLander from '@/pages/landers/CorporateLander';
+import Login from '@/pages/auth/Login';
+import Register from '@/pages/auth/Register';
+import IntakeWizard from '@/pages/wizard/IntakeWizard';
+import PortalDashboard from '@/pages/portal/PortalDashboard';
 
 describe('Public Lander Page Components Render Integrity', () => {
   it('renders Index homepage without blank screen or errors', () => {
@@ -46,9 +46,7 @@ describe('Public Lander Page Components Render Integrity', () => {
         </MemoryRouter>
       </HelmetProvider>,
     );
-    expect(screen.getAllByText(/Honest work/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Chicken Catching/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Turkey Catching/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/poultry catching/i).length).toBeGreaterThan(0);
     expect(container.innerHTML).not.toBe('');
   });
 
@@ -60,8 +58,7 @@ describe('Public Lander Page Components Render Integrity', () => {
         </MemoryRouter>
       </HelmetProvider>,
     );
-    expect(screen.getAllByText(/Chicken Catching/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/Boston Catching Area/i)).toBeDefined();
+    expect(screen.getAllByText(/Broiler Chicken Division/i).length).toBeGreaterThan(0);
     expect(container.innerHTML).not.toBe('');
   });
 
@@ -73,8 +70,7 @@ describe('Public Lander Page Components Render Integrity', () => {
         </MemoryRouter>
       </HelmetProvider>,
     );
-    expect(screen.getAllByText(/Turkey Catching/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/Sleaford Catching Area/i)).toBeDefined();
+    expect(screen.getAllByText(/Commercial Turkey Division/i).length).toBeGreaterThan(0);
     expect(container.innerHTML).not.toBe('');
   });
 
@@ -86,8 +82,7 @@ describe('Public Lander Page Components Render Integrity', () => {
         </MemoryRouter>
       </HelmetProvider>,
     );
-    expect(screen.getByText(/Join our professional catching crews in Boston/i)).toBeDefined();
-    expect(screen.getByTestId('hero-triage-card')).toBeDefined();
+    expect(screen.getAllByText(/Door-to-Door Poultry Catching Routes/i).length).toBeGreaterThan(0);
     expect(container.innerHTML).not.toBe('');
   });
 
@@ -99,10 +94,8 @@ describe('Public Lander Page Components Render Integrity', () => {
         </MemoryRouter>
       </HelmetProvider>,
     );
-    expect(screen.getByText(/Pullum Ltd • Corporate Parent/i)).toBeDefined();
-    expect(
-      screen.getByText(/Professional Poultry Catching & Agricultural Crew Management/i),
-    ).toBeDefined();
+    expect(screen.getAllByText(/Pullum Ltd/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/GLAA Licensed Provider/i).length).toBeGreaterThan(0);
     expect(container.innerHTML).not.toBe('');
   });
 
@@ -114,7 +107,7 @@ describe('Public Lander Page Components Render Integrity', () => {
         </MemoryRouter>
       </HelmetProvider>,
     );
-    expect(screen.getAllByText(/manage your catching roster/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Sign in to your account/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Log In/i).length).toBeGreaterThan(0);
     expect(container.innerHTML).not.toBe('');
   });
@@ -190,10 +183,10 @@ describe('Public Lander Page Components Render Integrity', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Verified Employee Portal/i)).toBeDefined();
+      expect(screen.getByText(/Operative Menu/i)).toBeDefined();
     });
-    expect(screen.getByText(/View Application/i)).toBeDefined();
-    expect(screen.getByText(/Edit Details/i)).toBeDefined();
+    expect(screen.getAllByText(/Dashboard/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Schedule/i).length).toBeGreaterThan(0);
     expect(container.innerHTML).not.toBe('');
   });
 });

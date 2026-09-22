@@ -6,13 +6,14 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@api': path.resolve(__dirname, './api'),
+      '@': path.resolve(__dirname, './apps/web/src'),
+      '@api': path.resolve(__dirname, './apps/api/src'),
+      '@catchingjobs/shared': path.resolve(__dirname, './packages/shared/src'),
     },
   },
   test: {
     environment: 'jsdom',
-    setupFiles: ['./setupTests.ts'],
+    setupFiles: ['./tests/setupTests.ts'],
     globals: true,
     exclude: [
       '**/node_modules/**', 
@@ -20,7 +21,7 @@ export default defineConfig({
       '**/.{idea,git,cache,output,temp}/**', 
       '**/{karma,rollup,webpack,vite,vitest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*',
       'tests/*.spec.ts',
-      'src/hooks/use-table-url-state.test.ts'
+      'apps/web/src/hooks/use-table-url-state.test.ts'
     ],
   },
 });
