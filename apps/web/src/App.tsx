@@ -18,7 +18,6 @@ import {
 } from '@clerk/clerk-react';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-import { motion, AnimatePresence } from 'motion/react';
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode; role?: string }) {
   const { isLoaded, userId } = useAuth();
