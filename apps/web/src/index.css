@@ -12,12 +12,21 @@
   --font-serif: 'Instrument Serif', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
-  /* CatchingJobs Brand Tokens */
+  /* CatchingJobs Brand Tokens (Cadmium Orange / Flame #ff7c20) */
   --color-brand-yellow: #ff7c20;
   --color-brand-yellowDark: #e05500;
+  --color-brand-yellow-hover: #e05500;
+  --color-brand-orange: #ff7c20;
+  --color-brand-orange-hover: #e05500;
+  --color-brand-broiler-gold: #f5e6a3;
   --color-brand-ivory: #fffdf0;
   --color-brand-obsidian: #090d14;
   --color-brand-obsidianCard: #111622;
+  --color-brand-black: #000000;
+  --color-brand-surface: #ffffff;
+  --color-brand-mist: #f8fafc;
+  --color-brand-border: #e2e8f0;
+  --color-brand-border-dark: #1e293b;
 
   --color-paper: #ffffff;
   --color-ink: #090d14;

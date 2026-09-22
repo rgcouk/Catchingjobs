@@ -37,8 +37,8 @@ Operational tasks are driven via the root `Makefile` (or equivalent npm scripts)
 - **Sidebar Standard**: Dashboards use the official shadcn sidebar system (`SidebarProvider`, `AppSidebar`, `SidebarInset`, `SidebarTrigger`) configured with CSS variables (`var(--sidebar)`, `var(--sidebar-foreground)`, `var(--sidebar-border)`, `var(--sidebar-accent)`).
 - **Logins & Auth Styling**: Auth pages use shadcn UI containers (`Card`, `Input`, `Button`, `Label`) with Clerk integrated cleanly into shadcn tokens (`bg-card`, `border-border`, `text-card-foreground`).
 
-### 2. Marketing & Landing Pages (Cadmium Yellow v2)
-- **Scope**: Public landers and marketing sections enforce the **Cadmium Yellow v2** design system using tokens (`#FFCC00`, `#090D14`, `#FFFFFF`, Chicken-C monogram) as locked in `design.md`. Do NOT use Hallmark green/orange rules.
+### 2. Marketing & Landing Pages (Cadmium Orange / Flame)
+- **Scope**: Public landers and marketing sections enforce the **Cadmium Orange / Flame** design system using tokens (`#ff7c20`, `#090D14`, `#FFFFFF`, Chicken-C monogram) as locked in `design.md`. Do NOT use Hallmark green rules.
 
 ## Agent Reference Documentation
 - **Issue tracker**: GitHub Issues, using the `gh` CLI. See `docs/agents/issue-tracker.md`.

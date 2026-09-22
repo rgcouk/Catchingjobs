@@ -39,6 +39,6 @@ Co-Authored-By: Antigravity <noreply@google.com>
 
 ## Key Conventions
 - **Dashboards & Auth**: Use **shadcn/ui** components (`@/components/ui/`). Do NOT use Hallmark rules here.
-- **Marketing & Landers**: Public landers enforce **Cadmium Yellow v2** design tokens (`#FFCC00`, `#090D14`, `#FFFFFF`, Chicken-C monogram) as specified in `design.md`. Do NOT use Hallmark green/orange rules.
+- **Marketing & Landers**: Public landers enforce **Cadmium Orange / Flame** design tokens (`#ff7c20`, `#090D14`, `#FFFFFF`, Chicken-C monogram) as specified in `design.md`. Do NOT use Hallmark green rules.
 - **Database**: Run `make db-push` or `npx prisma db push --schema=apps/api/prisma/schema.prisma` on schema changes.
 - **Domain Docs**: See `CONTEXT.md` at repo root. Agent specs in `docs/agents/`.

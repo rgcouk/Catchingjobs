@@ -12,7 +12,7 @@ export default function Index({ onNavigate }: any) {
     {
       badge: '18 UK LOCATIONS',
       title:
-        "UK poultry catching jobs with door-to-door home pickup<span className='text-black'>.</span>",
+        'UK poultry catching jobs with door-to-door home pickup<span class="text-black font-mono">.</span>',
       desc: 'CatchingJobs connects you with professional broiler and commercial turkey catching teams across England. Free door-to-door heated minibus transit, guaranteed weekly Friday payroll direct to your bank.',
       btn1: 'Find Catching Jobs Near You',
       btn2: 'Apply in 60 Seconds (No CV)',
@@ -21,7 +21,8 @@ export default function Index({ onNavigate }: any) {
     },
     {
       badge: 'INDUSTRY LEADING',
-      title: "Premium welfare standards & professional teams<span className='text-black'>.</span>",
+      title:
+        'Premium welfare standards & professional teams<span class="text-black font-mono">.</span>',
       desc: 'Join highly trained catching squads operating across the UK with Lantra-certified welfare protocols.',
       btn1: 'View Chicken Catching Jobs',
       btn2: 'Explore Welfare Standards',
@@ -30,7 +31,7 @@ export default function Index({ onNavigate }: any) {
     },
     {
       badge: 'ZERO FEES',
-      title: "Direct employment with weekly payroll<span className='text-black'>.</span>",
+      title: 'Direct employment with weekly payroll<span class="text-black font-mono">.</span>',
       desc: 'No umbrella companies. No transport deductions. Get paid every Friday directly into your bank account.',
       btn1: 'Register For Work Today',
       btn2: 'View Corporate Transport',

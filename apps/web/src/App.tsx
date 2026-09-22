@@ -41,8 +41,6 @@ import BrandLogo from './components/brand/BrandLogo';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PortalDashboard from './pages/portal/PortalDashboard';
-import TestLandingPage from './pages/landers/test-landing';
-import HallmarkBrandDemo from './pages/landers/HallmarkBrandDemo';
 import JobDetailsPage from './pages/jobs/JobDetailsPage';
 import { ErrorBoundary } from './components/shared/ErrorBoundary';
 
@@ -313,8 +311,6 @@ function App() {
                   <Route path="/jobs/:id" element={<JobDetailsPage />} />
                   <Route path="/jobs/:id/:slug" element={<JobDetailsPage />} />
                   <Route path="/ssr-test" element={<SSRTest />} />
-                  <Route path="/demo" element={<HallmarkBrandDemo />} />
-                  <Route path="/landings/test-landing" element={<TestLandingPage />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </AnimatePresence>

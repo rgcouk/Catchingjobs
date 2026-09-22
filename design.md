@@ -1,7 +1,7 @@
 # Design — CatchingJobs (Pullum Ltd)
 
-> **LOCKED DESIGN SYSTEM — CADMIUM YELLOW V2 (ANTI-SLOP TRADE SPECIFICATION)**
-> This file is the single canonical source of truth for CatchingJobs.co.uk. All AI agents, skills, and code generators must strictly adhere to these specifications. Do NOT revert to green or orange tokens.
+> **LOCKED DESIGN SYSTEM — CADMIUM ORANGE / FLAME SPECIFICATION**
+> This file is the single canonical source of truth for CatchingJobs.co.uk. All AI agents, skills, and code generators must strictly adhere to these specifications. The primary brand accent is signature Flame Orange (`#ff7c20`). Do NOT revert to green tokens.
 
 ---
 
@@ -19,20 +19,22 @@ The vector mark, wordmark, and eye circle share identical fills. Never apply two
 - **Terminal Period**: The wordmark ends with a period: `CatchingJobs.`
 
 ### The 4 Contextual Lockups
-1. **Yellow Nav Context**: `#000000` on `#FFCC00` (Header / Hero TopNav)
-2. **Dark Sector Context**: `#FFCC00` on `#000000` (Turkey Sector Card, Admin / Dark mode)
+1. **Orange Nav Context**: `#000000` on `#ff7c20` (Header / Hero TopNav)
+2. **Dark Sector Context**: `#ff7c20` on `#000000` (Turkey Sector Card, Admin / Dark mode)
 3. **Scrolled Nav Context**: `#000000` on `#FFFFFF` (Scrolled Sticky Navigation)
-4. **Universal Footer Context**: `#FFFFFF` on `#000000` (Platform Footer)
+4. **Universal Footer Context**: `#FFFFFF` on `#000000` (Platform Footer with `#ff7c20` terminal accents)
 
 ---
 
-## 2. Color System (Locked 3-Tone Palette)
+## 2. Color System (Flame Orange & Obsidian Palette)
 
 | Token | Hex Value | Role & Usage |
 |---|---|---|
-| **brand-yellow** | `#FFCC00` | Signature Cadmium Yellow — Top nav background, Hero background, active region tab, primary action hover, accent bars |
-| **brand-yellow-hover** | `#E6B800` | Darkened yellow for pressed and focused states |
+| **brand-orange** / **brand-yellow** | `#ff7c20` | Signature Cadmium / Flame Orange — Top nav background, Hero background, active region tab, primary action hover, accent bars |
+| **brand-orange-hover** | `#e05500` | Darkened flame orange for pressed and focused states |
+| **brand-energy-gradient** | `linear-gradient(178deg, #ff7c20, #ea5708, #ff4b00)` | Hero backgrounds and high-impact sector gradient overlays |
 | **brand-broiler-gold** | `#F5E6A3` | Warm light golden-yellow card background for Broiler Chicken Catching division |
+| **brand-ivory** | `#FFFDF0` | Soft warm card and modal backdrop |
 | **brand-obsidian** | `#090D14` | High-contrast dark ink for body text, headings, Turkey Sector card |
 | **brand-black** | `#000000` | Universal Footer background, primary action buttons, dark division cards |
 | **brand-surface** | `#FFFFFF` | Job vacancy cards, sticky scrolled nav, clean contrast surfaces |
@@ -41,7 +43,7 @@ The vector mark, wordmark, and eye circle share identical fills. Never apply two
 | **brand-border-dark** | `#1E293B` | Footer dividers, dark card borders |
 
 > [!IMPORTANT]
-> **Strictly Banned Colors**: Emerald Green (`#059669`), Harvest Orange (`#EA580C`), or any off-palette blues/purples in public marketing headers and hero sections.
+> **Strictly Banned Colors**: Emerald Green (`#059669`) or any off-palette blues/purples in public marketing headers and hero sections.
 
 ---
 
