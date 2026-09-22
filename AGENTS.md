@@ -18,9 +18,10 @@ Primary task execution is driven via root `Makefile` or `npm`:
 - `make clean` / `npm run clean` - Cleans build outputs, temp caches, and logs
 - `make quality-check` / `npm run quality-check` - 1-command pre-flight verification (format, lint, test, build)
 
-## Global Agent Skills Isolation
+## Global Agent Skills & MCP Isolation
 - Do **NOT** store or create custom project-level `SKILL.md` folders or agent configurations inside Catchingjobs.
-- All custom agent skills, rules, and workflows live globally in `~/.gemini/antigravity/skills/` to remain cross-project and out of version control.
+- All custom agent skills, rules, and workflows live globally in `~/.gemini/antigravity-cli/skills/` (Antigravity CLI) and `~/.gemini/antigravity/skills/` (Antigravity IDE) to remain cross-project and out of version control.
+- Global MCP servers reside in `~/.gemini/config/mcp_config.json`. Any workspace-scoped MCP definitions belong in `.agents/mcp_config.json` following the modern `"serverUrl"` schema.
 
 ## Commit Attribution
 AI commits MUST include:

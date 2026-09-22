@@ -12,9 +12,10 @@
 - **`packages/shared/`**: `@catchingjobs/shared` — shared TypeScript types, static datasets, resolvers
 - **Root Purity**: The root directory remains pristine. No ad-hoc Python scripts, test scripts, or scratch notes in root.
 
-## Global Agent Skills Isolation
+## Global Agent Skills & MCP Isolation
 - Do **NOT** store or create custom project-level `SKILL.md` folders or agent configurations inside Catchingjobs.
-- All custom agent skills, rules, and workflows live globally in `~/.gemini/antigravity/skills/` to remain cross-project and out of version control.
+- All custom agent skills, rules, and workflows live globally in `~/.gemini/antigravity-cli/skills/` (Antigravity CLI) and `~/.gemini/antigravity/skills/` (Antigravity IDE) to remain cross-project and out of version control.
+- Global MCP servers reside in `~/.gemini/config/mcp_config.json`. Any workspace-scoped MCP definitions belong in `.agents/mcp_config.json` following the modern `"serverUrl"` schema.
 
 ## Task Execution via Makefile
 Operational tasks are driven via the root `Makefile` (or equivalent npm scripts):
