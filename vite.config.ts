@@ -49,10 +49,12 @@ function ssrDevPlugin(): Plugin {
 
 export default defineConfig(() => {
   return {
+    publicDir: 'apps/web/public',
     plugins: [react(), tailwindcss(), ssrDevPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './apps/web/src'),
+        '@api': path.resolve(__dirname, './apps/api/src'),
         '@catchingjobs/shared': path.resolve(__dirname, './packages/shared/src'),
         'react-router-dom': 'react-router',
       },

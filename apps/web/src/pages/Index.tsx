@@ -6,6 +6,7 @@ import { PublicHeader } from '../components/layout/PublicHeader';
 
 export default function Index({ onNavigate }: any) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
   const slides = [
     {
@@ -16,7 +17,7 @@ export default function Index({ onNavigate }: any) {
       btn1: 'Find Catching Jobs Near You',
       btn2: 'Apply in 60 Seconds (No CV)',
       bgImg: '/images/homepage-hero.jpg',
-      sideImg: 'images/hero-sprinter-blended.png',
+      sideImg: '/images/hero-sprinter-blended.png',
     },
     {
       badge: 'INDUSTRY LEADING',
@@ -25,7 +26,7 @@ export default function Index({ onNavigate }: any) {
       btn1: 'View Chicken Catching Jobs',
       btn2: 'Explore Welfare Standards',
       bgImg: '/images/chicken-sector-hero.jpg',
-      sideImg: 'images/chicken-sector-hero.jpg',
+      sideImg: '/images/chicken-sector-hero.jpg',
     },
     {
       badge: 'ZERO FEES',
@@ -34,7 +35,7 @@ export default function Index({ onNavigate }: any) {
       btn1: 'Register For Work Today',
       btn2: 'View Corporate Transport',
       bgImg: '/images/corporate-logistics.jpg',
-      sideImg: 'images/door-pickup-fleet.jpg',
+      sideImg: '/images/door-pickup-fleet.jpg',
     },
   ];
 
@@ -160,12 +161,22 @@ export default function Index({ onNavigate }: any) {
                       <span>{slides[currentSlide].btn1}</span>
                       <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
                     </Link>
-                    <Link
-                      to="/corporate"
-                      className="inline-flex items-center justify-center px-6 py-3.5 rounded-md bg-transparent hover:bg-black/10 text-black border-[1.5px] border-black/40 font-bold text-sm tracking-tight transition-all active:scale-95"
-                    >
-                      {slides[currentSlide].btn2}
-                    </Link>
+                    {currentSlide === 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => setIsApplyModalOpen(true)}
+                        className="inline-flex items-center justify-center px-6 py-3.5 rounded-md bg-transparent hover:bg-black/10 text-black border-[1.5px] border-black/40 font-bold text-sm tracking-tight transition-all active:scale-95 cursor-pointer"
+                      >
+                        {slides[currentSlide].btn2}
+                      </button>
+                    ) : (
+                      <Link
+                        to="/corporate"
+                        className="inline-flex items-center justify-center px-6 py-3.5 rounded-md bg-transparent hover:bg-black/10 text-black border-[1.5px] border-black/40 font-bold text-sm tracking-tight transition-all active:scale-95"
+                      >
+                        {slides[currentSlide].btn2}
+                      </Link>
+                    )}
                   </div>
 
                   {/* Trust Checkmarks */}
@@ -581,8 +592,9 @@ export default function Index({ onNavigate }: any) {
                 </p>
               </div>
               <button
-                onClick={() => {}}
-                className="w-full py-3 bg-[#ff7c20] hover:bg-[#e05500] text-black font-display font-bold text-xs uppercase rounded-md transition-all shadow active:scale-95"
+                type="button"
+                onClick={() => setIsApplyModalOpen(true)}
+                className="w-full py-3 bg-[#ff7c20] hover:bg-[#e05500] text-black font-display font-bold text-xs uppercase rounded-md transition-all shadow active:scale-95 cursor-pointer"
               >
                 Apply in 60 Seconds →
               </button>
@@ -796,134 +808,143 @@ export default function Index({ onNavigate }: any) {
       </footer>
 
       {/*  9. EXPRESS 60-SECOND APPLY MODAL  */}
-      <div
-        id="apply-modal"
-        className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4"
-      >
-        <div className="bg-white rounded-md max-w-lg w-full p-8 relative shadow-2xl space-y-6">
-          <button
-            onClick={() => {}}
-            className="absolute top-5 right-5 text-slate-400 hover:text-black text-2xl font-bold leading-none"
-          >
-            ×
-          </button>
-
-          <div>
-            <span className="px-3 py-1 rounded-full bg-[#ff7c20] text-black font-mono text-[11px] font-bold uppercase">
-              Quick Apply · No CV Needed
-            </span>
-            <h3 id="modal-role-title" className="text-2xl font-black font-display text-black mt-2">
-              Apply in 60 Seconds
-            </h3>
-            <p className="text-xs text-slate-500 font-sans mt-1">
-              Our dispatch team will call you to confirm your heated minibus pickup address.
-            </p>
-          </div>
-
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              const form = e.currentTarget;
-              const formData = new FormData(form);
-              const data = {
-                name: formData.get('name'),
-                phone: formData.get('phone'),
-                town: formData.get('town'),
-                hasRightToWork: formData.get('rightToWork') === 'on',
-                sector: 'chicken',
-              };
-              try {
-                const res = await fetch('/api/triage', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(data),
-                });
-                if (res.ok) {
-                  document.getElementById('modal-success')?.classList.remove('hidden');
-                  form.style.display = 'none';
-                }
-              } catch (err) {
-                console.error(err);
-              }
-            }}
-            className="space-y-4 text-xs font-sans"
-          >
-            <div>
-              <label className="block font-bold text-slate-800 mb-1">Full Name *</label>
-              <input
-                name="name"
-                type="text"
-                required={true}
-                placeholder="e.g. David Jones"
-                className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold text-slate-800 mb-1">
-                UK Mobile Phone Number *
-              </label>
-              <input
-                name="phone"
-                type="tel"
-                required={true}
-                placeholder="e.g. 07123 456789"
-                className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition text-sm font-mono"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold text-slate-800 mb-1">
-                Home Town / Postcode (For Free Minibus Pickup) *
-              </label>
-              <input
-                name="town"
-                type="text"
-                required={true}
-                placeholder="e.g. Boston, PE21 8TR"
-                className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="flex items-start gap-2.5 cursor-pointer pt-1">
-                <input
-                  name="rightToWork"
-                  type="checkbox"
-                  required={true}
-                  className="mt-0.5 rounded text-black focus:ring-black"
-                />
-                <span className="text-[11px] text-slate-600 leading-snug">
-                  I confirm that I have legal Right to Work in the UK and am 18+ years of age.
-                </span>
-              </label>
-            </div>
-
+      {isApplyModalOpen && (
+        <div
+          id="apply-modal"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsApplyModalOpen(false);
+          }}
+        >
+          <div className="bg-white rounded-md max-w-lg w-full p-8 relative shadow-2xl space-y-6">
             <button
-              type="submit"
-              className="w-full py-3.5 rounded-md bg-[#ff7c20] hover:bg-[#e05500] text-black font-display font-bold text-sm uppercase tracking-wider transition-all shadow-md mt-2 active:scale-95"
+              type="button"
+              onClick={() => setIsApplyModalOpen(false)}
+              className="absolute top-5 right-5 text-slate-400 hover:text-black text-2xl font-bold leading-none cursor-pointer"
             >
-              Submit 60-Second Application →
+              ×
             </button>
 
-            <p className="text-[11px] text-slate-400 text-center font-mono">
-              🔒 GLAA Protected Recruitment · Zero Fees
-            </p>
-          </form>
+            <div>
+              <span className="px-3 py-1 rounded-full bg-[#ff7c20] text-black font-mono text-[11px] font-bold uppercase">
+                Quick Apply · No CV Needed
+              </span>
+              <h3
+                id="modal-role-title"
+                className="text-2xl font-black font-display text-black mt-2"
+              >
+                Apply in 60 Seconds
+              </h3>
+              <p className="text-xs text-slate-500 font-sans mt-1">
+                Our dispatch team will call you to confirm your heated minibus pickup address.
+              </p>
+            </div>
 
-          <div
-            id="modal-success"
-            className="hidden p-6 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-950 space-y-2 text-center"
-          >
-            <div className="text-3xl">✅</div>
-            <h4 className="font-bold text-base font-display">Application Received!</h4>
-            <p className="text-xs text-emerald-800">
-              Our dispatch coordinator will phone you today to schedule your first shift and confirm
-              your doorstep pickup time.
-            </p>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const form = e.currentTarget;
+                const formData = new FormData(form);
+                const data = {
+                  name: formData.get('name'),
+                  phone: formData.get('phone'),
+                  town: formData.get('town'),
+                  hasRightToWork: formData.get('rightToWork') === 'on',
+                  sector: 'chicken',
+                };
+                try {
+                  const res = await fetch('/api/triage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                  });
+                  if (res.ok) {
+                    document.getElementById('modal-success')?.classList.remove('hidden');
+                    form.style.display = 'none';
+                  }
+                } catch (err) {
+                  console.error(err);
+                }
+              }}
+              className="space-y-4 text-xs font-sans"
+            >
+              <div>
+                <label className="block font-bold text-slate-800 mb-1">Full Name *</label>
+                <input
+                  name="name"
+                  type="text"
+                  required={true}
+                  placeholder="e.g. David Jones"
+                  className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-800 mb-1">
+                  UK Mobile Phone Number *
+                </label>
+                <input
+                  name="phone"
+                  type="tel"
+                  required={true}
+                  placeholder="e.g. 07123 456789"
+                  className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition text-sm font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-800 mb-1">
+                  Home Town / Postcode (For Free Minibus Pickup) *
+                </label>
+                <input
+                  name="town"
+                  type="text"
+                  required={true}
+                  placeholder="e.g. Boston, PE21 8TR"
+                  className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="flex items-start gap-2.5 cursor-pointer pt-1">
+                  <input
+                    name="rightToWork"
+                    type="checkbox"
+                    required={true}
+                    className="mt-0.5 rounded text-black focus:ring-black"
+                  />
+                  <span className="text-[11px] text-slate-600 leading-snug">
+                    I confirm that I have legal Right to Work in the UK and am 18+ years of age.
+                  </span>
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-md bg-[#ff7c20] hover:bg-[#e05500] text-black font-display font-bold text-sm uppercase tracking-wider transition-all shadow-md mt-2 active:scale-95"
+              >
+                Submit 60-Second Application →
+              </button>
+
+              <p className="text-[11px] text-slate-400 text-center font-mono">
+                🔒 GLAA Protected Recruitment · Zero Fees
+              </p>
+            </form>
+
+            <div
+              id="modal-success"
+              className="hidden p-6 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-950 space-y-2 text-center"
+            >
+              <div className="text-3xl">✅</div>
+              <h4 className="font-bold text-base font-display">Application Received!</h4>
+              <p className="text-xs text-emerald-800">
+                Our dispatch coordinator will phone you today to schedule your first shift and
+                confirm your doorstep pickup time.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/*  Leaflet JS  */}
     </m.div>

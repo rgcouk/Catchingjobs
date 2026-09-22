@@ -24,6 +24,9 @@
       ],
       "@catchingjobs/shared/*": [
         "./packages/shared/src/*"
+      ],
+      "@api/*": [
+        "./apps/api/src/*"
       ]
     },
     "allowImportingTsExtensions": true,

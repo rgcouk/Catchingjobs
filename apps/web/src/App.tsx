@@ -4,7 +4,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import NoiseOverlay from './components/layout/NoiseOverlay';
 import { LazyMotion, domAnimation, AnimatePresence } from 'framer-motion';
 import { Routes, Route, useNavigate, useLocation, Navigate, useParams, Link } from 'react-router';
 
@@ -241,8 +240,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white text-[#090D14] flex flex-col font-sans selection:bg-[#ff7c20] selection:text-black antialiased relative">
-      <NoiseOverlay />
-
       <main className="flex-1 w-full flex flex-col lg:flex-row relative">
         <div className="flex-1">
           <ErrorBoundary>
