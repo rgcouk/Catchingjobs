@@ -1,0 +1,58 @@
+name: Process email outbox
+
+on:
+  schedule:
+    # Offset from the hour to reduce contention on GitHub's shared scheduler.
+    - cron: '2-59/5 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: email-outbox
+  cancel-in-progress: false
+
+jobs:
+  process:
+    if: github.repository == 'rgcouk/Catchingjobs' && vars.EMAIL_OUTBOX_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    environment: email-outbox
+    steps:
+      # No checkout or third-party actions: only the runner's built-in Node.js.
+      - name: Invoke authenticated processor
+        env:
+          OUTBOX_ORIGIN: ${{ vars.EMAIL_OUTBOX_ORIGIN }}
+          OUTBOX_SECRET: ${{ secrets.EMAIL_OUTBOX_CRON_SECRET }}
+          PREVIEW_BYPASS_SECRET: ${{ secrets.EMAIL_OUTBOX_PREVIEW_BYPASS_SECRET }}
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          const fail = (message) => { console.error(`::error::${message}`); process.exit(1); };
+          const { OUTBOX_ORIGIN, OUTBOX_SECRET, PREVIEW_BYPASS_SECRET } = process.env;
+          if (!OUTBOX_ORIGIN || !OUTBOX_SECRET) fail('Email scheduler configuration is missing.');
+          let origin;
+          try { origin = new URL(OUTBOX_ORIGIN); } catch { fail('Email scheduler origin is invalid.'); }
+          const allowed = /^(www\.)?catchingjobs\.co\.uk$/.test(origin.hostname)
+            || /^catchingjobs-[a-z0-9]+-pullumltd\.vercel\.app$/.test(origin.hostname);
+          if (!allowed || origin.protocol !== 'https:' || origin.username || origin.password
+            || origin.pathname !== '/' || origin.search || origin.hash) {
+            fail('Email scheduler requires an approved HTTPS Catchingjobs origin.');
+          }
+          const headers = { authorization: `Bearer ${OUTBOX_SECRET}` };
+          if (PREVIEW_BYPASS_SECRET) headers['x-vercel-protection-bypass'] = PREVIEW_BYPASS_SECRET;
+          let response;
+          try {
+            response = await fetch(new URL('/api/cron/email-outbox', origin), {
+              headers, redirect: 'error', signal: AbortSignal.timeout(90_000),
+            });
+          } catch { fail('Email processor could not be reached within 90 seconds.'); }
+          if (!response.ok) fail(`Email processor returned HTTP ${response.status}.`);
+          let result;
+          try { result = await response.json(); } catch { fail('Email processor returned invalid JSON.'); }
+          if (![result?.sent, result?.failed].every((n) => Number.isSafeInteger(n) && n >= 0 && n <= 25)) {
+            fail('Email processor returned an unexpected result.');
+          }
+          console.log(`Email processor completed: sent=${result.sent}, failed=${result.failed}.`);
+          if (result.failed) fail('Email deliveries failed; inspect the private outbox and retry state.');
+          NODE
