@@ -19,7 +19,7 @@ Paths above are relative to `apps/web/src/`. Reused assets retain native icon ge
 ## Deliberate adaptations and design gaps
 
 - The newer jobs-first homepage takes precedence over the earlier pickup-led homepage. Desktop and mobile use the latest full-bleed aerial farm map exported directly from Pen; the location-first search submits a town/area filter to the jobs directory.
-- The current hero retains its native desktop/mobile type treatment. Shared navigation uses Manrope consistently. Orange-hero routes share the hero surface; light-hero, auth, employee and error pages use white navigation with a dark logo. Brand geometry is unchanged.
+- The current hero retains its native desktop/mobile type treatment. Shared navigation uses Manrope consistently. Orange-hero routes share the hero surface; light-hero, employee and error pages use white navigation with a dark logo. Brand geometry is unchanged.
 - Canvas example vacancies, rates, availability, employee shifts and operational statistics are not fabricated as live data. Missing roster information remains unavailable; dispatch uses the actual telephone action. No fake document downloads or messaging success states were added.
 - The START HERE index marks mobile locations, sectors, regional/corporate, verification and operations as NEEDS DESIGN. These use responsive adaptations of their approved desktop layouts, not claims of a separate approved mobile design.
 - Training has approved header/intro frames only. The code implements that scope rather than inventing an unapproved full course page.
@@ -34,3 +34,5 @@ Production and the existing staging scheduler were not changed by this UI work.
 ## Jobs and launch pass — 22 October
 
 Job cards and directory filters now share real vacancy data, URL-backed role/sector/town/region filters, retry/reset states, truthful role badges and explicit employment types only when supplied. Missing roster, pay estimates and training terms are no longer fabricated by the API or detail-page defaults. CI generates framework types and runs the Chromium suite. See [launch-readiness.md](launch-readiness.md) for actual production gates. Automatic Git deployments for codex/stack-staging are disabled to prevent use of the historical shared Preview database default; manual Preview deployment must pass isolated overrides.
+
+Authentication pages use standalone full-height layouts without the public navigation header.

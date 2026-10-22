@@ -152,3 +152,5 @@ Use the retained Moffett training desktop/mobile frames in `catchingjobs-website
 ### Latest homepage and navigation update — 22 October 2026
 
 Use the full-bleed aerial farm-map backgrounds from BIFM1/i10Jb, with native desktop/mobile exports LqSK5/HT8IN. The search is location-first and searches actual listed towns/areas; do not promise a postcode or distance resolver. Shared public navigation, auth and employee pages use the same menu, with a dark logo on white light-page surfaces. Regional orange heroes use orange navigation. Employment contracts, shifts, rates and training terms must be actual vacancy data or clearly awaiting confirmation.
+
+Authentication pages use standalone full-height layouts without the public navigation header.

@@ -207,8 +207,6 @@ for (const path of [
   '/turkeys',
   '/corporate',
   '/training/moffett',
-  '/login',
-  '/register',
 ]) {
   test(`light-page menu stays consistent with a dark logo on ${path}`, async ({ page }) => {
     await page.goto(path);

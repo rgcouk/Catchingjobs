@@ -26,7 +26,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ShieldCheck, Truck, Coins, ArrowLeft } from 'lucide-react';
-import { PublicHeader } from '../../components/layout/PublicHeader';
 
 const registerSchema = z.object({
   firstName: z.string().min(2, { message: 'First name is required.' }),
@@ -130,8 +129,7 @@ export default function Register() {
 
   return (
     <>
-      <PublicHeader />
-      <div className="min-h-[calc(100dvh-5rem)] flex flex-col md:flex-row bg-white text-brand-obsidian selection:bg-brand-yellow selection:text-black antialiased">
+      <div className="min-h-dvh flex flex-col md:flex-row bg-white text-brand-obsidian selection:bg-brand-yellow selection:text-black antialiased">
         <>
           <title>Apply &amp; Register | CatchingJobs</title>
           <meta
