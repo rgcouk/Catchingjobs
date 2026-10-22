@@ -58,7 +58,7 @@ export function PublicHeader({ heroTone }: { heroTone?: 'orange' | 'light' } = {
     cn(
       'inline-flex min-h-11 items-center border-b-2 text-sm font-semibold transition-colors hover:text-brand-obsidian',
       focus,
-      'lg:font-[Manrope] lg:text-base lg:uppercase lg:tracking-[0.4px]',
+      'lg:font-navigation lg:text-base lg:uppercase lg:tracking-[0.4px]',
       isActive
         ? 'border-brand-obsidian text-brand-obsidian'
         : 'border-transparent text-brand-obsidian/80',
@@ -80,7 +80,7 @@ export function PublicHeader({ heroTone }: { heroTone?: 'orange' | 'light' } = {
               className={cn(
                 'flex min-h-11 items-center gap-1 border-b-2 text-sm font-semibold',
                 focus,
-                'lg:font-[Manrope] lg:text-base lg:uppercase lg:tracking-[0.4px]',
+                'lg:font-navigation lg:text-base lg:uppercase lg:tracking-[0.4px]',
                 jobsActive ? 'border-brand-obsidian' : 'border-transparent',
               )}
             >
@@ -117,7 +117,7 @@ export function PublicHeader({ heroTone }: { heroTone?: 'orange' | 'light' } = {
             className={cn(
               'inline-flex min-h-11 items-center text-sm font-semibold',
               focus,
-              'lg:font-[Manrope] lg:text-base lg:uppercase lg:tracking-[0.4px]',
+              'lg:font-navigation lg:text-base lg:uppercase lg:tracking-[0.4px]',
             )}
           >
             Contact

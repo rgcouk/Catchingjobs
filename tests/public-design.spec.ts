@@ -225,3 +225,20 @@ test('regional orange hero shares its orange menu', async ({ page }) => {
   await expect(header).toHaveAttribute('data-hero-tone', 'orange');
   await expect(header).toHaveCSS('background-color', 'rgb(255, 118, 5)');
 });
+
+test('brand fonts load when external font services are unavailable', async ({ page }) => {
+  await page.route('https://fonts.googleapis.com/**', (route) => route.abort());
+  await page.route('https://fonts.gstatic.com/**', (route) => route.abort());
+  await page.goto('/');
+  await page.evaluate(() => document.fonts.ready);
+  const loaded = await page.evaluate(() => ({
+    navigation: document.fonts.check('700 16px "Manrope Variable"'),
+    heading: document.fonts.check('700 54px "Plus Jakarta Sans Variable"'),
+  }));
+  expect(loaded).toEqual({ navigation: true, heading: true });
+  await expect(
+    page
+      .getByRole('navigation', { name: 'Main navigation' })
+      .getByRole('link', { name: 'Home', exact: true }),
+  ).toHaveCSS('font-family', /Manrope Variable/);
+});
