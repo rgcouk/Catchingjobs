@@ -4,7 +4,11 @@ vi.mock('@hono/clerk-auth', () => ({
   getAuth: (c: any) => ({ userId: c.req.header('x-test-verified-user') || null }),
 }));
 vi.mock('@api/server/db', () => ({ getPrisma: () => db }));
-const { db } = vi.hoisted(() => ({ db: { user: { findUnique: vi.fn() } } }));
+const { db, clerkUser } = vi.hoisted(() => ({
+  db: { user: { findUnique: vi.fn(), upsert: vi.fn() } },
+  clerkUser: vi.fn(),
+}));
+vi.mock('@clerk/backend', () => ({ createClerkClient: () => ({ users: { getUser: clerkUser } }) }));
 import { app as portal } from '@api/server/routes/portal';
 import { app as triage } from '@api/server/routes/triage';
 import { app as applications } from '@api/server/routes/applications';
@@ -26,6 +30,55 @@ describe('Verified identity boundary', () => {
     expect(response.status).toBe(200);
     expect(db.user.findUnique.mock.calls[0][0].where.id).toBe('owner');
     expect(response.headers.get('cache-control')).toContain('no-store');
+  });
+  it('repairs a missing profile using only the verified Clerk account', async () => {
+    db.user.findUnique
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({
+        id: 'owner',
+        email: 'owner@example.com',
+        role: 'WORKER',
+        application: null,
+      });
+    clerkUser.mockResolvedValue({
+      primaryEmailAddressId: 'email-owner',
+      emailAddresses: [
+        {
+          id: 'email-owner',
+          emailAddress: 'Owner@example.com',
+          verification: { status: 'verified' },
+        },
+      ],
+    });
+    const response = await portal.request('/api/portal/me?userId=victim', {
+      headers: { 'x-test-verified-user': 'owner' },
+    });
+    expect(response.status).toBe(200);
+    expect(clerkUser).toHaveBeenCalledWith('owner');
+    expect(db.user.upsert).toHaveBeenCalledWith({
+      where: { id: 'owner' },
+      update: {},
+      create: { id: 'owner', email: 'owner@example.com', passwordHash: '', role: 'WORKER' },
+    });
+    expect(response.headers.get('cache-control')).toContain('no-store');
+  });
+  it('does not bootstrap an account with an unverified email', async () => {
+    db.user.findUnique.mockResolvedValueOnce(null);
+    clerkUser.mockResolvedValue({
+      primaryEmailAddressId: 'email-owner',
+      emailAddresses: [
+        {
+          id: 'email-owner',
+          emailAddress: 'owner@example.com',
+          verification: { status: 'unverified' },
+        },
+      ],
+    });
+    const response = await portal.request('/api/portal/me', {
+      headers: { 'x-test-verified-user': 'owner' },
+    });
+    expect(response.status).toBe(403);
+    expect(db.user.upsert).not.toHaveBeenCalled();
   });
   it('rejects body identity for triage claim', async () => {
     const response = await triage.request('/api/triage/claim', {

@@ -31,8 +31,20 @@ const profileQuery = (userId: string) =>
   });
 app.get('/api/portal/me', async (c) => {
   try {
-    const user = await profileQuery(authenticatedUserId(c)!);
-    return user ? c.json(user) : c.json({ error: 'User sync in progress' }, 404);
+    const userId = authenticatedUserId(c)!;
+    let user = await profileQuery(userId);
+    if (!user) {
+      // Existing Clerk accounts can predate this database or arrive before their webhook.
+      // Bootstrap only the verified identity; never claim applications or elevate roles.
+      const email = await verifiedEmail(userId);
+      await getPrisma().user.upsert({
+        where: { id: userId },
+        update: {},
+        create: { id: userId, email, passwordHash: '', role: 'WORKER' },
+      });
+      user = await profileQuery(userId);
+    }
+    return user ? c.json(user) : c.json({ error: 'User sync in progress' }, 503);
   } catch (error) {
     return handleError(error, 'Failed to fetch profile', c);
   }
