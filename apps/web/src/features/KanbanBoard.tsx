@@ -62,44 +62,12 @@ export interface KanbanBoardProps {
   onTaskSelect?: (task: KanbanTask) => void;
 }
 
-const COLUMN_THEMES: Record<
-  string,
-  {
-    headerBg: string;
-    borderAccent: string;
-    badgeBg: string;
-    badgeText: string;
-    dotColor: string;
-  }
-> = {
-  NEW: {
-    headerBg: 'bg-blue-50/50 dark:bg-blue-950/20',
-    borderAccent: 'border-t-blue-500',
-    badgeBg: 'bg-blue-100 dark:bg-blue-900/50',
-    badgeText: 'text-blue-700 dark:text-blue-300',
-    dotColor: 'bg-blue-500',
-  },
-  REVIEWING: {
-    headerBg: 'bg-amber-50/50 dark:bg-amber-950/20',
-    borderAccent: 'border-t-amber-500',
-    badgeBg: 'bg-amber-100 dark:bg-amber-900/50',
-    badgeText: 'text-amber-700 dark:text-amber-300',
-    dotColor: 'bg-amber-500',
-  },
-  HIRED: {
-    headerBg: 'bg-emerald-50/50 dark:bg-emerald-950/20',
-    borderAccent: 'border-t-emerald-500',
-    badgeBg: 'bg-emerald-100 dark:bg-emerald-900/50',
-    badgeText: 'text-emerald-700 dark:text-emerald-300',
-    dotColor: 'bg-emerald-500',
-  },
-  REJECTED: {
-    headerBg: 'bg-rose-50/50 dark:bg-rose-950/20',
-    borderAccent: 'border-t-rose-500',
-    badgeBg: 'bg-rose-100 dark:bg-rose-900/50',
-    badgeText: 'text-rose-700 dark:text-rose-300',
-    dotColor: 'bg-rose-500',
-  },
+const COLUMN_THEME = {
+  headerBg: 'bg-brand-mist',
+  borderAccent: 'border-brand-border',
+  badgeBg: 'bg-white',
+  badgeText: 'text-brand-obsidian',
+  dotColor: 'bg-brand-orange',
 };
 
 export function KanbanBoard({
@@ -147,17 +115,16 @@ export function KanbanBoard({
   };
 
   return (
-    <div className="w-full overflow-x-auto pb-6 scrollbar-thin">
-      <div className="flex gap-4 min-w-[1100px] xl:min-w-full items-start">
+    <div
+      role="region"
+      aria-label="Application workflow columns"
+      tabIndex={0}
+      className="w-full overflow-x-auto pb-6 scrollbar-thin focus-visible:outline-2 focus-visible:outline-brand-orange"
+    >
+      <div className="flex gap-4 min-w-[1128px] xl:min-w-0 items-start">
         {columns.map((col) => {
           const colTasks = tasks.filter((t) => t.statusId === col.id);
-          const theme = COLUMN_THEMES[col.id] || {
-            headerBg: 'bg-muted/40',
-            borderAccent: 'border-t-primary',
-            badgeBg: 'bg-muted',
-            badgeText: 'text-muted-foreground',
-            dotColor: 'bg-primary',
-          };
+          const theme = COLUMN_THEME;
           const isDragOver = dragOverColumnId === col.id;
 
           return (
@@ -166,21 +133,19 @@ export function KanbanBoard({
               onDragOver={(e) => handleDragOver(e, col.id)}
               onDragLeave={() => setDragOverColumnId(null)}
               onDrop={(e) => handleDrop(e, col.id)}
-              className={`flex-1 min-w-[270px] max-w-[340px] flex flex-col rounded-md border bg-muted/20 transition-all duration-200 ${
+              className={`flex-1 min-w-[270px] xl:min-w-0 flex flex-col rounded-sm border bg-brand-mist transition-colors duration-200 ${
                 theme.borderAccent
-              } border-t-4 ${
+              } ${
                 isDragOver
-                  ? 'border-primary ring-2 ring-primary/20 bg-primary/5 shadow-md'
+                  ? 'border-primary ring-2 ring-primary/20 bg-brand-ivory'
                   : 'border-border'
               }`}
             >
               {/* Column Header */}
-              <div
-                className={`p-3.5 border-b border-border/80 rounded-t-lg flex items-center justify-between ${theme.headerBg}`}
-              >
+              <div className={`p-4 flex items-center justify-between ${theme.headerBg}`}>
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${theme.dotColor}`} />
-                  <span className="font-semibold text-xs tracking-wider uppercase text-foreground">
+                  <span className="font-display font-bold text-lg tracking-tight text-foreground">
                     {col.title}
                   </span>
                 </div>
@@ -192,7 +157,7 @@ export function KanbanBoard({
               </div>
 
               {/* Task Cards Column Body */}
-              <div className="p-3 flex-1 flex flex-col gap-3 min-h-[420px] max-h-[calc(100vh-280px)] overflow-y-auto">
+              <div className="px-4 pb-4 flex-1 flex flex-col gap-4 min-h-[420px] max-h-[calc(100vh-280px)] overflow-y-auto">
                 {colTasks.map((task) => {
                   const isBeingDragged = draggedTaskId === task.id;
                   const candidateName = task.name || task.title || 'Applicant';
@@ -205,8 +170,7 @@ export function KanbanBoard({
                       draggable
                       onDragStart={(e) => handleDragStart(e, task.id)}
                       onDragEnd={handleDragEnd}
-                      onClick={() => onTaskSelect?.(task)}
-                      className={`group bg-card rounded-md border border-border p-3.5 shadow-xs hover:shadow-md hover:border-primary/50 transition-all cursor-grab active:cursor-grabbing select-none relative ${
+                      className={`group bg-white rounded-lg border border-brand-border p-5 hover:border-brand-orange transition-colors cursor-grab active:cursor-grabbing select-none relative ${
                         isBeingDragged ? 'opacity-40 scale-95 border-dashed border-primary' : ''
                       }`}
                     >
@@ -216,15 +180,21 @@ export function KanbanBoard({
                           <div
                             className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
                               task.sector === 'chicken'
-                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                                : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
+                                ? 'bg-brand-ivory text-brand-obsidian'
+                                : 'bg-white text-brand-obsidian'
                             }`}
                           >
                             {candidateInitial}
                           </div>
                           <div className="min-w-0">
-                            <h4 className="font-semibold text-sm text-foreground leading-tight truncate group-hover:text-primary transition-colors">
-                              {candidateName}
+                            <h4 className="font-display font-bold text-lg text-foreground leading-tight break-words">
+                              <button
+                                type="button"
+                                className="text-left [overflow-wrap:anywhere] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-brand-orange"
+                                onClick={() => onTaskSelect?.(task)}
+                              >
+                                {candidateName}
+                              </button>
                             </h4>
                             <div className="flex items-center gap-1.5 mt-0.5">
                               <Badge
@@ -314,7 +284,7 @@ export function KanbanBoard({
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="h-6 text-[10px] font-mono px-2 py-0"
+                                className="min-h-11 text-xs font-mono px-3"
                               >
                                 <span>Move</span>
                                 <ChevronRight className="w-3 h-3 ml-0.5 text-muted-foreground" />
@@ -338,8 +308,9 @@ export function KanbanBoard({
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="h-6 w-6 p-0 text-muted-foreground hover:text-primary"
+                              className="min-h-11 min-w-11 p-0 text-muted-foreground hover:text-primary"
                               title={`Advance to ${nextStatus}`}
+                              aria-label={`Advance ${candidateName} to ${nextStatus}`}
                               onClick={() => onTaskStatusChange(task.id, nextStatus)}
                             >
                               <ArrowRight className="w-3.5 h-3.5" />

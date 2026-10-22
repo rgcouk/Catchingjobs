@@ -1,109 +1,21 @@
 import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-import fs from 'fs';
-import { defineConfig, Plugin } from 'vite';
-
-function ssrDevPlugin(): Plugin {
-  return {
-    name: 'catchingjobs-ssr-dev',
-    configureServer(server) {
-      server.middlewares.use(async (req, res, next) => {
-        const url = req.originalUrl || req.url || '/';
-
-        // Bypass asset requests, api endpoints, and internal Vite requests
-        if (
-          req.method !== 'GET' ||
-          url.startsWith('/api') ||
-          url.startsWith('/@') ||
-          url.startsWith('/src') ||
-          url.startsWith('/node_modules') ||
-          url.includes('.')
-        ) {
-          return next();
-        }
-
-        try {
-          const templatePath = path.resolve(__dirname, 'index.html');
-          let template = fs.readFileSync(templatePath, 'utf-8');
-          template = await server.transformIndexHtml(url, template);
-
-          const { render } = await server.ssrLoadModule('/apps/web/src/entry.server.tsx');
-          const { html: appHtml, head: headHtml, statusCode } = await render(url);
-
-          const fullHtml = template
-            .replace('<!--app-head-->', headHtml || '')
-            .replace('<!--app-html-->', appHtml || '');
-
-          res.statusCode = statusCode || 200;
-          res.setHeader('Content-Type', 'text/html; charset=utf-8');
-          res.end(fullHtml);
-        } catch (e) {
-          server.ssrFixStacktrace(e as Error);
-          next(e);
-        }
-      });
+import { reactRouter } from '@react-router/dev/vite';
+import path from 'node:path';
+import { defineConfig } from 'vite';
+export default defineConfig({
+  publicDir: 'apps/web/public',
+  plugins: [tailwindcss(), reactRouter()],
+  resolve: {
+    alias: {
+      '@': path.resolve('apps/web/src'),
+      '@catchingjobs/shared': path.resolve('packages/shared/src'),
     },
-  };
-}
-
-export default defineConfig(() => {
-  return {
-    publicDir: 'apps/web/public',
-    plugins: [react(), tailwindcss(), ssrDevPlugin()],
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, './apps/web/src'),
-        '@api': path.resolve(__dirname, './apps/api/src'),
-        '@catchingjobs/shared': path.resolve(__dirname, './packages/shared/src'),
-        'react-router-dom': 'react-router',
-      },
-    },
-    ssr: {
-      noExternal: ['react-router', 'react-helmet-async', '@clerk/clerk-react'],
-    },
-
-
-    build: {
-      chunkSizeWarningLimit: 800,
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (id.includes('@clerk')) {
-                return 'vendor-clerk';
-              }
-              if (id.includes('lucide-react')) {
-                return 'vendor-icons';
-              }
-              if (id.includes('recharts') || id.includes('d3-')) {
-                return 'vendor-charts';
-              }
-              if (id.includes('motion') || id.includes('framer-motion')) {
-                return 'vendor-motion';
-              }
-              if (id.includes('@radix-ui')) {
-                return 'vendor-radix';
-              }
-              return 'vendor-core';
-            }
-          },
-        },
-      },
-    },
-
-    server: {
-      proxy: {
-        '/api': {
-          target: `http://localhost:${process.env.PORT_API || 3002}`,
-          changeOrigin: true,
-        },
-      },
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modify—file watching is disabled to prevent flickering during agent edits.
-      hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
-      watch: process.env.DISABLE_HMR === 'true' ? null : {},
-    },
-  };
+  },
+  ssr: { noExternal: ['react-router', 'react-router-dom', '@clerk/clerk-react'] },
+  server: {
+    port: 3000,
+    host: '0.0.0.0',
+    hmr: process.env.DISABLE_HMR !== 'true',
+    watch: process.env.DISABLE_HMR === 'true' ? null : {},
+  },
 });

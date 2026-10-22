@@ -97,7 +97,7 @@ export const REGIONS_DATA: Record<string, RegionInfo> = {
   },
 };
 
-export function CadmiumCatchingMap() {
+export function CadmiumCatchingMap({ compact = false }: { compact?: boolean }) {
   const [selectedRegionKey, setSelectedRegionKey] = useState<string>('lincolnshire');
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
@@ -165,7 +165,7 @@ export function CadmiumCatchingMap() {
       currentRegion.points.forEach((pt) => {
         const yellowIcon = L.divIcon({
           className: 'custom-pin',
-          html: `<div style="background-color:#ff7c20; border:2px solid #090D14; border-radius:6px; padding:3px 6px; font-weight:800; font-size:10px; font-family:'JetBrains Mono',monospace; color:#090D14; box-shadow:0 2px 6px rgba(0,0,0,0.2); white-space:nowrap; display:flex; align-items:center; gap:3px;">
+          html: `<div style="background-color:#FF7605; border:2px solid #362F2B; border-radius:6px; padding:3px 6px; font-weight:800; font-size:10px; font-family:'JetBrains Mono',monospace; color:#362F2B; box-shadow:0 2px 6px rgba(0,0,0,0.2); white-space:nowrap; display:flex; align-items:center; gap:3px;">
                   <span>📍</span><span>${pt.name.toUpperCase()}</span>
                  </div>`,
           iconSize: [80, 24],
@@ -182,9 +182,9 @@ export function CadmiumCatchingMap() {
   }, [isLeafletLoaded, selectedRegionKey, currentRegion]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div className={`grid grid-cols-1 gap-6 items-start ${compact ? '' : 'lg:grid-cols-12'}`}>
       {/* Left Column: Region Selectors */}
-      <div className="lg:col-span-4 space-y-2.5">
+      <div className={`space-y-2.5 ${compact ? '' : 'lg:col-span-4'}`}>
         <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 pb-1">
           SELECT REGION:
         </div>
@@ -199,15 +199,15 @@ export function CadmiumCatchingMap() {
               onClick={() => setSelectedRegionKey(key)}
               className={`w-full text-left p-4 rounded transition-all flex items-center justify-between cursor-pointer ${
                 isSelected
-                  ? 'bg-[#ff7c20] text-black font-display font-bold border-l-4 border-black shadow-xs'
-                  : 'bg-[#121824] text-slate-300 hover:text-white hover:bg-slate-800 font-display font-medium border border-slate-800'
+                  ? 'bg-brand-orange text-brand-obsidian font-display font-bold border-l-4 border-brand-obsidian shadow-xs'
+                  : 'bg-white text-slate-700 hover:text-brand-obsidian hover:bg-brand-ivory font-display font-medium border border-brand-border'
               }`}
             >
               <div>
                 <div className="text-base font-black">{region.name}</div>
                 <div
                   className={`text-xs font-mono font-medium ${
-                    isSelected ? 'text-black/75' : 'text-slate-400'
+                    isSelected ? 'text-brand-obsidian/75' : 'text-slate-400'
                   }`}
                 >
                   {region.badge} · {region.teams}
@@ -222,14 +222,16 @@ export function CadmiumCatchingMap() {
       </div>
 
       {/* Right Column: Interactive Map Display & Town Corridor */}
-      <div className="lg:col-span-8 bg-white rounded-md border border-slate-200 overflow-hidden shadow-card text-black flex flex-col justify-between">
+      <div
+        className={`bg-white rounded-md border border-slate-200 overflow-hidden shadow-card text-brand-obsidian flex flex-col justify-between ${compact ? '' : 'lg:col-span-8'}`}
+      >
         {/* Top Floating Towns Strip */}
         <div className="p-4 bg-[#F8FAFC] border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
             <span className="font-mono font-bold text-slate-700 uppercase">
               ✓ OPERATING TOWNS IN REGION:
             </span>
-            <div className="flex flex-wrap items-center gap-1.5 font-bold text-black">
+            <div className="flex flex-wrap items-center gap-1.5 font-bold text-brand-obsidian">
               {currentRegion.towns.map((town) => (
                 <span
                   key={town}
@@ -258,20 +260,20 @@ export function CadmiumCatchingMap() {
         {/* Map Footer Action Strip */}
         <div className="p-4 bg-white border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-xs text-slate-600 font-sans">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-brand-orange"></span>
             <span>All routes operate heated company minibuses with home collection.</span>
           </div>
           <div className="flex items-center gap-3">
             <Link
               to="/chickens"
-              className="bg-[#ff7c20] hover:bg-[#E6B800] text-black font-display font-bold text-xs px-4 py-2.5 rounded transition-colors shadow-xs no-underline inline-flex items-center gap-1"
+              className="bg-brand-orange hover:bg-brand-ivory text-brand-obsidian font-display font-bold text-xs px-4 py-2.5 rounded transition-colors shadow-xs no-underline inline-flex items-center gap-1"
             >
               <span>Apply Chicken Squad</span>
               <span>→</span>
             </Link>
             <Link
               to="/turkeys"
-              className="bg-black hover:bg-neutral-800 text-white font-display font-bold text-xs px-4 py-2.5 rounded transition-colors shadow-xs no-underline inline-flex items-center gap-1"
+              className="bg-brand-ivory hover:bg-neutral-800 text-brand-obsidian font-display font-bold text-xs px-4 py-2.5 rounded transition-colors shadow-xs no-underline inline-flex items-center gap-1"
             >
               <span>Apply Turkey Squad</span>
               <span>→</span>

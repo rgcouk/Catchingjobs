@@ -376,7 +376,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
                   onClick={() => setValue('hasRightToWork', true)}
                   className={`px-3 py-1 text-xs font-mono uppercase rounded-md transition-colors cursor-pointer ${
                     watchRtw === true
-                      ? 'bg-black text-[#ff7c20] font-bold shadow-xs'
+                      ? 'bg-brand-orange text-brand-obsidian font-bold shadow-xs'
                       : 'text-slate-600 hover:text-black'
                   }`}
                 >
@@ -410,11 +410,11 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
               type="submit"
               data-testid="triage-submit"
               disabled={isSubmitting}
-              className="w-full bg-black hover:bg-neutral-800 active:scale-95 text-white font-display font-bold py-3.5 px-4 rounded-md text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer disabled:opacity-50"
+              className="w-full min-h-11 bg-brand-orange hover:bg-brand-orange-hover text-brand-obsidian font-display font-bold py-3.5 px-4 rounded text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-obsidian focus-visible:ring-offset-2"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-[#ff7c20]" />
+                  <Loader2 className="w-4 h-4 animate-spin motion-reduce:animate-none text-brand-obsidian" />
                   <span>{isSignedIn ? 'Confirming Roster Slot...' : 'Verifying Candidate...'}</span>
                 </>
               ) : (
@@ -424,7 +424,7 @@ export default function HeroTriageForm({ town, sectorId, className = '' }: HeroT
                       ? `1-Click Apply for ${town.name} Crew`
                       : `Join ${town.name} Roster`}
                   </span>
-                  <ArrowRight className="w-4 h-4 text-[#ff7c20]" />
+                  <ArrowRight className="w-4 h-4 text-brand-obsidian" />
                 </>
               )}
             </button>

@@ -1,0 +1,536 @@
+{
+  "source": "designs/refined-catchingjobs.pen",
+  "extractedAt": "2026-10-16",
+  "variables": {
+    "cj-surface": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "cj-muted": {
+      "type": "color",
+      "value": "#475569"
+    },
+    "cj-font-mono": {
+      "type": "string",
+      "value": "JetBrains Mono"
+    },
+    "cj-ink": {
+      "type": "color",
+      "value": "#362F2B"
+    },
+    "cj-font-display": {
+      "type": "string",
+      "value": "Plus Jakarta Sans"
+    },
+    "cj-font-body": {
+      "type": "string",
+      "value": "Geist"
+    },
+    "cj-orange": {
+      "type": "color",
+      "value": "#FF7605"
+    },
+    "cj-border": {
+      "type": "color",
+      "value": "#E2E8F0"
+    },
+    "cj-ivory": {
+      "type": "color",
+      "value": "#FFFDF0"
+    },
+    "cj-orange-hover": {
+      "type": "color",
+      "value": "#E05500"
+    },
+    "cj-black": {
+      "type": "color",
+      "value": "#362F2B"
+    },
+    "cj-mist": {
+      "type": "color",
+      "value": "#F8FAFC"
+    },
+    "cj-border-dark": {
+      "type": "color",
+      "value": "#1E293B"
+    },
+    "cj-gold": {
+      "type": "color",
+      "value": "#F5E6A3"
+    },
+    "cj-error": {
+      "type": "color",
+      "value": "#B91C1C"
+    },
+    "cj-error-surface": {
+      "type": "color",
+      "value": "#FEF2F2"
+    },
+    "cj-success": {
+      "type": "color",
+      "value": "#166534"
+    },
+    "cj-success-surface": {
+      "type": "color",
+      "value": "#F0FDF4"
+    },
+    "cj-radius-control": {
+      "type": "number",
+      "value": 4
+    },
+    "cj-space-4": {
+      "type": "number",
+      "value": 4
+    },
+    "cj-space-8": {
+      "type": "number",
+      "value": 8
+    },
+    "cj-space-12": {
+      "type": "number",
+      "value": 12
+    },
+    "cj-space-16": {
+      "type": "number",
+      "value": 16
+    },
+    "cj-space-24": {
+      "type": "number",
+      "value": 24
+    },
+    "cj-space-32": {
+      "type": "number",
+      "value": 32
+    },
+    "cj-space-48": {
+      "type": "number",
+      "value": 48
+    },
+    "cj-space-64": {
+      "type": "number",
+      "value": 64
+    },
+    "cj-space-80": {
+      "type": "number",
+      "value": 80
+    },
+    "cj-space-96": {
+      "type": "number",
+      "value": 96
+    },
+    "cj-radius-card": {
+      "type": "number",
+      "value": 8
+    },
+    "cj-control-min-height": {
+      "type": "number",
+      "value": 44
+    },
+    "cj-page-max-width": {
+      "type": "number",
+      "value": 1280
+    },
+    "cj-gutter-desktop": {
+      "type": "number",
+      "value": 80
+    },
+    "cj-gutter-mobile": {
+      "type": "number",
+      "value": 24
+    },
+    "cj-motion-short": {
+      "type": "number",
+      "value": 160
+    },
+    "cj-motion-scene": {
+      "type": "number",
+      "value": 650
+    }
+  },
+  "components": [
+    {
+      "id": "OXscf",
+      "name": "Brand icon / Home pickup"
+    },
+    {
+      "id": "iehni",
+      "name": "Brand icon / Weekly pay"
+    },
+    {
+      "id": "LkfjF",
+      "name": "Brand icon / No CV needed"
+    },
+    {
+      "id": "oiQrN",
+      "name": "Brand icon / PPE provided"
+    },
+    {
+      "id": "FydxL",
+      "name": "Brand icon / Chicken"
+    },
+    {
+      "id": "Pw0KA",
+      "name": "Brand icon / Turkey"
+    },
+    {
+      "id": "mU3Rg",
+      "name": "Brand icon / Locations"
+    },
+    {
+      "id": "L8mciD",
+      "name": "Brand icon / Team"
+    },
+    {
+      "id": "M8DfdF",
+      "name": "Brand icon / Verified"
+    },
+    {
+      "id": "PLZ33",
+      "name": "Button / brand"
+    },
+    {
+      "id": "lvkn2",
+      "name": "Button / secondary"
+    },
+    {
+      "id": "m2UNt",
+      "name": "Button / outline"
+    },
+    {
+      "id": "ta4jZ",
+      "name": "Field / text"
+    },
+    {
+      "id": "IbLvZ",
+      "name": "Field / select"
+    },
+    {
+      "id": "TAiEd",
+      "name": "Control / checkbox"
+    },
+    {
+      "id": "XQ61Q",
+      "name": "Alert / error"
+    },
+    {
+      "id": "kXGcA",
+      "name": "Alert / success"
+    },
+    {
+      "id": "PA967",
+      "name": "Card / job vacancy"
+    },
+    {
+      "id": "HmfKi",
+      "name": "Card / region"
+    },
+    {
+      "id": "EfT8H",
+      "name": "Badge / status"
+    },
+    {
+      "id": "V1LVu",
+      "name": "Tab / filter"
+    },
+    {
+      "id": "bcoyE",
+      "name": "Card / metric"
+    },
+    {
+      "id": "oDWyz",
+      "name": "Card / application"
+    },
+    {
+      "id": "h2LQN9",
+      "name": "Row / onboarding task"
+    },
+    {
+      "id": "x0lRT",
+      "name": "Table / applicant row"
+    },
+    {
+      "id": "SB3Fv",
+      "name": "Header / other pages white"
+    },
+    {
+      "id": "QfYU2",
+      "name": "Menu / homepage orange dropdown"
+    },
+    {
+      "id": "DQWtt",
+      "name": "Menu / Homepage"
+    },
+    {
+      "id": "GuyOG",
+      "name": "Menu / Other pages"
+    },
+    {
+      "id": "gK8FP",
+      "name": "Hero / sector"
+    },
+    {
+      "id": "t6P4j",
+      "name": "Hero / corporate"
+    },
+    {
+      "id": "O5VeB",
+      "name": "Hero / directory"
+    },
+    {
+      "id": "r1cj0E",
+      "name": "Hero / locations"
+    },
+    {
+      "id": "frRXc",
+      "name": "Hero / regional with triage"
+    },
+    {
+      "id": "wIEw5",
+      "name": "Form / quick apply"
+    },
+    {
+      "id": "FpcuZ",
+      "name": "Shell / admin"
+    },
+    {
+      "id": "QQtjx",
+      "name": "Sidebar / operations"
+    },
+    {
+      "id": "a5NcDB",
+      "name": "Header / app page"
+    },
+    {
+      "id": "bYSPX",
+      "name": "Table / applicants"
+    },
+    {
+      "id": "nF8bM",
+      "name": "Dialog / email verification"
+    },
+    {
+      "id": "d0Tks",
+      "name": "Dialog / application inspector"
+    },
+    {
+      "id": "h9EB4",
+      "name": "Field / document upload"
+    },
+    {
+      "id": "p2mWd",
+      "name": "State / Empty"
+    },
+    {
+      "id": "Xe5dS",
+      "name": "State / Error"
+    },
+    {
+      "id": "GoSJ2",
+      "name": "State / Loading"
+    },
+    {
+      "id": "Q1004P",
+      "name": "Footer / public"
+    },
+    {
+      "id": "OWCBH",
+      "name": "Shell / authentication"
+    },
+    {
+      "id": "Dmd5v",
+      "name": "Form / login"
+    },
+    {
+      "id": "rgEl7",
+      "name": "Header / employee portal"
+    },
+    {
+      "id": "Q7596G",
+      "name": "Header / job details"
+    },
+    {
+      "id": "rKwPR",
+      "name": "Card / sector Chicken"
+    },
+    {
+      "id": "j8JuBi",
+      "name": "Card / sector Turkey"
+    },
+    {
+      "id": "b7qkc",
+      "name": "Map / coverage legend"
+    },
+    {
+      "id": "G1jPNm",
+      "name": "Kanban / application workflow"
+    },
+    {
+      "id": "g4kA3",
+      "name": "Menu / actions"
+    },
+    {
+      "id": "Q0ZpLw",
+      "name": "Accordion / disclosure"
+    },
+    {
+      "id": "o824qt",
+      "name": "Control / toggle"
+    },
+    {
+      "id": "bW3EA",
+      "name": "Pagination"
+    },
+    {
+      "id": "W9GTp",
+      "name": "Breadcrumb / public"
+    },
+    {
+      "id": "xEtUV",
+      "name": "Home pickup"
+    },
+    {
+      "id": "xDLuJ",
+      "name": "Working together"
+    },
+    {
+      "id": "WpPwp",
+      "name": "Poultry divisions"
+    },
+    {
+      "id": "PFr1p",
+      "name": "Pickup / minimal"
+    },
+    {
+      "id": "OSUwj",
+      "name": "Team / minimal"
+    },
+    {
+      "id": "vrnwl",
+      "name": "Divisions / minimal"
+    },
+    {
+      "id": "lNi6w",
+      "name": "Illustration / hand-drawn pickup"
+    },
+    {
+      "id": "C82Ud",
+      "name": "Illustration / hand-drawn team"
+    },
+    {
+      "id": "DhARr",
+      "name": "Header / homepage orange"
+    },
+    {
+      "id": "oxAf8",
+      "name": "Hero / homepage split"
+    },
+    {
+      "id": "bB8nF",
+      "name": "Header / homepage mobile orange"
+    },
+    {
+      "id": "ywFD0",
+      "name": "Hero / homepage stacked"
+    },
+    {
+      "id": "u2BlGz",
+      "name": "Brand icon refined / pickup / 64"
+    },
+    {
+      "id": "B95jt",
+      "name": "Brand icon refined / pickup / 32"
+    },
+    {
+      "id": "MbkW1",
+      "name": "Brand icon refined / pay / 64"
+    },
+    {
+      "id": "uqZrG",
+      "name": "Brand icon refined / pay / 32"
+    },
+    {
+      "id": "cFxxZ",
+      "name": "Brand icon refined / noCV / 64"
+    },
+    {
+      "id": "x9fWQ",
+      "name": "Brand icon refined / noCV / 32"
+    },
+    {
+      "id": "E83dLJ",
+      "name": "Brand icon refined / PPE / 64"
+    },
+    {
+      "id": "cvQTl",
+      "name": "Brand icon refined / PPE / 32"
+    },
+    {
+      "id": "URL56",
+      "name": "Brand icon refined / chicken / 64"
+    },
+    {
+      "id": "DAt7w",
+      "name": "Brand icon refined / chicken / 32"
+    },
+    {
+      "id": "bm5bq",
+      "name": "Brand icon refined / turkey / 64"
+    },
+    {
+      "id": "PEbn6",
+      "name": "Brand icon refined / turkey / 32"
+    },
+    {
+      "id": "IAkhP",
+      "name": "Brand icon refined / locations / 64"
+    },
+    {
+      "id": "mTb4h",
+      "name": "Brand icon refined / locations / 32"
+    },
+    {
+      "id": "msZ8S",
+      "name": "Brand icon refined / team / 64"
+    },
+    {
+      "id": "VluIE",
+      "name": "Brand icon refined / team / 32"
+    },
+    {
+      "id": "PAG2f",
+      "name": "Brand icon refined / verified / 64"
+    },
+    {
+      "id": "u2Fqi",
+      "name": "Brand icon refined / verified / 32"
+    },
+    {
+      "id": "MdJt3",
+      "name": "Logo lockup / Orange homepage"
+    },
+    {
+      "id": "D3Uva",
+      "name": "Logo lockup / White internal pages"
+    },
+    {
+      "id": "mdpuY",
+      "name": "Illustration / Home pickup / vector"
+    },
+    {
+      "id": "nnALV",
+      "name": "Illustration / The catching crew / vector"
+    },
+    {
+      "id": "m1XTKC",
+      "name": "Illustration / Friday payday / vector"
+    },
+    {
+      "id": "OfIS9",
+      "name": "Hero / Home pickup / desktop / vector"
+    },
+    {
+      "id": "p2aGuj",
+      "name": "Hero / Home pickup / mobile / vector"
+    }
+  ]
+}

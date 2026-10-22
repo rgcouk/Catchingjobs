@@ -5,6 +5,9 @@
 
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { workerProfileSchema } from '@catchingjobs/shared/validation';
+const editableProfile = (value: Record<string, any> = {}) =>
+  Object.fromEntries(Object.entries(value).filter(([key]) => key in workerProfileSchema.shape));
 import { useUser, useAuth } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,13 +44,14 @@ export default function IntakeWizard({
   const [step, setStep] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<Record<string, any>>({
     defaultValues: {
       hasDrivingLicense: 'false',
       hasForkliftLicense: 'false',
@@ -55,8 +59,8 @@ export default function IntakeWizard({
       isFitToLift: true,
       hasAsthmaOrAllergies: false,
       hasBackIssues: false,
-      declarationSigned: true,
-      ...initialData,
+      declarationSigned: false,
+      ...editableProfile(initialData),
     },
   });
 
@@ -74,10 +78,11 @@ export default function IntakeWizard({
   const autoSave = async (data: any) => {
     setIsSaving(true);
     setSavedSuccess(false);
+    setSaveError('');
     try {
       const token = await getToken();
       const payload = {
-        ...data,
+        ...editableProfile(data),
         hasDrivingLicense: data.hasDrivingLicense === 'true' || data.hasDrivingLicense === true,
         hasForkliftLicense: data.hasForkliftLicense === 'true' || data.hasForkliftLicense === true,
         isFitToLift: data.isFitToLift === 'true' || data.isFitToLift === true,
@@ -102,15 +107,17 @@ export default function IntakeWizard({
 
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 2500);
+      return true;
     } catch (err) {
-      console.warn('Auto-save failed', err);
+      setSaveError('Your progress could not be saved. Please try again.');
+      return false;
     } finally {
       setIsSaving(false);
     }
   };
 
   const onSubmit = async (data: Record<string, any>) => {
-    await autoSave(data);
+    if (!(await autoSave(data))) return;
 
     if (step < 3) {
       setStep(step + 1);
@@ -121,16 +128,21 @@ export default function IntakeWizard({
     // Final Step Submission
     const finalSector = data.sector || sectorId || 'chicken';
     onSuccess({
-      ...data,
-      userId: user.id,
+      ...editableProfile(data),
       name: user.fullName || data.name || 'Candidate',
-      email: user.primaryEmailAddress?.emailAddress,
-      sector: finalSector,
     });
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-sm shadow-xs p-6 sm:p-8 w-full max-w-3xl mx-auto space-y-8 text-brand-obsidian">
+    <div className="bg-white border border-slate-200 rounded-lg p-6 sm:p-8 w-full max-w-3xl mx-auto space-y-8 text-brand-obsidian">
+      {saveError && (
+        <p
+          role="alert"
+          className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+        >
+          {saveError}
+        </p>
+      )}
       {/* Header & Step Progress Bar */}
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F1F5F9] pb-5">
@@ -227,7 +239,7 @@ export default function IntakeWizard({
                 <Input
                   type="date"
                   {...register('dateOfBirth')}
-                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm text-sm"
+                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm"
                   required
                 />
               </div>
@@ -239,7 +251,7 @@ export default function IntakeWizard({
                 <Input
                   placeholder="QQ 12 34 56 A"
                   {...register('niNumber')}
-                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm text-sm font-mono uppercase"
+                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm font-mono uppercase"
                   required
                 />
               </div>
@@ -252,7 +264,7 @@ export default function IntakeWizard({
                 <Input
                   placeholder="12 High Street, Flat 4"
                   {...register('addressLine1')}
-                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm text-sm"
+                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm"
                   required
                 />
               </div>
@@ -262,7 +274,7 @@ export default function IntakeWizard({
                 <Input
                   placeholder="PE21 8SS"
                   {...register('postcode')}
-                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm text-sm font-mono uppercase"
+                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm font-mono uppercase"
                   required
                 />
               </div>
@@ -273,7 +285,7 @@ export default function IntakeWizard({
                 </Label>
                 <select
                   {...register('poultryExperience')}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-brand-yellow rounded-sm text-sm"
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm"
                 >
                   <option value="none">New to Poultry Catching (Full training provided)</option>
                   <option value="1-2-years">1 - 2 Years Commercial Experience</option>
@@ -288,7 +300,7 @@ export default function IntakeWizard({
                 </Label>
                 <select
                   {...register('hasDrivingLicense')}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-brand-yellow rounded-sm text-sm"
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm"
                 >
                   <option value="false">No</option>
                   <option value="true">Yes (Full UK Clean License)</option>
@@ -301,7 +313,7 @@ export default function IntakeWizard({
                 </Label>
                 <select
                   {...register('hasForkliftLicense')}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-brand-yellow rounded-sm text-sm"
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm"
                 >
                   <option value="false">No</option>
                   <option value="true">Yes (Active Certificate)</option>
@@ -336,7 +348,7 @@ export default function IntakeWizard({
                 <Input
                   placeholder="e.g. Sarah King"
                   {...register('emergencyName')}
-                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm text-sm"
+                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm"
                   required
                 />
               </div>
@@ -346,7 +358,7 @@ export default function IntakeWizard({
                 <Input
                   placeholder="07700 900123"
                   {...register('emergencyPhone')}
-                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm text-sm font-mono"
+                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm font-mono"
                   required
                 />
               </div>
@@ -356,7 +368,7 @@ export default function IntakeWizard({
                 <Input
                   placeholder="e.g. Spouse / Parent / Sibling"
                   {...register('emergencyRelation')}
-                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm text-sm"
+                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm"
                   required
                 />
               </div>
@@ -372,7 +384,7 @@ export default function IntakeWizard({
                 <Input
                   placeholder="e.g. Barclays / Lloyds"
                   {...register('bankName')}
-                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm text-sm"
+                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm"
                   required
                 />
               </div>
@@ -384,7 +396,7 @@ export default function IntakeWizard({
                 <Input
                   placeholder="e.g. Arthur King"
                   {...register('bankAccountName')}
-                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm text-sm"
+                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm"
                   required
                 />
               </div>
@@ -394,7 +406,7 @@ export default function IntakeWizard({
                 <Input
                   placeholder="20-00-00"
                   {...register('bankSortCode')}
-                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm text-sm font-mono"
+                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm font-mono"
                   required
                 />
               </div>
@@ -404,7 +416,7 @@ export default function IntakeWizard({
                 <Input
                   placeholder="12345678"
                   {...register('bankAccountNumber')}
-                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm text-sm font-mono"
+                  className="bg-slate-50 border-slate-200 focus:border-brand-yellow rounded-sm min-h-12 text-sm font-mono"
                   required
                 />
               </div>
@@ -498,7 +510,7 @@ export default function IntakeWizard({
           <Button
             type="submit"
             disabled={isSaving}
-            className="bg-brand-yellow hover:bg-brand-yellowDark text-white font-mono font-semibold text-xs uppercase tracking-wider px-6 py-3 rounded-sm shadow-xs cursor-pointer transition-colors flex items-center gap-2"
+            className="bg-brand-yellow hover:bg-brand-obsidian hover:text-white text-brand-obsidian font-mono font-semibold text-xs uppercase tracking-wider px-6 py-3 rounded-sm shadow-xs cursor-pointer transition-colors flex items-center gap-2"
           >
             {isSaving ? (
               <>

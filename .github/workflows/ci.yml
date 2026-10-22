@@ -26,5 +26,20 @@ jobs:
       - name: Run Linter
         run: npm run lint
 
+      - name: Generate database client
+        run: npx prisma generate --schema=apps/api/prisma/schema.prisma
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm test
+
       - name: Run Build
         run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Check framework rendering and public design
+        run: npm run test:e2e:framework

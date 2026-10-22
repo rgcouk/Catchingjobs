@@ -1,5 +1,4 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { CheckCircle2, Server, Globe2, ShieldCheck } from 'lucide-react';
 
 export default function SSRTest() {
@@ -16,10 +15,10 @@ export default function SSRTest() {
       data-testid="ssr-test-container"
       className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center"
     >
-      <Helmet>
+      <>
         <title>SSR Foundation Test | CatchingJobs</title>
         <meta name="description" content="React Router v7 Server-Side Rendering Foundation Test" />
-      </Helmet>
+      </>
 
       <div className="max-w-xl w-full bg-[var(--color-paper-2)] border border-[var(--color-rule)] rounded-md p-8 shadow-sm space-y-6">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[var(--color-ink)] text-[var(--color-paper)] mx-auto">

@@ -1,6 +1,10 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
-import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
+import { getAuth } from '@hono/clerk-auth';
+import { authenticate } from '../middleware/auth.js';
+import { handleError } from '../http/errors.js';
+import { paginationSchema } from '@catchingjobs/shared/validation';
+import { z } from 'zod';
 import { getPrisma } from '../db.js';
 import { ManageLocations } from '../services/ManageLocations.js';
 import { ManageApplications } from '../services/ManageApplications.js';
@@ -12,23 +16,8 @@ import { requireAdmin } from '../middleware/auth.js';
 
 const app = new Hono();
 
-app.use(
-  '/api/admin/*',
-  clerkMiddleware({
-    publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,
-    secretKey: process.env.CLERK_SECRET_KEY,
-  }),
-);
-
+app.use('/api/admin/*', authenticate);
 app.use('/api/admin/*', requireAdmin);
-
-const handleError = (error: unknown, defaultMessage: string, c: any) => {
-  if (error instanceof DomainError) {
-    return c.json({ error: error.message }, error.statusCode);
-  }
-  console.error(defaultMessage, error);
-  return c.json({ error: defaultMessage }, 500);
-};
 
 app.get('/api/admin/locations', async (c) => {
   const service = new ManageLocations(getPrisma());
@@ -77,8 +66,10 @@ app.delete('/api/admin/locations/:type/:id', async (c) => {
 app.get('/api/admin/applications', async (c) => {
   const service = new ManageApplications(getPrisma());
   try {
-    const skip = parseInt(c.req.query('skip') || '0', 10);
-    const take = parseInt(c.req.query('take') || '50', 10);
+    const { skip, take } = paginationSchema.parse({
+      skip: c.req.query('skip'),
+      take: c.req.query('take'),
+    });
     const result = await service.getApplications(skip, take);
     return c.json(result);
   } catch (error) {
@@ -102,24 +93,7 @@ app.patch('/api/admin/applications/:id', async (c) => {
   try {
     const { id } = c.req.param();
     const body = await c.req.json();
-    const prevApp = await service.getApplication(parseInt(id, 10)).catch(() => null);
     const application = await service.updateApplication(parseInt(id, 10), body);
-
-    // If status changed, send notification email
-    if (body.status && prevApp && prevApp.status !== body.status && application.email) {
-      emailService
-        .sendStatusChangeEmail(
-          {
-            name: application.name,
-            email: application.email,
-            rosterRef: application.rosterRef,
-            town: application.town,
-            sector: application.sector,
-          },
-          body.status,
-        )
-        .catch((err) => console.error('Error sending status change email:', err));
-    }
 
     return c.json(application);
   } catch (error) {
@@ -210,7 +184,10 @@ app.patch('/api/admin/users/:id/role', async (c) => {
   const service = new ManageUsers(getPrisma());
   try {
     const id = c.req.param('id');
-    const { role } = await c.req.json();
+    const { role } = z
+      .object({ role: z.enum(['ADMIN', 'WORKER']) })
+      .strict()
+      .parse(await c.req.json());
     const user = await service.updateUserRole(id, role);
     return c.json(user);
   } catch (error) {
@@ -232,13 +209,14 @@ app.delete('/api/admin/users/:id', async (c) => {
 app.post('/api/admin/invite', async (c) => {
   const service = new ManageUsers(getPrisma());
   try {
-    const { email, role } = await c.req.json();
+    const { email, role } = z
+      .object({ email: z.string().email(), role: z.enum(['ADMIN', 'WORKER']).optional() })
+      .strict()
+      .parse(await c.req.json());
     const user = await service.inviteUser(email, role);
 
     // Send branded invitation email
-    emailService
-      .sendStaffInvitation(email, role || 'WORKER')
-      .catch((err) => console.error('Error sending staff invitation email:', err));
+    emailService.sendStaffInvitation(email, role || 'WORKER');
 
     return c.json({ success: true, user }, 201);
   } catch (error) {
@@ -285,8 +263,10 @@ app.post('/api/admin/broadcast-email', async (c) => {
  */
 app.get('/api/admin/emails/logs', async (c) => {
   try {
-    const skip = parseInt(c.req.query('skip') || '0', 10);
-    const take = parseInt(c.req.query('take') || '50', 10);
+    const { skip, take } = paginationSchema.parse({
+      skip: c.req.query('skip'),
+      take: c.req.query('take'),
+    });
     const search = c.req.query('search') || undefined;
     const status = c.req.query('status') || undefined;
 

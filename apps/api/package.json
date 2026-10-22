@@ -4,7 +4,7 @@
   "type": "module",
   "main": "./src/api/index.ts",
   "scripts": {
-    "dev": "tsx src/api/index.ts",
+    "dev": "API_STANDALONE=1 tsx src/api/index.ts",
     "seed": "tsx prisma/scripts/auto-seed.ts",
     "db:push": "prisma db push --schema=prisma/schema.prisma",
     "db:generate": "prisma generate --schema=prisma/schema.prisma"

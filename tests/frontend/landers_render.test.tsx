@@ -20,8 +20,21 @@ vi.mock('@clerk/clerk-react', () => ({
     },
     setActive: vi.fn(),
   }),
-  useAuth: () => ({ isLoaded: true, userId: 'test-user', getToken: vi.fn().mockResolvedValue('test-token') }),
-  useUser: () => ({ isLoaded: true, user: { id: 'test-user', firstName: 'Arthur', fullName: 'Arthur King', primaryEmailAddress: { emailAddress: 'arthur@example.co.uk' }, publicMetadata: { role: 'CANDIDATE' } } }),
+  useAuth: () => ({
+    isLoaded: true,
+    userId: 'test-user',
+    getToken: vi.fn().mockResolvedValue('test-token'),
+  }),
+  useUser: () => ({
+    isLoaded: true,
+    user: {
+      id: 'test-user',
+      firstName: 'Arthur',
+      fullName: 'Arthur King',
+      primaryEmailAddress: { emailAddress: 'arthur@example.co.uk' },
+      publicMetadata: { role: 'CANDIDATE' },
+    },
+  }),
   SignedIn: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   SignedOut: ({ children }: { children: React.ReactNode }) => null,
   UserButton: () => <button>User Profile</button>,
@@ -58,7 +71,7 @@ describe('Public Lander Page Components Render Integrity', () => {
         </MemoryRouter>
       </HelmetProvider>,
     );
-    expect(screen.getAllByText(/Broiler Chicken Division/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Broiler Chicken Catching Division/i).length).toBeGreaterThan(0);
     expect(container.innerHTML).not.toBe('');
   });
 
@@ -70,7 +83,7 @@ describe('Public Lander Page Components Render Integrity', () => {
         </MemoryRouter>
       </HelmetProvider>,
     );
-    expect(screen.getAllByText(/Commercial Turkey Division/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Commercial Turkey Catching Division/i).length).toBeGreaterThan(0);
     expect(container.innerHTML).not.toBe('');
   });
 
@@ -183,10 +196,10 @@ describe('Public Lander Page Components Render Integrity', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Operative Menu/i)).toBeDefined();
+      expect(screen.getByRole('heading', { name: /Welcome back, Arthur/i })).toBeDefined();
     });
-    expect(screen.getAllByText(/Dashboard/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Schedule/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole('heading', { name: /Complete your onboarding/i })).toBeDefined();
+    expect(screen.getByRole('button', { name: /View Application/i })).toBeDefined();
     expect(container.innerHTML).not.toBe('');
   });
 });

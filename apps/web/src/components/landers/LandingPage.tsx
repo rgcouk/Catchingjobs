@@ -8,7 +8,6 @@
 
 import React from 'react';
 import { Link } from 'react-router';
-import { Helmet } from 'react-helmet-async';
 
 // Import UI components
 import { Button } from '../ui/button';
@@ -146,10 +145,10 @@ export default function LandingPage({
     <div
       className={`font-sans w-full pb-16 bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)] selection:text-[var(--color-paper)] ${className}`}
     >
-      <Helmet>
-        <title>{title} | CatchingJobs.co.uk</title>
+      <>
+        <title>{`${title} | CatchingJobs.co.uk`}</title>
         <meta name="description" content={subtitle || title} />
-      </Helmet>
+      </>
 
       {/* Hero Section */}
       <section className="relative border-b border-[var(--color-rule)]">

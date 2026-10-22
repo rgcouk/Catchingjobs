@@ -1,292 +1,133 @@
+import { serializable } from '../db-transaction.js';
+import { validateDocumentReferences } from '../integrations/document-references.js';
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
-import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
+import { randomBytes } from 'node:crypto';
+import { z } from 'zod';
+import { workerProfileSchema, settingsSchema } from '@catchingjobs/shared/validation';
+import {
+  authenticate,
+  requireUser,
+  authenticatedUserId,
+  verifiedEmail,
+} from '../middleware/auth.js';
 import { getPrisma } from '../db.js';
-import { emailService } from '../services/EmailService.js';
+import { handleError } from '../http/errors.js';
+import { ManageApplications } from '../services/ManageApplications.js';
 
-type Variables = {
-  userId: string;
-};
-const app = new Hono<{ Variables: Variables }>();
-
-app.use(
-  '/api/portal/*',
-  clerkMiddleware({
-    publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,
-    secretKey: process.env.CLERK_SECRET_KEY,
-  }),
-);
-
-app.use('/api/portal/*', async (c, next) => {
-  const auth = getAuth(c);
-  // Support theoretical non-clerk headers/query logic from old implementation if needed,
-  // but we enforce Clerk auth:
-  const userId = auth?.userId || c.req.header('x-user-id') || c.req.query('userId');
-  if (!userId) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
-  c.set('userId', userId);
-  await next();
-});
-
-const toBool = (val: any) => {
-  if (val === undefined || val === null) return undefined;
-  return val === 'true' || val === true;
-};
-
-const getUser = async (userId: string, prisma: any) => {
-  return await prisma.user.findUnique({
+const app = new Hono();
+app.use('/api/portal/*', authenticate, requireUser);
+const profileQuery = (userId: string) =>
+  getPrisma().user.findUnique({
     where: { id: userId },
-    include: {
-      application: {
-        include: { jobPosting: true },
-      },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      applicationId: true,
+      createdAt: true,
+      application: { include: { jobPosting: true } },
     },
   });
-};
-
 app.get('/api/portal/me', async (c) => {
-  const prisma = getPrisma();
   try {
-    const userId = c.get('userId');
-    const user = await getUser(userId, prisma);
-
-    if (!user) {
-      return c.json({ error: 'User sync in progress' }, 404);
-    }
-
-    // Remove password hash from response
-    const { passwordHash, ...userWithoutPassword } = user;
-    return c.json(userWithoutPassword);
+    const user = await profileQuery(authenticatedUserId(c)!);
+    return user ? c.json(user) : c.json({ error: 'User sync in progress' }, 404);
   } catch (error) {
-    console.error('Error fetching portal profile:', error);
-    return c.json({ error: 'Failed to fetch profile' }, 500);
+    return handleError(error, 'Failed to fetch profile', c);
   }
 });
-
 app.patch('/api/portal/onboarding', async (c) => {
-  const prisma = getPrisma();
   try {
-    const userId = c.get('userId');
-    const user = await getUser(userId, prisma);
-    if (!user) return c.json({ error: 'User not found' }, 404);
-
+    const userId = authenticatedUserId(c)!;
     const body = await c.req.json();
-    const {
-      name,
-      phone,
-      town,
-      niNumber,
-      dateOfBirth,
-      addressLine1,
-      postcode,
-      bankName,
-      bankAccountName,
-      bankAccountNumber,
-      bankSortCode,
-      emergencyName,
-      emergencyPhone,
-      emergencyRelation,
-      hasAsthmaOrAllergies,
-      hasBackIssues,
-      isFitToLift,
-      declarationSigned,
-      // Extensive fields
-      employmentHistory,
-      education,
-      references,
-      hasRightToWork,
-      rightToWorkUK,
-      restrictionsOnWork,
-      restrictionsDetail,
-      hasDrivingLicense,
-      hasForkliftLicense,
-      poultryExperience,
-      abusedPosition,
-      abusedPositionDetail,
-      reasonableAdjustments,
-      adjustmentsDetail,
-      hasConvictions,
-      criminalConvictions,
-      idDocumentUri,
-      proofOfAddressUri,
-      signatureImage,
-      socialMediaConsent,
-      privacyPolicyConsent,
-    } = body;
-
-    const updatedFields = {
-      ...(name && { name }),
-      ...(phone && { phone }),
-      ...(town && { town }),
-      niNumber,
-      dateOfBirth,
-      addressLine1,
-      postcode,
-      bankName,
-      bankAccountName,
-      bankAccountNumber,
-      bankSortCode,
-      emergencyName,
-      emergencyPhone,
-      emergencyRelation,
-      hasAsthmaOrAllergies: toBool(hasAsthmaOrAllergies),
-      hasBackIssues: toBool(hasBackIssues),
-      isFitToLift: toBool(isFitToLift),
-      declarationSigned: toBool(declarationSigned) ?? false,
-      employmentHistory,
-      education,
-      references,
-      hasRightToWork: toBool(hasRightToWork),
-      rightToWorkUK: toBool(rightToWorkUK),
-      restrictionsOnWork: toBool(restrictionsOnWork),
-      restrictionsDetail,
-      hasDrivingLicense: toBool(hasDrivingLicense),
-      hasForkliftLicense: toBool(hasForkliftLicense),
-      poultryExperience,
-      abusedPosition: toBool(abusedPosition),
-      abusedPositionDetail,
-      reasonableAdjustments: toBool(reasonableAdjustments),
-      adjustmentsDetail,
-      hasConvictions: toBool(hasConvictions),
-      criminalConvictions,
-      idDocumentUri,
-      proofOfAddressUri,
-      signatureImage,
-      socialMediaConsent: toBool(socialMediaConsent),
-      privacyPolicyConsent: toBool(privacyPolicyConsent),
-      profileFormCompleted: true,
-    };
-
-    let application;
-    if (!user.applicationId) {
-      // Create an application if one doesn't exist
-      application = await prisma.application.create({
-        data: {
-          rosterRef: `PL-PRT-${Math.floor(1000 + Math.random() * 9000)}`,
-          name: name || user.email?.split('@')[0] || 'Unknown',
-          email: user.email || '',
-          phone: phone || '',
-          town: town || '',
-          hasRightToWork: toBool(hasRightToWork) ?? true,
-          hasDrivingLicense: toBool(hasDrivingLicense) ?? false,
-          hasForkliftLicense: toBool(hasForkliftLicense) ?? false,
-          poultryExperience: poultryExperience || '',
-          shiftAvailability: 'Any',
-          sector: 'chicken',
-          timestamp: new Date().toISOString(),
-          ...updatedFields,
-          user: { connect: { id: user.id } },
-        },
+    const { profileFormCompleted, ...rawFields } = body;
+    const fields = workerProfileSchema.parse(rawFields);
+    if (!(await validateDocumentReferences(userId, fields)))
+      return c.json({ error: 'Invalid document reference' }, 400);
+    const prisma = getPrisma();
+    let user = await profileQuery(userId);
+    if (!user) {
+      const email = await verifiedEmail(userId);
+      await prisma.user.upsert({
+        where: { id: userId },
+        update: {},
+        create: { id: userId, email, passwordHash: '', role: 'WORKER' },
+      });
+      user = await profileQuery(userId);
+    }
+    if (!user!.applicationId) {
+      await serializable(prisma, async (tx) => {
+        const current = await tx.user.findUniqueOrThrow({ where: { id: userId } });
+        if (current.applicationId) return;
+        await tx.application.create({
+          data: {
+            rosterRef: `PL-CHI-${randomBytes(12).toString('hex').toUpperCase()}`,
+            name: fields.name || current.email.split('@')[0],
+            email: current.email,
+            phone: fields.phone || '',
+            town: fields.town || '',
+            sector: 'chicken',
+            timestamp: new Date().toISOString(),
+            shiftAvailability: 'Any',
+            status: 'Draft',
+            ...fields,
+            user: { connect: { id: userId } },
+          },
+        });
       });
     } else {
-      application = await prisma.application.update({
-        where: { id: user.applicationId },
-        data: updatedFields,
-      });
-    }
-
-    // Real Resend email triggers for applicant confirmation and admin alert
-    try {
-      if (application.email) {
-        await emailService.sendApplicationReceipt({
-          name: application.name,
-          email: application.email,
-          rosterRef: application.rosterRef,
-          town: application.town,
-          sector: application.sector,
-        });
+      if (user!.application?.status === 'Draft') {
+        await new ManageApplications(prisma).updateMyDraftApplication(userId, fields);
+      } else {
+        // Reopening the worker form never changes administrative review state.
+        await prisma.application.update({ where: { id: user!.applicationId }, data: fields });
       }
-      await emailService.sendAdminNewApplicationAlert({
-        id: application.id,
-        rosterRef: application.rosterRef,
-        name: application.name,
-        email: application.email,
-        phone: application.phone,
-        town: application.town,
-        sector: application.sector,
-      });
-    } catch (err) {
-      console.error('Error sending application emails:', err);
     }
-
-    return c.json(application);
+    if (
+      profileFormCompleted === true &&
+      (!user?.application ||
+        user.application.status === 'Draft' ||
+        user.application.status === 'NEW')
+    ) {
+      const submitted = await new ManageApplications(prisma).submitMyDraftApplication(userId);
+      return c.json(submitted);
+    }
+    const updated = await profileQuery(userId);
+    return c.json(updated!.application);
   } catch (error) {
-    console.error('Error updating onboarding:', error);
-    return c.json({ error: 'Failed to update onboarding data' }, 500);
+    return handleError(error, 'Failed to update onboarding data', c);
   }
 });
-
 app.get('/api/portal/applications', async (c) => {
-  const prisma = getPrisma();
   try {
-    const userId = c.get('userId');
-    const user = await getUser(userId, prisma);
-    if (!user || !user.applicationId) return c.json([]);
-
-    const application = await prisma.application.findUnique({
-      where: { id: user.applicationId },
-      include: { jobPosting: true },
-    });
-
-    return c.json(application ? [application] : []);
+    const user = await profileQuery(authenticatedUserId(c)!);
+    return c.json(user?.application ? [user.application] : []);
   } catch (error) {
-    console.error('Error fetching portal applications:', error);
-    return c.json({ error: 'Failed to fetch applications' }, 500);
+    return handleError(error, 'Failed to fetch applications', c);
   }
 });
-
 app.get('/api/portal/resources', async (c) => {
-  const prisma = getPrisma();
   try {
-    const resources = await prisma.resource.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
-    return c.json(resources);
+    return c.json(
+      await getPrisma().resource.findMany({ take: 100, orderBy: { createdAt: 'desc' } }),
+    );
   } catch (error) {
-    console.error('Error fetching resources:', error);
-    return c.json({ error: 'Failed to fetch resources' }, 500);
+    return handleError(error, 'Failed to fetch resources', c);
   }
 });
-
 app.patch('/api/portal/settings', async (c) => {
-  const prisma = getPrisma();
   try {
-    const userId = c.get('userId');
-    const user = await getUser(userId, prisma);
+    const fields = settingsSchema.parse(await c.req.json());
+    const user = await profileQuery(authenticatedUserId(c)!);
     if (!user) return c.json({ error: 'User not found' }, 404);
-
-    const body = await c.req.json();
-    const { email, phone, name } = body;
-
-    if (user.applicationId) {
-      await prisma.application.update({
-        where: { id: user.applicationId },
-        data: {
-          ...(email && { email }),
-          ...(phone && { phone }),
-          ...(name && { name }),
-        },
-      });
-    }
-
-    if (email && email !== user.email) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { email },
-      });
-    }
-
-    const updatedUser = await getUser(userId, prisma);
-    if (!updatedUser) return c.json({ error: 'User not found' }, 404);
-    const { passwordHash, ...userWithoutPassword } = updatedUser;
-    return c.json(userWithoutPassword);
+    if (user.applicationId)
+      await getPrisma().application.update({ where: { id: user.applicationId }, data: fields });
+    return c.json(await profileQuery(user.id));
   } catch (error) {
-    console.error('Error updating settings:', error);
-    return c.json({ error: 'Failed to update settings' }, 500);
+    return handleError(error, 'Failed to update settings', c);
   }
 });
-
 export { app };
 const handler = handle(app);
 export const GET = handler;

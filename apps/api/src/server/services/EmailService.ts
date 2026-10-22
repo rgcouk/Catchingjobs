@@ -1,30 +1,32 @@
 import { Resend } from 'resend';
+import type { Prisma } from '@prisma/client';
 import { getPrisma } from '../db.js';
+import { createHash } from 'node:crypto';
 
 export interface EmailApplicantPayload {
   name: string;
   email: string;
   rosterRef: string;
-  town?: string;
-  sector?: string;
+  town?: string | null;
+  sector?: string | null;
 }
 
 export interface EmailAdminAlertPayload {
   id: number | string;
   rosterRef: string;
   name: string;
-  email?: string;
-  phone?: string;
-  town?: string;
-  sector?: string;
-  hasRightToWork?: boolean;
+  email?: string | null;
+  phone?: string | null;
+  town?: string | null;
+  sector?: string | null;
+  hasRightToWork?: boolean | null;
 }
 
 export interface EmailCampaignPayload {
   name: string;
   email: string;
-  town?: string;
-  sector?: string;
+  town?: string | null;
+  sector?: string | null;
   template: 'reengage' | 'urgent' | 'peak' | 'rtw' | 'custom';
   customSubject?: string;
   customBody?: string;
@@ -46,7 +48,10 @@ export class EmailService {
   private adminEmail: string;
   private appUrl: string;
 
-  constructor() {
+  constructor(
+    private queueDb?: Prisma.TransactionClient,
+    private queueKey?: string,
+  ) {
     const apiKey = process.env.RESEND_API_KEY;
     if (apiKey) {
       this.resend = new Resend(apiKey);
@@ -63,7 +68,9 @@ export class EmailService {
       fromEmail: this.fromEmail,
       adminEmail: this.adminEmail,
       appUrl: this.appUrl,
-      provider: process.env.RESEND_API_KEY ? 'Resend (Live)' : 'Mock / Console (Dev Mode)',
+      provider: process.env.RESEND_API_KEY
+        ? 'Resend (Durable Queue)'
+        : 'Queue (delivery not configured)',
     };
   }
 
@@ -126,123 +133,25 @@ export class EmailService {
     } = {},
   ): Promise<{ success: boolean; id?: string }> {
     const { recipientName, template = 'custom', metadata } = options;
-
-    if (!to || !to.includes('@')) {
-      console.warn(`[EmailService] Invalid recipient email address: "${to}". Skipping dispatch.`);
-      return { success: false };
-    }
-
-    const snippet = html
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, 200);
-
-    if (!this.resend) {
-      console.log(`\n================== [EmailService - MOCK SEND] ==================`);
-      console.log(`To:        ${to} (${recipientName || 'No Name'})`);
-      console.log(`From:      ${this.fromEmail}`);
-      console.log(`Subject:   ${subject}`);
-      console.log(`Template:  ${template}`);
-      console.log(`Status:    Resend API key not set in environment. Mocking successful delivery.`);
-      console.log(`=================================================================\n`);
-
-      const mockId = `mock-${Date.now()}`;
-      try {
-        const prisma = getPrisma();
-        await prisma.emailLog.create({
-          data: {
-            recipient: to,
-            recipientName: recipientName || null,
-            subject,
-            template,
-            status: 'MOCKED',
-            resendId: mockId,
-            bodySnippet: snippet,
-            metadata: metadata || null,
-          },
-        });
-      } catch (logErr) {
-        console.error('[EmailService] Failed to create EmailLog record:', logErr);
-      }
-
-      return { success: true, id: mockId };
-    }
-
-    try {
-      const response = await this.resend.emails.send({
-        from: this.fromEmail,
-        to,
-        subject,
-        html,
-      });
-
-      if (response.error) {
-        console.error(`[EmailService] Resend API error sending to ${to}:`, response.error);
-
-        try {
-          const prisma = getPrisma();
-          await prisma.emailLog.create({
-            data: {
-              recipient: to,
-              recipientName: recipientName || null,
-              subject,
-              template,
-              status: 'FAILED',
-              bodySnippet: snippet,
-              metadata: { error: response.error, ...(metadata || {}) },
-            },
-          });
-        } catch (logErr) {
-          console.error('[EmailService] Failed to log email error:', logErr);
-        }
-
-        return { success: false };
-      }
-
-      const resendId = response.data?.id;
-
-      try {
-        const prisma = getPrisma();
-        await prisma.emailLog.create({
-          data: {
-            recipient: to,
-            recipientName: recipientName || null,
-            subject,
-            template,
-            status: 'SENT',
-            resendId: resendId || null,
-            bodySnippet: snippet,
-            metadata: metadata || null,
-          },
-        });
-      } catch (logErr) {
-        console.error('[EmailService] Failed to create EmailLog record:', logErr);
-      }
-
-      return { success: true, id: resendId };
-    } catch (err: any) {
-      console.error(`[EmailService] Exception during email delivery to ${to}:`, err);
-
-      try {
-        const prisma = getPrisma();
-        await prisma.emailLog.create({
-          data: {
-            recipient: to,
-            recipientName: recipientName || null,
-            subject,
-            template,
-            status: 'FAILED',
-            bodySnippet: snippet,
-            metadata: { error: err?.message || String(err), ...(metadata || {}) },
-          },
-        });
-      } catch (logErr) {
-        console.error('[EmailService] Failed to log email exception:', logErr);
-      }
-
-      return { success: false };
-    }
+    if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) return { success: false };
+    const db = this.queueDb || getPrisma();
+    // A stable workflow key makes re-submission safe without suppressing intentional campaigns.
+    const dedupeKey = this.queueKey
+      ? createHash('sha256').update(`${this.queueKey}:${template}:${to}`).digest('hex')
+      : undefined;
+    const data = {
+      recipient: to,
+      recipientName: recipientName || null,
+      subject,
+      html,
+      template,
+      metadata: metadata || undefined,
+      dedupeKey,
+    };
+    const queued = dedupeKey
+      ? await db.emailOutbox.upsert({ where: { dedupeKey }, create: data, update: {} })
+      : await db.emailOutbox.create({ data });
+    return { success: true, id: queued.id };
   }
 
   /**
@@ -543,7 +452,11 @@ export class EmailService {
    */
   async getEmailLogs(options: { skip?: number; take?: number; search?: string; status?: string }) {
     const prisma = getPrisma();
-    const { skip = 0, take = 50, search, status } = options;
+    const { search, status } = options;
+    const skip = Number.isFinite(options.skip) ? Math.max(0, Math.floor(options.skip!)) : 0;
+    const take = Number.isFinite(options.take)
+      ? Math.max(1, Math.min(100, Math.floor(options.take!)))
+      : 50;
 
     const where: any = {};
     if (status && status !== 'ALL') {
@@ -665,19 +578,21 @@ export class EmailService {
   /**
    * 10. Handle Inbound Resend Webhooks
    */
-  async handleWebhookEvent(event: {
-    type: string;
-    created_at?: string;
-    data: {
-      email_id?: string;
-      to?: string[];
-      subject?: string;
-      click?: { link?: string; timestamp?: string };
-      bounce?: { message?: string; type?: string };
-      [key: string]: any;
-    };
-  }) {
-    const prisma = getPrisma();
+  async handleWebhookEvent(
+    event: {
+      type: string;
+      created_at?: string;
+      data: {
+        email_id?: string;
+        to?: string[];
+        subject?: string;
+        click?: { link?: string; timestamp?: string };
+        bounce?: { message?: string; type?: string };
+        [key: string]: any;
+      };
+    },
+    prisma: Prisma.TransactionClient = getPrisma(),
+  ) {
     const { type, data } = event;
     const resendId = data.email_id;
 
@@ -788,3 +703,14 @@ export class EmailService {
 }
 
 export const emailService = new EmailService();
+
+/** Queue both messages inside the caller's submission transaction. */
+export async function enqueueOnboardingEmails(
+  tx: Prisma.TransactionClient,
+  applicant: EmailAdminAlertPayload,
+) {
+  const service = new EmailService(tx, `application-submitted:${applicant.id}`);
+  if (applicant.email)
+    await service.sendApplicationReceipt({ ...applicant, email: applicant.email });
+  await service.sendAdminNewApplicationAlert(applicant);
+}

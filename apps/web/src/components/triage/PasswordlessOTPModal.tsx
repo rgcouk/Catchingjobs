@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useSignIn, useSignUp } from '@clerk/clerk-react';
+import { useSignIn, useSignUp, useClerk } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router';
 import { ShieldCheck, Loader2, AlertCircle, X, Phone, Mail } from 'lucide-react';
 import { TriageFormData } from './HeroTriageForm';
@@ -23,6 +23,8 @@ export default function PasswordlessOTPModal({
   draftApplication,
 }: PasswordlessOTPModalProps) {
   const navigate = useNavigate();
+  const clerk = useClerk();
+  const verifiedSessionId = React.useRef<string | null>(null);
   const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
   const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
 
@@ -101,20 +103,17 @@ export default function PasswordlessOTPModal({
                 }
               }
             } else {
-              console.warn('Clerk SignUp initialization warning:', signUpErr);
+              throw signUpErr;
             }
           }
         };
 
-        // Run with a 3-second safety timeout
-        await Promise.race([
-          initTask(),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Clerk init timeout')), 3000),
-          ),
-        ]);
+        await initTask();
       } catch (err: any) {
-        console.warn('Clerk OTP init notice:', err);
+        hasInitialized.current = false;
+        setErrorMessage(
+          err.errors?.[0]?.longMessage || err.message || 'Unable to send verification code.',
+        );
       } finally {
         setIsInitializing(false);
       }
@@ -135,9 +134,9 @@ export default function PasswordlessOTPModal({
     setErrorMessage('');
 
     try {
-      let createdSessionId: string | null = null;
+      let createdSessionId = verifiedSessionId.current;
 
-      try {
+      if (!createdSessionId) {
         if (!isExistingUser && signUp) {
           if (strategy === 'email_code') {
             const res = await signUp.attemptEmailAddressVerification({ code: otpCode.trim() });
@@ -159,30 +158,21 @@ export default function PasswordlessOTPModal({
             await setSignInActive({ session: createdSessionId });
           }
         }
-      } catch (clerkErr: any) {
-        console.warn('Clerk verification call:', clerkErr);
-        // If testing without full Clerk backend, check if mock code is provided
-        if (otpCode.trim().length === 6) {
-          createdSessionId = 'mock_session_id';
-        } else {
-          throw clerkErr;
-        }
       }
+      if (!createdSessionId)
+        throw new Error('Verification is incomplete. Please check your code and try again.');
+      verifiedSessionId.current = createdSessionId;
+      const token = await clerk.session?.getToken();
+      if (!token) throw new Error('Your session is not ready. Please try again.');
 
       // Link user to draft application
       if (draftApplication?.rosterRef) {
-        try {
-          await fetch('/api/triage/claim', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              rosterRef: draftApplication.rosterRef,
-              email: formData.email,
-            }),
-          });
-        } catch (claimErr) {
-          console.warn('Claim draft linkage notice:', claimErr);
-        }
+        const claim = await fetch('/api/triage/claim', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ rosterRef: draftApplication.rosterRef, email: formData.email }),
+        });
+        if (!claim.ok) throw new Error('Unable to link your application. Please try again.');
       }
 
       // Successful OTP verification -> route to wizard

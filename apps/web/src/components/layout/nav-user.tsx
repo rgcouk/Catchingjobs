@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  BellIcon,
-  CreditCardIcon,
-  LogOutIcon,
-  MoreVerticalIcon,
-  UserCircleIcon,
-} from 'lucide-react';
+import { LogOutIcon, MoreVerticalIcon, UserCircleIcon } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -61,7 +55,7 @@ export function NavUser() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-sm bg-black text-brand-yellow border border-brand-yellow"
+            className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-56 rounded-lg bg-white text-brand-obsidian border border-slate-200"
             side={isMobile ? 'bottom' : 'right'}
             align="end"
             sideOffset={4}
@@ -77,7 +71,7 @@ export function NavUser() {
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-display font-bold">{user.fullName}</span>
-                  <span className="truncate text-xs font-display text-brand-yellow/70">
+                  <span className="truncate text-xs font-display text-muted-foreground">
                     {user.primaryEmailAddress?.emailAddress}
                   </span>
                 </div>
@@ -85,21 +79,13 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => setActiveTab('settings')}>
+              <DropdownMenuItem className="min-h-11" onClick={() => setActiveTab('settings')}>
                 <UserCircleIcon />
                 Settings
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon />
-                Notifications
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>
+            <DropdownMenuItem className="min-h-11" onClick={() => signOut()}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>

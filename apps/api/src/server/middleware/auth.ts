@@ -1,47 +1,33 @@
-import { getAuth } from '@hono/clerk-auth';
-import { getPrisma } from '../../server/db.js';
+import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
+import { getPrisma } from '../db.js';
 import { createClerkClient } from '@clerk/backend';
 import type { Context, Next } from 'hono';
+import { ForbiddenError } from '../services/exceptions.js';
 
-export const requireAdmin = async (c: Context, next: Next) => {
-  const auth = getAuth(c);
-  if (!auth?.userId) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
-
-  const prisma = getPrisma();
-
-  // 1. Fast path: Check Prisma
-  const user = await prisma.user.findUnique({
-    where: { id: auth.userId },
-    select: { role: true },
-  });
-
-  if (user?.role === 'ADMIN') {
-    return await next();
-  }
-
-  // 2. Slow path / Self-healing: Check Clerk directly
-  // This resolves edge cases where users were granted ADMIN via the Clerk Dashboard
-  // but the role wasn't synchronized to Prisma.
-  try {
-    const clerkClient = createClerkClient({
-      secretKey: process.env.CLERK_SECRET_KEY,
-    });
-
-    const clerkUser = await clerkClient.users.getUser(auth.userId);
-
-    if (clerkUser.publicMetadata?.role === 'ADMIN') {
-      // Heal the Prisma database by syncing the role
-      await prisma.user.update({
-        where: { id: auth.userId },
-        data: { role: 'ADMIN' },
-      });
-      return await next();
-    }
-  } catch (error) {
-    console.warn(`Failed to fetch Clerk user ${auth.userId} in requireAdmin middleware:`, error);
-  }
-
-  return c.json({ error: 'Forbidden: Admin access required' }, 403);
-};
+export const authenticate = clerkMiddleware({
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,
+  secretKey: process.env.CLERK_SECRET_KEY,
+});
+export const authenticatedUserId = (c: Context) => getAuth(c)?.userId;
+export async function requireUser(c: Context, next: Next) {
+  if (!authenticatedUserId(c)) return c.json({ error: 'Unauthorized' }, 401);
+  c.header('Cache-Control', 'private, no-store');
+  await next();
+}
+export async function verifiedEmail(userId: string): Promise<string> {
+  const client = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+  const user = await client.users.getUser(userId);
+  const email = user.emailAddresses.find(
+    (e) => e.id === user.primaryEmailAddressId && e.verification?.status === 'verified',
+  );
+  if (!email) throw new ForbiddenError('Verify your account email before linking an application.');
+  return email.emailAddress.toLowerCase().trim();
+}
+export async function requireAdmin(c: Context, next: Next) {
+  const userId = authenticatedUserId(c);
+  if (!userId) return c.json({ error: 'Unauthorized' }, 401);
+  c.header('Cache-Control', 'private, no-store');
+  const user = await getPrisma().user.findUnique({ where: { id: userId }, select: { role: true } });
+  if (user?.role !== 'ADMIN') return c.json({ error: 'Forbidden: Admin access required' }, 403);
+  await next();
+}

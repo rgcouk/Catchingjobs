@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --host=0.0.0.0",
-    "build": "vite build && vite build --ssr src/entry.server.tsx --outDir dist/server",
-    "preview": "vite preview"
+    "dev": "react-router dev --config ../../vite.config.ts",
+    "build": "cd ../.. && react-router build",
+    "preview": "cd ../.. && react-router-serve dist/server/*/index.js"
   },
   "dependencies": {
     "@catchingjobs/shared": "*"

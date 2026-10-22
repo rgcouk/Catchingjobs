@@ -12,7 +12,14 @@ export function getPrisma() {
     const pool = new pg.Pool({
       connectionString: process.env.DATABASE_URL,
       max: 1,
-      ssl: isLocal ? undefined : { rejectUnauthorized: false },
+      ssl: isLocal
+        ? undefined
+        : {
+            rejectUnauthorized: true,
+            ...(process.env.DATABASE_CA_CERT
+              ? { ca: process.env.DATABASE_CA_CERT.replace(/\\n/g, '\n') }
+              : {}),
+          },
     });
     const adapter = new PrismaPg(pool);
     prisma = new PrismaClient({ adapter });

@@ -1,0 +1,8 @@
+{
+  "source": "Natural Earth 1:50m country geometry and 1:10m roads",
+  "source_url": "https://www.naturalearthdata.com/",
+  "license": "Public domain",
+  "projection": "Illustrative equirectangular coordinates",
+  "coverage_source": "packages/shared/src/data.ts REGIONS",
+  "farm_names": "Invented scene examples, not confirmed employers or pickup locations"
+}

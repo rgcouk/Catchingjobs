@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<path transform="translate(7 15.490192193382207)" d="M37.328 0l-34.32 0-3.008 3 0 20.656 3.008 3.008 34.32 0 3.048-3.008 0-20.656-3.048-3z" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<rect x="11.424534376857537" y="20.99271844660194" width="18.147661977412326" height="21.45507232019021" rx="0" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(13.865464632454923 34.55102040816327)" d="M0 6.288l0-3.888 3.624-2.4 3.376 0 3.656 2.4 0 3.888-10.656 0z" fill="#FF7605"/>
+<path transform="translate(17.58054289677036 34.65999603724985)" d="M0 0.816l2.344 1.592 2.296-1.6-0.76-0.808-3.12 0-0.76 0.816z" fill="#FFFDF0"/>
+<path transform="translate(13.865464632454923 34.55102040816327)" d="M0 6.288l0-3.888 3.624-2.4 3.376 0 3.656 2.4 0 3.888" fill="none" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(16.223300970873787 23.702991876362198)" d="M1.84 8.76l-1.84-2.728 0-3.88 2.312-2.152 2.288 0 2.28 2.152 0 3.88-1.808 2.728-3.232 0z" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(16.15395284327323 23.53457499504656)" d="M0.128 4.2l4.624-1.384 2.336 1.76 0-2.256-2.32-2.32-2.448 0-2.32 2.32 0.128 1.88z" fill="#362F2B" stroke="#362F2B" stroke-width="1.2" stroke-linecap="square" stroke-linejoin="bevel"/>
+<ellipse cx="47.479988111749556" cy="39.54643847830394" rx="5.5098325738062215" ry="5.5098325738062215" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(42.21114028135526 38.206657420249655)" d="M0.06231 0.368l2.824 0.776c0.144-0.736 0.72-1.144 1.384-1.144 0.672 0 1.224 0.504 1.368 1.144l2.872-0.776c0.496 2.68-1.72 5.056-4.24 5.056-2.552 0-4.664-2.632-4.208-5.056z" fill="#FF7605"/>
+<path transform="translate(42.327917574796906 38.57321180899544)" d="M0 0l2.808 0.784" fill="none" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(49.282544085595404 38.57321180899544)" d="M2.784 0l-2.784 0.784" fill="none" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<ellipse cx="47.49156677234001" cy="40.07565137705568" rx="1.7598944917772934" ry="1.7598944917772934" fill="#FF7605" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(47.479492767980986 41.92173568456509)" d="M0 0l0 2.424" fill="none" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<rect x="32.915890628095894" y="22.666980384386765" width="20.374975232811572" height="2.3906528630869825" rx="0" fill="#362F2B" stroke="#362F2B" stroke-width="1.2" stroke-linecap="square" stroke-linejoin="bevel"/>
+<rect x="32.915890628095894" y="27.86511789181692" width="20.374975232811572" height="2.3906528630869825" rx="0" fill="#362F2B" stroke="#362F2B" stroke-width="1.2" stroke-linecap="square" stroke-linejoin="bevel"/>
+</svg>
+

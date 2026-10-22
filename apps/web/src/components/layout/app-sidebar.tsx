@@ -2,30 +2,8 @@
 import { Link } from 'react-router-dom';
 
 import * as React from 'react';
-import {
-  ArrowUpCircleIcon,
-  BarChartIcon,
-  CameraIcon,
-  ClipboardListIcon,
-  DatabaseIcon,
-  FileCodeIcon,
-  FileIcon,
-  FileTextIcon,
-  FolderIcon,
-  HelpCircleIcon,
-  LayoutDashboardIcon,
-  ListIcon,
-  SearchIcon,
-  SettingsIcon,
-  UsersIcon,
-  Settings2,
-  LifeBuoy,
-  Search,
-  Database,
-  Frame,
-  PieChart,
-  Command,
-} from 'lucide-react';
+import BrandLogo from '@/components/brand/BrandLogo';
+import { useAppShell } from '@/components/layout/AppShell';
 
 import { NavMain } from '@/components/layout/nav-main';
 import { NavUser } from '@/components/layout/nav-user';
@@ -42,31 +20,32 @@ export function AppSidebar({
   navItems,
   ...props
 }: React.ComponentProps<typeof Sidebar> & { navItems?: any[] }) {
-  // Catchingjobs specific content for the other areas
+  const { userType } = useAppShell();
   return (
-    <Sidebar variant="inset" {...props}>
-      <SidebarHeader>
+    <Sidebar variant="sidebar" {...props}>
+      <SidebarHeader className={userType === 'admin' ? 'p-0 pb-6' : undefined}>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
               asChild
-              className="hover:bg-brand-yellow hover:text-black rounded-sm"
+              className="h-auto min-h-16 hover:bg-brand-ivory rounded-sm"
             >
               <Link to="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-sm bg-brand-yellow text-black">
-                  <Command className="size-4 text-black" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-display font-bold">CatchingJobs</span>
-                  <span className="truncate text-xs font-display">Admin Portal</span>
+                <div className="grid min-w-0 flex-1 gap-2 text-left">
+                  <BrandLogo variant="scrolled" size="sm" asLink={false} />
+                  <span className="truncate text-xs text-muted-foreground">
+                    {userType === 'admin' ? 'Operations portal' : 'Employee portal'}
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>{navItems && <NavMain items={navItems} />}</SidebarContent>
+      <SidebarContent className={userType === 'admin' ? 'gap-6' : undefined}>
+        {navItems && <NavMain items={navItems} />}
+      </SidebarContent>
       <SidebarFooter>
         <NavUser />
       </SidebarFooter>

@@ -1,7 +1,11 @@
+import { app as cronEmailApp } from '../server/routes/cron-email.js';
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { cors } from 'hono/cors';
+import { requestId } from 'hono/request-id';
+import { secureHeaders } from 'hono/secure-headers';
+import { handleError } from '../server/http/errors.js';
 
 // Import individual route sub-apps from server/routes/
 import { app as pingApp } from '../server/routes/ping.js';
@@ -18,10 +22,14 @@ import { app as jobsApp } from '../server/routes/jobs.js';
 
 const app = new Hono();
 
-app.use('*', cors());
+app.use('*', requestId());
+app.use('*', secureHeaders());
+app.use('*', cors({ origin: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',') }));
+app.onError((error, c) => handleError(error, 'Request failed', c));
 
 // Mount routes
 app.route('/', pingApp);
+app.route('/', cronEmailApp);
 app.route('/', locationsApp);
 app.route('/', jobsApp);
 app.route('/', applicationsApp);
@@ -38,7 +46,11 @@ app.notFound((c) => {
 });
 
 // Local development standalone runner (only run when executed directly with node)
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+if (
+  process.env.API_STANDALONE === '1' &&
+  process.env.NODE_ENV !== 'production' &&
+  !process.env.VERCEL
+) {
   const port = Number(process.env.PORT_API) || 3002;
   console.log(`[API Server] Initializing Hono API on http://localhost:${port}`);
   serve({

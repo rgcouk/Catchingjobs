@@ -1,19 +1,18 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
-import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
+import {
+  authenticate,
+  requireUser,
+  authenticatedUserId,
+  verifiedEmail,
+} from '../middleware/auth.js';
+import { draftSchema } from '@catchingjobs/shared/validation';
+import { handleError } from '../http/errors.js';
 import { getPrisma } from '../db.js';
 import { ManageApplications } from '../services/ManageApplications.js';
 import { DomainError } from '../services/exceptions.js';
 
 const app = new Hono();
-
-const handleError = (error: unknown, defaultMessage: string, c: any) => {
-  if (error instanceof DomainError) {
-    return c.json({ success: false, error: error.message }, error.statusCode as any);
-  }
-  console.error(defaultMessage, error);
-  return c.json({ success: false, error: defaultMessage }, 500);
-};
 
 /**
  * Public automated triage endpoint.
@@ -22,14 +21,14 @@ const handleError = (error: unknown, defaultMessage: string, c: any) => {
 app.post('/api/triage', async (c) => {
   const service = new ManageApplications(getPrisma());
   try {
-    const body = await c.req.json();
+    const body = draftSchema.parse(await c.req.json());
     const application = await service.createDraftApplication({
       name: body.name,
       phone: body.phone,
       email: body.email,
       town: body.town,
       sector: body.sector,
-      hasRightToWork: body.hasRightToWork === true || body.hasRightToWork === 'true',
+      hasRightToWork: body.hasRightToWork === true,
     });
     return c.json({ success: true, application }, 201);
   } catch (error) {
@@ -40,35 +39,31 @@ app.post('/api/triage', async (c) => {
 /**
  * Authenticated claim endpoint to associate Clerk user ID with Draft Application.
  */
-app.post(
-  '/api/triage/claim',
-  clerkMiddleware({
-    publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,
-    secretKey: process.env.CLERK_SECRET_KEY,
-  }),
-  async (c) => {
-    const auth = getAuth(c);
-    const body = await c.req.json().catch(() => ({}));
-    const userId = auth?.userId || body.userId;
+app.post('/api/triage/claim', authenticate, requireUser, async (c) => {
+  const userId = authenticatedUserId(c)!;
+  const body = await c.req.json().catch(() => ({}));
 
-    if (!userId) {
-      return c.json({ success: false, error: 'Unauthorized: User ID required' }, 401);
+  if (!userId) {
+    return c.json({ success: false, error: 'Unauthorized: User ID required' }, 401);
+  }
+
+  const service = new ManageApplications(getPrisma());
+  try {
+    const { rosterRef, email } = body;
+    if (!rosterRef) {
+      return c.json({ success: false, error: 'Roster reference (rosterRef) is required' }, 400);
     }
 
-    const service = new ManageApplications(getPrisma());
-    try {
-      const { rosterRef, email } = body;
-      if (!rosterRef) {
-        return c.json({ success: false, error: 'Roster reference (rosterRef) is required' }, 400);
-      }
-
-      const application = await service.linkUserToDraft(rosterRef, userId, email);
-      return c.json({ success: true, application });
-    } catch (error) {
-      return handleError(error, 'Failed to link user to application', c);
-    }
-  },
-);
+    const application = await service.linkUserToDraft(
+      rosterRef,
+      userId,
+      await verifiedEmail(userId),
+    );
+    return c.json({ success: true, application });
+  } catch (error) {
+    return handleError(error, 'Failed to link user to application', c);
+  }
+});
 
 export { app };
 const handler = handle(app);

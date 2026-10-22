@@ -98,13 +98,15 @@ describe('CRM Features Integration Tests', () => {
       // Step 3
       await waitFor(() => expect(screen.getByText(/Step 3 of 3/i)).toBeInTheDocument());
 
+      fireEvent.click(document.querySelector('input[name="declarationSigned"]')!);
       fireEvent.click(screen.getByText('Submit & Complete Profile'));
 
       await waitFor(() => {
         expect(mockSuccess).toHaveBeenCalled();
         const submittedData = mockSuccess.mock.calls[0][0];
         expect(submittedData.name).toBe('Test User');
-        expect(submittedData.userId).toBe('user123');
+        expect(submittedData).not.toHaveProperty('userId');
+        expect(submittedData).not.toHaveProperty('email');
         expect(submittedData.hasDrivingLicense).toBe('true');
       });
     });

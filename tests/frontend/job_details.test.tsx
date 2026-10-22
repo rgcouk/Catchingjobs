@@ -7,8 +7,20 @@ import { HelmetProvider } from 'react-helmet-async';
 vi.mock('@clerk/clerk-react', () => ({
   useSignIn: () => ({ isLoaded: true, signIn: {}, setActive: vi.fn() }),
   useSignUp: () => ({ isLoaded: true, signUp: {}, setActive: vi.fn() }),
-  useAuth: () => ({ isLoaded: true, userId: 'test-user', getToken: vi.fn().mockResolvedValue('test-token') }),
-  useUser: () => ({ isLoaded: true, user: { id: 'test-user', fullName: 'Arthur King', primaryEmailAddress: { emailAddress: 'arthur@example.co.uk' }, primaryPhoneNumber: { phoneNumber: '07700900123' } } }),
+  useAuth: () => ({
+    isLoaded: true,
+    userId: 'test-user',
+    getToken: vi.fn().mockResolvedValue('test-token'),
+  }),
+  useUser: () => ({
+    isLoaded: true,
+    user: {
+      id: 'test-user',
+      fullName: 'Arthur King',
+      primaryEmailAddress: { emailAddress: 'arthur@example.co.uk' },
+      primaryPhoneNumber: { phoneNumber: '07700900123' },
+    },
+  }),
   SignedIn: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   SignedOut: ({ children }: { children: React.ReactNode }) => null,
   UserButton: () => <button>User Profile</button>,
@@ -29,7 +41,8 @@ const mockJob = {
   regionName: 'Lincolnshire',
   county: 'Lincolnshire',
   pickupPoint: 'Boston Railway Station, Station Approach',
-  description: 'Operating in modern broiler houses. Night shifts with guaranteed door-to-door home pickup. Consistent 45-50 hrs weekly with Friday payroll.',
+  description:
+    'Operating in modern broiler houses. Night shifts with guaranteed door-to-door home pickup. Consistent 45-50 hrs weekly with Friday payroll.',
   payRate: '£15.50 - £18.50/hr',
   status: 'ACTIVE',
   createdAt: '2026-07-15T00:00:00.000Z',
@@ -95,8 +108,59 @@ describe('Dedicated Job Details Page & Sharing Unit Tests', () => {
 
     expect(screen.getAllByText(/£15.50 - £18.50\/hr/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Boston/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/Free Door-to-Door Pickup/i)).toBeDefined();
+    expect(screen.getByText(/Free Door-to-Door Home Transit/i)).toBeDefined();
     expect(screen.getByText(/Candidate Requirements/i)).toBeDefined();
+  });
+
+  it('does not invent vacancy terms or salary schema when optional details are absent', async () => {
+    const vacancy = {
+      ...mockJob,
+      description: 'Join a local poultry team.',
+      payRate: '',
+      weeklyPayEst: undefined,
+      shiftPattern: undefined,
+      requirements: undefined,
+      trainingStandards: undefined,
+      createdAt: undefined,
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockImplementation((url: string) =>
+          Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(url.includes('/api/jobs/1') ? vacancy : []),
+          }),
+        ),
+    );
+    const { container } = render(
+      <MemoryRouter initialEntries={['/jobs/1']}>
+        <Routes>
+          <Route path="/jobs/:id" element={<JobDetailsPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    await screen.findByText('Join a local poultry team.');
+    expect(screen.getAllByText(/confirm with dispatch/i).length).toBeGreaterThan(0);
+    expect(
+      screen.queryByText(
+        /Guaranteed 40-50 hours|20:00 - 05:00|Lantra L2|sponsorship for formal|zero unexpected cancellations/i,
+      ),
+    ).toBeNull();
+    const schema = JSON.parse(
+      container.querySelector('script[type="application/ld+json"]')!.textContent!,
+    );
+    expect(schema).not.toHaveProperty('baseSalary');
+    expect(schema).not.toHaveProperty('datePosted');
+    expect(schema).not.toHaveProperty('validThrough');
+    expect(schema).not.toHaveProperty('employmentType');
+    expect(schema).not.toHaveProperty('qualifications');
+    expect(schema).not.toHaveProperty('responsibilities');
+    expect(schema.description).toBe(vacancy.description);
+    expect(screen.getByRole('link', { name: /apply for this role/i }).getAttribute('href')).toBe(
+      '#hero-triage-form',
+    );
   });
 
   it('renders SSR preloaded initial data without loading spinner', () => {
@@ -108,7 +172,12 @@ describe('Dedicated Job Details Page & Sharing Unit Tests', () => {
         pickupPoint: 'Boston Railway Station, Station Approach',
         surrounding: 'Lincolnshire',
         localizedCopy: 'Boston Catching Hub',
-        region: { id: 'lincolnshire', name: 'Lincolnshire', county: 'Lincolnshire', activeCrews: 14 },
+        region: {
+          id: 'lincolnshire',
+          name: 'Lincolnshire',
+          county: 'Lincolnshire',
+          activeCrews: 14,
+        },
       },
       sector: 'chicken' as const,
     };

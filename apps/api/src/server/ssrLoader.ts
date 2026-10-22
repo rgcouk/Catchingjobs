@@ -1,5 +1,5 @@
 import { getPrisma } from './db';
-import { resolveTown } from '../../../../apps/web/src/data/locations';
+import { resolveTown } from '@catchingjobs/shared';
 import { TownLoaderData, JobLoaderData, SSRRouteData } from '../../../../packages/shared/src/types';
 import { getJobById } from './routes/jobs';
 
@@ -39,7 +39,8 @@ export async function loadRouteData(url: string): Promise<SSRRouteData | null> {
         } as JobLoaderData;
       }
     } catch (err) {
-      console.warn('[SSR Loader] Error loading job data for route:', err);
+      console.warn('[SSR Loader] Error loading job data for route');
+      throw err;
     }
 
     return {
@@ -135,7 +136,7 @@ export async function loadRouteData(url: string): Promise<SSRRouteData | null> {
         };
       }
     } catch (dbErr) {
-      console.warn('[SSR Loader] Database lookup bypassed, using static resolver:', dbErr);
+      console.warn('[SSR Loader] Database lookup bypassed, using static resolver:');
     }
 
     // 2. Static Dataset Resolver Fallback
