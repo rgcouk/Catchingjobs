@@ -1,0 +1,24 @@
+# Deployment needs application sources and public exports, not design originals.
+designs/
+.agents/
+.agent/
+.codex/
+.aws/
+.claude/
+.impeccable/
+.open-design.json
+.superdesign/
+.stitch/
+skills/
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+.react-router/
+.env*
+!.env.example
+*.pen
+*.log
+*.db
+*.sqlite*

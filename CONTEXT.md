@@ -21,8 +21,8 @@ Catchingjobs is a UK poultry catching workforce platform managed by Pullum Ltd (
 
 | Term                                      | What It Means                                                                                                                         |
 | :---------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| **Catching Team / Crew**                  | The group of 6–8 catchers working shifts together in a specific area. _(Always use "team" or "crew", never "squad".)_                |
-| **Sector**                                | The type of poultry catching work: `chicken` (broiler) or `turkey` (commercial turkey).                                              |
+| **Catching Team / Crew**                  | The group of 6–8 catchers working shifts together in a specific area. _(Always use "team" or "crew", never "squad".)_                 |
+| **Sector**                                | The type of poultry catching work: `chicken` (broiler) or `turkey` (commercial turkey).                                               |
 | **Region**                                | An operational county or territory (e.g., Lincolnshire, Norfolk, Yorkshire, Shropshire, Suffolk).                                     |
 | **Town / Coverage Area**                  | A town we cover where teams operate. Team members are picked up directly from home as the standard routine (no pickup points needed). |
 | **Job Vacancy (`JobPosting`)**            | An active job opening with dedicated URL (`/jobs/:id`), pay rate (e.g., `£15.50 - £18.50/hr`), and schema.org `JobPosting` metadata.  |
@@ -33,7 +33,7 @@ Catchingjobs is a UK poultry catching workforce platform managed by Pullum Ltd (
 | **Interactive Location Map**              | Instant-loading vector map (`RegionalCatchingMap`) with clickable location markers linking to chicken and turkey job pages.           |
 | **Email Log (`EmailLog`)**                | A record tracking every automated email sent to candidates (receipts, status updates, safety packs) and its delivery status.          |
 
-| **Forbidden Terminology**                 | Strict lexical bans: Never use **"squad"** (use **"team"** or **"crew"**). Never use **"pickup point"**, **"bus station"**, or **"corridor"** (use **"home pickup"**, **"coverage area"**, or **"county hub"**). |
+| **Forbidden Terminology** | Strict lexical bans: Never use **"squad"** (use **"team"** or **"crew"**). Never use **"pickup point"**, **"bus station"**, or **"corridor"** (use **"home pickup"**, **"coverage area"**, or **"county hub"**). |
 
 ---
 
@@ -58,24 +58,21 @@ Catchingjobs is a UK poultry catching workforce platform managed by Pullum Ltd (
 
 ### Frontend
 
-- **Framework**: Vite + React 19 with TypeScript and Tailwind CSS v4.
-- **SEO & SSR**: Uses Server-Side Rendering (`src/entry.server.tsx` and `server/ssrLoader.ts`) so search engines can index local town landing pages with complete HTML and Google Jobs metadata (`JobPosting` schema).
-- **Authentication**: Clerk for passwordless email OTP and Google OAuth SSO.
+- React 19 + TypeScript, React Router v7 Framework Mode, Vite, Tailwind CSS v4.
+- Public route loaders render job/location content on the server; fixed marketing routes are prerendered. Vercel uses its React Router preset.
+- Private route loaders verify Clerk sessions; admin access uses the database role. API routes independently enforce the same access rules.
+- Approved pages in `designs/catchingjobs-website.pen` define the appearance; `design.md` documents current tokens. Preserve Pen layouts when changing implementation.
 
-### Backend (Hono Serverless API)
+### Backend
 
-- Backend routes run on Hono and deploy as Vercel serverless functions (`api/index.ts` mounting `server/routes/`):
-  - `GET /api/ping` - Health check.
-  - `GET /api/locations`, `/api/regions`, `/api/towns` - Regions and town depots.
-  - `GET/POST/PATCH/DELETE /api/jobs` - Job vacancies.
-  - `GET/POST/PATCH /api/applications` - Candidate applications.
-  - `POST /api/triage`, `POST /api/triage/claim` - Instant screening and user linking.
-  - `ALL /api/admin/*` - Admin dashboard, applicant CRM, Kanban board, and email logs.
-  - `ALL /api/portal/*` - Employee onboarding profile, safety tasks, and resources.
-  - `POST /api/upload` - Secure file uploads for ID and address documents (Vercel Blob).
-  - `POST /api/webhook/clerk` - Clerk user synchronization.
-  - `POST /api/webhook/intake` - External intake form integration (Jotform).
-  - `POST /api/webhook/resend` - Email delivery tracking webhook.
+Hono API in `apps/api/src/api/index.ts`, forwarded through the native React Router `api/*` resource route on Vercel. PostgreSQL/Prisma, Clerk authentication, private Vercel Blob documents, and Resend delivery via a database outbox remain the backend services. `npm run dev` serves both the site and API through Framework Mode; the API workspace can still run independently with its standalone dev command.
+
+- Verified account identity is required for portal, application claim, and uploads. Roster references are not credentials.
+- Worker updates use shared Zod allowlists; administrative review fields cannot be submitted by workers.
+- Webhooks authenticate and deduplicate persistent provider event IDs.
+- Submission and notification queueing share a transaction. A secured scheduler processes `/api/cron/email-outbox`.
+- Database TLS verifies certificates. Set `DATABASE_CA_CERT` when the provider requires its CA.
+- See `docs/stack-rollout.md`, `docs/email-outbox.md`, and `docs/private-document-migration.md` before release.
 
 ### Core Services
 
@@ -96,25 +93,7 @@ Located in `src/services/` with domain exceptions in `src/services/exceptions.ts
 
 ## 5. UI Design Systems
 
-The project uses two separate design systems based on the page type:
-
-### 1. Public Marketing & Local Landing Pages (Cadmium Yellow v2)
-
-- **Pages**: Home (`/`), Sector pages (`/chickens`, `/turkeys`), Town pages (`/chickens/:town`, `/turkeys/:town`), and Corporate (`/corporate`).
-- **Style**: Enforces **Cadmium Yellow v2** design tokens:
-  - Primary Accent: `#FFCC00` (Cadmium Yellow)
-  - Dominant Background: `#090D14` (Deep Obsidian Dark)
-  - Pure Surface / Contrast: `#FFFFFF` (Clean White)
-  - Secondary Tint: `#F5E6A3` (Broiler Gold)
-  - Monogram: Chicken-C vector mark (`viewBox="0 0 416 394"`) with mandatory `-mr-1` (`-4px`) negative margin flush against wordmark (`atchingJobs.`).
-  - Strict Rule: Do NOT use Hallmark green/orange rules for marketing landers.
-- **Focus**: High trust, verified statutory standards (GLAA Licence `PULL0001`, Lantra Level 2 Animal Welfare), clear worker benefits (free door-to-door heated minibus pickup, guaranteed Friday BACS pay), and instant Right to Work screening.
-
-### 2. Dashboards & Authentication (shadcn/ui)
-
-- **Pages**: Admin Portal (`/admin/*`), Employee Portal (`/employee`), Login (`/login`), and Register (`/register`).
-- **Style**: Official **shadcn/ui** components (`@/components/ui/`) using clean slate/neutral tokens (`--background`, `--foreground`, `--card`, `--sidebar`).
-- **Focus**: Functional, responsive tables, modal inspectors, and drag-and-drop Kanban workflow.
+The approved Pen pages are the visual authority for marketing, auth, and account pages. Public pages use current orange/ivory/Obsidian tokens from `design.md`, with the Chicken-C mark and approved native illustrations. Account/admin interfaces reuse shadcn/ui primitives styled to match their Pen pages. Historical yellow and Hallmark directions are archived, not implementation specifications.
 
 ---
 

@@ -1,39 +1,46 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
+@import './styles/vendor/shadcn-tailwind.css';
 @import '@fontsource-variable/geist';
+@import '@fontsource-variable/plus-jakarta-sans';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Geist Variable', 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Geist Variable', 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-navigation:
+    'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Instrument Serif', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
-  /* CatchingJobs Brand Tokens (Cadmium Orange / Flame #ff7c20) */
-  --color-brand-yellow: #ff7c20;
+  /* Native Pencil cj-* tokens; yellow names remain compatibility aliases. */
+  --color-brand-yellow: #ff7605;
   --color-brand-yellowDark: #e05500;
   --color-brand-yellow-hover: #e05500;
-  --color-brand-orange: #ff7c20;
+  --color-brand-orange: #ff7605;
   --color-brand-orange-hover: #e05500;
   --color-brand-broiler-gold: #f5e6a3;
   --color-brand-ivory: #fffdf0;
-  --color-brand-obsidian: #090d14;
-  --color-brand-obsidianCard: #111622;
-  --color-brand-black: #000000;
+  --color-brand-obsidian: #362f2b;
+  --color-brand-obsidianCard: #362f2b;
+  --color-brand-black: #362f2b;
+  --color-brand-ink-black: #090d14;
   --color-brand-surface: #ffffff;
   --color-brand-mist: #f8fafc;
   --color-brand-border: #e2e8f0;
   --color-brand-border-dark: #1e293b;
 
   --color-paper: #ffffff;
-  --color-ink: #090d14;
+  --color-ink: #362f2b;
+  --color-ink-2: #475569;
   --color-rule: #e2e8f0;
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --dur-short: 200ms;
+  --dur-short: 160ms;
 }
 
 body {
@@ -41,6 +48,30 @@ body {
   background-color: var(--color-paper);
   color: var(--color-ink);
   overflow-x: clip;
+}
+
+@keyframes scene-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 h1,
@@ -71,8 +102,8 @@ h6,
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: 'Geist Variable', sans-serif;
+  --font-heading: var(--font-display);
+  --font-sans: 'Geist Variable', 'Geist', ui-sans-serif, system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -91,7 +122,7 @@ h6,
   --color-border: var(--border);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
-  --color-accent: oklch(50% 0.15 40);
+  --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -115,13 +146,13 @@ h6,
 
 :root {
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --foreground: #362f2b;
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: #362f2b;
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.65 0.2 45);
-  --primary-foreground: oklch(0.985 0 0);
+  --popover-foreground: #362f2b;
+  --primary: #ff7605;
+  --primary-foreground: #362f2b;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -132,7 +163,7 @@ h6,
   --destructive-foreground: oklch(1 0 0);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.65 0.2 45);
+  --ring: #e05500;
   --chart-1: oklch(0.81 0.1 252);
   --chart-2: oklch(0.62 0.19 260);
   --chart-3: oklch(0.55 0.22 263);
@@ -156,8 +187,8 @@ h6,
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.269 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.65 0.2 45);
-  --primary-foreground: oklch(0.985 0 0);
+  --primary: #ff7605;
+  --primary-foreground: #362f2b;
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -168,7 +199,7 @@ h6,
   --destructive-foreground: oklch(0.985 0 0);
   --border: oklch(0.275 0 0);
   --input: oklch(0.325 0 0);
-  --ring: oklch(0.65 0.2 45);
+  --ring: #e05500;
   --chart-1: oklch(0.81 0.1 252);
   --chart-2: oklch(0.62 0.19 260);
   --chart-3: oklch(0.55 0.22 263);

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<path transform="translate(0 0) scale(1 1) translate(0 0)" d="M31 16l-1-9 7 5 5-7 3 9 7-4-2 11z" fill="#FF7605" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(0 0) scale(1 1) translate(0 0)" d="M34 18l15 0 5 9-8 10-4 12h-19l-8-9-9-15 14 3 6 8 5-7z" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(0 0) scale(1 1) translate(0 0)" d="M53 25l8 4-9 3z" fill="#FF7605" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(0 0) scale(1 1) translate(0 0)" d="M26 37l11 2-5 5" fill="#00000000" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(0 0) scale(1 1) translate(0 0)" d="M25 49v8h-7m20-8l4 8h7" fill="#00000000" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(0 0) scale(1 1) translate(0 0)" d="M44 24h3v3h-3z" fill="#362F2B" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+</svg>
+

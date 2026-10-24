@@ -1,4 +1,5 @@
 'use client';
+import { useAppShell } from '@/components/layout/AppShell';
 import { Link } from 'react-router-dom';
 
 import React, { useState, useEffect } from 'react';
@@ -33,6 +34,7 @@ export function NavMain({
     }[];
   }[];
 }) {
+  const { userType } = useAppShell();
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
   // Auto-expand any item that is active or has an active subitem
@@ -50,8 +52,14 @@ export function NavMain({
   }, [items]);
 
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel className="text-[11px] uppercase tracking-wider font-display font-semibold text-muted-foreground/80 px-2 py-1.5">
+    <SidebarGroup className={userType === 'admin' ? 'p-0' : undefined}>
+      <SidebarGroupLabel
+        className={
+          userType === 'admin'
+            ? 'sr-only'
+            : 'text-[11px] uppercase tracking-wider font-display font-semibold text-muted-foreground/80 px-2 py-1.5'
+        }
+      >
         Platform
       </SidebarGroupLabel>
       <SidebarMenu className="gap-1">
@@ -68,7 +76,7 @@ export function NavMain({
                   tooltip={item.title}
                   onClick={() => item.onClick?.()}
                   isActive={item.isActive}
-                  className="font-display font-medium text-sm transition-colors rounded-sm hover:bg-brand-yellow hover:text-black cursor-pointer"
+                  className="min-h-11 font-sans font-medium text-sm transition-colors rounded-sm data-[active=true]:bg-brand-orange data-[active=true]:text-brand-obsidian hover:bg-brand-ivory hover:text-black cursor-pointer"
                 >
                   {item.icon && <item.icon className="w-4 h-4" />}
                   <span>{item.title}</span>
@@ -95,7 +103,7 @@ export function NavMain({
                       item.onClick?.();
                     }}
                     isActive={isItemActive}
-                    className="font-display font-medium text-sm flex-1 transition-colors rounded-sm hover:bg-brand-yellow hover:text-black cursor-pointer"
+                    className="min-h-11 font-sans font-medium text-sm flex-1 transition-colors rounded-sm data-[active=true]:bg-brand-orange data-[active=true]:text-brand-obsidian hover:bg-brand-ivory hover:text-black cursor-pointer"
                   >
                     {item.icon && <item.icon className="w-4 h-4" />}
                     <span>{item.title}</span>
@@ -104,7 +112,7 @@ export function NavMain({
                     <button
                       type="button"
                       aria-label={`Toggle ${item.title} submenu`}
-                      className="p-1.5 hover:bg-brand-yellow rounded-sm text-muted-foreground hover:text-black transition-transform cursor-pointer shrink-0"
+                      className="min-h-11 min-w-11 p-1.5 hover:bg-brand-yellow rounded-sm text-muted-foreground hover:text-black transition-transform cursor-pointer shrink-0"
                     >
                       <ChevronRight
                         className={`w-4 h-4 transition-transform duration-200 ${
@@ -126,7 +134,7 @@ export function NavMain({
                             e.preventDefault();
                             subItem.onClick?.();
                           }}
-                          className={`text-xs py-1.5 px-2 rounded-sm transition-colors cursor-pointer font-display ${
+                          className={`min-h-11 text-sm py-1.5 px-2 rounded-sm transition-colors cursor-pointer font-display ${
                             subItem.isActive
                               ? 'bg-brand-yellow text-black font-bold'
                               : 'text-muted-foreground hover:text-black hover:bg-brand-yellow'

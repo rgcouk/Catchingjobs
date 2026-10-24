@@ -41,3 +41,9 @@ scratch/
 *.diff
 *.patch
 mcp.json
+
+# Superdesign temporary drafts and reference exports
+.superdesign/tmp/
+
+# React Router generated route types
+.react-router/

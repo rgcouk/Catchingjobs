@@ -251,7 +251,7 @@ export function RegionalCatchingMap({
     <div className={`relative isolate w-full py-8 lg:py-12 ${className}`}>
       {/* Background Ambience & Soft Gradients */}
       <div
-        className="pointer-events-none absolute -top-24 -right-24 w-[600px] h-[600px] rounded-full bg-emerald-500/[0.035] blur-[100px]"
+        className="pointer-events-none absolute -top-24 -right-24 w-[600px] h-[600px] rounded-full bg-brand-orange/[0.035] blur-[100px]"
         aria-hidden="true"
       />
 
@@ -261,8 +261,8 @@ export function RegionalCatchingMap({
           {/* Header */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-mono font-medium tracking-wide">
-                <Radio className="w-3 h-3 text-emerald-600 animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-ivory text-emerald-800 text-[11px] font-mono font-medium tracking-wide">
+                <Radio className="w-3 h-3 text-brand-obsidian" />
                 Live Hub Network · 13 Catching Areas
               </span>
             </div>
@@ -288,7 +288,7 @@ export function RegionalCatchingMap({
                 onClick={() => handleSelectRegion('ALL')}
                 className={`px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-150 cursor-pointer ${
                   selectedRegion === 'ALL'
-                    ? 'bg-slate-900 text-white font-medium shadow-xs'
+                    ? 'bg-brand-orange text-brand-obsidian font-medium shadow-xs'
                     : 'bg-white/80 text-slate-600 hover:text-slate-900 hover:bg-white shadow-2xs'
                 }`}
               >
@@ -304,14 +304,14 @@ export function RegionalCatchingMap({
                     onClick={() => handleSelectRegion(region.id)}
                     className={`px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${
                       isSelected
-                        ? 'bg-emerald-600 text-white font-medium shadow-xs'
-                        : 'bg-white/80 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/70 shadow-2xs'
+                        ? 'bg-brand-orange text-brand-obsidian font-medium shadow-xs'
+                        : 'bg-white/80 text-slate-600 hover:text-brand-obsidian hover:bg-brand-ivory/70 shadow-2xs'
                     }`}
                   >
                     <span>{region.name}</span>
                     <span
                       className={`text-[10px] ${
-                        isSelected ? 'text-emerald-100' : 'text-slate-400'
+                        isSelected ? 'text-brand-obsidian' : 'text-slate-400'
                       }`}
                     >
                       {count}
@@ -327,8 +327,8 @@ export function RegionalCatchingMap({
             {/* Hub Header */}
             <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
               <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-xs font-mono text-emerald-700 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <div className="flex items-center gap-1.5 text-xs font-mono text-brand-obsidian font-medium">
+                  <span className="w-2 h-2 rounded-full bg-brand-orange" />
                   <span>{activeTown.regionName} Division</span>
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
@@ -338,15 +338,15 @@ export function RegionalCatchingMap({
 
               <div className="text-right space-y-1">
                 <div className="text-[11px] font-mono text-slate-500">{activeTown.coords}</div>
-                <div className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                <div className="inline-flex items-center gap-1 text-[11px] font-mono text-brand-obsidian bg-brand-ivory px-2 py-0.5 rounded">
                   <span>{activeTown.activeCrews} Active Crews</span>
                 </div>
               </div>
             </div>
 
             {/* Transport Feature */}
-            <div className="flex items-center gap-3 text-xs font-mono text-slate-700 bg-emerald-50/50 px-3.5 py-2.5 rounded-md border border-emerald-100/60">
-              <div className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+            <div className="flex items-center gap-3 text-xs font-mono text-slate-700 bg-brand-ivory/50 px-3.5 py-2.5 rounded-md border border-brand-border/60">
+              <div className="w-5 h-5 rounded-full bg-brand-orange text-brand-obsidian flex items-center justify-center shrink-0">
                 <Check className="w-3 h-3" />
               </div>
               <div className="leading-relaxed">
@@ -378,21 +378,21 @@ export function RegionalCatchingMap({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
               <Link
                 to={`/chickens/${activeTown.id}`}
-                className="group relative inline-flex items-center justify-between bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-mono text-xs font-semibold px-4 py-2.5 rounded-md transition-all duration-150 shadow-xs no-underline"
+                className="group relative inline-flex items-center justify-between bg-brand-orange hover:bg-brand-ivory active:scale-[0.98] text-brand-obsidian font-mono text-xs font-semibold px-4 py-2.5 rounded-md transition-all duration-150 shadow-xs no-underline"
               >
                 <span>{activeTown.name} Chickens</span>
                 <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
-                  <ArrowRight className="w-3 h-3 text-white" />
+                  <ArrowRight className="w-3 h-3 text-brand-obsidian" />
                 </div>
               </Link>
 
               <Link
                 to={`/turkeys/${activeTown.id}`}
-                className="group relative inline-flex items-center justify-between bg-slate-900 hover:bg-slate-800 active:scale-[0.98] text-white font-mono text-xs font-semibold px-4 py-2.5 rounded-md transition-all duration-150 shadow-xs no-underline"
+                className="group relative inline-flex items-center justify-between border border-brand-border bg-brand-ivory hover:bg-brand-orange active:scale-[0.98] text-brand-obsidian font-mono text-xs font-semibold px-4 py-2.5 rounded-md transition-all duration-150 shadow-xs no-underline"
               >
                 <span>{activeTown.name} Turkeys</span>
                 <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
-                  <ArrowUpRight className="w-3 h-3 text-white" />
+                  <ArrowUpRight className="w-3 h-3 text-brand-obsidian" />
                 </div>
               </Link>
             </div>
@@ -416,7 +416,7 @@ export function RegionalCatchingMap({
                     onMouseLeave={() => setHoveredTown(null)}
                     className={`px-2.5 py-1 rounded-md text-xs font-mono transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-emerald-600 text-white font-semibold shadow-xs'
+                        ? 'bg-brand-orange text-brand-obsidian font-semibold shadow-xs'
                         : 'bg-white/80 text-slate-600 hover:bg-white hover:text-slate-900 shadow-2xs'
                     }`}
                   >
@@ -439,23 +439,23 @@ export function RegionalCatchingMap({
               <defs>
                 {/* Landmass Subtle Surface Gradient */}
                 <linearGradient id="ukLandGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#0F172A" stopOpacity="0.03" />
-                  <stop offset="50%" stopColor="#059669" stopOpacity="0.05" />
-                  <stop offset="100%" stopColor="#0F172A" stopOpacity="0.06" />
+                  <stop offset="0%" stopColor="#362F2B" stopOpacity="0.03" />
+                  <stop offset="50%" stopColor="#FF7605" stopOpacity="0.05" />
+                  <stop offset="100%" stopColor="#362F2B" stopOpacity="0.06" />
                 </linearGradient>
 
                 {/* Pulsing Radar Glow */}
                 <radialGradient id="activeRadarGlow2" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#10B981" stopOpacity="0.5" />
-                  <stop offset="50%" stopColor="#059669" stopOpacity="0.2" />
-                  <stop offset="100%" stopColor="#059669" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#FF7605" stopOpacity="0.5" />
+                  <stop offset="50%" stopColor="#FF7605" stopOpacity="0.2" />
+                  <stop offset="100%" stopColor="#FF7605" stopOpacity="0" />
                 </radialGradient>
 
                 {/* Transit Line Gradient */}
                 <linearGradient id="transitLineGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#059669" stopOpacity="0.15" />
-                  <stop offset="50%" stopColor="#059669" stopOpacity="0.35" />
-                  <stop offset="100%" stopColor="#059669" stopOpacity="0.15" />
+                  <stop offset="0%" stopColor="#FF7605" stopOpacity="0.15" />
+                  <stop offset="50%" stopColor="#FF7605" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#FF7605" stopOpacity="0.15" />
                 </linearGradient>
               </defs>
 
@@ -496,7 +496,7 @@ export function RegionalCatchingMap({
                       y1={fromTown.svgY}
                       x2={toTown.svgX}
                       y2={toTown.svgY}
-                      stroke={isRouteActive ? '#059669' : 'url(#transitLineGrad2)'}
+                      stroke={isRouteActive ? '#FF7605' : 'url(#transitLineGrad2)'}
                       strokeWidth={isRouteActive ? '1.0' : '0.45'}
                       strokeDasharray={isRouteActive ? 'none' : '1.5,2'}
                       className="transition-all duration-300"
@@ -548,7 +548,7 @@ export function RegionalCatchingMap({
                       cx={town.svgX}
                       cy={town.svgY}
                       r={isActive ? 3.8 : 2.2}
-                      fill={isActive ? '#059669' : '#0F172A'}
+                      fill={isActive ? '#FF7605' : '#362F2B'}
                       stroke="#FFFFFF"
                       strokeWidth={isActive ? 1.4 : 0.8}
                       className="transition-all duration-200"
@@ -567,7 +567,7 @@ export function RegionalCatchingMap({
                             width={town.name.length * 2.2 + 4}
                             height="4.6"
                             rx="1.2"
-                            fill="#0F172A"
+                            fill="#362F2B"
                             className="shadow-xs"
                           />
                         )}
@@ -592,13 +592,13 @@ export function RegionalCatchingMap({
             {/* Bottom Floating Telemetry Bar */}
             <div className="absolute bottom-1 right-2 flex items-center gap-4 text-[11px] font-mono text-slate-500 bg-white/85 backdrop-blur-md px-3.5 py-1.5 rounded-full ring-1 ring-black/[0.04] shadow-xs">
               <div className="flex items-center gap-1.5">
-                <Compass className="w-3 h-3 text-emerald-600" />
+                <Compass className="w-3 h-3 text-brand-obsidian" />
                 <span>UK Corridor</span>
               </div>
               <span className="text-slate-200">|</span>
               <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                <span className="text-emerald-700 font-medium">{activeTown.name}</span>
+                <span className="w-2 h-2 rounded-full bg-brand-orange" />
+                <span className="text-brand-obsidian font-medium">{activeTown.name}</span>
               </div>
             </div>
           </div>

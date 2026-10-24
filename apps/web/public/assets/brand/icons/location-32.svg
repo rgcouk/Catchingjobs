@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+<path transform="translate(0 0) scale(0.5 0.5) translate(0 0)" d="M17 9h29l8 11v15l-22 22-22-22v-15z" fill="#FF7605" stroke="#362F2B" stroke-width="2" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(0 0) scale(0.5 0.5) translate(0 0)" d="M24 20h16v15h-16z" fill="#FFFDF0" stroke="#362F2B" stroke-width="2" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(0 0) scale(0.5 0.5) translate(0 0)" d="M9 56h10m26 0h10" fill="#00000000" stroke="#362F2B" stroke-width="2" stroke-linecap="square" stroke-linejoin="bevel"/>
+</svg>
+

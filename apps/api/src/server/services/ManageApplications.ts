@@ -1,9 +1,20 @@
+import { serializable } from '../db-transaction.js';
+import { validateDocumentReferences } from '../integrations/document-references.js';
+import { EmailService, enqueueOnboardingEmails } from './EmailService.js';
+import { randomBytes } from 'node:crypto';
+import {
+  workerProfileSchema,
+  employmentApplicationSchema,
+  adminApplicationSchema,
+  paginationSchema,
+} from '@catchingjobs/shared/validation';
 import type { PrismaClient, Application } from '@prisma/client';
 import {
   DomainError,
   ApplicationNotFoundError,
   RightToWorkRequiredError,
   ValidationError,
+  ForbiddenError,
 } from './exceptions.js';
 
 export interface CreateDraftApplicationInput {
@@ -40,7 +51,7 @@ export class ManageApplications {
    */
   private generateRosterRef(sector: string): string {
     const normSector = sector.toLowerCase().includes('turk') ? 'TUR' : 'CHI';
-    const randDigits = Math.floor(1000 + Math.random() * 9000);
+    const randDigits = randomBytes(12).toString('hex').toUpperCase();
     return `PL-${normSector}-${randDigits}`;
   }
 
@@ -104,41 +115,8 @@ export class ManageApplications {
       minute: '2-digit',
     });
 
-    // 3. Check for existing active Draft to prevent duplicate entries / support resumption
-    if (cleanEmail || cleanPhone) {
-      const existingDraft = await this.prisma.application.findFirst({
-        where: {
-          status: 'Draft',
-          OR: [...(cleanEmail ? [{ email: cleanEmail }] : []), { phone: cleanPhone }],
-        },
-        orderBy: { createdAt: 'desc' },
-      });
-
-      if (existingDraft) {
-        const updated = await this.prisma.application.update({
-          where: { id: existingDraft.id },
-          data: {
-            name: cleanName,
-            town: cleanTown,
-            sector: cleanSector,
-            timestamp,
-          },
-        });
-        return this.toDTO(updated);
-      }
-    }
-
-    // 4. Generate unique collision-free roster reference
-    let rosterRef = this.generateRosterRef(cleanSector);
-    let attempts = 0;
-    while (attempts < 5) {
-      const collision = await this.prisma.application.findUnique({
-        where: { rosterRef },
-      });
-      if (!collision) break;
-      rosterRef = this.generateRosterRef(cleanSector);
-      attempts++;
-    }
+    // Public contact details do not prove ownership. Resume only after authenticated claiming.
+    const rosterRef = this.generateRosterRef(cleanSector);
 
     // 5. Persist Draft Application
     const application = await this.prisma.application.create({
@@ -174,48 +152,48 @@ export class ManageApplications {
     clerkUserId: string,
     userEmail?: string,
   ): Promise<ApplicationDTO> {
-    const application = await this.prisma.application.findUnique({
-      where: { rosterRef },
-    });
-
-    if (!application) {
-      throw new ApplicationNotFoundError();
-    }
-
-    // Upsert the user in database
-    await this.prisma.user.upsert({
-      where: { id: clerkUserId },
-      update: {
-        applicationId: application.id,
-        ...(userEmail ? { email: userEmail } : {}),
-      },
-      create: {
-        id: clerkUserId,
-        email: userEmail || application.email || `${clerkUserId}@placeholder.com`,
-        passwordHash: '',
-        role: 'WORKER',
-        applicationId: application.id,
-      },
-    });
-
-    // Update email on application if missing
-    if (!application.email && userEmail) {
-      const updated = await this.prisma.application.update({
-        where: { id: application.id },
-        data: { email: userEmail },
+    return serializable(this.prisma, async (tx) => {
+      const application = await tx.application.findUnique({
+        where: { rosterRef },
+        include: { user: { select: { id: true } } },
       });
-      return this.toDTO(updated);
-    }
-
-    return this.toDTO(application);
+      if (!application) throw new ApplicationNotFoundError();
+      if (
+        !userEmail ||
+        !application.email ||
+        application.email.trim().toLowerCase() !== userEmail.trim().toLowerCase()
+      ) {
+        throw new ForbiddenError('Application ownership could not be verified.');
+      }
+      if (application.user && application.user.id !== clerkUserId)
+        throw new ForbiddenError('Application is already linked.');
+      const existingUser = await tx.user.findUnique({ where: { id: clerkUserId } });
+      if (existingUser?.applicationId && existingUser.applicationId !== application.id)
+        throw new ForbiddenError('Account already has a linked application.');
+      if (application.status !== 'Draft' && application.user?.id !== clerkUserId)
+        throw new ForbiddenError('Application cannot be claimed.');
+      await tx.user.upsert({
+        where: { id: clerkUserId },
+        update: { applicationId: application.id, email: userEmail },
+        create: {
+          id: clerkUserId,
+          email: userEmail,
+          passwordHash: '',
+          role: 'WORKER',
+          applicationId: application.id,
+        },
+      });
+      return this.toDTO(application);
+    });
   }
 
   async getApplications(skip: number, take: number) {
+    ({ skip, take } = paginationSchema.parse({ skip, take }));
     const [applications, total] = await Promise.all([
       this.prisma.application.findMany({
         skip,
         take,
-        include: { user: true, jobPosting: true },
+        include: { user: { select: { id: true, email: true, role: true } }, jobPosting: true },
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.application.count(),
@@ -226,7 +204,7 @@ export class ManageApplications {
   async getApplication(id: number) {
     const application = await this.prisma.application.findUnique({
       where: { id },
-      include: { user: true, jobPosting: true },
+      include: { user: { select: { id: true, email: true, role: true } }, jobPosting: true },
     });
     if (!application) {
       throw new ApplicationNotFoundError();
@@ -235,30 +213,77 @@ export class ManageApplications {
   }
 
   async updateApplication(id: number, body: any) {
-    const { id: _id, createdAt, updatedAt, user, jobPosting, ...updateData } = body;
-
-    return this.prisma.application.update({
-      where: { id },
-      data: updateData,
-    });
+    const updateData = adminApplicationSchema.parse(body);
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await this.prisma.$transaction(
+          async (tx) => {
+            const previous = await tx.application.findUnique({ where: { id } });
+            if (!previous) throw new ApplicationNotFoundError();
+            const application = await tx.application.update({ where: { id }, data: updateData });
+            if (updateData.status && previous.status !== application.status && application.email) {
+              const mail = new EmailService(
+                tx,
+                `status:${id}:${application.status}:${application.updatedAt.toISOString()}`,
+              );
+              await mail.sendStatusChangeEmail(
+                {
+                  name: application.name,
+                  email: application.email,
+                  rosterRef: application.rosterRef,
+                  town: application.town,
+                  sector: application.sector,
+                },
+                application.status,
+              );
+            }
+            return application;
+          },
+          { isolationLevel: 'Serializable' },
+        );
+      } catch (error) {
+        if (
+          attempt < 2 &&
+          typeof error === 'object' &&
+          error !== null &&
+          'code' in error &&
+          error.code === 'P2034'
+        )
+          continue;
+        throw error;
+      }
+    }
   }
 
   async getAllApplicationsDesc() {
     return this.prisma.application.findMany({
+      take: 100,
       orderBy: { createdAt: 'desc' },
     });
   }
 
   async createApplication(body: any) {
+    const fields = adminApplicationSchema.parse(body);
+    if (!fields.name || !fields.phone || !fields.town || !fields.sector)
+      throw new ValidationError('Name, phone, town and sector are required.');
     return this.prisma.application.create({
-      data: body,
+      data: {
+        ...fields,
+        name: fields.name,
+        phone: fields.phone,
+        town: fields.town,
+        sector: fields.sector,
+        rosterRef: this.generateRosterRef(fields.sector),
+        shiftAvailability: fields.shiftAvailability || 'Any',
+        timestamp: new Date().toISOString(),
+      },
     });
   }
 
   async updateApplicationByRosterRef(rosterRef: string, body: any) {
     return this.prisma.application.update({
       where: { rosterRef },
-      data: body,
+      data: adminApplicationSchema.parse(body),
     });
   }
 
@@ -292,40 +317,65 @@ export class ManageApplications {
       );
     }
 
-    return this.prisma.application.update({
-      where: { id: user.applicationId },
-      data,
+    const fields = workerProfileSchema.parse(data);
+    if (
+      application.applicationFormVersion === 'jotform-v1' &&
+      fields.applicationFormVersion === null
+    )
+      throw new ValidationError('The application form version cannot be removed.');
+    if (!(await validateDocumentReferences(clerkUserId, fields)))
+      throw new ValidationError('Invalid document reference.');
+    const updated = await this.prisma.application.updateMany({
+      where: { id: user.applicationId, status: 'Draft' },
+      data: fields,
     });
+    if (!updated.count) throw new DomainError('Draft has already been submitted.', 409);
+    return this.prisma.application.findUniqueOrThrow({ where: { id: user.applicationId } });
   }
 
   /**
    * Submits the authenticated user's Draft Application, changing status to NEW
    */
   async submitMyDraftApplication(clerkUserId: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: clerkUserId },
-    });
-
-    if (!user || !user.applicationId) {
-      throw new ApplicationNotFoundError();
-    }
-
-    const application = await this.prisma.application.findUnique({
-      where: { id: user.applicationId },
-    });
-
-    if (!application || application.status !== 'Draft') {
-      throw new DomainError('Application is not in Draft status or does not exist', 400);
-    }
-
-    // Final update to set status to NEW
-    return this.prisma.application.update({
-      where: { id: user.applicationId },
-      data: {
-        status: 'NEW',
-        profileFormCompleted: true,
-        declarationSigned: true,
-      },
+    return serializable(this.prisma, async (tx) => {
+      const user = await tx.user.findUnique({ where: { id: clerkUserId } });
+      if (!user?.applicationId) throw new ApplicationNotFoundError();
+      const application = await tx.application.findUnique({ where: { id: user.applicationId } });
+      if (!application) throw new ApplicationNotFoundError();
+      if (application.status === 'NEW') {
+        await enqueueOnboardingEmails(tx, application);
+        return application;
+      }
+      if (application.status !== 'Draft')
+        throw new DomainError('Application is not in Draft status or does not exist', 409);
+      if (
+        !application.declarationSigned ||
+        !application.hasRightToWork ||
+        !application.name ||
+        !application.phone ||
+        !application.town
+      )
+        throw new ValidationError('Complete required details and declaration before submitting.');
+      const { success } = employmentApplicationSchema.safeParse(
+        Object.fromEntries(
+          Object.keys(workerProfileSchema.shape).map((key) => [
+            key,
+            application[key as keyof typeof application],
+          ]),
+        ),
+      );
+      if (!success)
+        throw new ValidationError(
+          'Complete the employment application details and declarations before submitting.',
+        );
+      const result = await tx.application.updateMany({
+        where: { id: application.id, status: 'Draft' },
+        data: { status: 'NEW', profileFormCompleted: true },
+      });
+      if (!result.count) throw new DomainError('Application changed; reload and retry.', 409);
+      const submitted = await tx.application.findUniqueOrThrow({ where: { id: application.id } });
+      await enqueueOnboardingEmails(tx, submitted);
+      return submitted;
     });
   }
 }

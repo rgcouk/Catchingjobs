@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<ellipse cx="31.999333025042688" cy="32.117554336226526" rx="11.526049818582814" ry="11.526049818582814" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<rect x="30.00624510885031" y="7" width="4.078440701479796" height="9.959381225099603" rx="0" fill="#FF7605" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<rect x="30.00624510885031" y="47.15745055492317" width="4.078440701479796" height="9.842549445076838" rx="0" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<rect x="8.187271005264652" y="30.546550405520776" width="8.927126316163916" height="4.027750604723962" rx="0" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<rect x="46.88560267857143" y="30.546550405520776" width="8.927126316163916" height="4.027750604723962" rx="0" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(13.360551099174724 13.926646094194652)" d="M0 2.544l2.464-2.544 5.944 5.976-2.56 2.6-5.848-6.032z" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(41.20453231715993 41.17479635031304)" d="M0 2.536l2.576-2.536 5.96 5.96-2.56 2.56-5.976-5.984z" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(41.320141309760956 13.926646094194652)" d="M5.872 0l2.56 2.544-5.88 6.032-2.552-2.6 5.872-5.976z" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(13.360551099174724 41.17479635031304)" d="M5.936 0l2.552 2.536-5.96 5.984-2.528-2.56 5.936-5.96z" fill="#FFFDF0" stroke="#362F2B" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel"/>
+</svg>
+

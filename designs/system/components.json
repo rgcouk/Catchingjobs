@@ -1,0 +1,593 @@
+{
+  "source": "designs/refined-catchingjobs.pen",
+  "extractedAt": "2026-10-16",
+  "note": "Current means available for design reuse, not implemented or functionally tested. 26B state examples include local instance overrides. Do not use legacy-reference masters for new work.",
+  "boards": {
+    "start": "lyuNM",
+    "foundations": "iLHQu",
+    "controls": "Y4sQm",
+    "page-patterns": "qiaDD",
+    "illustrations": "OwNNo",
+    "icons-motion": "q8yza",
+    "operations": "L2zCmt",
+    "homepage-heroes": "oKbf2"
+  },
+  "components": [
+    {
+      "id": "OXscf",
+      "name": "Brand icon / Home pickup",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "iehni",
+      "name": "Brand icon / Weekly pay",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "LkfjF",
+      "name": "Brand icon / No CV needed",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "oiQrN",
+      "name": "Brand icon / PPE provided",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "FydxL",
+      "name": "Brand icon / Chicken",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "Pw0KA",
+      "name": "Brand icon / Turkey",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "mU3Rg",
+      "name": "Brand icon / Locations",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "L8mciD",
+      "name": "Brand icon / Team",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "M8DfdF",
+      "name": "Brand icon / Verified",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "PLZ33",
+      "name": "Button / brand",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "lvkn2",
+      "name": "Button / secondary",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "m2UNt",
+      "name": "Button / outline",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "ta4jZ",
+      "name": "Field / text",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "IbLvZ",
+      "name": "Field / select",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "TAiEd",
+      "name": "Control / checkbox",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "XQ61Q",
+      "name": "Alert / error",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "kXGcA",
+      "name": "Alert / success",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "PA967",
+      "name": "Card / job vacancy",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "HmfKi",
+      "name": "Card / region",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "EfT8H",
+      "name": "Badge / status",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "V1LVu",
+      "name": "Tab / filter",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "bcoyE",
+      "name": "Card / metric",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "oDWyz",
+      "name": "Card / application",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "h2LQN9",
+      "name": "Row / onboarding task",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "x0lRT",
+      "name": "Table / applicant row",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "SB3Fv",
+      "name": "Header / other pages white",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "QfYU2",
+      "name": "Menu / homepage orange dropdown",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "DQWtt",
+      "name": "Menu / Homepage",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "GuyOG",
+      "name": "Menu / Other pages",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "gK8FP",
+      "name": "Hero / sector",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "t6P4j",
+      "name": "Hero / corporate",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "O5VeB",
+      "name": "Hero / directory",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "r1cj0E",
+      "name": "Hero / locations",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "frRXc",
+      "name": "Hero / regional with triage",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "wIEw5",
+      "name": "Form / quick apply",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "FpcuZ",
+      "name": "Shell / admin",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "QQtjx",
+      "name": "Sidebar / operations",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "a5NcDB",
+      "name": "Header / app page",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "bYSPX",
+      "name": "Table / applicants",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "nF8bM",
+      "name": "Dialog / email verification",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "d0Tks",
+      "name": "Dialog / application inspector",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "h9EB4",
+      "name": "Field / document upload",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "p2mWd",
+      "name": "State / Empty",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "Xe5dS",
+      "name": "State / Error",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "GoSJ2",
+      "name": "State / Loading",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "Q1004P",
+      "name": "Footer / public",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "OWCBH",
+      "name": "Shell / authentication",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "Dmd5v",
+      "name": "Form / login",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "rgEl7",
+      "name": "Header / employee portal",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "Q7596G",
+      "name": "Header / job details",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "rKwPR",
+      "name": "Card / sector Chicken",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "j8JuBi",
+      "name": "Card / sector Turkey",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "b7qkc",
+      "name": "Map / coverage legend",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "G1jPNm",
+      "name": "Kanban / application workflow",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "g4kA3",
+      "name": "Menu / actions",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "Q0ZpLw",
+      "name": "Accordion / disclosure",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "o824qt",
+      "name": "Control / toggle",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "bW3EA",
+      "name": "Pagination",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "W9GTp",
+      "name": "Breadcrumb / public",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "xEtUV",
+      "name": "Home pickup",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "xDLuJ",
+      "name": "Working together",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "WpPwp",
+      "name": "Poultry divisions",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "PFr1p",
+      "name": "Pickup / minimal",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "OSUwj",
+      "name": "Team / minimal",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "vrnwl",
+      "name": "Divisions / minimal",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "lNi6w",
+      "name": "Illustration / hand-drawn pickup",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "C82Ud",
+      "name": "Illustration / hand-drawn team",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "DhARr",
+      "name": "Header / homepage orange",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "oxAf8",
+      "name": "Hero / homepage split",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "bB8nF",
+      "name": "Header / homepage mobile orange",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "ywFD0",
+      "name": "Hero / homepage stacked",
+      "status": "legacy-reference",
+      "kind": "component"
+    },
+    {
+      "id": "u2BlGz",
+      "name": "Brand icon refined / pickup / 64",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "B95jt",
+      "name": "Brand icon refined / pickup / 32",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "MbkW1",
+      "name": "Brand icon refined / pay / 64",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "uqZrG",
+      "name": "Brand icon refined / pay / 32",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "cFxxZ",
+      "name": "Brand icon refined / noCV / 64",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "x9fWQ",
+      "name": "Brand icon refined / noCV / 32",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "E83dLJ",
+      "name": "Brand icon refined / PPE / 64",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "cvQTl",
+      "name": "Brand icon refined / PPE / 32",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "URL56",
+      "name": "Brand icon refined / chicken / 64",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "DAt7w",
+      "name": "Brand icon refined / chicken / 32",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "bm5bq",
+      "name": "Brand icon refined / turkey / 64",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "PEbn6",
+      "name": "Brand icon refined / turkey / 32",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "IAkhP",
+      "name": "Brand icon refined / locations / 64",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "mTb4h",
+      "name": "Brand icon refined / locations / 32",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "msZ8S",
+      "name": "Brand icon refined / team / 64",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "VluIE",
+      "name": "Brand icon refined / team / 32",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "PAG2f",
+      "name": "Brand icon refined / verified / 64",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "u2Fqi",
+      "name": "Brand icon refined / verified / 32",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "MdJt3",
+      "name": "Logo lockup / Orange homepage",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "D3Uva",
+      "name": "Logo lockup / White internal pages",
+      "status": "current",
+      "kind": "component"
+    },
+    {
+      "id": "mdpuY",
+      "name": "Illustration / Home pickup / vector",
+      "status": "current",
+      "kind": "illustration"
+    },
+    {
+      "id": "nnALV",
+      "name": "Illustration / The catching crew / vector",
+      "status": "current",
+      "kind": "illustration"
+    },
+    {
+      "id": "m1XTKC",
+      "name": "Illustration / Friday payday / vector",
+      "status": "current",
+      "kind": "illustration"
+    },
+    {
+      "id": "OfIS9",
+      "name": "Hero / Home pickup / desktop / vector",
+      "status": "current",
+      "kind": "hero"
+    },
+    {
+      "id": "p2aGuj",
+      "name": "Hero / Home pickup / mobile / vector",
+      "status": "current",
+      "kind": "hero"
+    }
+  ]
+}

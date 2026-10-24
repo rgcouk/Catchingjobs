@@ -14,7 +14,7 @@ app.get('/api/locations', async (c) => {
     });
     return c.json(locations);
   } catch (error) {
-    console.error('Failed to fetch locations from DB, falling back to static data:', error);
+    console.error('Failed to fetch locations from DB, falling back to static data:');
     // Dynamic import to avoid bundling issues if called standalone
     const { getAllRegionsWithTowns } = await import('@catchingjobs/shared');
     return c.json(getAllRegionsWithTowns());

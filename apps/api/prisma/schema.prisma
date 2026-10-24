@@ -8,110 +8,131 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 model Application {
-  id                    Int      @id @default(autoincrement())
-  rosterRef             String   @unique
-  name                  String
-  email                 String?
-  phone                 String
-  town                  String
-  hasRightToWork        Boolean?
-  hasDrivingLicense     Boolean?
-  hasForkliftLicense    Boolean?
-  poultryExperience     String?
-  shiftAvailability     String
-  authProvider          String?
-  avatarUrl             String?
-  sector                String
-  timestamp             String
-  contacted             Boolean  @default(false)
-  safetyResourcesSent   Boolean  @default(false)
-  safetyTasksCompleted  Boolean  @default(false)
-  status                String   @default("NEW")
-  
+  id                   Int      @id @default(autoincrement())
+  rosterRef            String   @unique
+  name                 String
+  email                String?
+  phone                String
+  town                 String
+  hasRightToWork       Boolean?
+  hasDrivingLicense    Boolean?
+  hasForkliftLicense   Boolean?
+  poultryExperience    String?
+  shiftAvailability    String
+  authProvider         String?
+  avatarUrl            String?
+  sector               String
+  timestamp            String
+  contacted            Boolean  @default(false)
+  safetyResourcesSent  Boolean  @default(false)
+  safetyTasksCompleted Boolean  @default(false)
+  status               String   @default("NEW")
+
   // Compliance details
-  dateOfBirth           String?
-  niNumber              String?
-  addressLine1          String?
-  postcode              String?
-  emergencyName         String?
-  emergencyPhone        String?
-  emergencyRelation     String?
-  bankName              String?
-  bankAccountName       String?
-  bankAccountNumber     String?
-  bankSortCode          String?
-  hasAsthmaOrAllergies  Boolean?
-  hasBackIssues         Boolean?
-  isFitToLift           Boolean?
-  declarationSigned     Boolean  @default(false)
-  profileFormCompleted  Boolean  @default(false)
+  dateOfBirth          String?
+  niNumber             String?
+  addressLine1         String?
+  postcode             String?
+  emergencyName        String?
+  emergencyPhone       String?
+  emergencyRelation    String?
+  bankName             String?
+  bankAccountName      String?
+  bankAccountNumber    String?
+  bankSortCode         String?
+  hasAsthmaOrAllergies Boolean?
+  hasBackIssues        Boolean?
+  isFitToLift          Boolean?
+  declarationSigned    Boolean  @default(false)
+  profileFormCompleted Boolean  @default(false)
 
   // Relationships
-  jobPostingId          Int?
-  jobPosting            JobPosting? @relation(fields: [jobPostingId], references: [id])
-  user                  User?
+  jobPostingId Int?
+  jobPosting   JobPosting? @relation(fields: [jobPostingId], references: [id])
+  user         User?
 
   // Employment Application Form Fields
-  employmentHistory Json?     // Array of past employers
-  education         Json?     // Array of educational qualifications
-  references        Json?     // Array of reference details
-  
+  privacyNoticeVersion     String?
+  applicationFormVersion   String?
+  positionAppliedFor       String?
+  vacancySource            String?
+  addressLine2             String?
+  city                     String?
+  county                   String?
+  currentlyEmployed        Boolean?
+  noticePeriod             String?
+  poultryExperienceDetails String?
+  pendingCharges           Boolean?
+  pendingChargesDetail     String?
+  convictionHistory        Json?
+  socialMediaSignature     String?
+  socialMediaSignedDate    String?
+  declarationSignature     String?
+  declarationSignedDate    String?
+  employmentHistory        Json? // Array of past employers
+  education                Json? // Array of educational qualifications
+  references               Json? // Array of reference details
+
   // Right to Work & Checks
-  rightToWorkUK       Boolean?
-  restrictionsOnWork  Boolean?
-  restrictionsDetail  String?
-  abusedPosition      Boolean?
-  abusedPositionDetail String?
+  rightToWorkUK         Boolean?
+  restrictionsOnWork    Boolean?
+  restrictionsDetail    String?
+  abusedPosition        Boolean?
+  abusedPositionDetail  String?
   reasonableAdjustments Boolean?
-  adjustmentsDetail   String?
-  
+  adjustmentsDetail     String?
+
   // Criminal Convictions
   hasConvictions      Boolean?
   criminalConvictions String?
-  
-  // Compliance & Documents
-  idDocumentUri       String?
-  proofOfAddressUri   String?
-  signatureImage      String? // Base64 or URI of e-signature
-  socialMediaConsent  Boolean?
-  privacyPolicyConsent Boolean?
-  notes               String?
 
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  // Compliance & Documents
+  idDocumentUri        String?
+  proofOfAddressUri    String?
+  signatureImage       String? // Base64 or URI of e-signature
+  socialMediaConsent   Boolean?
+  privacyPolicyConsent Boolean?
+  notes                String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@index([phone])
 }
 
 model User {
-  id             String    @id
-  email          String    @unique
-  passwordHash   String
-  role           String    @default("WORKER") // "ADMIN" or "WORKER"
-  
+  id           String @id
+  email        String @unique
+  passwordHash String
+  role         String @default("WORKER") // "ADMIN" or "WORKER"
+
   // Link to their application/compliance data
-  applicationId  Int?      @unique
-  application    Application? @relation(fields: [applicationId], references: [id])
-  
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  applicationId Int?         @unique
+  application   Application? @relation(fields: [applicationId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Region {
-  id            String    @id
-  name          String
-  county        String
-  activeCrews   Int       @default(0)
-  seoCopy       String
-  description   String?
-  phoneNumber   String?
-  towns         Town[]
+  id          String  @id
+  name        String
+  county      String
+  activeCrews Int     @default(0)
+  seoCopy     String
+  description String?
+  phoneNumber String?
+  towns       Town[]
 }
 
 model Town {
-  id            String    @id
+  id            String  @id
   name          String
   pickupPoint   String
   surrounding   String
@@ -119,28 +140,31 @@ model Town {
   description   String?
   phoneNumber   String?
   regionId      String
-  region        Region    @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  region        Region  @relation(fields: [regionId], references: [id], onDelete: Cascade)
 }
 
 model JobPosting {
-  id            Int       @id @default(autoincrement())
-  title         String
-  sector        String
-  townId        String
-  description   String
-  payRate       String
-  status        String    @default("ACTIVE")
-  
-  applications  Application[]
-  
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id          Int    @id @default(autoincrement())
+  title       String
+  sector      String
+  townId      String
+  description String
+  payRate     String
+  status      String @default("ACTIVE")
+
+  applications Application[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, townId])
+  @@index([sector, createdAt])
 }
 
 model Resource {
   id          Int      @id @default(autoincrement())
   title       String
-  type        String   // e.g., "VIDEO", "PDF", "LINK"
+  type        String // e.g., "VIDEO", "PDF", "LINK"
   url         String
   description String?
   createdAt   DateTime @default(now())
@@ -153,7 +177,7 @@ model EmailLog {
   recipientName String?
   subject       String
   template      String    @default("custom") // "receipt", "alert", "status_change", "invitation", "campaign", "custom", "test"
-  status        String    @default("SENT")   // "SENT", "DELIVERED", "OPENED", "CLICKED", "BOUNCED", "COMPLAINED", "FAILED", "MOCKED"
+  status        String    @default("SENT") // "SENT", "DELIVERED", "OPENED", "CLICKED", "BOUNCED", "COMPLAINED", "FAILED", "MOCKED"
   resendId      String?
   bodySnippet   String?
   deliveredAt   DateTime?
@@ -167,4 +191,44 @@ model EmailLog {
   @@index([recipient])
   @@index([status])
   @@index([resendId])
+}
+
+model EmailOutbox {
+  id             String    @id @default(cuid())
+  dedupeKey      String?   @unique
+  recipient      String
+  recipientName  String?
+  subject        String
+  html           String
+  template       String
+  metadata       Json?
+  status         String    @default("PENDING")
+  attempts       Int       @default(0)
+  availableAt    DateTime  @default(now())
+  firstAttemptAt DateTime?
+  lockedAt       DateTime?
+  lockToken      String?
+  providerId     String?
+  lastError      String?
+  createdAt      DateTime  @default(now())
+  sentAt         DateTime?
+
+  @@index([status, availableAt])
+}
+
+model PrivateDocument {
+  id          String   @id @default(cuid())
+  ownerId     String
+  pathname    String   @unique
+  contentType String
+  size        Int
+  createdAt   DateTime @default(now())
+
+  @@index([ownerId])
+}
+
+model WebhookEvent {
+  id        String   @id
+  provider  String
+  createdAt DateTime @default(now())
 }

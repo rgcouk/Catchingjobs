@@ -2,18 +2,30 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-
-import React, { useState, useEffect } from 'react';
-import { useSignIn, useSignUp } from '@clerk/clerk-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSignIn, useSignUp, useClerk } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router';
-import { ShieldCheck, Loader2, AlertCircle, X, Phone, Mail } from 'lucide-react';
-import { TriageFormData } from './HeroTriageForm';
+import { ShieldCheck, Loader2, AlertCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import type { TriageFormData } from './HeroTriageForm';
 
 interface PasswordlessOTPModalProps {
   isOpen: boolean;
   onClose: () => void;
   formData: TriageFormData;
   draftApplication: { id: number; rosterRef: string } | null;
+}
+
+type ClerkError = {
+  errors?: { code?: string; longMessage?: string; message?: string }[];
+  message?: string;
+};
+function errorText(error: unknown, fallback: string) {
+  const detail = (error || {}) as ClerkError;
+  if (detail.errors?.[0]?.code?.includes('expired')) {
+    return 'This code has expired. Request a new code and try again.';
+  }
+  return detail.errors?.[0]?.longMessage || detail.message || fallback;
 }
 
 export default function PasswordlessOTPModal({
@@ -23,322 +35,349 @@ export default function PasswordlessOTPModal({
   draftApplication,
 }: PasswordlessOTPModalProps) {
   const navigate = useNavigate();
-  const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
-  const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
-
-  const [otpCode, setOtpCode] = useState<string>('');
-  const [strategy, setStrategy] = useState<'email_code' | 'phone_code'>('email_code');
-  const [isExistingUser, setIsExistingUser] = useState<boolean>(false);
-  const [isInitializing, setIsInitializing] = useState<boolean>(false);
-  const [isVerifying, setIsVerifying] = useState<boolean>(false);
-  const [isResending, setIsResending] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [countdown, setCountdown] = useState<number>(30);
-  const hasInitialized = React.useRef(false);
-
-  // Countdown timer for code resend
+  const returnFocus = useRef<HTMLElement | null>(
+    typeof document === 'undefined' ? null : (document.activeElement as HTMLElement | null),
+  );
+  const clerk = useClerk();
+  const signup = useSignUp();
+  const signin = useSignIn();
+  // Clerk resource identities can change during their own operations.
+  const resources = useRef({ signup, signin, clerk });
   useEffect(() => {
-    if (countdown <= 0) return;
-    const timer = setInterval(() => setCountdown((c) => c - 1), 1000);
-    return () => clearInterval(timer);
-  }, [countdown]);
-
-  // Initiate Clerk Passwordless flow when modal opens
+    resources.current = { signup, signin, clerk };
+  });
+  const [otpCode, setOtpCode] = useState('');
+  const [hasVerifiedSession, setHasVerifiedSession] = useState(false);
+  const [phase, setPhase] = useState<
+    'sending' | 'ready' | 'send-error' | 'verifying' | 'resending'
+  >('sending');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [notice, setNotice] = useState('');
+  const [countdown, setCountdown] = useState(0);
+  const [attempt, setAttempt] = useState(0);
+  const generation = useRef(0);
+  const busy = useRef(false);
+  const existingUser = useRef(false);
+  const verifiedSession = useRef<string | null>(null);
+  const claimController = useRef<AbortController | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const email = formData.email;
+  const rosterRef = draftApplication?.rosterRef;
+  const applicantName = useRef(formData.name);
   useEffect(() => {
-    if (!isOpen || !formData.email) {
-      hasInitialized.current = false;
-      setIsInitializing(false);
-      return;
-    }
+    applicantName.current = formData.name;
+  }, [formData.name]);
 
-    async function initClerkOtp() {
-      if (!isSignUpLoaded || !isSignInLoaded) return;
-      if (hasInitialized.current) return;
-      hasInitialized.current = true;
-      setIsInitializing(true);
-      setErrorMessage('');
+  useEffect(() => {
+    if (!isOpen || countdown <= 0) return;
+    const timer = setTimeout(() => setCountdown((value) => Math.max(0, value - 1)), 1000);
+    return () => clearTimeout(timer);
+  }, [isOpen, countdown]);
 
-      try {
-        const nameParts = formData.name ? formData.name.trim().split(/\s+/) : ['Applicant'];
-        const firstName = nameParts[0] || 'Applicant';
-        const lastName = nameParts.slice(1).join(' ') || 'Candidate';
-
-        const initTask = async () => {
-          // 1. Attempt Sign-Up with Email
-          try {
-            if (signUp) {
-              await signUp.create({
-                emailAddress: formData.email,
-                firstName,
-                lastName,
-              });
-
-              await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-              setStrategy('email_code');
-              setIsExistingUser(false);
-              setCountdown(30);
-            }
-          } catch (signUpErr: any) {
-            // If user already exists in Clerk, switch to Sign-In OTP
-            if (
-              signUpErr.errors?.[0]?.code === 'form_identifier_exists' ||
-              signUpErr.errors?.[0]?.message?.includes('already exists')
-            ) {
-              if (signIn) {
-                const signInAttempt = await signIn.create({ identifier: formData.email });
-                const emailFactor = signInAttempt.supportedFirstFactors?.find(
-                  (f: any) => f.strategy === 'email_code',
-                );
-
-                if (emailFactor && 'emailAddressId' in emailFactor) {
-                  await signIn.prepareFirstFactor({
-                    strategy: 'email_code',
-                    emailAddressId: emailFactor.emailAddressId as string,
-                  });
-                  setStrategy('email_code');
-                  setIsExistingUser(true);
-                  setCountdown(30);
-                }
-              }
-            } else {
-              console.warn('Clerk SignUp initialization warning:', signUpErr);
-            }
-          }
-        };
-
-        // Run with a 3-second safety timeout
-        await Promise.race([
-          initTask(),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Clerk init timeout')), 3000),
-          ),
-        ]);
-      } catch (err: any) {
-        console.warn('Clerk OTP init notice:', err);
-      } finally {
-        setIsInitializing(false);
-      }
-    }
-
-    initClerkOtp();
-  }, [isOpen, isSignUpLoaded, isSignInLoaded, formData.email, formData.name, signUp, signIn]);
-
-  // Verify entered 6-digit code
-  const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!otpCode || otpCode.length < 6) {
-      setErrorMessage('Please enter the full 6-digit verification code.');
-      return;
-    }
-
-    setIsVerifying(true);
+  useEffect(() => {
+    const current = ++generation.current;
+    verifiedSession.current = null;
+    setHasVerifiedSession(false);
+    existingUser.current = false;
+    busy.current = false;
+    setOtpCode('');
     setErrorMessage('');
-
-    try {
-      let createdSessionId: string | null = null;
-
-      try {
-        if (!isExistingUser && signUp) {
-          if (strategy === 'email_code') {
-            const res = await signUp.attemptEmailAddressVerification({ code: otpCode.trim() });
-            if (res.status === 'complete') createdSessionId = res.createdSessionId;
-          } else {
-            const res = await signUp.attemptPhoneNumberVerification({ code: otpCode.trim() });
-            if (res.status === 'complete') createdSessionId = res.createdSessionId;
-          }
-          if (createdSessionId && setSignUpActive) {
-            await setSignUpActive({ session: createdSessionId });
-          }
-        } else if (signIn) {
-          const res = await signIn.attemptFirstFactor({
-            strategy,
-            code: otpCode.trim(),
-          });
-          if (res.status === 'complete') createdSessionId = res.createdSessionId;
-          if (createdSessionId && setSignInActive) {
-            await setSignInActive({ session: createdSessionId });
-          }
-        }
-      } catch (clerkErr: any) {
-        console.warn('Clerk verification call:', clerkErr);
-        // If testing without full Clerk backend, check if mock code is provided
-        if (otpCode.trim().length === 6) {
-          createdSessionId = 'mock_session_id';
-        } else {
-          throw clerkErr;
-        }
-      }
-
-      // Link user to draft application
-      if (draftApplication?.rosterRef) {
+    setNotice('');
+    setCountdown(0);
+    setPhase('sending');
+    const active = () => generation.current === current;
+    if (isOpen && signup.isLoaded && signin.isLoaded) {
+      busy.current = true;
+      void (async () => {
         try {
-          await fetch('/api/triage/claim', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              rosterRef: draftApplication.rosterRef,
-              email: formData.email,
-            }),
-          });
-        } catch (claimErr) {
-          console.warn('Claim draft linkage notice:', claimErr);
+          const { signUp } = resources.current.signup;
+          const { signIn } = resources.current.signin;
+          if (!rosterRef)
+            throw new Error(
+              'Your application reference is missing. Close this window and save your application details again.',
+            );
+          if (!email || !signUp || !signIn)
+            throw new Error('Verification is unavailable. Please try again.');
+          const [firstName = 'Applicant', ...last] = (applicantName.current || 'Applicant')
+            .trim()
+            .split(/\s+/);
+          try {
+            await signUp.create({
+              emailAddress: email,
+              firstName,
+              lastName: last.join(' ') || 'Candidate',
+            });
+            if (!active()) return;
+            await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+          } catch (error) {
+            if (!active()) return;
+            const detail = (error || {}) as ClerkError;
+            if (detail.errors?.[0]?.code !== 'form_identifier_exists') throw error;
+            existingUser.current = true;
+            const result = await signIn.create({ identifier: email });
+            if (!active()) return;
+            const factor = result.supportedFirstFactors?.find(
+              (item) => item.strategy === 'email_code',
+            );
+            if (!factor || !('emailAddressId' in factor))
+              throw new Error(
+                'Email verification is unavailable for this account. Please use Log in or contact us for help.',
+                { cause: error },
+              );
+            await signIn.prepareFirstFactor({
+              strategy: 'email_code',
+              emailAddressId: factor.emailAddressId,
+            });
+          }
+          if (!active()) return;
+          setCountdown(30);
+          setPhase('ready');
+          setNotice('Code sent. Check your inbox and spam folder.');
+        } catch (error) {
+          if (!active()) return;
+          setErrorMessage(errorText(error, 'Unable to send your code. Please try again.'));
+          setPhase('send-error');
+        } finally {
+          if (active()) busy.current = false;
         }
-      }
-
-      // Successful OTP verification -> route to wizard
-      onClose();
-      navigate('/employee?wizard=active');
-    } catch (err: any) {
-      console.error('Clerk OTP attempt error:', err);
-      setErrorMessage(
-        err.errors?.[0]?.longMessage ||
-          err.message ||
-          'Invalid verification code. Please check and re-enter.',
-      );
-    } finally {
-      setIsVerifying(false);
+      })();
     }
-  };
+    return () => {
+      generation.current = current + 1;
+      claimController.current?.abort();
+    };
+  }, [isOpen, email, rosterRef, signup.isLoaded, signin.isLoaded, attempt]);
 
-  // Resend code action
-  const handleResend = async () => {
-    if (countdown > 0) return;
-    setIsResending(true);
+  useEffect(() => {
+    if (phase === 'ready') inputRef.current?.focus();
+  }, [phase]);
+
+  function close() {
+    generation.current++;
+    claimController.current?.abort();
+    onClose();
+  }
+
+  async function handleVerify(event: React.FormEvent) {
+    event.preventDefault();
+    if (busy.current || phase !== 'ready' || (!hasVerifiedSession && !/^\d{6}$/.test(otpCode)))
+      return;
+    busy.current = true;
+    const current = generation.current;
+    const active = () => generation.current === current;
+    setPhase('verifying');
     setErrorMessage('');
-
     try {
-      if (!isExistingUser && signUp) {
-        await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-      } else if (signIn) {
-        const signInAttempt = await signIn.create({ identifier: formData.email });
-        const emailFactor = signInAttempt.supportedFirstFactors?.find(
-          (f: any) => f.strategy === 'email_code',
-        );
-        if (emailFactor && 'emailAddressId' in emailFactor) {
-          await signIn.prepareFirstFactor({
-            strategy: 'email_code',
-            emailAddressId: emailFactor.emailAddressId as string,
-          });
-        }
+      const { signup: up, signin: into } = resources.current;
+      let session = verifiedSession.current;
+      if (!session) {
+        const result = existingUser.current
+          ? await into.signIn?.attemptFirstFactor({ strategy: 'email_code', code: otpCode })
+          : await up.signUp?.attemptEmailAddressVerification({ code: otpCode });
+        if (!active()) return;
+        if (result?.status !== 'complete' || !result.createdSessionId)
+          throw new Error('Verification is incomplete. Please check your code and try again.');
+        session = result.createdSessionId;
+        verifiedSession.current = session;
+        setHasVerifiedSession(true);
       }
-      setCountdown(30);
-    } catch (err: any) {
-      console.error('Failed to resend code:', err);
-      setErrorMessage(err.errors?.[0]?.longMessage || 'Failed to resend code.');
+      const activate = existingUser.current ? into.setActive : up.setActive;
+      if (!activate) throw new Error('Your session is not ready. Please try again.');
+      await activate({ session });
+      if (!active()) return;
+      const token = await resources.current.clerk.session?.getToken();
+      if (!active()) return;
+      if (!token) throw new Error('Your session is not ready. Please try again.');
+      if (rosterRef) {
+        const controller = new AbortController();
+        claimController.current = controller;
+        const result = await fetch('/api/triage/claim', {
+          method: 'POST',
+          signal: controller.signal,
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ rosterRef, email }),
+        });
+        if (!active()) return;
+        if (!result.ok) throw new Error('Unable to link your application. Please try again.');
+      }
+      if (!active()) return;
+      close();
+      navigate('/employee?wizard=active');
+    } catch (error) {
+      if (active()) setErrorMessage(errorText(error, 'Unable to verify. Please try again.'));
     } finally {
-      setIsResending(false);
+      if (active()) {
+        busy.current = false;
+        setPhase('ready');
+      }
     }
-  };
+  }
 
-  if (!isOpen) return null;
+  async function handleResend() {
+    if (busy.current || countdown > 0 || verifiedSession.current) return;
+    busy.current = true;
+    const current = generation.current;
+    const active = () => generation.current === current;
+    setPhase('resending');
+    setErrorMessage('');
+    setNotice('');
+    try {
+      const { signup: up, signin: into } = resources.current;
+      if (existingUser.current) {
+        const result = await into.signIn?.create({ identifier: email });
+        if (!active()) return;
+        const factor = result?.supportedFirstFactors?.find(
+          (item) => item.strategy === 'email_code',
+        );
+        if (!into.signIn || !factor || !('emailAddressId' in factor))
+          throw new Error('Email verification is unavailable. Please use Log in or contact us.');
+        await into.signIn.prepareFirstFactor({
+          strategy: 'email_code',
+          emailAddressId: factor.emailAddressId,
+        });
+      } else {
+        if (!up.signUp) throw new Error('Verification is unavailable. Please try again.');
+        await up.signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+      }
+      if (!active()) return;
+      setOtpCode('');
+      setCountdown(30);
+      setNotice('New code sent. Use the most recent email.');
+    } catch (error) {
+      if (active())
+        setErrorMessage(errorText(error, 'Unable to resend your code. Please try again.'));
+    } finally {
+      if (active()) {
+        busy.current = false;
+        setPhase('ready');
+      }
+    }
+  }
 
   return (
-    <div
-      data-testid="passwordless-otp-modal"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) close();
+      }}
     >
-      <div
-        data-testid="clerk-otp-container"
-        className="bg-[var(--color-paper)] text-[var(--color-ink)] border border-[var(--color-rule)] max-w-md w-full p-6 sm:p-8 shadow-2xl relative space-y-6"
+      <DialogContent
+        data-testid="passwordless-otp-modal"
+        className="w-[calc(100%-2rem)] max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl border-brand-border bg-white p-6 text-brand-obsidian sm:rounded-xl sm:p-8 [&>button:last-child]:top-1 [&>button:last-child]:right-1 [&>button:last-child]:size-11 [&>button:last-child]:inline-flex [&>button:last-child]:items-center [&>button:last-child]:justify-center [&>button:last-child]:focus:ring-brand-orange"
+        onPointerDownOutside={(event) => event.preventDefault()}
+        onCloseAutoFocus={(event) => {
+          if (returnFocus.current?.isConnected) {
+            event.preventDefault();
+            returnFocus.current.focus();
+          }
+        }}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-[var(--color-ink-2)] hover:text-[var(--color-ink)] p-1 transition-colors cursor-pointer"
-          aria-label="Close modal"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        {/* Header */}
-        <div data-testid="otp-verification-screen" className="space-y-2 text-center">
-          <div className="w-12 h-12 bg-[var(--color-paper-2)] border border-[var(--color-rule)] flex items-center justify-center mx-auto text-[var(--color-accent)]">
-            <ShieldCheck className="w-6 h-6" />
+        <div data-testid="clerk-otp-container" className="space-y-6">
+          <div data-testid="otp-verification-screen" className="space-y-3 text-center">
+            <ShieldCheck aria-hidden="true" className="mx-auto size-10 text-brand-orange" />
+            <DialogTitle className="font-display pr-8 text-2xl">
+              Verify Your Application
+            </DialogTitle>
+            <DialogDescription className="font-sans text-sm text-slate-600">
+              Your application draft is saved. Verify your email, then complete your details.{' '}
+              {phase === 'sending' ? 'Sending a code to ' : 'Email: '}
+              <strong className="break-all text-brand-obsidian">{email}</strong>.
+            </DialogDescription>
           </div>
-          <h3 className="font-display text-2xl text-[var(--color-ink)]">Verify Your Application</h3>
-          <p className="text-xs text-[var(--color-ink-2)] leading-relaxed max-w-xs mx-auto">
-            We sent a 6-digit verification code to{' '}
-            <strong className="text-[var(--color-ink)] font-mono">{formData.email}</strong>.
-          </p>
-          {draftApplication?.rosterRef && (
-            <div className="inline-block bg-[var(--color-paper-2)] border border-[var(--color-rule)] px-2.5 py-0.5 text-[10px] font-mono text-[var(--color-ink-2)]">
-              Draft Ref:{' '}
-              <span className="text-[var(--color-ink)] font-semibold">
-                {draftApplication.rosterRef}
-              </span>
+          {errorMessage && (
+            <div
+              role="alert"
+              id="otp-error"
+              data-testid="otp-error-message"
+              className="flex gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+            >
+              <AlertCircle aria-hidden="true" className="size-4 shrink-0" />
+              <span>{errorMessage}</span>
             </div>
           )}
-        </div>
-
-        {/* Loading Spinner during Clerk Initialization */}
-        {isInitializing ? (
-          <div className="py-8 text-center space-y-3">
-            <Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--color-accent)]" />
-            <p className="text-xs font-mono text-[var(--color-ink-2)]">
-              Dispatching secure verification code...
+          {phase === 'sending' ? (
+            <p role="status" className="flex items-center justify-center gap-2 text-sm">
+              <Loader2
+                aria-hidden="true"
+                className="size-4 animate-spin motion-reduce:animate-none"
+              />
+              Sending your verification code…
             </p>
-          </div>
-        ) : (
-          /* Code Input Form */
-          <form onSubmit={handleVerify} className="space-y-4">
-            {errorMessage && (
-              <div
-                data-testid="otp-error-message"
-                className="p-3 text-xs text-red-600 bg-red-50 border border-red-200 flex items-start gap-2"
-              >
-                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>{errorMessage}</span>
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <label className="text-xs font-mono uppercase tracking-wider text-[var(--color-ink-2)] block text-center">
-                Enter 6-Digit Code
+          ) : phase === 'send-error' ? (
+            <button
+              type="button"
+              className="min-h-11 w-full rounded-lg bg-brand-orange px-4 font-display font-bold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-obsidian"
+              onClick={() => setAttempt((value) => value + 1)}
+            >
+              Try sending code again
+            </button>
+          ) : (
+            <form onSubmit={handleVerify} className="space-y-4">
+              <label htmlFor="application-otp" className="block text-sm font-semibold">
+                6-digit verification code
               </label>
               <input
+                ref={inputRef}
+                id="application-otp"
                 name="code"
                 data-testid="otp-input"
                 type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]{6}"
                 maxLength={6}
-                autoFocus
-                placeholder="6-digit verification code"
                 value={otpCode}
-                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
-                className="w-full text-center tracking-[0.4em] text-2xl py-3 px-4 bg-[var(--color-paper-2)] border border-[var(--color-rule)] text-[var(--color-ink)] focus:outline-none focus:border-[var(--color-ink)] font-mono font-bold"
+                onChange={(event) => setOtpCode(event.target.value.replace(/\D/g, ''))}
+                disabled={phase !== 'ready' || hasVerifiedSession}
+                aria-invalid={!!errorMessage && !hasVerifiedSession}
+                aria-describedby={errorMessage ? 'otp-error' : undefined}
+                className="w-full rounded-lg border border-brand-border px-4 py-3 text-center font-sans text-2xl tracking-[.35em] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-orange disabled:opacity-60"
               />
-            </div>
-
-            <button
-              data-testid="btn-verify-otp"
-              type="submit"
-              disabled={isVerifying || otpCode.length < 6}
-              className="w-full bg-[var(--color-ink)] hover:bg-[var(--color-ink-2)] disabled:opacity-50 text-[var(--color-paper)] font-medium py-3 px-4 text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer shadow"
-            >
-              {isVerifying ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin text-[var(--color-accent)]" />
-                  <span>Verifying Session...</span>
-                </>
-              ) : (
-                <span>Confirm & Continue</span>
-              )}
-            </button>
-
-            {/* Resend and Fallback Controls */}
-            <div className="pt-3 border-t border-[var(--color-rule)] flex items-center justify-between text-xs font-mono">
               <button
-                type="button"
-                onClick={handleResend}
-                disabled={countdown > 0 || isResending}
-                className="text-[var(--color-ink-2)] hover:text-[var(--color-ink)] disabled:opacity-40 transition-colors cursor-pointer"
+                data-testid="btn-verify-otp"
+                type="submit"
+                disabled={phase !== 'ready' || (!hasVerifiedSession && otpCode.length !== 6)}
+                className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-brand-orange px-4 font-display font-bold disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-obsidian"
               >
-                {countdown > 0 ? `Resend in ${countdown}s` : 'Resend Code'}
+                {phase === 'verifying' ? (
+                  <>
+                    <Loader2
+                      aria-hidden="true"
+                      className="size-4 animate-spin motion-reduce:animate-none"
+                    />
+                    Confirming…
+                  </>
+                ) : hasVerifiedSession ? (
+                  'Retry & Continue'
+                ) : (
+                  'Confirm & Continue'
+                )}
               </button>
-              <span className="text-[10px] text-[var(--color-ink-2)]">Passwordless Auth</span>
-            </div>
-          </form>
-        )}
-      </div>
-    </div>
+              {!hasVerifiedSession && (
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={countdown > 0 || phase !== 'ready'}
+                  className="min-h-11 text-sm font-semibold underline underline-offset-4 disabled:no-underline disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-obsidian"
+                >
+                  {phase === 'resending'
+                    ? 'Sending new code…'
+                    : countdown > 0
+                      ? `Resend in ${countdown}s`
+                      : 'Resend Code'}
+                </button>
+              )}
+              <p role="status" className="text-sm text-slate-600">
+                {notice}
+              </p>
+            </form>
+          )}
+          <p className="text-xs text-slate-600">
+            Closing this window keeps your entered application details. Your application is not
+            complete until you finish onboarding.
+          </p>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

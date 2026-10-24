@@ -1,6 +1,9 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
-import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
+import { getAuth } from '@hono/clerk-auth';
+import { authenticate, verifiedEmail } from '../middleware/auth.js';
+import { draftSchema } from '@catchingjobs/shared/validation';
+import { handleError } from '../http/errors.js';
 import { getPrisma } from '../db.js';
 import { ManageApplications } from '../services/ManageApplications.js';
 import { emailService } from '../services/EmailService.js';
@@ -9,19 +12,15 @@ import { requireAdmin } from '../middleware/auth.js';
 
 const app = new Hono();
 
-app.use(
-  '/api/applications/*',
-  clerkMiddleware({
-    publishableKey: process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY,
-    secretKey: process.env.CLERK_SECRET_KEY,
-  }),
-);
+app.use('/api/applications/*', authenticate);
+app.use('/api/applications', authenticate);
 
 app.use('/api/applications/*', async (c, next) => {
   // Allow public draft creation endpoint to bypass Clerk auth
   if (c.req.path === '/api/applications/draft' && c.req.method === 'POST') {
     return next();
   }
+  c.header('Cache-Control', 'private, no-store');
   const auth = getAuth(c);
   if (!auth?.userId) {
     return c.json({ error: 'Unauthorized' }, 401);
@@ -29,28 +28,21 @@ app.use('/api/applications/*', async (c, next) => {
   await next();
 });
 
-const handleError = (error: unknown, defaultMessage: string, c: any) => {
-  if (error instanceof DomainError) {
-    return c.json({ success: false, error: error.message }, error.statusCode as any);
-  }
-  console.error(defaultMessage, error);
-  return c.json({ success: false, error: defaultMessage }, 500);
-};
-
 /**
  * Public endpoint to create a draft application during triage
  */
 app.post('/api/applications/draft', async (c) => {
   const service = new ManageApplications(getPrisma());
   try {
-    const body = await c.req.json();
+    const body = draftSchema.parse(await c.req.json());
     const application = await service.createDraftApplication({
       name: body.name,
       phone: body.phone,
       email: body.email,
       town: body.town,
       sector: body.sector,
-      hasRightToWork: body.hasRightToWork === true || body.hasRightToWork === 'true',
+      hasRightToWork: body.hasRightToWork === true,
+      jobPostingId: body.jobPostingId,
     });
     return c.json({ success: true, application }, 201);
   } catch (error) {
@@ -67,7 +59,11 @@ app.post('/api/applications/:rosterRef/link-user', async (c) => {
   try {
     const { rosterRef } = c.req.param();
     const body = await c.req.json().catch(() => ({}));
-    const application = await service.linkUserToDraft(rosterRef, auth!.userId, body.email);
+    const application = await service.linkUserToDraft(
+      rosterRef,
+      auth!.userId!,
+      await verifiedEmail(auth!.userId!),
+    );
     return c.json({ success: true, application });
   } catch (error) {
     return handleError(error, 'Failed to link user to application', c);
@@ -78,6 +74,7 @@ app.post('/api/applications/:rosterRef/link-user', async (c) => {
  * Auto-save wizard progress to the authenticated user's draft
  */
 app.patch('/api/applications/draft', async (c) => {
+  c.header('Cache-Control', 'private, no-store');
   const auth = getAuth(c);
   if (!auth?.userId) return c.json({ error: 'Unauthorized' }, 401);
 
@@ -95,36 +92,13 @@ app.patch('/api/applications/draft', async (c) => {
  * Submit the wizard, changing draft status to NEW
  */
 app.post('/api/applications/submit', async (c) => {
+  c.header('Cache-Control', 'private, no-store');
   const auth = getAuth(c);
   if (!auth?.userId) return c.json({ error: 'Unauthorized' }, 401);
 
   const service = new ManageApplications(getPrisma());
   try {
     const application = await service.submitMyDraftApplication(auth.userId);
-
-    // Trigger confirmation receipt and admin notification
-    if (application.email) {
-      emailService
-        .sendApplicationReceipt({
-          name: application.name,
-          email: application.email,
-          rosterRef: application.rosterRef,
-          town: application.town,
-          sector: application.sector,
-        })
-        .catch((err) => console.error('Error sending application receipt:', err));
-    }
-    emailService
-      .sendAdminNewApplicationAlert({
-        id: application.id,
-        rosterRef: application.rosterRef,
-        name: application.name,
-        email: application.email,
-        phone: application.phone,
-        town: application.town,
-        sector: application.sector,
-      })
-      .catch((err) => console.error('Error sending admin alert:', err));
 
     return c.json({ success: true, application });
   } catch (error) {

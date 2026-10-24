@@ -4,6 +4,7 @@ import { getPrisma } from '../db.js';
 import { REGIONS } from '@catchingjobs/shared';
 
 const app = new Hono();
+const allowDemoJobs = () => process.env.NODE_ENV !== 'production' && !process.env.DATABASE_URL;
 
 // Static fallback jobs in case DB is unseeded or during SSR
 const FALLBACK_JOBS = [
@@ -163,12 +164,12 @@ app.get('/api/jobs', async (c) => {
   const sector = c.req.query('sector');
   const townId = c.req.query('townId');
   const regionId = c.req.query('regionId');
-  const status = c.req.query('status') || 'ACTIVE';
+  const status = 'ACTIVE';
 
   try {
     const prisma = getPrisma();
     const where: any = {
-      ...(status !== 'ALL' && { status }),
+      status,
       ...(sector && sector !== 'ALL' && { sector }),
     };
 
@@ -179,6 +180,7 @@ app.get('/api/jobs', async (c) => {
     const dbJobs = await prisma.jobPosting.findMany({
       where,
       orderBy: { createdAt: 'desc' },
+      take: 100,
       include: {
         _count: {
           select: { applications: true },
@@ -186,7 +188,7 @@ app.get('/api/jobs', async (c) => {
       },
     });
 
-    if (dbJobs && dbJobs.length > 0) {
+    if (dbJobs) {
       const enriched = dbJobs.map((job) => {
         const meta = findLocationMeta(job.townId);
         return {
@@ -204,12 +206,13 @@ app.get('/api/jobs', async (c) => {
       return c.json(filtered);
     }
   } catch (error) {
-    console.warn('DB jobs fetch notice, falling back to static roster:', error);
+    console.warn('DB jobs fetch failed');
+    if (!allowDemoJobs()) return c.json({ error: 'Jobs temporarily unavailable' }, 503);
   }
 
   // Fallback to static catalog
   const results = FALLBACK_JOBS.filter((j) => {
-    if (status !== 'ALL' && j.status !== status) return false;
+    if (j.status !== status) return false;
     if (sector && sector !== 'ALL' && j.sector !== sector) return false;
     if (townId && townId !== 'ALL' && j.townId.toLowerCase() !== townId.toLowerCase()) return false;
     if (regionId && regionId !== 'ALL' && j.regionId.toLowerCase() !== regionId.toLowerCase())
@@ -223,6 +226,7 @@ app.get('/api/jobs', async (c) => {
 // Helper to resolve specific job with enriched specs
 export async function getJobById(id: number | string) {
   const numericId = Number(id);
+  if (!Number.isSafeInteger(numericId) || numericId <= 0) return null;
 
   // 1. Try DB
   try {
@@ -236,32 +240,21 @@ export async function getJobById(id: number | string) {
       },
     });
 
-    if (job) {
+    if (job && job.status === 'ACTIVE') {
       const meta = findLocationMeta(job.townId);
-      const isChicken = job.sector.toLowerCase() === 'chicken';
+      // A sector identifies the work, not its earnings, roster or certifications.
+      // Only publish terms recorded on the vacancy; missing terms need confirmation.
       return {
         ...job,
         ...meta,
-        weeklyPayEst: isChicken ? '£750 - £950' : '£800 - £1,100',
-        shiftPattern: isChicken
-          ? 'Guaranteed 40-50 hours weekly, stable night rosters (approx. 20:00 - 05:00)'
-          : 'Consistent roster, balanced day and evening catching blocks',
-        requirements: [
-          'Right to work in the UK (verified via passport / share code)',
-          'Physical fitness, stamina, and manual handling capability',
-          'Commitment to strict AHVLA & Lantra bird welfare protocols (catching by both legs)',
-          'Reliable attendance for nightly crew minibus pickup',
-        ],
-        trainingStandards: [
-          'Lantra Commercial Poultry Handling & Welfare (Level 2)',
-          'Pullum Ltd Standard Safety Induction & Shed Biosecurity',
-          'GLAA Compliant Agricultural Worker Protection',
-        ],
       };
     }
   } catch (error) {
-    console.warn('[getJobById] DB query error, checking fallback roster:', error);
+    console.warn('[getJobById] DB query failed');
+    if (!allowDemoJobs()) throw new Error('Jobs temporarily unavailable', { cause: error });
   }
+
+  if (!allowDemoJobs()) return null;
 
   // 2. Try Fallback Jobs
   const fallback = FALLBACK_JOBS.find((j) => String(j.id) === String(id));

@@ -6,7 +6,20 @@ import tseslint from 'typescript-eslint';
 import prettierConfig from 'eslint-config-prettier';
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', '.next', 'out', '.agent/**', '.agents/**', '.agentMemory/**', '.roo/**', '.windsurf/**'] },
+  {
+    ignores: [
+      '.react-router/**',
+      'dist',
+      'node_modules',
+      '.next',
+      'out',
+      '.agent/**',
+      '.agents/**',
+      '.agentMemory/**',
+      '.roo/**',
+      '.windsurf/**',
+    ],
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended, prettierConfig],
     files: ['**/*.{ts,tsx}'],
@@ -28,7 +41,7 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       'react-hooks/purity': 'off',
       'react-hooks/set-state-in-effect': 'off',
-      'react-hooks/exhaustive-deps': 'warn'
+      'react-hooks/exhaustive-deps': 'warn',
     },
   },
 );

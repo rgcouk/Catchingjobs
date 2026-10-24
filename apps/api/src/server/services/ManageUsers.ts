@@ -7,6 +7,7 @@ export class ManageUsers {
   async getUsers() {
     const [users, applications] = await Promise.all([
       this.prisma.user.findMany({
+        take: 100,
         include: {
           application: {
             include: { jobPosting: true },
@@ -15,8 +16,9 @@ export class ManageUsers {
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.application.findMany({
+        take: 100,
         include: {
-          user: true,
+          user: { select: { id: true, email: true, role: true } },
           jobPosting: true,
         },
         orderBy: { createdAt: 'desc' },
@@ -28,7 +30,8 @@ export class ManageUsers {
     const emailToUserMap = new Map<string, any>();
 
     for (const u of users) {
-      userMap.set(u.id, { ...u, source: 'REGISTERED_USER' });
+      const { passwordHash, ...publicUser } = u;
+      userMap.set(u.id, { ...publicUser, source: 'REGISTERED_USER' });
       if (u.email) {
         emailToUserMap.set(u.email.toLowerCase().trim(), u.id);
       }
@@ -96,10 +99,7 @@ export class ManageUsers {
           publicMetadata: { role: finalRole },
         });
       } catch (err) {
-        console.warn(
-          'Could not update Clerk metadata directly (user might not be in Clerk yet):',
-          err,
-        );
+        throw new Error('Unable to update identity provider role', { cause: err });
       }
     }
 
@@ -126,7 +126,7 @@ export class ManageUsers {
         });
         await clerkClient.users.deleteUser(userId);
       } catch (err) {
-        console.warn('Could not delete user in Clerk:', err);
+        throw new Error('Unable to delete identity provider account', { cause: err });
       }
     }
 

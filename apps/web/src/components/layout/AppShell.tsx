@@ -160,10 +160,22 @@ export default function AppShell({
         userType,
       }}
     >
-      <div className="flex flex-col h-[100dvh]">
-        <PublicHeader />
-        <SidebarProvider defaultOpen={true} className="flex-1 overflow-hidden w-full">
+      <div className="flex min-h-dvh flex-col bg-brand-mist text-brand-obsidian">
+        {userType === 'portal' && <PublicHeader />}
+        <SidebarProvider
+          defaultOpen={true}
+          className={
+            userType === 'admin'
+              ? 'min-h-dvh flex-1 w-full [--sidebar-width:15rem]!'
+              : 'min-h-[70dvh] flex-1 w-full'
+          }
+        >
           <AppSidebar
+            className={
+              userType === 'admin'
+                ? '[&_[data-sidebar=sidebar]]:bg-white [&_[data-sidebar=sidebar]]:p-6'
+                : 'md:!relative md:!inset-auto md:!h-full'
+            }
             navItems={displayedNavItems.map((item) => ({
               title: item.label,
               url: item.href || (userType === 'admin' ? `/admin/${item.id}` : '#'),
@@ -182,12 +194,12 @@ export default function AppShell({
                 : undefined,
             }))}
           />
-          <SidebarInset>
+          <SidebarInset className="min-w-0 bg-brand-mist">
             <SiteHeader title={currentTab?.label || 'Dashboard'} />
-            <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">{children}</div>
+            <div className="flex-1 flex flex-col min-w-0">{children}</div>
           </SidebarInset>
         </SidebarProvider>
-        <PublicFooter />
+        {userType === 'portal' && <PublicFooter />}
       </div>
     </AppShellContext.Provider>
   );

@@ -1,3 +1,4 @@
+import { jobSchema } from '@catchingjobs/shared/validation';
 import type { PrismaClient } from '@prisma/client';
 import { ForbiddenError } from './exceptions.js';
 
@@ -6,6 +7,7 @@ export class ManageJobPostings {
 
   async getJobPostings() {
     return this.prisma.jobPosting.findMany({
+      take: 100,
       include: {
         _count: {
           select: { applications: true },
@@ -22,11 +24,22 @@ export class ManageJobPostings {
     }
 
     return this.prisma.jobPosting.create({
-      data: body,
+      data: (() => {
+        const fields = jobSchema.parse(body);
+        return {
+          ...fields,
+          title: fields.title!,
+          sector: fields.sector!,
+          townId: fields.townId!,
+          description: fields.description!,
+          payRate: fields.payRate!,
+        };
+      })(),
     });
   }
 
   async updateJobPosting(id: number, data: any) {
+    data = jobSchema.partial().parse(data);
     return this.prisma.jobPosting.update({
       where: { id },
       data: {
@@ -59,7 +72,7 @@ export class ManageJobPostings {
   async updateJobPostingStatus(id: number, status: string) {
     return this.prisma.jobPosting.update({
       where: { id },
-      data: { status },
+      data: { status: jobSchema.shape.status.parse(status) },
       include: {
         _count: {
           select: { applications: true },

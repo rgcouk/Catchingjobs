@@ -1,0 +1,23 @@
+import { index, route, type RouteConfig } from '@react-router/dev/routes';
+export default [
+  route('api/*', 'routes/api.ts'),
+  index('routes/home.tsx'),
+  route('corporate', 'routes/corporate.tsx'),
+  route('jobs', 'routes/jobs.tsx'),
+  route('locations', 'routes/locations.tsx'),
+  route('training/moffett', 'routes/training.tsx'),
+  route('chickens', 'routes/chickens.tsx'),
+  route('turkeys', 'routes/turkeys.tsx'),
+  route('chickens/:regionId', 'routes/chicken-region.tsx'),
+  route('turkeys/:regionId', 'routes/turkey-region.tsx'),
+  route('jobs/:id/:slug?', 'routes/job.tsx'),
+  route('login/*', 'routes/login.tsx'),
+  route('register/*', 'routes/register.tsx'),
+  route('sso-callback', 'routes/sso.tsx'),
+  route('employee', 'routes/employee.tsx'),
+  route('portal', 'routes/portal.tsx'),
+  route('admin', 'routes/admin-index.tsx'),
+  route('admin/:tab', 'routes/admin.tsx'),
+  route('ssr-test', 'routes/ssr-test.tsx'),
+  route('*', 'routes/not-found.tsx'),
+] satisfies RouteConfig;

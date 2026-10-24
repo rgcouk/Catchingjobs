@@ -1,3 +1,4 @@
+import { EmploymentApplicationRecord } from '@/components/EmploymentApplicationRecord';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   LayoutDashboard,
@@ -163,7 +164,7 @@ const AdminDashboard = () => {
   const [jobs, setJobs] = useState<JobPostingWithCount[]>([]);
   const [users, setUsers] = useState<UserWithApplication[]>([]);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Inspector & Modals for Applicants
@@ -175,6 +176,7 @@ const AdminDashboard = () => {
 
   // Applicant Filters & View
   const [applicantSearch, setApplicantSearch] = useState('');
+  const [applicantTownFilter, setApplicantTownFilter] = useState('ALL');
   const [applicantSectorFilter, setApplicantSectorFilter] = useState<'ALL' | 'chicken' | 'turkey'>(
     'ALL',
   );
@@ -336,6 +338,7 @@ const AdminDashboard = () => {
         setTotalApps(data.total);
         setAppSkip(data.skip + data.data.length);
       } catch (err: any) {
+        setError(err.message || 'Failed to fetch applications');
         toast.error(err.message || 'Failed to fetch applications');
       }
     },
@@ -355,6 +358,9 @@ const AdminDashboard = () => {
         fetch('/api/admin/users', { headers }),
       ]);
 
+      if (!locationsRes.ok || !jobsRes.ok || !usersRes.ok) {
+        throw new Error('Unable to load operations data. Please try again.');
+      }
       if (locationsRes.ok) setLocations(await locationsRes.json());
       if (jobsRes.ok) setJobs(await jobsRes.json());
       if (usersRes.ok) setUsers(await usersRes.json());
@@ -1098,7 +1104,17 @@ const AdminDashboard = () => {
         </div>
       );
     }
-    if (error) return <div className="p-8 text-destructive font-medium">Error: {error}</div>;
+    if (error)
+      return (
+        <div
+          role="alert"
+          className="m-6 rounded-lg border border-brand-border bg-white p-8 md:m-10"
+        >
+          <h1 className="font-display text-2xl font-bold">Unable to load operations</h1>
+          <p className="my-4 text-muted-foreground">{error}</p>
+          <Button onClick={fetchData}>Try again</Button>
+        </div>
+      );
 
     switch (activeTab) {
       /* =========================================================================
@@ -1192,9 +1208,8 @@ const AdminDashboard = () => {
                         {totalApps || applications.length}
                       </CardTitle>
                       <div className="absolute right-4 top-4">
-                        <Badge variant="outline" className="flex gap-1 rounded-sm text-xs">
-                          <TrendingUp className="size-3 text-emerald-600" />
-                          +14%
+                        <Badge variant="outline" className="rounded-sm text-xs">
+                          Live data
                         </Badge>
                       </div>
                     </CardHeader>
@@ -1409,7 +1424,7 @@ const AdminDashboard = () => {
         const reMarketingPoolCount = rejectedCount + draftCount;
 
         return (
-          <div className="p-4 md:p-8 space-y-6 w-full">
+          <div className="p-6 md:p-10 space-y-8 w-full">
             {/* Header & Marketing Broadcast Actions */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="space-y-1">
@@ -1941,6 +1956,7 @@ const AdminDashboard = () => {
           if (activeTab === 'reviewing' && app.status !== 'REVIEWING') return false;
           if (activeTab === 'hired' && app.status !== 'HIRED') return false;
           if (activeTab === 'rejected' && app.status !== 'REJECTED') return false;
+          if (applicantTownFilter !== 'ALL' && app.town !== applicantTownFilter) return false;
           if (applicantSectorFilter !== 'ALL' && app.sector !== applicantSectorFilter) return false;
 
           if (applicantSearch) {
@@ -1957,17 +1973,15 @@ const AdminDashboard = () => {
         });
 
         return (
-          <div className="p-4 md:p-8 space-y-6 w-full">
+          <div className="p-6 md:p-10 space-y-8 w-full">
             {/* Header & View Controls */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
-                  <Briefcase className="w-7 h-7 text-brand-yellow" />
-                  Applicants Pipeline
+              <div className="space-y-2">
+                <h1 className="font-display text-[32px] font-bold leading-tight text-foreground tracking-[-0.03em]">
+                  {isKanban ? 'Application workflow' : 'Applicants'}
                 </h1>
                 <p className="text-muted-foreground text-xs sm:text-sm">
-                  Track candidate progress from initial intake through compliance vetting and
-                  hiring.
+                  Operations Control · Pullum Ltd
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
@@ -1980,108 +1994,134 @@ const AdminDashboard = () => {
                   <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
                   Export CSV
                 </Button>
-                <div className="flex rounded-sm border border-border p-0.5 bg-muted/30 shrink-0">
-                  <Button
-                    size="sm"
-                    variant={!isKanban ? 'default' : 'ghost'}
-                    className="h-7 text-xs px-2.5"
-                    onClick={() => {
-                      setApplicantViewMode('table');
-                      if (activeTab === 'kanban') setActiveTab('applicants');
-                    }}
-                  >
-                    <ListFilter className="w-3.5 h-3.5 mr-1" />
-                    Table
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={isKanban ? 'default' : 'ghost'}
-                    className="h-7 text-xs px-2.5"
-                    onClick={() => {
-                      setApplicantViewMode('kanban');
-                      setActiveTab('kanban');
-                    }}
-                  >
-                    <Columns3 className="w-3.5 h-3.5 mr-1" />
-                    Kanban
-                  </Button>
-                </div>
+                <Button
+                  className="min-h-12"
+                  disabled={filteredApps.length === 0}
+                  onClick={() =>
+                    setSelectedApp(
+                      filteredApps.find((app) => app.id === selectedApp?.id) || filteredApps[0],
+                    )
+                  }
+                >
+                  View Application <ChevronRight className="ml-2 size-4" />
+                </Button>
               </div>
             </div>
 
-            {/* Pipeline KPI Metric Strips */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div
-                className="bg-card border border-border p-3 rounded-sm cursor-pointer hover:border-primary/50 transition-colors"
-                onClick={() => setActiveTab('applicants')}
-              >
-                <span className="text-[10px] font-mono text-muted-foreground block uppercase">
-                  New Intake
-                </span>
-                <span className="text-xl font-bold text-blue-600">
-                  {applications.filter((a) => (a.status || 'NEW') === 'NEW').length}
-                </span>
-              </div>
-              <div
-                className="bg-card border border-border p-3 rounded-sm cursor-pointer hover:border-primary/50 transition-colors"
-                onClick={() => setActiveTab('reviewing')}
-              >
-                <span className="text-[10px] font-mono text-muted-foreground block uppercase">
-                  Under Review
-                </span>
-                <span className="text-xl font-bold text-amber-600">
-                  {applications.filter((a) => a.status === 'REVIEWING').length}
-                </span>
-              </div>
-              <div
-                className="bg-card border border-border p-3 rounded-sm cursor-pointer hover:border-primary/50 transition-colors"
-                onClick={() => setActiveTab('hired')}
-              >
-                <span className="text-[10px] font-mono text-muted-foreground block uppercase">
-                  Hired / Rostered
-                </span>
-                <span className="text-xl font-bold text-emerald-600">
-                  {applications.filter((a) => a.status === 'HIRED').length}
-                </span>
-              </div>
-              <div
-                className="bg-card border border-border p-3 rounded-sm cursor-pointer hover:border-primary/50 transition-colors"
-                onClick={() => setActiveTab('rejected')}
-              >
-                <span className="text-[10px] font-mono text-muted-foreground block uppercase">
-                  Rejected
-                </span>
-                <span className="text-xl font-bold text-rose-600">
-                  {applications.filter((a) => a.status === 'REJECTED').length}
-                </span>
-              </div>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Application records and counts are populated from live data.
+            </p>
+
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+              {[
+                { status: 'NEW', label: 'New Intake', tab: 'applicants' },
+                { status: 'REVIEWING', label: 'Under Review', tab: 'reviewing' },
+                { status: 'HIRED', label: 'Hired / Rostered', tab: 'hired' },
+                { status: 'REJECTED', label: 'Rejected', tab: 'rejected' },
+              ].map((stage) => (
+                <button
+                  key={stage.status}
+                  type="button"
+                  onClick={() => setActiveTab(stage.tab)}
+                  className="space-y-3 rounded-lg border border-brand-border bg-white p-6 text-left transition-colors hover:border-brand-orange focus-visible:outline-2 focus-visible:outline-brand-orange"
+                >
+                  <span className="block text-sm font-semibold text-muted-foreground">
+                    {stage.label}
+                  </span>
+                  <span className="block font-display text-[32px] font-bold leading-tight tracking-tight">
+                    {applications.filter((app) => (app.status || 'NEW') === stage.status).length}
+                  </span>
+                  <span className="block text-xs text-muted-foreground">
+                    {applications.length < totalApps
+                      ? 'In loaded applications'
+                      : 'Live application count'}
+                  </span>
+                </button>
+              ))}
             </div>
 
-            {/* Search & Multi-filter */}
-            <div className="bg-card border border-border p-3.5 rounded-sm flex flex-col sm:flex-row items-center gap-3 shadow-xs">
-              <div className="relative flex-1 w-full">
-                <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
+            <div className="grid items-end gap-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="applicant-search">Search applicants</Label>
                 <Input
-                  placeholder="Search candidates by name, phone, town, or roster ref..."
+                  id="applicant-search"
+                  placeholder="Name, email, phone or reference"
                   value={applicantSearch}
-                  onChange={(e) => setApplicantSearch(e.target.value)}
-                  className="pl-9 text-xs"
+                  onChange={(event) => setApplicantSearch(event.target.value)}
+                  className="h-12 rounded-sm bg-white"
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="applicant-sector">Sector</Label>
+                <Select
+                  value={applicantSectorFilter}
+                  onValueChange={(value: 'ALL' | 'chicken' | 'turkey') =>
+                    setApplicantSectorFilter(value)
+                  }
+                >
+                  <SelectTrigger id="applicant-sector" className="h-12 w-full rounded-sm bg-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All sectors</SelectItem>
+                    <SelectItem value="chicken">Chicken Catching</SelectItem>
+                    <SelectItem value="turkey">Turkey Catching</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="applicant-location">Location</Label>
+                <Select value={applicantTownFilter} onValueChange={setApplicantTownFilter}>
+                  <SelectTrigger
+                    id="applicant-location"
+                    className="h-12 w-full rounded-sm bg-white"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All locations</SelectItem>
+                    {Array.from(new Set(applications.map((app) => app.town).filter(Boolean)))
+                      .sort()
+                      .map((town) => (
+                        <SelectItem key={town} value={town}>
+                          {town}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Showing {filteredApps.length} of {totalApps} applications.{' '}
+              {applications.length < totalApps &&
+                'Stage counts and filters cover loaded applications.'}
+            </p>
 
-              <Select
-                value={applicantSectorFilter}
-                onValueChange={(val: any) => setApplicantSectorFilter(val)}
+            <div className="flex w-fit flex-wrap gap-3">
+              <Button
+                size="sm"
+                variant={!isKanban ? 'default' : 'ghost'}
+                className="min-h-12 rounded-sm border border-brand-border px-6 text-sm"
+                onClick={() => {
+                  setApplicantViewMode('table');
+                  if (activeTab === 'kanban') setActiveTab('applicants');
+                }}
               >
-                <SelectTrigger className="text-xs w-full sm:w-[170px]">
-                  <SelectValue placeholder="Sector" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL">All Sectors</SelectItem>
-                  <SelectItem value="chicken">Chicken Catching</SelectItem>
-                  <SelectItem value="turkey">Turkey Squads</SelectItem>
-                </SelectContent>
-              </Select>
+                <ListFilter className="w-3.5 h-3.5 mr-1" />
+                Table view
+              </Button>
+              <Button
+                size="sm"
+                variant={isKanban ? 'default' : 'ghost'}
+                className="min-h-12 rounded-sm border border-brand-border px-6 text-sm"
+                onClick={() => {
+                  setApplicantViewMode('kanban');
+                  setActiveTab('kanban');
+                }}
+              >
+                <Columns3 className="w-3.5 h-3.5 mr-1" />
+                Kanban view
+              </Button>
             </div>
 
             {/* Body: Kanban or Table */}
@@ -2126,17 +2166,20 @@ const AdminDashboard = () => {
               </div>
             ) : (
               <ErrorBoundary>
-                <div className="bg-card border border-border rounded-sm overflow-hidden flex flex-col shadow-xs">
+                <div
+                  role="region"
+                  aria-label="Applicant records, scroll horizontally for more columns"
+                  tabIndex={0}
+                  className="bg-card border border-border rounded-sm overflow-x-auto [&>div]:overflow-visible flex flex-col focus-visible:outline-2 focus-visible:outline-brand-orange"
+                >
                   <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-brand-ivory [&_th]:h-14 [&_th]:font-mono [&_th]:text-xs [&_th]:font-medium">
                       <TableRow>
-                        <TableHead>Candidate</TableHead>
+                        <TableHead>Applicant</TableHead>
                         <TableHead>Sector</TableHead>
-                        <TableHead>Town Hub</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Compliance</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead>Town</TableHead>
+                        <TableHead>Reference</TableHead>
+                        <TableHead className="text-right">Status</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -2150,45 +2193,35 @@ const AdminDashboard = () => {
                             }`}
                             onClick={() => setSelectedApp(app)}
                           >
-                            <TableCell className="py-3.5">
-                              <div className="flex items-center gap-3">
-                                <div
-                                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
-                                    app.sector === 'chicken'
-                                      ? 'bg-amber-100 text-amber-800'
-                                      : 'bg-blue-100 text-blue-800'
-                                  }`}
-                                >
-                                  {(app.name || 'A').charAt(0).toUpperCase()}
-                                </div>
-                                <div className="space-y-0.5">
-                                  <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
-                                    <span>{app.name || 'Anonymous Applicant'}</span>
-                                  </div>
-                                  <div className="text-xs text-muted-foreground font-mono">
-                                    {app.email || app.phone || 'No direct contact'}
-                                  </div>
-                                </div>
-                              </div>
+                            <TableCell className="px-5 py-5">
+                              <button
+                                type="button"
+                                className="text-left text-sm font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-brand-orange"
+                                onClick={() => setSelectedApp(app)}
+                              >
+                                {app.name || 'Anonymous Applicant'}
+                              </button>
                             </TableCell>
-
+                            <TableCell className="px-5 text-sm capitalize">{app.sector}</TableCell>
+                            <TableCell className="px-5 text-sm text-muted-foreground">
+                              {app.town || '—'}
+                            </TableCell>
+                            <TableCell className="px-5 font-mono text-xs text-muted-foreground">
+                              {app.rosterRef || '—'}
+                            </TableCell>
                             <TableCell>
-                              <Badge variant="outline" className="text-[10px] uppercase font-mono">
-                                {app.sector}
-                              </Badge>
-                            </TableCell>
-
-                            <TableCell className="text-xs text-muted-foreground">
-                              {app.town || '-'}
-                            </TableCell>
-
-                            <TableCell>
-                              <div onClick={(e) => e.stopPropagation()}>
+                              <div
+                                className="flex justify-end"
+                                onClick={(e) => e.stopPropagation()}
+                              >
                                 <Select
                                   value={app.status || 'NEW'}
                                   onValueChange={(val) => updateApplicationStatus(app.id, val)}
                                 >
-                                  <SelectTrigger className="h-7 text-xs w-[125px]">
+                                  <SelectTrigger
+                                    aria-label={`Status for ${app.name || app.rosterRef}`}
+                                    className="h-9 w-[145px] rounded-sm text-xs"
+                                  >
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -2200,82 +2233,13 @@ const AdminDashboard = () => {
                                 </Select>
                               </div>
                             </TableCell>
-
-                            <TableCell>
-                              <div className="flex items-center gap-1.5">
-                                {app.hasRightToWork ? (
-                                  <Badge
-                                    variant="outline"
-                                    className="text-[9px] py-0 px-1.5 bg-emerald-50 text-emerald-700 border-emerald-200 font-mono flex items-center gap-1"
-                                  >
-                                    <ShieldCheck className="w-2.5 h-2.5" /> RTW
-                                  </Badge>
-                                ) : (
-                                  <Badge
-                                    variant="outline"
-                                    className="text-[9px] py-0 px-1.5 text-muted-foreground font-mono"
-                                  >
-                                    RTW Pending
-                                  </Badge>
-                                )}
-
-                                {app.profileFormCompleted && (
-                                  <Badge
-                                    variant="outline"
-                                    className="text-[9px] py-0 px-1.5 bg-blue-50 text-blue-700 border-blue-200 font-mono flex items-center gap-1"
-                                  >
-                                    <CheckCircle2 className="w-2.5 h-2.5" /> Induction
-                                  </Badge>
-                                )}
-                              </div>
-                            </TableCell>
-
-                            <TableCell className="text-xs text-muted-foreground font-mono">
-                              {new Date(app.createdAt).toLocaleDateString()}
-                            </TableCell>
-
-                            <TableCell className="text-right">
-                              <div
-                                className="flex items-center justify-end gap-1"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                {app.phone && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700"
-                                    title="WhatsApp Candidate"
-                                    onClick={() =>
-                                      window.open(
-                                        getWhatsAppLink(
-                                          app.phone,
-                                          `Hi ${app.name || 'Operative'}, Pullum Ltd recruitment team here regarding your application.`,
-                                        ),
-                                        '_blank',
-                                      )
-                                    }
-                                  >
-                                    <Smartphone className="w-4 h-4" />
-                                  </Button>
-                                )}
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0"
-                                  title="Inspect Candidate"
-                                  onClick={() => setSelectedApp(app)}
-                                >
-                                  <Eye className="w-4 h-4 text-brand-yellow" />
-                                </Button>
-                              </div>
-                            </TableCell>
                           </TableRow>
                         );
                       })}
                       {filteredApps.length === 0 && (
                         <TableRow>
                           <TableCell
-                            colSpan={7}
+                            colSpan={5}
                             className="text-center py-10 text-muted-foreground"
                           >
                             No applications found in this view.
@@ -2287,6 +2251,28 @@ const AdminDashboard = () => {
                 </div>
               </ErrorBoundary>
             )}
+            {applications.length < totalApps && (
+              <Button
+                variant="outline"
+                className="min-h-12 bg-white"
+                onClick={() => loadApplications(appSkip, true)}
+              >
+                Load more applications
+              </Button>
+            )}
+            <section
+              className="space-y-3 rounded-lg border border-brand-border bg-brand-ivory p-6"
+              aria-label="Application review guidance"
+            >
+              <h2 className="font-display text-xl font-bold tracking-tight">Application review</h2>
+              <p className="text-sm leading-relaxed">
+                Open an application to review contact details, catching area, Right to Work
+                documents and onboarding progress.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Only authorised staff can access applicant records.
+              </p>
+            </section>
           </div>
         );
       }
@@ -2339,7 +2325,7 @@ const AdminDashboard = () => {
         });
 
         return (
-          <div className="p-4 md:p-8 space-y-6 w-full">
+          <div className="p-6 md:p-10 space-y-8 w-full">
             {/* Header & Primary Actions */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
@@ -2930,7 +2916,7 @@ const AdminDashboard = () => {
         });
 
         return (
-          <div className="p-4 md:p-8 space-y-6 w-full">
+          <div className="p-6 md:p-10 space-y-8 w-full">
             {/* Header & Post Job Button */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
@@ -3168,7 +3154,7 @@ const AdminDashboard = () => {
       case 'emails-logs':
       case 'emails-settings':
         return (
-          <div className="p-4 md:p-8 space-y-6 w-full">
+          <div className="p-6 md:p-10 space-y-8 w-full">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
@@ -3832,7 +3818,7 @@ const AdminDashboard = () => {
       ========================================================================= */
       case 'settings':
         return (
-          <div className="p-4 md:p-8 max-w-5xl space-y-6">
+          <div className="p-6 md:p-10 max-w-5xl space-y-6">
             <div className="mb-6">
               <h1 className="text-3xl font-bold text-foreground tracking-tight">System Settings</h1>
               <p className="text-muted-foreground mt-1 text-sm">
@@ -3922,7 +3908,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="h-full flex-1 w-full">
+    <div className="h-full flex-1 w-full [&_[data-slot=card]]:rounded-lg [&_[data-slot=card]]:shadow-none [&_h1]:font-display [&_h1]:text-[32px] [&_h1]:tracking-[-0.03em] [&_button]:min-h-11 [&_[role=combobox]]:min-h-11">
       {renderContent()}
 
       {/* Location Details Modal */}
@@ -4909,6 +4895,7 @@ const AdminDashboard = () => {
 
           {selectedApp && (
             <div className="space-y-6 mt-4 text-xs">
+              <EmploymentApplicationRecord application={selectedApp} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 className="font-semibold text-foreground mb-2 text-sm">Personal Details</h4>
@@ -4931,68 +4918,78 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                <div>
-                  <h4 className="font-semibold text-foreground mb-2 text-sm">Emergency Contact</h4>
-                  <div className="space-y-1.5 text-muted-foreground">
-                    <p>
-                      <strong className="text-foreground">Name:</strong>{' '}
-                      {selectedApp.emergencyName || 'N/A'}
-                    </p>
-                    <p>
-                      <strong className="text-foreground">Phone:</strong>{' '}
-                      {selectedApp.emergencyPhone || 'N/A'}
-                    </p>
-                    <p>
-                      <strong className="text-foreground">Relation:</strong>{' '}
-                      {selectedApp.emergencyRelation || 'N/A'}
-                    </p>
+                {selectedApp.applicationFormVersion !== 'jotform-v1' && (
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-2 text-sm">
+                      Emergency Contact
+                    </h4>
+                    <div className="space-y-1.5 text-muted-foreground">
+                      <p>
+                        <strong className="text-foreground">Name:</strong>{' '}
+                        {selectedApp.emergencyName || 'N/A'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Phone:</strong>{' '}
+                        {selectedApp.emergencyPhone || 'N/A'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Relation:</strong>{' '}
+                        {selectedApp.emergencyRelation || 'N/A'}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
-              <div className="border-t border-border pt-4">
-                <h4 className="font-semibold text-foreground mb-2 text-sm">Bank Details (BACS)</h4>
-                <div className="grid grid-cols-2 gap-3 text-muted-foreground">
-                  <p>
-                    <strong className="text-foreground">Bank:</strong>{' '}
-                    {selectedApp.bankName || 'N/A'}
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Account Name:</strong>{' '}
-                    {selectedApp.bankAccountName || 'N/A'}
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Sort Code:</strong>{' '}
-                    <span className="font-mono">{selectedApp.bankSortCode || 'N/A'}</span>
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Account #:</strong>{' '}
-                    <span className="font-mono">{selectedApp.bankAccountNumber || 'N/A'}</span>
-                  </p>
-                </div>
-              </div>
+              {selectedApp.applicationFormVersion !== 'jotform-v1' && (
+                <>
+                  <div className="border-t border-border pt-4">
+                    <h4 className="font-semibold text-foreground mb-2 text-sm">
+                      Bank Details (BACS)
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3 text-muted-foreground">
+                      <p>
+                        <strong className="text-foreground">Bank:</strong>{' '}
+                        {selectedApp.bankName || 'N/A'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Account Name:</strong>{' '}
+                        {selectedApp.bankAccountName || 'N/A'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Sort Code:</strong>{' '}
+                        <span className="font-mono">{selectedApp.bankSortCode || 'N/A'}</span>
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Account #:</strong>{' '}
+                        <span className="font-mono">{selectedApp.bankAccountNumber || 'N/A'}</span>
+                      </p>
+                    </div>
+                  </div>
 
-              <div className="border-t border-border pt-4">
-                <h4 className="font-semibold text-foreground mb-2 text-sm">Health & Welfare</h4>
-                <div className="grid grid-cols-2 gap-3 text-muted-foreground">
-                  <p>
-                    <strong className="text-foreground">Fit to Lift 15-20kg:</strong>{' '}
-                    {selectedApp.isFitToLift ? 'Yes' : 'No'}
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Back/Joint Issues:</strong>{' '}
-                    {selectedApp.hasBackIssues ? 'Yes' : 'No'}
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Asthma/Allergies:</strong>{' '}
-                    {selectedApp.hasAsthmaOrAllergies ? 'Yes' : 'No'}
-                  </p>
-                  <p>
-                    <strong className="text-foreground">UK Driving License:</strong>{' '}
-                    {selectedApp.hasDrivingLicense ? 'Yes' : 'No'}
-                  </p>
-                </div>
-              </div>
+                  <div className="border-t border-border pt-4">
+                    <h4 className="font-semibold text-foreground mb-2 text-sm">Health & Welfare</h4>
+                    <div className="grid grid-cols-2 gap-3 text-muted-foreground">
+                      <p>
+                        <strong className="text-foreground">Fit to Lift 15-20kg:</strong>{' '}
+                        {selectedApp.isFitToLift ? 'Yes' : 'No'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Back/Joint Issues:</strong>{' '}
+                        {selectedApp.hasBackIssues ? 'Yes' : 'No'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Asthma/Allergies:</strong>{' '}
+                        {selectedApp.hasAsthmaOrAllergies ? 'Yes' : 'No'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">UK Driving License:</strong>{' '}
+                        {selectedApp.hasDrivingLicense ? 'Yes' : 'No'}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
 

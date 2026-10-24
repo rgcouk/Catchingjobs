@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+<path transform="translate(0 0) scale(0.5 0.5) translate(0 0)" d="M14 7h24l12 12v37h-36z" fill="#FFFDF0" stroke="#362F2B" stroke-width="2" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(0 0) scale(0.5 0.5) translate(0 0)" d="M38 7v12h12" fill="#FF7605" stroke="#362F2B" stroke-width="2" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(0 0) scale(0.5 0.5) translate(0 0)" d="M22 27h19m-19 7h15m-15 7h9" fill="#00000000" stroke="#362F2B" stroke-width="2" stroke-linecap="square" stroke-linejoin="bevel"/>
+<path transform="translate(0 0) scale(0.5 0.5) translate(0 0)" d="M8 52l48-40" fill="#00000000" stroke="#362F2B" stroke-width="2" stroke-linecap="square" stroke-linejoin="bevel"/>
+</svg>
+

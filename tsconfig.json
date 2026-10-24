@@ -30,6 +30,28 @@
       ]
     },
     "allowImportingTsExtensions": true,
-    "noEmit": true
-  }
+    "noEmit": true,
+    "types": [
+      "vite/client",
+      "node"
+    ],
+    "rootDirs": [
+      ".",
+      "./.react-router/types"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".vercel"
+  ],
+  "include": [
+    "apps/**/*.ts",
+    "apps/**/*.tsx",
+    "packages/**/*.ts",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "*.config.ts",
+    "api/**/*.ts"
+  ]
 }

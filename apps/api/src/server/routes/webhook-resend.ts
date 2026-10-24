@@ -1,15 +1,19 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { Webhook } from 'svix';
+import { bodyLimit } from 'hono/body-limit';
+import { getPrisma } from '../db.js';
 import { emailService } from '../services/EmailService.js';
 
 const app = new Hono();
 
+app.use('/api/webhook/resend', bodyLimit({ maxSize: 256 * 1024 }));
 app.post('/api/webhook/resend', async (c) => {
   try {
     const rawBody = await c.req.text();
     const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
 
+    if (!webhookSecret) return c.json({ error: 'Webhook unavailable' }, 503);
     let payload: any;
     if (webhookSecret) {
       const svix_id = c.req.header('svix-id');
@@ -28,19 +32,39 @@ app.post('/api/webhook/resend', async (c) => {
           'svix-signature': svix_signature,
         });
       } catch (err) {
-        console.error('[Resend Webhook] Svix verification failed:', err);
+        console.warn('[Resend Webhook] Invalid signature');
         return c.json({ error: 'Invalid webhook signature' }, 400);
       }
-    } else {
-      // Fallback: parse JSON directly if webhook secret is not set yet in dev
-      payload = JSON.parse(rawBody);
     }
 
-    const result = await emailService.handleWebhookEvent(payload);
+    if (
+      !payload ||
+      typeof payload.type !== 'string' ||
+      !payload.data ||
+      typeof payload.data !== 'object'
+    ) {
+      return c.json({ error: 'Invalid event' }, 400);
+    }
+    const eventId = `resend:${c.req.header('svix-id')}`;
+    let result;
+    try {
+      result = await getPrisma().$transaction(async (tx) => {
+        await tx.webhookEvent.create({ data: { id: eventId, provider: 'resend' } });
+        return emailService.handleWebhookEvent(payload, tx);
+      });
+    } catch (error) {
+      if (
+        (error as { code?: string }).code === 'P2002' &&
+        (await getPrisma().webhookEvent.findUnique({ where: { id: eventId } }))
+      ) {
+        return c.json({ received: true, duplicate: true });
+      }
+      throw error;
+    }
     return c.json({ received: true, result });
   } catch (error: any) {
-    console.error('[Resend Webhook Error]:', error);
-    return c.json({ error: error.message || 'Webhook processing failed' }, 500);
+    console.error('[Resend Webhook] Processing failed');
+    return c.json({ error: 'Webhook processing failed' }, 500);
   }
 });
 

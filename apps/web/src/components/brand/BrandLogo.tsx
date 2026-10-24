@@ -12,10 +12,10 @@ interface BrandLogoProps {
 
 export const ChickenCMark: React.FC<{ className?: string }> = ({ className = 'w-8 h-8' }) => (
   <svg
-    className={`shrink-0 transition-transform group-hover:scale-105 ${className}`}
+    className={`shrink-0 ${className}`}
     viewBox="0 0 416 394"
     fill="currentColor"
-    aria-label="CatchingJobs Chicken-C Brand Mark"
+    aria-hidden="true"
     style={{ marginRight: '-4px' }}
   >
     <g id="chicken-c-mark">
@@ -59,20 +59,20 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   // Colors based on the 4 contextual lockups
   const variantStyles = {
     yellow: {
-      text: 'text-black',
-      period: 'text-black font-mono',
+      text: 'text-brand-obsidian',
+      period: 'text-brand-obsidian font-mono',
     },
     dark: {
-      text: 'text-[#ff7c20]',
-      period: 'text-[#ff7c20] font-mono',
+      text: 'text-[#FF7605]',
+      period: 'text-[#FF7605] font-mono',
     },
     white: {
       text: 'text-white',
-      period: 'text-[#ff7c20] font-mono',
+      period: 'text-white font-mono',
     },
     scrolled: {
-      text: 'text-black',
-      period: 'text-black font-mono',
+      text: 'text-brand-obsidian',
+      period: 'text-brand-orange',
     },
   }[variant];
 
@@ -90,7 +90,12 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
   if (asLink) {
     return (
-      <Link to={to} className="no-underline inline-block" title="CatchingJobs">
+      <Link
+        to={to}
+        className="inline-block rounded-sm no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-obsidian focus-visible:ring-offset-2"
+        aria-label="CatchingJobs Home"
+        title="CatchingJobs"
+      >
         {content}
       </Link>
     );
