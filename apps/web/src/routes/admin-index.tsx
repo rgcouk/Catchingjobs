@@ -1,6 +1,6 @@
 import { redirect } from 'react-router';
 export function loader() {
-  return redirect('/admin/dashboard');
+  return redirect('/admin/applicants');
 }
 export default function Route() {
   return null;

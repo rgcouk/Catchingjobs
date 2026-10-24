@@ -173,7 +173,7 @@ export default function AppShell({
           <AppSidebar
             className={
               userType === 'admin'
-                ? '[&_[data-sidebar=sidebar]]:bg-white [&_[data-sidebar=sidebar]]:p-4 [&_[data-sidebar=sidebar]]:md:p-6'
+                ? '[&_[data-sidebar=sidebar]]:bg-white [&_[data-sidebar=sidebar]]:p-6'
                 : 'md:!relative md:!inset-auto md:!h-full'
             }
             navItems={displayedNavItems.map((item) => ({

@@ -1975,7 +1975,7 @@ const AdminDashboard = () => {
           <div className="p-6 md:p-10 space-y-8 w-full">
             {/* Header & View Controls */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <h1 className="font-display text-[32px] font-bold leading-tight text-foreground tracking-[-0.03em]">
                   {isKanban ? 'Application workflow' : 'Applicants'}
                 </h1>
@@ -2002,10 +2002,14 @@ const AdminDashboard = () => {
                     )
                   }
                 >
-                  View Application <ArrowUpRight className="ml-2 size-4" />
+                  View Application <ChevronRight className="ml-2 size-4" />
                 </Button>
               </div>
             </div>
+
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Application records and counts are populated from live data.
+            </p>
 
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               {[
@@ -2023,7 +2027,7 @@ const AdminDashboard = () => {
                   <span className="block text-sm font-semibold text-muted-foreground">
                     {stage.label}
                   </span>
-                  <span className="block font-display text-4xl font-bold tracking-tight">
+                  <span className="block font-display text-[32px] font-bold leading-tight tracking-tight">
                     {applications.filter((app) => (app.status || 'NEW') === stage.status).length}
                   </span>
                   <span className="block text-xs text-muted-foreground">
@@ -2035,7 +2039,7 @@ const AdminDashboard = () => {
               ))}
             </div>
 
-            <div className="grid items-end gap-4 md:grid-cols-[2fr_1fr_1fr]">
+            <div className="grid items-end gap-4 md:grid-cols-3">
               <div className="space-y-2">
                 <Label htmlFor="applicant-search">Search applicants</Label>
                 <Input
@@ -2096,7 +2100,7 @@ const AdminDashboard = () => {
               <Button
                 size="sm"
                 variant={!isKanban ? 'default' : 'ghost'}
-                className="min-h-12 text-sm px-5"
+                className="min-h-12 rounded-sm border border-brand-border px-6 text-sm"
                 onClick={() => {
                   setApplicantViewMode('table');
                   if (activeTab === 'kanban') setActiveTab('applicants');
@@ -2108,7 +2112,7 @@ const AdminDashboard = () => {
               <Button
                 size="sm"
                 variant={isKanban ? 'default' : 'ghost'}
-                className="min-h-12 text-sm px-5"
+                className="min-h-12 rounded-sm border border-brand-border px-6 text-sm"
                 onClick={() => {
                   setApplicantViewMode('kanban');
                   setActiveTab('kanban');
@@ -2173,10 +2177,8 @@ const AdminDashboard = () => {
                         <TableHead>Applicant</TableHead>
                         <TableHead>Sector</TableHead>
                         <TableHead>Town</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Compliance</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead>Reference</TableHead>
+                        <TableHead className="text-right">Status</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -2190,45 +2192,35 @@ const AdminDashboard = () => {
                             }`}
                             onClick={() => setSelectedApp(app)}
                           >
-                            <TableCell className="py-3.5">
-                              <div className="flex items-center gap-3">
-                                <div
-                                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
-                                    app.sector === 'chicken'
-                                      ? 'bg-brand-ivory text-brand-obsidian'
-                                      : 'bg-brand-mist text-brand-obsidian'
-                                  }`}
-                                >
-                                  {(app.name || 'A').charAt(0).toUpperCase()}
-                                </div>
-                                <div className="space-y-0.5">
-                                  <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
-                                    <span>{app.name || 'Anonymous Applicant'}</span>
-                                  </div>
-                                  <div className="text-xs text-muted-foreground font-mono">
-                                    {app.email || app.phone || 'No direct contact'}
-                                  </div>
-                                </div>
-                              </div>
+                            <TableCell className="px-5 py-5">
+                              <button
+                                type="button"
+                                className="text-left text-sm font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-brand-orange"
+                                onClick={() => setSelectedApp(app)}
+                              >
+                                {app.name || 'Anonymous Applicant'}
+                              </button>
                             </TableCell>
-
+                            <TableCell className="px-5 text-sm capitalize">{app.sector}</TableCell>
+                            <TableCell className="px-5 text-sm text-muted-foreground">
+                              {app.town || '—'}
+                            </TableCell>
+                            <TableCell className="px-5 font-mono text-xs text-muted-foreground">
+                              {app.rosterRef || '—'}
+                            </TableCell>
                             <TableCell>
-                              <Badge variant="outline" className="text-[10px] uppercase font-mono">
-                                {app.sector}
-                              </Badge>
-                            </TableCell>
-
-                            <TableCell className="text-xs text-muted-foreground">
-                              {app.town || '-'}
-                            </TableCell>
-
-                            <TableCell>
-                              <div onClick={(e) => e.stopPropagation()}>
+                              <div
+                                className="flex justify-end"
+                                onClick={(e) => e.stopPropagation()}
+                              >
                                 <Select
                                   value={app.status || 'NEW'}
                                   onValueChange={(val) => updateApplicationStatus(app.id, val)}
                                 >
-                                  <SelectTrigger className="h-7 text-xs w-[125px]">
+                                  <SelectTrigger
+                                    aria-label={`Status for ${app.name || app.rosterRef}`}
+                                    className="h-9 w-[145px] rounded-sm text-xs"
+                                  >
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -2240,82 +2232,13 @@ const AdminDashboard = () => {
                                 </Select>
                               </div>
                             </TableCell>
-
-                            <TableCell>
-                              <div className="flex items-center gap-1.5">
-                                {app.hasRightToWork ? (
-                                  <Badge
-                                    variant="outline"
-                                    className="text-[9px] py-0 px-1.5 bg-emerald-50 text-emerald-700 border-emerald-200 font-mono flex items-center gap-1"
-                                  >
-                                    <ShieldCheck className="w-2.5 h-2.5" /> RTW
-                                  </Badge>
-                                ) : (
-                                  <Badge
-                                    variant="outline"
-                                    className="text-[9px] py-0 px-1.5 text-muted-foreground font-mono"
-                                  >
-                                    RTW Pending
-                                  </Badge>
-                                )}
-
-                                {app.profileFormCompleted && (
-                                  <Badge
-                                    variant="outline"
-                                    className="text-[9px] py-0 px-1.5 bg-blue-50 text-blue-700 border-blue-200 font-mono flex items-center gap-1"
-                                  >
-                                    <CheckCircle2 className="w-2.5 h-2.5" /> Induction
-                                  </Badge>
-                                )}
-                              </div>
-                            </TableCell>
-
-                            <TableCell className="text-xs text-muted-foreground font-mono">
-                              {new Date(app.createdAt).toLocaleDateString()}
-                            </TableCell>
-
-                            <TableCell className="text-right">
-                              <div
-                                className="flex items-center justify-end gap-1"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                {app.phone && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700"
-                                    title="WhatsApp Candidate"
-                                    onClick={() =>
-                                      window.open(
-                                        getWhatsAppLink(
-                                          app.phone,
-                                          `Hi ${app.name || 'Operative'}, Pullum Ltd recruitment team here regarding your application.`,
-                                        ),
-                                        '_blank',
-                                      )
-                                    }
-                                  >
-                                    <Smartphone className="w-4 h-4" />
-                                  </Button>
-                                )}
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0"
-                                  title="Inspect Candidate"
-                                  onClick={() => setSelectedApp(app)}
-                                >
-                                  <Eye className="w-4 h-4 text-brand-yellow" />
-                                </Button>
-                              </div>
-                            </TableCell>
                           </TableRow>
                         );
                       })}
                       {filteredApps.length === 0 && (
                         <TableRow>
                           <TableCell
-                            colSpan={7}
+                            colSpan={5}
                             className="text-center py-10 text-muted-foreground"
                           >
                             No applications found in this view.
@@ -2336,6 +2259,19 @@ const AdminDashboard = () => {
                 Load more applications
               </Button>
             )}
+            <section
+              className="space-y-3 rounded-lg border border-brand-border bg-brand-ivory p-6"
+              aria-label="Application review guidance"
+            >
+              <h2 className="font-display text-xl font-bold tracking-tight">Application review</h2>
+              <p className="text-sm leading-relaxed">
+                Open an application to review contact details, catching area, Right to Work
+                documents and onboarding progress.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Only authorised staff can access applicant records.
+              </p>
+            </section>
           </div>
         );
       }
