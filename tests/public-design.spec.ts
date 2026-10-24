@@ -50,7 +50,7 @@ test('desktop navigation uses page context and opens keyboard-accessible menus',
   page,
 }) => {
   await page.goto('/');
-  await expect(page.locator('header')).toHaveCSS('background-color', 'rgb(255, 118, 5)');
+  await expect(page.locator('header')).toHaveCSS('background-color', 'rgb(255, 124, 32)');
   const trigger = page.getByRole('button', { name: 'Catching Jobs', exact: true });
   await trigger.focus();
   await page.keyboard.press('Enter');
@@ -70,7 +70,7 @@ test('desktop navigation uses page context and opens keyboard-accessible menus',
 });
 
 for (const [route, colour] of [
-  ['/', 'rgb(255, 118, 5)'],
+  ['/', 'rgb(255, 124, 32)'],
   ['/jobs', 'rgb(255, 255, 255)'],
 ] as const) {
   test(`mobile menu follows ${route} context and closes after navigation`, async ({ page }) => {
@@ -147,27 +147,18 @@ for (const width of [390, 1440]) {
   }
 }
 
-test('approved home pickup hero links to jobs and directory searches by area', async ({ page }) => {
+test('updated home map hero searches by pickup area with reduced motion', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   const hero = page.locator('#home');
-  await expect(hero.getByRole('heading', { level: 1 })).toHaveText(
-    'UK poultry catching jobs with door-to-door home pickup.',
-  );
-  const image = hero.getByRole('img', {
-    name: 'CatchingJobs minibus and crew providing home pickup',
-  });
-  await expect(image).toHaveAttribute('src', /home-pickup\/roDLt\.png$/);
-  await expect(hero.getByRole('link', { name: 'Find Catching Jobs Near You' })).toHaveAttribute(
-    'href',
-    '/jobs',
-  );
+  const image = hero.locator('picture img');
+  await expect(image).toHaveAttribute('src', /home-hero-map\/HT8IN\.png$/);
   await expect
     .poll(() => image.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0))
     .toBe(true);
   const search = page.getByRole('form', { name: 'Search catching jobs by home location' });
-  await search.getByRole('textbox', { name: 'Enter your town or area' }).fill('Boston');
+  await search.getByRole('textbox').fill('Boston');
   await search.getByRole('button', { name: 'Find jobs near me' }).click();
   await expect(page).toHaveURL(/\/jobs\?town=Boston$/);
   await expect(page.getByRole('heading', { name: 'Night Shift Broiler Catcher' })).toBeVisible();

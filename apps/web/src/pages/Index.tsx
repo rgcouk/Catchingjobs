@@ -107,12 +107,7 @@ export default function Index(_props: { onNavigate?: unknown }) {
     <div className="min-h-dvh bg-white text-brand-obsidian">
       <PublicHeader />
       <main>
-        <HomeHero
-          onQuickApply={() => {
-            setApplicationSector('chicken');
-            setIsApplyModalOpen(true);
-          }}
-        />
+        <HomeHero />
         <section id="vacancies" data-od-id="live-vacancies" className="bg-white py-8 lg:py-10">
           <div className="mx-auto max-w-[1440px] space-y-5 px-6 lg:px-20">
             <h2 className="text-center font-display text-[28px] font-bold lg:text-[32px]">
@@ -120,52 +115,6 @@ export default function Index(_props: { onNavigate?: unknown }) {
             </h2>
             <p className="text-center text-xs text-slate-600">
               Browse current vacancies. Confirm pay and availability when applying.
-            </p>
-            <form
-              aria-label="Search catching jobs by home location"
-              onSubmit={(event) => {
-                event.preventDefault();
-                const fields = new FormData(event.currentTarget);
-                const filters = new URLSearchParams();
-                const keyword = String(fields.get('q') || '').trim();
-                const town = String(fields.get('town') || '')
-                  .trim()
-                  .replace(/\s+/g, ' ');
-                if (keyword) filters.set('q', keyword);
-                if (town) filters.set('town', town);
-                navigate(`/jobs${filters.size ? `?${filters}` : ''}`);
-              }}
-              className="grid gap-3 rounded-lg border border-brand-border bg-white p-3 text-left lg:grid-cols-[1fr_1fr_auto]"
-            >
-              <label className="flex flex-col gap-2 rounded bg-brand-mist px-4 py-3">
-                <span className="text-xs font-semibold">ROLE OR KEYWORD</span>
-                <input
-                  name="q"
-                  aria-label="Role or keyword"
-                  placeholder="Catcher, driver or crew leader"
-                  className="min-h-6 min-w-0 bg-transparent text-sm outline-offset-4"
-                />
-              </label>
-              <label className="flex flex-col gap-2 rounded bg-brand-mist px-4 py-3">
-                <span className="text-xs font-semibold">HOME PICKUP AREA</span>
-                <input
-                  name="town"
-                  aria-label="Enter your town or area"
-                  aria-describedby="home-search-hint"
-                  autoComplete="address-level2"
-                  placeholder="Enter your town or area"
-                  className="min-h-6 min-w-0 bg-transparent text-sm outline-offset-4"
-                />
-              </label>
-              <button
-                type="submit"
-                className="min-h-12 rounded bg-brand-obsidian px-7 text-sm font-semibold text-white hover:bg-brand-obsidian/90"
-              >
-                Find jobs near me
-              </button>
-            </form>
-            <p id="home-search-hint" className="text-xs text-slate-600">
-              Search listed towns and regions; confirm home pickup when applying.
             </p>
             <div className="hidden flex-wrap justify-center gap-2 lg:flex">
               {[

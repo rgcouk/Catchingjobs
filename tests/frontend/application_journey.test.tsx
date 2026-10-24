@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import Index from '@/pages/Index';
+import { HomeHero } from '@/components/home/HomeHero';
 import JobsListPage from '@/pages/jobs/JobsListPage';
 import JobDetailsPage from '@/pages/jobs/JobDetailsPage';
 
@@ -44,7 +44,6 @@ beforeEach(() => {
       if (url === '/api/applications/draft')
         return { ok: true, json: async () => ({ id: 12, rosterRef: 'REF12' }) };
       if (url === '/api/triage/claim') return { ok: true, json: async () => ({ success: true }) };
-      if (url === '/api/locations') return { ok: true, json: async () => [] };
       return { ok: true, json: async () => (url === '/api/jobs/42' ? job : [job]) };
     }),
   );
@@ -58,7 +57,7 @@ it('preserves the location and vacancy through search, application and verified 
   render(
     <MemoryRouter>
       <Routes>
-        <Route path="/" element={<Index />} />
+        <Route path="/" element={<HomeHero />} />
         <Route path="/jobs" element={<JobsListPage initialItems={[job]} />} />
         <Route path="/jobs/:id" element={<JobDetailsPage />} />
         <Route path="/employee" element={<h1>Complete your application</h1>} />

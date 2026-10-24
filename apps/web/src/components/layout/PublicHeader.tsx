@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router';
 import { SignedIn, UserButton, useAuth } from '@clerk/clerk-react';
-import { ArrowRight, ChevronDown, Menu, UserRound } from 'lucide-react';
+import { ChevronDown, Menu, UserRound } from 'lucide-react';
 import BrandLogo from '../brand/BrandLogo';
 import {
   DropdownMenu,
@@ -42,7 +42,10 @@ export function PublicHeader({ heroTone }: { heroTone?: 'orange' | 'light' } = {
   const jobsActive = ['/jobs', '/chickens', '/turkeys', '/training'].some(
     (path) => pathname === path || pathname.startsWith(path + '/'),
   );
-  const surface = isOrangeHero ? 'bg-brand-orange border-black/10' : 'bg-white border-brand-border';
+  const orangeSurface = pathname === '/' ? 'bg-[#FF7C20]' : 'bg-brand-orange';
+  const surface = isOrangeHero
+    ? `${orangeSurface} border-black/10`
+    : 'bg-white border-brand-border';
   const focus =
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-obsidian focus-visible:ring-offset-2';
   const action = cn(
@@ -199,14 +202,9 @@ export function PublicHeader({ heroTone }: { heroTone?: 'orange' | 'light' } = {
                 </a>
                 <div className="mt-6 flex flex-col gap-3">
                   {!isSignedIn && (
-                    <Link
-                      to="/register"
-                      className={cn(
-                        action,
-                        'rounded-sm bg-brand-orange text-brand-obsidian hover:bg-brand-obsidian hover:text-white',
-                      )}
-                    >
-                      Quick Apply <ArrowRight aria-hidden="true" className="size-4" />
+                    <Link to="/login" className={action}>
+                      <UserRound aria-hidden="true" className="size-[18px]" />
+                      Log in
                     </Link>
                   )}
                   <SignedIn>

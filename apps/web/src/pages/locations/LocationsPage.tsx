@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
+import { BrandIcon } from '../../components/brand/BrandIcon';
 import { PublicHeader } from '../../components/layout/PublicHeader';
 import { PublicFooter } from '../../components/layout/PublicFooter';
 
@@ -94,16 +95,19 @@ export default function LocationsPage({ initialItems }: { initialItems?: any[] }
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {locations.map((region) => (
                 <Link to={`/chickens/${region.id}`} key={region.id} className="block group">
-                  <div className="flex h-full flex-col gap-4 rounded-lg border border-brand-border bg-brand-mist p-6 transition-colors hover:border-brand-orange">
-                    <p className="font-mono text-xs font-medium tracking-wide text-slate-600">
-                      COVERAGE AREA
-                    </p>
-                    <h3 className="text-2xl font-bold font-display text-brand-obsidian tracking-tight">
+                  <div className="bg-slate-50 rounded-lg border border-slate-200 p-6 h-full transition-shadow hover:shadow-md">
+                    <BrandIcon name="location" size={32} className="mb-4" />
+                    <h3 className="text-xl font-bold font-display text-slate-900 mb-2 group-hover:text-brand-yellow transition-colors">
                       {region.name}
                     </h3>
+                    <p className="text-sm text-slate-500 mb-4">{region.county}</p>
+
                     {region.towns && region.towns.length > 0 && (
                       <div className="space-y-1">
-                        {region.towns.slice(0, 6).map((town: any) => (
+                        <p className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+                          Depots / Pickups
+                        </p>
+                        {region.towns.slice(0, 3).map((town: any) => (
                           <div
                             key={town.id}
                             className="text-sm text-slate-700 flex items-center gap-2"
@@ -112,23 +116,20 @@ export default function LocationsPage({ initialItems }: { initialItems?: any[] }
                             {town.name}
                           </div>
                         ))}
-                        {region.towns.length > 6 && (
+                        {region.towns.length > 3 && (
                           <div className="text-xs text-slate-600 pt-1">
-                            +{region.towns.length - 6} more towns
+                            +{region.towns.length - 3} more hubs
                           </div>
                         )}
                       </div>
                     )}
-                    <span className="mt-auto inline-flex min-h-12 items-center justify-center rounded border border-brand-border bg-white px-6 font-display text-sm font-bold group-hover:bg-brand-obsidian group-hover:text-white">
-                      Explore {region.name} →
-                    </span>
                   </div>
                 </Link>
               ))}
             </div>
           )}
         </section>
-        <section className="mx-auto max-w-[1280px] bg-brand-ivory px-6 py-8 mb-12 rounded-lg space-y-3">
+        <section className="mx-auto max-w-[1280px] bg-brand-mist px-6 py-8 mb-12 rounded-lg space-y-3">
           <h2 className="text-xl font-display font-bold">Free Door-to-Door Home Pickup</h2>
           <p className="text-sm text-slate-600">
             Our heated minibuses collect you from home and bring you back after your shift.

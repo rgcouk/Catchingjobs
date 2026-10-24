@@ -16,8 +16,6 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
-import BrandLogo from '@/components/brand/BrandLogo';
-import { BrandIcon } from '@/components/brand/BrandIcon';
 import {
   Form,
   FormControl,
@@ -27,7 +25,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ShieldCheck, ArrowLeft } from 'lucide-react';
+import { ShieldCheck, Truck, Coins, ArrowLeft } from 'lucide-react';
 
 const registerSchema = z.object({
   firstName: z.string().min(2, { message: 'First name is required.' }),
@@ -143,14 +141,14 @@ export default function Register() {
         {/* Right Column - Brand Showcase (light surface) */}
         <div className="flex flex-col justify-between flex-1 p-6 py-8 md:p-16 bg-brand-ivory text-brand-obsidian border-b md:border-b-0 md:border-r border-slate-200">
           <div className="space-y-7 max-w-[592px]">
-            <BrandLogo variant="scrolled" size="md" />
+            {/* Authentic Brand Monogram Lockup */}
 
             <div className="space-y-4">
               <span className="inline-flex items-center gap-2 text-[9px] md:text-[11px] font-mono font-bold text-brand-obsidian bg-white px-3 py-1 rounded border border-slate-200">
                 <ShieldCheck className="w-4 h-4" />
                 Direct Recruitment · GLAA Licence PULL0001
               </span>
-              <h1 className="text-[32px] md:text-[48px] font-black font-display text-brand-obsidian leading-tight tracking-[-0.03em] text-balance">
+              <h1 className="text-[32px] md:text-[48px] font-black font-display text-brand-obsidian leading-tight text-balance">
                 Start your career with Pullum Ltd.
               </h1>
               <p className="text-sm md:text-base text-slate-600 leading-relaxed text-pretty font-sans">
@@ -161,8 +159,8 @@ export default function Register() {
 
             <div className="space-y-6 pt-6 border-t border-slate-200 text-xs font-mono">
               <div className="flex items-center gap-3 text-slate-600">
-                <div className="w-8 h-8 flex items-center justify-center shrink-0">
-                  <BrandIcon name="pickup" size={32} />
+                <div className="w-9 h-9 rounded-sm bg-white flex items-center justify-center text-brand-obsidian shrink-0 border border-slate-200">
+                  <Truck className="w-4 h-4" />
                 </div>
                 <div>
                   <p className="font-bold text-brand-obsidian font-display text-sm">
@@ -175,8 +173,8 @@ export default function Register() {
               </div>
 
               <div className="flex items-center gap-3 text-slate-600">
-                <div className="w-8 h-8 flex items-center justify-center shrink-0">
-                  <BrandIcon name="pay" size={32} />
+                <div className="w-9 h-9 rounded-sm bg-white flex items-center justify-center text-brand-obsidian shrink-0 border border-slate-200">
+                  <Coins className="w-4 h-4" />
                 </div>
                 <div>
                   <p className="font-bold text-brand-obsidian font-display text-sm">
@@ -189,8 +187,8 @@ export default function Register() {
               </div>
 
               <div className="flex items-center gap-3 text-slate-600">
-                <div className="w-8 h-8 flex items-center justify-center shrink-0">
-                  <BrandIcon name="verified" size={32} />
+                <div className="w-9 h-9 rounded-sm bg-white flex items-center justify-center text-brand-obsidian shrink-0 border border-slate-200">
+                  <ShieldCheck className="w-4 h-4" />
                 </div>
                 <div>
                   <p className="font-bold text-brand-obsidian font-display text-sm">

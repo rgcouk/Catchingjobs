@@ -28,7 +28,6 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { BrandIcon } from '@/components/brand/BrandIcon';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -234,8 +233,7 @@ const PortalDashboard = () => {
             <h1 className="flex-1 font-display text-[28px] md:text-[32px] font-extrabold tracking-tight leading-tight">
               Welcome back, {user?.firstName || user?.fullName || app?.name || 'Operative'}
             </h1>
-            <BrandIcon name="team" size={64} className="hidden md:block" />
-            <BrandIcon name="team" size={32} className="md:hidden" />
+            <User className="size-6 shrink-0 md:hidden" aria-hidden="true" />
           </div>
           <p className="text-base text-slate-600 leading-relaxed">
             Pullum Ltd Employee &amp; Compliance Portal. View your application status, manage your
@@ -328,10 +326,7 @@ const PortalDashboard = () => {
                 section: 'edit' as const,
               },
             ].map(({ title, description, label, icon: Icon, section }) => (
-              <div
-                key={title}
-                className="rounded-lg border border-slate-200 bg-slate-50 p-5 space-y-3"
-              >
+              <div key={title} className="rounded-lg border border-slate-200 p-5 space-y-3">
                 <h3 className="flex items-center gap-3 font-display text-lg font-bold">
                   <Icon className="size-5 shrink-0" aria-hidden="true" />
                   {title}
@@ -339,7 +334,7 @@ const PortalDashboard = () => {
                 <p className="text-sm text-slate-600 leading-relaxed">{description}</p>
                 <Button
                   variant="outline"
-                  className="min-h-12 rounded-sm bg-white"
+                  className="min-h-12 rounded-sm"
                   onClick={() =>
                     openAccountDialog(section === 'edit' && !app ? 'onboarding' : section)
                   }

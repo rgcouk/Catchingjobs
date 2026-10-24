@@ -793,17 +793,14 @@ export default function IntakeWizard({
     );
   return (
     <section
-      className="mx-auto w-full max-w-[760px] rounded-lg border border-slate-200 bg-white p-5 text-brand-obsidian sm:p-8"
+      className="mx-auto w-full max-w-3xl rounded-xl border border-slate-200 bg-white p-5 text-[#090D14] sm:p-8"
       style={{ fontFamily: 'Geist, sans-serif' }}
     >
       <header className="mb-6 border-b border-slate-200 pb-6">
-        <p className="mb-3 font-display text-xs font-bold uppercase tracking-wide text-slate-600">
-          Application for employment
-        </p>
         <h2
           ref={step === -1 ? heading : undefined}
           tabIndex={-1}
-          className="text-2xl font-bold sm:text-[32px] leading-tight"
+          className="text-2xl font-extrabold sm:text-3xl"
           style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
         >
           Complete your application

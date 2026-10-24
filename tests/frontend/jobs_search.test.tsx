@@ -1,16 +1,12 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router';
-import Index from '@/pages/Index';
+import { HomeHero } from '@/components/home/HomeHero';
 import { matchesJobLocation } from '@/lib/job-discovery';
 import JobsListPage from '@/pages/jobs/JobsListPage';
 
 vi.mock('@/components/layout/PublicHeader', () => ({ PublicHeader: () => <header /> }));
 vi.mock('@/components/layout/PublicFooter', () => ({ PublicFooter: () => <footer /> }));
-vi.mock('@clerk/clerk-react', () => ({
-  useUser: () => ({ isLoaded: true, isSignedIn: false, user: null }),
-  useAuth: () => ({ getToken: vi.fn() }),
-}));
 
 const jobs = [
   {
@@ -143,13 +139,9 @@ it('matches location names, region identifiers and counties without claiming pos
 });
 
 it('submits a location-only homepage search and trims repeated whitespace', () => {
-  vi.stubGlobal(
-    'fetch',
-    vi.fn(async () => ({ ok: true, json: async () => [] })),
-  );
   render(
     <MemoryRouter>
-      <Index />
+      <HomeHero />
       <NavigationProbe />
     </MemoryRouter>,
   );

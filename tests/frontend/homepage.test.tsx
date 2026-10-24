@@ -133,9 +133,7 @@ describe('Homepage vacancy and application journeys', () => {
       'href',
       'tel:01205330190',
     );
-    screen.getAllByRole('button', { name: 'Apply in 60 Seconds (No CV)' }).forEach((action) => {
-      expect(action).toBeEnabled();
-    });
+    expect(screen.getByRole('button', { name: 'Apply in 60 Seconds (No CV)' })).toBeEnabled();
   });
 
   it('submits turkey intake, exposes errors, and retries without losing entered details', async () => {

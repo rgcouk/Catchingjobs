@@ -177,27 +177,7 @@ export default function CorporateLander({ onNavigate }: any) {
         </div>
       </main>
 
-      <section className="bg-brand-mist py-12">
-        <div className="mx-auto flex max-w-[1280px] flex-col items-start justify-between gap-8 px-6 sm:flex-row sm:items-center xl:px-0">
-          <div className="space-y-3">
-            <h2 className="font-display text-[28px] font-bold tracking-tight">
-              Operated by Pullum Ltd
-            </h2>
-            <a
-              href="tel:01205330190"
-              className="inline-flex min-h-11 items-center text-xl hover:underline"
-            >
-              01205 330 190
-            </a>
-          </div>
-          <Link
-            to="/jobs"
-            className="inline-flex min-h-12 items-center justify-center rounded bg-brand-orange px-6 font-display text-sm font-bold hover:bg-brand-obsidian hover:text-white"
-          >
-            View Catching Roles →
-          </Link>
-        </div>
-      </section>
+      {/*  4. STATUTORY FOOTER  */}
       <PublicFooter />
     </m.div>
   );
