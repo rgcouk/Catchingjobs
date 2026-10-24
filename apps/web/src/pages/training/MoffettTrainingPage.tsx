@@ -17,7 +17,7 @@ export default function MoffettTrainingPage() {
       </>
       <PublicHeader />
       <main>
-        <section className="relative isolate overflow-hidden bg-brand-ivory">
+        <section className="relative isolate overflow-hidden bg-brand-mist">
           <div className="mx-auto max-w-[1312px] px-6 py-8 lg:px-0 lg:py-10">
             <nav aria-label="Breadcrumb" className="text-sm text-slate-600">
               <Link to="/" className="underline-offset-4 hover:underline">

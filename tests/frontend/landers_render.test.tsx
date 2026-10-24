@@ -146,8 +146,8 @@ describe('Public Lander Page Components Render Integrity', () => {
         </MemoryRouter>
       </HelmetProvider>,
     );
-    expect(screen.getByText(/Complete Your Crew Profile/i)).toBeDefined();
-    expect(screen.getByText(/Basic & Licenses/i)).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Personal details & eligibility' })).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Review and submit application' })).toBeDisabled();
     expect(container.innerHTML).not.toBe('');
   });
 
@@ -198,8 +198,8 @@ describe('Public Lander Page Components Render Integrity', () => {
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /Welcome back, Arthur/i })).toBeDefined();
     });
-    expect(screen.getByRole('heading', { name: /Complete your onboarding/i })).toBeDefined();
-    expect(screen.getByRole('button', { name: /View Application/i })).toBeDefined();
+    expect(screen.getByRole('heading', { name: /Complete your application/i })).toBeDefined();
+    expect(screen.getAllByRole('button', { name: /View Application/i }).length).toBeGreaterThan(0);
     expect(container.innerHTML).not.toBe('');
   });
 });

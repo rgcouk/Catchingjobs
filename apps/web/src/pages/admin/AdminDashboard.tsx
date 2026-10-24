@@ -1,3 +1,4 @@
+import { EmploymentApplicationRecord } from '@/components/EmploymentApplicationRecord';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   LayoutDashboard,
@@ -4894,6 +4895,7 @@ const AdminDashboard = () => {
 
           {selectedApp && (
             <div className="space-y-6 mt-4 text-xs">
+              <EmploymentApplicationRecord application={selectedApp} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 className="font-semibold text-foreground mb-2 text-sm">Personal Details</h4>
@@ -4916,68 +4918,78 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                <div>
-                  <h4 className="font-semibold text-foreground mb-2 text-sm">Emergency Contact</h4>
-                  <div className="space-y-1.5 text-muted-foreground">
-                    <p>
-                      <strong className="text-foreground">Name:</strong>{' '}
-                      {selectedApp.emergencyName || 'N/A'}
-                    </p>
-                    <p>
-                      <strong className="text-foreground">Phone:</strong>{' '}
-                      {selectedApp.emergencyPhone || 'N/A'}
-                    </p>
-                    <p>
-                      <strong className="text-foreground">Relation:</strong>{' '}
-                      {selectedApp.emergencyRelation || 'N/A'}
-                    </p>
+                {selectedApp.applicationFormVersion !== 'jotform-v1' && (
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-2 text-sm">
+                      Emergency Contact
+                    </h4>
+                    <div className="space-y-1.5 text-muted-foreground">
+                      <p>
+                        <strong className="text-foreground">Name:</strong>{' '}
+                        {selectedApp.emergencyName || 'N/A'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Phone:</strong>{' '}
+                        {selectedApp.emergencyPhone || 'N/A'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Relation:</strong>{' '}
+                        {selectedApp.emergencyRelation || 'N/A'}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
-              <div className="border-t border-border pt-4">
-                <h4 className="font-semibold text-foreground mb-2 text-sm">Bank Details (BACS)</h4>
-                <div className="grid grid-cols-2 gap-3 text-muted-foreground">
-                  <p>
-                    <strong className="text-foreground">Bank:</strong>{' '}
-                    {selectedApp.bankName || 'N/A'}
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Account Name:</strong>{' '}
-                    {selectedApp.bankAccountName || 'N/A'}
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Sort Code:</strong>{' '}
-                    <span className="font-mono">{selectedApp.bankSortCode || 'N/A'}</span>
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Account #:</strong>{' '}
-                    <span className="font-mono">{selectedApp.bankAccountNumber || 'N/A'}</span>
-                  </p>
-                </div>
-              </div>
+              {selectedApp.applicationFormVersion !== 'jotform-v1' && (
+                <>
+                  <div className="border-t border-border pt-4">
+                    <h4 className="font-semibold text-foreground mb-2 text-sm">
+                      Bank Details (BACS)
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3 text-muted-foreground">
+                      <p>
+                        <strong className="text-foreground">Bank:</strong>{' '}
+                        {selectedApp.bankName || 'N/A'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Account Name:</strong>{' '}
+                        {selectedApp.bankAccountName || 'N/A'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Sort Code:</strong>{' '}
+                        <span className="font-mono">{selectedApp.bankSortCode || 'N/A'}</span>
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Account #:</strong>{' '}
+                        <span className="font-mono">{selectedApp.bankAccountNumber || 'N/A'}</span>
+                      </p>
+                    </div>
+                  </div>
 
-              <div className="border-t border-border pt-4">
-                <h4 className="font-semibold text-foreground mb-2 text-sm">Health & Welfare</h4>
-                <div className="grid grid-cols-2 gap-3 text-muted-foreground">
-                  <p>
-                    <strong className="text-foreground">Fit to Lift 15-20kg:</strong>{' '}
-                    {selectedApp.isFitToLift ? 'Yes' : 'No'}
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Back/Joint Issues:</strong>{' '}
-                    {selectedApp.hasBackIssues ? 'Yes' : 'No'}
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Asthma/Allergies:</strong>{' '}
-                    {selectedApp.hasAsthmaOrAllergies ? 'Yes' : 'No'}
-                  </p>
-                  <p>
-                    <strong className="text-foreground">UK Driving License:</strong>{' '}
-                    {selectedApp.hasDrivingLicense ? 'Yes' : 'No'}
-                  </p>
-                </div>
-              </div>
+                  <div className="border-t border-border pt-4">
+                    <h4 className="font-semibold text-foreground mb-2 text-sm">Health & Welfare</h4>
+                    <div className="grid grid-cols-2 gap-3 text-muted-foreground">
+                      <p>
+                        <strong className="text-foreground">Fit to Lift 15-20kg:</strong>{' '}
+                        {selectedApp.isFitToLift ? 'Yes' : 'No'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Back/Joint Issues:</strong>{' '}
+                        {selectedApp.hasBackIssues ? 'Yes' : 'No'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Asthma/Allergies:</strong>{' '}
+                        {selectedApp.hasAsthmaOrAllergies ? 'Yes' : 'No'}
+                      </p>
+                      <p>
+                        <strong className="text-foreground">UK Driving License:</strong>{' '}
+                        {selectedApp.hasDrivingLicense ? 'Yes' : 'No'}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
 

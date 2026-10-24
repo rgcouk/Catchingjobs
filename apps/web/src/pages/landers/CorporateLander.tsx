@@ -22,7 +22,7 @@ export default function CorporateLander({ onNavigate }: any) {
       {/*  2. HERO SECTION  */}
       <section
         data-od-id="corporate-hero"
-        className="relative bg-brand-ivory text-brand-obsidian py-12 lg:py-16 border-b border-black/10 overflow-hidden"
+        className="relative bg-brand-mist text-brand-obsidian py-12 lg:py-16 border-b border-black/10 overflow-hidden"
       >
         <div className="max-w-[1280px] mx-auto px-6 xl:px-0 space-y-6 relative z-10 lg:pr-[352px]">
           <div className="inline-flex items-center gap-2 text-brand-obsidian text-xs font-mono font-medium tracking-wide">
@@ -54,8 +54,8 @@ export default function CorporateLander({ onNavigate }: any) {
         <div className="max-w-[1280px] mx-auto px-6 xl:px-0 space-y-16">
           {/*  Key Credentials Cards  */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-6 rounded-lg border border-brand-border bg-brand-ivory space-y-4">
-              <div className="inline-block px-3 py-1 rounded-full bg-brand-ivory text-brand-obsidian font-mono text-xs font-bold">
+            <div className="p-6 rounded-lg border border-brand-border bg-brand-mist space-y-4">
+              <div className="inline-block px-3 py-1 rounded-full bg-brand-mist text-brand-obsidian font-mono text-xs font-bold">
                 LICENCE PULL0001
               </div>
               <BrandIcon name="verified" size={64} />
@@ -72,7 +72,7 @@ export default function CorporateLander({ onNavigate }: any) {
               </div>
             </div>
 
-            <div className="p-6 rounded-lg border border-brand-border bg-brand-ivory space-y-4">
+            <div className="p-6 rounded-lg border border-brand-border bg-brand-mist space-y-4">
               <div className="inline-block px-3 py-1 rounded-full bg-brand-orange text-brand-obsidian font-mono text-xs font-bold">
                 LEVEL 2 CERTIFIED
               </div>
@@ -89,7 +89,7 @@ export default function CorporateLander({ onNavigate }: any) {
               </div>
             </div>
 
-            <div className="p-6 rounded-lg border border-brand-border bg-brand-ivory space-y-4">
+            <div className="p-6 rounded-lg border border-brand-border bg-brand-mist space-y-4">
               <div className="inline-block px-3 py-1 rounded-full bg-brand-orange text-brand-obsidian font-mono text-xs font-bold">
                 ZERO CHARGES
               </div>
@@ -177,7 +177,27 @@ export default function CorporateLander({ onNavigate }: any) {
         </div>
       </main>
 
-      {/*  4. STATUTORY FOOTER  */}
+      <section className="bg-brand-mist py-12">
+        <div className="mx-auto flex max-w-[1280px] flex-col items-start justify-between gap-8 px-6 sm:flex-row sm:items-center xl:px-0">
+          <div className="space-y-3">
+            <h2 className="font-display text-[28px] font-bold tracking-tight">
+              Operated by Pullum Ltd
+            </h2>
+            <a
+              href="tel:01205330190"
+              className="inline-flex min-h-11 items-center text-xl hover:underline"
+            >
+              01205 330 190
+            </a>
+          </div>
+          <Link
+            to="/jobs"
+            className="inline-flex min-h-12 items-center justify-center rounded bg-brand-orange px-6 font-display text-sm font-bold hover:bg-brand-obsidian hover:text-white"
+          >
+            View Catching Roles →
+          </Link>
+        </div>
+      </section>
       <PublicFooter />
     </m.div>
   );

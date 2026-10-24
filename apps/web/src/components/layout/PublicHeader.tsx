@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router';
 import { SignedIn, UserButton, useAuth } from '@clerk/clerk-react';
-import { ArrowRight, ChevronDown, Menu } from 'lucide-react';
+import { ArrowRight, ChevronDown, Menu, UserRound } from 'lucide-react';
 import BrandLogo from '../brand/BrandLogo';
-import { buttonVariants } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,47 +49,47 @@ export function PublicHeader({ heroTone }: { heroTone?: 'orange' | 'light' } = {
   const focus =
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-obsidian focus-visible:ring-offset-2';
   const action = cn(
-    buttonVariants(),
-    'min-h-11 normal-case tracking-normal shadow-none',
-    isOrangeHero && 'bg-white text-brand-obsidian hover:bg-brand-ivory hover:text-brand-obsidian',
+    'inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-obsidian px-5 font-navigation text-[15px] font-bold text-white transition-colors hover:bg-brand-obsidian/90',
+    focus,
   );
-  const navClass = ({ isActive }: { isActive: boolean }) =>
-    cn(
-      'inline-flex min-h-11 items-center border-b-2 text-sm font-semibold transition-colors hover:text-brand-obsidian',
-      focus,
-      'lg:font-navigation lg:text-base lg:uppercase lg:tracking-[0.4px]',
-      isActive
-        ? 'border-brand-obsidian text-brand-obsidian'
-        : 'border-transparent text-brand-obsidian/80',
-    );
+  const navBase = cn(
+    'inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full px-3 font-navigation text-base font-bold uppercase tracking-[0.4px] transition-colors',
+    focus,
+  );
+  const navState = (active: boolean) =>
+    active
+      ? 'bg-brand-obsidian px-5 text-white hover:text-white'
+      : cn('text-brand-obsidian', isOrangeHero ? 'hover:bg-white/20' : 'hover:bg-brand-obsidian/5');
+  const navClass = ({ isActive }: { isActive: boolean }) => cn(navBase, navState(isActive));
 
   return (
     <header
       data-hero-tone={isOrangeHero ? 'orange' : 'light'}
-      className={cn('relative z-30 border-b text-brand-obsidian', surface)}
+      className={cn('relative z-30 h-20 border-b text-brand-obsidian xl:h-[88px]', surface)}
     >
-      <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between gap-3 px-6 lg:h-[88px] lg:gap-6 lg:px-20">
-        <BrandLogo variant={isOrangeHero ? 'white' : 'yellow'} size="md" />
-        <nav aria-label="Main navigation" className="hidden items-center gap-5 lg:flex">
+      <div className="mx-auto flex h-full max-w-[1440px] items-center justify-between gap-2 px-6 xl:grid xl:grid-cols-[200px_1fr_auto] xl:gap-8 xl:px-20">
+        <div className="flex shrink-0 items-center [&>a]:flex [&>a]:items-center">
+          <BrandLogo
+            variant={isOrangeHero ? 'white' : 'yellow'}
+            size="md"
+            className="h-10 w-[146px] [&>span]:text-[18px] [&>span]:tracking-[-1px] [&_svg]:size-8 min-[380px]:w-[184px] min-[380px]:[&>span]:text-[22px] min-[380px]:[&_svg]:size-9 xl:w-[200px] xl:[&>span]:text-2xl xl:[&>span]:tracking-[-1.2px]"
+          />
+        </div>
+        <nav
+          aria-label="Main navigation"
+          className="hidden items-center justify-center gap-5 xl:flex"
+        >
           <NavLink to="/" end className={navClass}>
             Home
           </NavLink>
           <DropdownMenu>
-            <DropdownMenuTrigger
-              className={cn(
-                'flex min-h-11 items-center gap-1 border-b-2 text-sm font-semibold',
-                focus,
-                'lg:font-navigation lg:text-base lg:uppercase lg:tracking-[0.4px]',
-                jobsActive ? 'border-brand-obsidian' : 'border-transparent',
-              )}
-            >
-              Catching Jobs <ChevronDown aria-hidden="true" className="size-4" />
+            <DropdownMenuTrigger className={cn(navBase, navState(jobsActive), 'whitespace-nowrap')}>
+              Catching Jobs <ChevronDown aria-hidden="true" className="size-3.5" />
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
               className={cn(
-                'z-50 w-64 rounded-md border p-2 text-brand-obsidian shadow-sm',
-                surface,
+                'z-50 w-64 rounded-lg border border-brand-border bg-white p-2 text-brand-obsidian shadow-lg',
               )}
             >
               {jobLinks.map(({ to, label }) => (
@@ -98,8 +97,8 @@ export function PublicHeader({ heroTone }: { heroTone?: 'orange' | 'light' } = {
                   key={to}
                   asChild
                   className={cn(
-                    'min-h-11 cursor-pointer rounded-sm px-3 font-medium text-brand-obsidian focus:text-brand-obsidian',
-                    isOrangeHero ? 'focus:bg-white/30' : 'focus:bg-brand-ivory',
+                    'min-h-11 cursor-pointer rounded-sm px-3 font-navigation font-medium text-brand-obsidian focus:text-brand-obsidian',
+                    'focus:bg-brand-mist',
                   )}
                 >
                   <Link to={to}>{label}</Link>
@@ -112,57 +111,34 @@ export function PublicHeader({ heroTone }: { heroTone?: 'orange' | 'light' } = {
               {label}
             </NavLink>
           ))}
-          <a
-            href="tel:01205330190"
-            className={cn(
-              'inline-flex min-h-11 items-center text-sm font-semibold',
-              focus,
-              'lg:font-navigation lg:text-base lg:uppercase lg:tracking-[0.4px]',
-            )}
-          >
+          <a href="tel:01205330190" className={cn(navBase, navState(false))}>
             Contact
           </a>
         </nav>
-        <div className="hidden items-center gap-5 lg:flex">
+        <div className="hidden items-center justify-end gap-3 xl:flex">
           {!isSignedIn && (
-            <>
-              <Link
-                to="/login"
-                className={cn('inline-flex min-h-11 items-center text-sm font-semibold', focus)}
-              >
-                Log In
-              </Link>
-              <Link to="/register" className={action}>
-                Quick Apply <ArrowRight aria-hidden="true" className="size-4" />
-              </Link>
-            </>
+            <Link to="/login" className={action}>
+              <UserRound aria-hidden="true" className="size-[18px]" />
+              Log in
+            </Link>
           )}
           <SignedIn>
-            <Link
-              to="/employee"
-              className={cn('inline-flex min-h-11 items-center text-sm font-semibold', focus)}
-            >
+            <Link to="/employee" className={action}>
               Portal
             </Link>
             <UserButton afterSignOutUrl="/" />
           </SignedIn>
         </div>
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex shrink-0 items-center gap-2 xl:hidden">
           {!isSignedIn && (
             <>
-              <Link
-                to="/login"
-                className="inline-flex min-h-11 items-center rounded-full bg-brand-obsidian px-3 text-xs font-semibold text-white"
-              >
-                Log In
+              <Link to="/login" className={cn(action, 'h-11 px-3 text-sm')}>
+                Log in
               </Link>
             </>
           )}
           <SignedIn>
-            <Link
-              to="/employee"
-              className="inline-flex min-h-11 items-center rounded-full bg-brand-obsidian px-3 text-xs font-semibold text-white"
-            >
+            <Link to="/employee" className={cn(action, 'h-11 px-3 text-sm')}>
               Portal
             </Link>
           </SignedIn>
@@ -172,11 +148,11 @@ export function PublicHeader({ heroTone }: { heroTone?: 'orange' | 'light' } = {
                 type="button"
                 aria-label="Open navigation menu"
                 className={cn(
-                  'flex size-11 items-center justify-center rounded border border-brand-obsidian/30',
+                  'flex size-11 items-center justify-center rounded border border-brand-obsidian bg-white',
                   focus,
                 )}
               >
-                <Menu aria-hidden="true" className="size-5" />
+                <Menu aria-hidden="true" className="size-[22px]" />
               </button>
             </SheetTrigger>
             <SheetContent
@@ -217,26 +193,24 @@ export function PublicHeader({ heroTone }: { heroTone?: 'orange' | 'light' } = {
                 ))}
                 <a
                   href="tel:01205330190"
-                  className={cn('flex min-h-11 items-center text-sm font-semibold', focus)}
+                  className={cn(
+                    'flex min-h-11 items-center font-navigation text-sm font-semibold',
+                    focus,
+                  )}
                 >
                   Contact
                 </a>
                 <div className="mt-6 flex flex-col gap-3">
                   {!isSignedIn && (
-                    <>
-                      <Link
-                        to="/login"
-                        className={cn(
-                          buttonVariants({ variant: 'outline' }),
-                          'min-h-11 bg-transparent normal-case tracking-normal',
-                        )}
-                      >
-                        Log In
-                      </Link>
-                      <Link to="/register" className={action}>
-                        Quick Apply <ArrowRight aria-hidden="true" className="size-4" />
-                      </Link>
-                    </>
+                    <Link
+                      to="/register"
+                      className={cn(
+                        action,
+                        'rounded-sm bg-brand-orange text-brand-obsidian hover:bg-brand-obsidian hover:text-white',
+                      )}
+                    >
+                      Quick Apply <ArrowRight aria-hidden="true" className="size-4" />
+                    </Link>
                   )}
                   <SignedIn>
                     <Link to="/employee" className={action}>

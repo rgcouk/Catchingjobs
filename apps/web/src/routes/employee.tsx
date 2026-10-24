@@ -14,7 +14,7 @@ export default function Route() {
     <>
       <PublicHeader />
       <PortalDashboard />
-      <PublicFooter />
+      <PublicFooter variant="portal" />
     </>
   );
 }

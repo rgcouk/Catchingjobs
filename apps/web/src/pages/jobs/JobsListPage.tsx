@@ -5,9 +5,10 @@ import { PublicFooter } from '../../components/layout/PublicFooter';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Checkbox } from '../../components/ui/checkbox';
-import { JobCard, type JobCardData } from '../../components/jobs/JobCard';
+import { JobCard, JobCardSkeleton, type JobCardData } from '../../components/jobs/JobCard';
 import { Search } from 'lucide-react';
-import { matchesRoleCategory } from '../../lib/job-discovery';
+import { BrandIcon } from '../../components/brand/BrandIcon';
+import { matchesJobLocation, matchesRoleCategory } from '../../lib/job-discovery';
 
 export default function JobsListPage({ initialItems }: { initialItems?: JobCardData[] } = {}) {
   const [jobs, setJobs] = useState<JobCardData[]>(initialItems || []);
@@ -75,22 +76,20 @@ export default function JobsListPage({ initialItems }: { initialItems?: JobCardD
 
   const filteredJobs = jobs.filter((job) => {
     const matchesSearch =
-      (job.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (job.townName || '').toLowerCase().includes(searchTerm.toLowerCase());
+      (job.title || '').toLowerCase().includes(searchTerm.trim().toLowerCase()) ||
+      (job.townName || '').toLowerCase().includes(searchTerm.trim().toLowerCase());
 
     const matchesSector = sectors.length === 0 || sectors.includes(job.sector);
 
     return (
       matchesSearch &&
       matchesRoleCategory(job, role) &&
-      (!town ||
-        [job.townName, job.townId, job.regionName, job.regionId, job.county]
-          .filter(Boolean)
-          .join(' ')
-          .toLowerCase()
-          .includes(town.trim().toLowerCase())) &&
+      matchesJobLocation(job, town) &&
       matchesSector &&
-      (!region || (job.regionName || job.regionId || '') === region)
+      (!region ||
+        [job.regionName, job.regionId].some(
+          (value) => value?.toLowerCase() === region.trim().toLowerCase(),
+        ))
     );
   });
 
@@ -98,9 +97,9 @@ export default function JobsListPage({ initialItems }: { initialItems?: JobCardD
     <div className="bg-white min-h-dvh flex flex-col font-sans">
       <PublicHeader />
 
-      <main className="flex-1 bg-[#f2f2f2] flex flex-col">
+      <main className="flex-1 bg-brand-mist flex flex-col">
         <section className="bg-white py-8 border-b border-brand-border">
-          <div className="max-w-[1280px] mx-auto px-6 xl:px-0 space-y-5">
+          <div className="max-w-[1440px] mx-auto px-6 xl:px-20 space-y-5">
             <h1 className="text-[40px] font-extrabold font-display tracking-[-0.03em] leading-[1.12] text-brand-obsidian">
               Catching Vacancies
             </h1>
@@ -111,107 +110,133 @@ export default function JobsListPage({ initialItems }: { initialItems?: JobCardD
           </div>
         </section>
 
-        <section className="flex-1 max-w-[1280px] mx-auto px-6 xl:px-0 py-8 w-full grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
+        <section className="flex-1 max-w-[1440px] mx-auto px-6 xl:px-20 py-8 w-full grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
           {/* SIDEBAR FILTERS */}
           <aside className="self-start space-y-4 bg-white p-6 rounded-xl border border-brand-border">
-            <div>
-              <h3 className="font-display font-black text-lg mb-4 text-black tracking-tight">
-                Find your role
-              </h3>
-              <label className="block text-sm font-semibold mb-2" htmlFor="job-search">
-                Job title or town
-              </label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                <Input
-                  id="job-search"
-                  aria-label="Search by job title or town"
-                  placeholder="Job title or town..."
-                  className="pl-9 py-6 rounded border-slate-300 focus-visible:ring-brand-orange bg-slate-50 font-medium"
-                  value={searchTerm}
-                  onChange={(e) => updateFilter('q', e.target.value)}
-                />
-              </div>
-            </div>
-
             <div className="space-y-2">
-              <label htmlFor="town-filter" className="text-sm font-semibold">
+              <h2 className="font-display text-lg font-bold text-brand-obsidian">
+                Find jobs by location
+              </h2>
+              <label htmlFor="town-filter" className="block text-sm font-semibold">
                 Town or pickup area
               </label>
-              <Input
-                id="town-filter"
-                value={town}
-                placeholder="e.g. Boston"
-                onChange={(e) => updateFilter('town', e.target.value)}
-              />
-              <p className="text-xs text-slate-600">
-                Search listed towns and regions. Confirm your postcode and home pickup when
-                applying.
+              <div className="relative">
+                <BrandIcon
+                  name="location"
+                  size={24}
+                  className="pointer-events-none absolute left-3 top-3"
+                />
+                <Input
+                  id="town-filter"
+                  value={town}
+                  placeholder="Town, county or region"
+                  autoComplete="address-level2"
+                  aria-describedby="location-search-hint"
+                  className="min-h-12 rounded border-brand-border pl-10 focus-visible:ring-brand-orange"
+                  onChange={(event) => updateFilter('town', event.target.value)}
+                />
+              </div>
+              <p id="location-search-hint" className="text-xs leading-relaxed text-slate-600">
+                Search listed towns, counties and regions. Confirm your postcode and home pickup
+                when applying.
               </p>
-              <label htmlFor="role-filter" className="block text-sm font-semibold">
-                Role category
-              </label>
-              <select
-                id="role-filter"
-                value={role}
-                onChange={(e) => updateFilter('role', e.target.value)}
-                className="h-12 w-full rounded border border-brand-border bg-white px-3 text-sm"
-              >
-                <option value="">All role categories</option>
-                <option value="catcher">Catchers</option>
-                <option value="driver">Driver–catchers</option>
-              </select>
             </div>
-            <div className="space-y-2">
-              <label htmlFor="region-filter" className="text-sm font-semibold">
-                Region
-              </label>
-              <select
-                id="region-filter"
-                value={region}
-                onChange={(event) => updateFilter('region', event.target.value)}
-                className="h-12 w-full rounded border border-brand-border bg-white px-3 text-sm"
-              >
-                <option value="">All regions</option>
-                {[
-                  ...new Set(jobs.map((job) => job.regionName || job.regionId).filter(Boolean)),
-                ].map((value) => (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <h3 className="font-display font-black text-lg mb-4 text-black tracking-tight">
-                Sector
-              </h3>
-              <div className="space-y-4 font-medium text-slate-700">
-                <div className="flex items-center space-x-3">
-                  <Checkbox
-                    id="sector-chicken"
-                    className="border-slate-300 data-[state=checked]:bg-brand-orange data-[state=checked]:border-brand-orange rounded-sm"
-                    checked={sectors.includes('chicken')}
-                    onCheckedChange={(c) => handleSectorChange('chicken', c as boolean)}
+            <details
+              open={Boolean(searchTerm || role || region || sectors.length)}
+              className="space-y-4"
+            >
+              <summary className="min-h-11 cursor-pointer py-3 font-display text-sm font-bold focus-visible:outline-brand-obsidian">
+                More filters
+              </summary>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold" htmlFor="job-search">
+                  Job title or town
+                </label>
+                <div className="relative">
+                  <Search
+                    className="pointer-events-none absolute left-3 top-4 size-4 text-slate-600"
+                    aria-hidden="true"
                   />
-                  <label htmlFor="sector-chicken" className="text-sm font-bold cursor-pointer">
-                    Broiler Chicken
-                  </label>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Checkbox
-                    id="sector-turkey"
-                    className="border-slate-300 data-[state=checked]:bg-brand-orange data-[state=checked]:border-brand-orange rounded-sm"
-                    checked={sectors.includes('turkey')}
-                    onCheckedChange={(c) => handleSectorChange('turkey', c as boolean)}
+                  <Input
+                    id="job-search"
+                    aria-label="Search by job title or town"
+                    placeholder="Optional keyword"
+                    className="min-h-12 rounded border-brand-border pl-9 focus-visible:ring-brand-orange"
+                    value={searchTerm}
+                    onChange={(event) => updateFilter('q', event.target.value)}
                   />
-                  <label htmlFor="sector-turkey" className="text-sm font-bold cursor-pointer">
-                    Commercial Turkey
-                  </label>
                 </div>
               </div>
-            </div>
-            {town && <p className="text-sm text-slate-600">Home pickup area: {town}</p>}
+              <div className="space-y-2">
+                <label htmlFor="role-filter" className="block text-sm font-semibold">
+                  Role category
+                </label>
+                <select
+                  id="role-filter"
+                  value={role}
+                  onChange={(e) => updateFilter('role', e.target.value)}
+                  className="h-12 w-full rounded border border-brand-border bg-white px-3 text-sm"
+                >
+                  <option value="">All role categories</option>
+                  <option value="catcher">Catchers</option>
+                  <option value="driver">Driver–catchers</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="region-filter" className="text-sm font-semibold">
+                  Region
+                </label>
+                <select
+                  id="region-filter"
+                  value={region}
+                  onChange={(event) => updateFilter('region', event.target.value)}
+                  className="h-12 w-full rounded border border-brand-border bg-white px-3 text-sm"
+                >
+                  <option value="">All regions</option>
+                  {[
+                    ...new Set(
+                      [region, ...jobs.map((job) => job.regionName || job.regionId)].filter(
+                        Boolean,
+                      ),
+                    ),
+                  ].map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <h3 className="font-display font-black text-lg mb-4 text-black tracking-tight">
+                  Sector
+                </h3>
+                <div className="space-y-4 font-medium text-slate-700">
+                  <div className="flex items-center space-x-3">
+                    <Checkbox
+                      id="sector-chicken"
+                      className="border-slate-300 data-[state=checked]:bg-brand-orange data-[state=checked]:border-brand-orange rounded-sm"
+                      checked={sectors.includes('chicken')}
+                      onCheckedChange={(c) => handleSectorChange('chicken', c as boolean)}
+                    />
+                    <label htmlFor="sector-chicken" className="text-sm font-bold cursor-pointer">
+                      Broiler Chicken
+                    </label>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Checkbox
+                      id="sector-turkey"
+                      className="border-slate-300 data-[state=checked]:bg-brand-orange data-[state=checked]:border-brand-orange rounded-sm"
+                      checked={sectors.includes('turkey')}
+                      onCheckedChange={(c) => handleSectorChange('turkey', c as boolean)}
+                    />
+                    <label htmlFor="sector-turkey" className="text-sm font-bold cursor-pointer">
+                      Commercial Turkey
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </details>
+            {town && <p className="text-sm text-slate-600">Searching location: {town}</p>}
             <Button variant="outline" className="w-full h-11 rounded" onClick={clearFilters}>
               Clear all filters
             </Button>
@@ -228,17 +253,18 @@ export default function JobsListPage({ initialItems }: { initialItems?: JobCardD
                   ? 'Loading roles…'
                   : error
                     ? 'Vacancies unavailable'
-                    : `${filteredJobs.length} matching roles`}
+                    : `${filteredJobs.length} matching ${filteredJobs.length === 1 ? 'role' : 'roles'}`}
               </h2>
             </div>
 
             {loading ? (
-              <div
-                role="status"
-                aria-live="polite"
-                className="text-center py-20 text-slate-600 font-sans font-medium"
-              >
-                Loading vacancies...
+              <div role="status" aria-live="polite">
+                <span className="sr-only">Loading vacancies...</span>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {Array.from({ length: 4 }, (_, index) => (
+                    <JobCardSkeleton key={index} />
+                  ))}
+                </div>
               </div>
             ) : error ? (
               <div
@@ -266,8 +292,9 @@ export default function JobsListPage({ initialItems }: { initialItems?: JobCardD
                     <h3 className="text-lg font-black font-display text-slate-900 mb-2">
                       No roles match your search
                     </h3>
-                    <p className="text-slate-500 font-medium">
-                      Try adjusting your filters or search terms.
+                    <p className="mx-auto max-w-md px-4 text-slate-600 font-medium">
+                      Try another town or a wider region, or clear your filters to see all
+                      advertised roles.
                     </p>
                     <Button variant="outline" className="mt-5" onClick={clearFilters}>
                       Clear filters

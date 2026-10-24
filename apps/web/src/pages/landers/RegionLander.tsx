@@ -24,6 +24,7 @@ export default function RegionLander({
     ) || null,
   );
   const [jobs, setJobs] = useState<any[]>(initialItems?.jobs || []);
+  const [loadingJobs, setLoadingJobs] = useState(!initialItems);
 
   const [dataError, setDataError] = useState(false);
   const [retry, setRetry] = useState(0);
@@ -32,6 +33,7 @@ export default function RegionLander({
     if (initialItems && retry === 0) return;
     let active = true;
     setDataError(false);
+    setLoadingJobs(true);
     fetch('/api/locations')
       .then(async (res) => {
         if (!res.ok) throw new Error('Unable to load live data');
@@ -63,6 +65,9 @@ export default function RegionLander({
       })
       .catch(() => {
         if (active) setDataError(true);
+      })
+      .finally(() => {
+        if (active) setLoadingJobs(false);
       });
     return () => {
       active = false;
@@ -93,7 +98,7 @@ export default function RegionLander({
           <button
             type="button"
             onClick={() => setRetry((value) => value + 1)}
-            className="mt-3 min-h-11 rounded border border-brand-border px-4 font-semibold hover:bg-brand-ivory"
+            className="mt-3 min-h-11 rounded border border-brand-border px-4 font-semibold hover:bg-brand-mist"
           >
             Retry live data
           </button>
@@ -138,7 +143,7 @@ export default function RegionLander({
                 onClick={() =>
                   navigate(`/${sectorId === 'chicken' ? 'chickens' : 'turkeys'}/${loc.id}`)
                 }
-                className={`px-5 py-2.5 rounded font-semibold text-sm transition-colors min-h-11 ${activeRegion?.id === loc.id ? 'bg-brand-orange text-brand-obsidian' : 'bg-brand-ivory hover:bg-brand-ivory text-brand-obsidian border border-brand-border'}`}
+                className={`px-5 py-2.5 rounded font-semibold text-sm transition-colors min-h-11 ${activeRegion?.id === loc.id ? 'bg-brand-orange text-brand-obsidian' : 'bg-brand-mist hover:bg-brand-mist text-brand-obsidian border border-brand-border'}`}
               >
                 {loc.name} ({loc.activeCrews || 0} Crews)
               </button>
@@ -199,7 +204,7 @@ export default function RegionLander({
                 </div>
 
                 {/*  Statutory Notice  */}
-                <div className="p-4 rounded-md bg-brand-ivory border border-brand-border text-brand-obsidian text-xs font-sans space-y-1">
+                <div className="p-4 rounded-md bg-brand-mist border border-brand-border text-brand-obsidian text-xs font-sans space-y-1">
                   <strong className="font-bold flex items-center gap-1.5 text-brand-obsidian">
                     <span>⚠️</span> UK Right to Work Mandatory
                   </strong>
@@ -255,35 +260,45 @@ export default function RegionLander({
 
       <section id="vacancies" className="py-16 bg-slate-50 border-t border-slate-200">
         <div className="max-w-[1280px] mx-auto px-6 xl:px-0 space-y-8">
-          <div className="text-center space-y-4">
+          <div className="space-y-4">
             <h2 className="text-3xl font-display font-black text-slate-900">
               Live Vacancies in {activeRegion?.name || 'this Region'}
             </h2>
-            <p className="text-slate-600 font-sans max-w-2xl mx-auto">
+            <p className="text-slate-600 font-sans max-w-2xl">
               Join our local {sectorId === 'chicken' ? 'Broiler' : 'Turkey'} squads. Free minibus
               transport provided from all listed depots.
             </p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-            {jobs.length > 0 ? (
+            {loadingJobs ? (
+              <div
+                role="status"
+                className="col-span-full rounded-lg border border-brand-border bg-white p-6 text-slate-600"
+              >
+                Loading vacancies…
+              </div>
+            ) : jobs.length > 0 ? (
               jobs.map((job: any) => (
                 <Link to={`/jobs/${job.id}`} key={job.id} className="block group">
-                  <div className="bg-white rounded-sm border border-slate-200 p-6 h-full flex flex-col transition-shadow hover:shadow-md">
+                  <div className="bg-white rounded-lg border border-brand-border p-6 h-full flex flex-col gap-4 transition-colors hover:border-brand-orange">
                     <div className="mb-4">
-                      <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded-sm mb-3">
+                      <span className="inline-block text-xs font-mono font-medium uppercase tracking-wide text-slate-600 mb-3">
                         {job.sector === 'chicken' ? 'Broiler Chicken' : 'Commercial Turkey'}
                       </span>
-                      <h3 className="text-lg font-bold font-display text-slate-900 group-hover:text-brand-yellow transition-colors leading-tight">
+                      <h3 className="text-2xl font-bold font-display text-brand-obsidian tracking-tight leading-tight">
                         {job.title}
                       </h3>
                       <p className="text-sm text-slate-500 mt-1">{job.townName || job.townId}</p>
                     </div>
 
-                    <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
-                      <span className="font-bold text-slate-900">{job.payRate}</span>
-                      <span className="text-brand-obsidian font-bold group-hover:underline">
-                        View details
+                    <div className="mt-auto space-y-4 text-sm">
+                      {job.payRate && (
+                        <p className="font-bold text-brand-obsidian">{job.payRate}</p>
+                      )}
+                      {job.shiftPattern && <p>{job.shiftPattern}</p>}
+                      <span className="flex min-h-12 items-center justify-center rounded bg-brand-orange px-6 font-display font-bold text-brand-obsidian group-hover:bg-brand-obsidian group-hover:text-white">
+                        View job →
                       </span>
                     </div>
                   </div>

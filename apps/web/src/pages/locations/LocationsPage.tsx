@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { BrandIcon } from '../../components/brand/BrandIcon';
 import { PublicHeader } from '../../components/layout/PublicHeader';
 import { PublicFooter } from '../../components/layout/PublicFooter';
 
@@ -86,7 +85,7 @@ export default function LocationsPage({ initialItems }: { initialItems?: any[] }
               <button
                 type="button"
                 onClick={() => setRetry((value) => value + 1)}
-                className="min-h-11 rounded border border-brand-border px-4 font-semibold hover:bg-brand-ivory"
+                className="min-h-11 rounded border border-brand-border px-4 font-semibold hover:bg-brand-mist"
               >
                 Retry coverage
               </button>
@@ -95,19 +94,16 @@ export default function LocationsPage({ initialItems }: { initialItems?: any[] }
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {locations.map((region) => (
                 <Link to={`/chickens/${region.id}`} key={region.id} className="block group">
-                  <div className="bg-slate-50 rounded-lg border border-slate-200 p-6 h-full transition-shadow hover:shadow-md">
-                    <BrandIcon name="location" size={32} className="mb-4" />
-                    <h3 className="text-xl font-bold font-display text-slate-900 mb-2 group-hover:text-brand-yellow transition-colors">
+                  <div className="flex h-full flex-col gap-4 rounded-lg border border-brand-border bg-brand-mist p-6 transition-colors hover:border-brand-orange">
+                    <p className="font-mono text-xs font-medium tracking-wide text-slate-600">
+                      COVERAGE AREA
+                    </p>
+                    <h3 className="text-2xl font-bold font-display text-brand-obsidian tracking-tight">
                       {region.name}
                     </h3>
-                    <p className="text-sm text-slate-500 mb-4">{region.county}</p>
-
                     {region.towns && region.towns.length > 0 && (
                       <div className="space-y-1">
-                        <p className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
-                          Depots / Pickups
-                        </p>
-                        {region.towns.slice(0, 3).map((town: any) => (
+                        {region.towns.slice(0, 6).map((town: any) => (
                           <div
                             key={town.id}
                             className="text-sm text-slate-700 flex items-center gap-2"
@@ -116,13 +112,16 @@ export default function LocationsPage({ initialItems }: { initialItems?: any[] }
                             {town.name}
                           </div>
                         ))}
-                        {region.towns.length > 3 && (
+                        {region.towns.length > 6 && (
                           <div className="text-xs text-slate-600 pt-1">
-                            +{region.towns.length - 3} more hubs
+                            +{region.towns.length - 6} more towns
                           </div>
                         )}
                       </div>
                     )}
+                    <span className="mt-auto inline-flex min-h-12 items-center justify-center rounded border border-brand-border bg-white px-6 font-display text-sm font-bold group-hover:bg-brand-obsidian group-hover:text-white">
+                      Explore {region.name} →
+                    </span>
                   </div>
                 </Link>
               ))}

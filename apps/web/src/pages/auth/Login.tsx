@@ -16,6 +16,8 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
+import BrandLogo from '@/components/brand/BrandLogo';
+import { BrandIcon } from '@/components/brand/BrandIcon';
 import {
   Form,
   FormControl,
@@ -25,7 +27,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ShieldCheck, Truck, Coins, ArrowRight, ArrowLeft } from 'lucide-react';
+import { ShieldCheck, ArrowRight, ArrowLeft } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -106,7 +108,7 @@ export default function Login() {
           {/* Left Column - Brand Showcase (light surface) */}
           <div className="flex flex-col justify-between flex-1 p-6 py-8 md:p-16 bg-brand-ivory text-brand-obsidian border-b md:border-b-0 md:border-r border-slate-200">
             <div className="space-y-7 max-w-[592px]">
-              {/* Authentic Brand Monogram Lockup */}
+              <BrandLogo variant="scrolled" size="md" />
 
               <div className="space-y-4">
                 <span className="inline-flex items-center gap-2 text-[9px] md:text-[11px] font-mono font-bold text-brand-obsidian bg-white px-3 py-1 rounded border border-slate-200">
@@ -115,7 +117,7 @@ export default function Login() {
               </div>
 
               <div className="space-y-4">
-                <h1 className="text-[32px] md:text-[48px] font-extrabold font-display text-brand-obsidian leading-tight text-balance">
+                <h1 className="text-[32px] md:text-[48px] font-extrabold font-display text-brand-obsidian leading-tight tracking-[-0.03em] text-balance">
                   Sign in to your account.
                 </h1>
                 <p className="text-sm md:text-base text-slate-600 leading-relaxed text-pretty font-sans">
@@ -126,8 +128,8 @@ export default function Login() {
 
               <div className="space-y-6 pt-6 border-t border-slate-200 text-xs text-slate-600 font-sans">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-sm bg-white flex items-center justify-center text-brand-obsidian shrink-0 border border-slate-200">
-                    <Truck className="w-4 h-4" />
+                  <div className="w-8 h-8 flex items-center justify-center shrink-0">
+                    <BrandIcon name="pickup" size={32} />
                   </div>
                   <div>
                     <strong className="text-brand-obsidian block font-display font-bold text-sm">
@@ -140,8 +142,8 @@ export default function Login() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-sm bg-white flex items-center justify-center text-brand-obsidian shrink-0 border border-slate-200">
-                    <Coins className="w-4 h-4" />
+                  <div className="w-8 h-8 flex items-center justify-center shrink-0">
+                    <BrandIcon name="pay" size={32} />
                   </div>
                   <div>
                     <strong className="text-brand-obsidian block font-display font-bold text-sm">
@@ -154,8 +156,8 @@ export default function Login() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-sm bg-white flex items-center justify-center text-brand-obsidian shrink-0 border border-slate-200">
-                    <ShieldCheck className="w-4 h-4" />
+                  <div className="w-8 h-8 flex items-center justify-center shrink-0">
+                    <BrandIcon name="verified" size={32} />
                   </div>
                   <div>
                     <strong className="text-brand-obsidian block font-display font-bold text-sm">

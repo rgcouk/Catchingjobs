@@ -1,108 +1,61 @@
-import { CalendarCheck, FileCheck, House, MapPin, Search } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { Link } from 'react-router';
 
-/** Native Pencil BIFM1 / i10Jb; backgrounds exported from LqSK5 / HT8IN. */
-export function HomeHero() {
-  const navigate = useNavigate();
-
+/** Canonical Pencil homepage J1AkY / r2nVbV, using native OfIS9 / p2aGuj artwork. */
+export function HomeHero({ onQuickApply }: { onQuickApply?: () => void }) {
   return (
     <section
       id="home"
       data-od-id="hero-section"
-      className="relative isolate flex min-h-[720px] items-center justify-center overflow-hidden bg-[#FF7C20] px-6 py-14 text-brand-obsidian lg:px-20"
+      className="relative isolate overflow-hidden bg-brand-orange text-brand-obsidian"
     >
-      <picture className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-        <source
-          media="(min-width: 1024px)"
-          srcSet="/assets/brand/illustrations/home-hero-map/LqSK5.png"
-        />
-        <img
-          src="/assets/brand/illustrations/home-hero-map/HT8IN.png"
-          alt=""
-          width="390"
-          height="720"
-          className="h-full w-full object-cover object-center"
-        />
-      </picture>
-      <div className="flex w-full max-w-[1280px] flex-col items-center gap-[18px] text-center lg:gap-7">
-        <div className="flex w-full flex-col items-center gap-[18px] lg:gap-5 lg:text-white">
-          <img
-            src="/assets/brand/illustrations/home-hero-map/FaYCC.png"
-            alt="CatchingJobs"
-            width="160"
-            height="45"
-            className="h-[38px] w-[136px] object-contain lg:h-[45px] lg:w-40"
-          />
-          <h1 className="w-full font-display text-[36px] font-bold leading-[1.1] tracking-[-0.03em] lg:text-[54px]">
-            Poultry catching jobs.
-            <br />
-            Closer to home.
+      <img
+        src="/assets/brand/illustrations/home-pickup/sr6cf.png"
+        alt=""
+        aria-hidden="true"
+        width="1440"
+        height="678"
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 hidden h-full w-full object-cover lg:block"
+      />
+      <div className="mx-auto grid max-w-[1440px] gap-6 px-6 py-8 lg:min-h-[850px] lg:grid-cols-[540px_minmax(0,1fr)] lg:items-center lg:gap-12 lg:px-20 lg:py-14">
+        <div className="flex min-w-0 flex-col items-start gap-6">
+          <p className="font-mono text-xs font-medium tracking-wide">
+            CATCHINGJOBS.CO.UK · UK POULTRY TEAMS
+          </p>
+          <h1 className="w-full rounded bg-brand-orange-hover p-4 font-display text-[42px] font-extrabold leading-[1.04] tracking-[-0.026em] text-white lg:text-[72px] lg:leading-[1.02] lg:tracking-[-0.03em]">
+            UK poultry catching jobs with door-to-door home pickup.
           </h1>
-          <p className="text-[14px] leading-[1.5] text-[#48250D] lg:text-[17px]">
-            Chicken, turkey and driver-catcher roles
-            <br />
-            with free home pickup across England.
+          <p className="max-w-[460px] text-base leading-relaxed lg:text-lg lg:font-medium">
+            CatchingJobs connects you with professional broiler and commercial turkey catching teams
+            across England. Free door-to-door heated minibus transit, guaranteed weekly Friday
+            payroll direct to your bank.
+          </p>
+          <div className="flex w-full flex-col gap-3 sm:flex-row lg:flex-wrap">
+            <Link
+              to="/jobs"
+              className="inline-flex min-h-12 items-center justify-center rounded border border-brand-obsidian bg-brand-ivory px-6 py-3 text-sm font-bold hover:bg-white lg:min-h-[52px]"
+            >
+              Find Catching Jobs Near You →
+            </Link>
+            <button
+              type="button"
+              onClick={onQuickApply}
+              className="inline-flex min-h-12 items-center justify-center rounded border border-brand-obsidian px-6 py-3 text-sm font-bold hover:bg-brand-ivory lg:min-h-[52px]"
+            >
+              Apply in 60 Seconds (No CV)
+            </button>
+          </div>
+          <p className="max-w-[460px] text-[13px] font-semibold leading-relaxed lg:text-sm">
+            Door Home Pickup · Friday Direct Pay · No CV Required
           </p>
         </div>
-        <form
-          aria-label="Search catching jobs by home location"
-          onSubmit={(event) => {
-            event.preventDefault();
-            const town = String(new FormData(event.currentTarget).get('town') || '').trim();
-            const params = new URLSearchParams();
-            if (town) params.set('town', town);
-            navigate(`/jobs${params.size ? `?${params}` : ''}`);
-          }}
-          className="flex w-full max-w-[760px] flex-col items-stretch gap-3 rounded-lg bg-white p-3 text-left ring-1 ring-inset ring-brand-border lg:flex-row lg:items-center"
-        >
-          <label className="flex min-w-0 flex-1 items-center gap-3 rounded bg-brand-mist px-3 py-[11px] lg:gap-[14px] lg:bg-white lg:px-4 lg:py-2">
-            <MapPin className="size-[18px] shrink-0 text-slate-600 lg:size-5" aria-hidden="true" />
-            <span className="flex min-w-0 flex-1 flex-col lg:gap-[6px]">
-              <span className="sr-only text-[11px] font-semibold text-slate-600 lg:not-sr-only">
-                WHERE DO YOU LIVE?
-              </span>
-              <input
-                name="town"
-                aria-label="Enter your town or area"
-                placeholder="Enter your town or area"
-                aria-describedby="home-search-hint"
-                autoComplete="address-level2"
-                className="w-full min-w-0 bg-transparent text-sm leading-5 text-brand-obsidian placeholder:text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-obsidian lg:text-base"
-              />
-            </span>
-          </label>
-          <button
-            type="submit"
-            className="flex min-h-12 shrink-0 items-center justify-center gap-3 rounded bg-brand-obsidian px-7 text-sm font-semibold text-white transition-colors hover:bg-brand-obsidian/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-obsidian lg:min-h-[57px] lg:text-[15px]"
-          >
-            <Search className="hidden size-[18px] lg:block" aria-hidden="true" />
-            Find jobs near me
-          </button>
-        </form>
-        <p id="home-search-hint" className="text-xs text-brand-obsidian">
-          Search listed towns and regions; confirm home pickup when applying.
-        </p>
-        <p className="text-[13px] leading-[1.5] lg:hidden">
-          Free home pickup · Weekly Friday pay
-          <br />
-          No CV required
-        </p>
-        <div className="hidden flex-wrap justify-center gap-x-10 gap-y-3 text-sm font-semibold lg:flex">
-          {(
-            [
-              [House, 'Free door-to-door pickup'],
-              [CalendarCheck, 'Weekly Friday pay'],
-              [FileCheck, 'No CV required'],
-            ] as const
-          ).map(([BenefitIcon, label]) => {
-            return (
-              <span key={label} className="flex items-center gap-2.5">
-                <BenefitIcon className="size-5" aria-hidden="true" />
-                {label}
-              </span>
-            );
-          })}
-        </div>
+        <img
+          src="/assets/brand/illustrations/home-pickup/roDLt.png"
+          alt="CatchingJobs minibus and crew providing home pickup"
+          width="720"
+          height="480"
+          fetchPriority="high"
+          className="mx-auto h-auto w-full max-w-[720px] object-contain lg:w-[min(50vw,720px)] lg:max-w-none lg:justify-self-center"
+        />
       </div>
     </section>
   );

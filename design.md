@@ -58,7 +58,7 @@ The vector mark, wordmark, and eye circle share identical fills. Never apply two
 - **Display (Headings & Wordmarks)**: `Plus Jakarta Sans` (700 bold, 800 extrabold, 900 black, tracking `-0.03em`)
 - **Body UI (Content & Descriptions)**: `Geist Variable` (400 normal, 500 medium, 600 semibold, leading `1.55`)
 - **Technical / Statutory / Data**: `JetBrains Mono` (500 medium, 600 semibold, uppercase tracking `+0.04em`)
-- **Revised homepage menu trial only**: `Manrope` (700, 16px, uppercase, 0.4px tracking) in the revised desktop homepage navigation. This owner-requested trial does not replace the global font families or alter the logo.
+- **Public navigation and header actions**: `Plus Jakarta Sans` (700, 16px menu, uppercase, 0.4px tracking). Orange and white desktop/mobile headers share the brand typography. Manrope is not approved.
 
 ---
 

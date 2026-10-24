@@ -56,9 +56,26 @@ model Application {
   user         User?
 
   // Employment Application Form Fields
-  employmentHistory Json? // Array of past employers
-  education         Json? // Array of educational qualifications
-  references        Json? // Array of reference details
+  privacyNoticeVersion     String?
+  applicationFormVersion   String?
+  positionAppliedFor       String?
+  vacancySource            String?
+  addressLine2             String?
+  city                     String?
+  county                   String?
+  currentlyEmployed        Boolean?
+  noticePeriod             String?
+  poultryExperienceDetails String?
+  pendingCharges           Boolean?
+  pendingChargesDetail     String?
+  convictionHistory        Json?
+  socialMediaSignature     String?
+  socialMediaSignedDate    String?
+  declarationSignature     String?
+  declarationSignedDate    String?
+  employmentHistory        Json? // Array of past employers
+  education                Json? // Array of educational qualifications
+  references               Json? // Array of reference details
 
   // Right to Work & Checks
   rightToWorkUK         Boolean?
@@ -177,24 +194,24 @@ model EmailLog {
 }
 
 model EmailOutbox {
-  id            String    @id @default(cuid())
-  dedupeKey     String?   @unique
-  recipient     String
-  recipientName String?
-  subject       String
-  html          String
-  template      String
-  metadata      Json?
-  status        String    @default("PENDING")
-  attempts      Int       @default(0)
-  availableAt   DateTime  @default(now())
+  id             String    @id @default(cuid())
+  dedupeKey      String?   @unique
+  recipient      String
+  recipientName  String?
+  subject        String
+  html           String
+  template       String
+  metadata       Json?
+  status         String    @default("PENDING")
+  attempts       Int       @default(0)
+  availableAt    DateTime  @default(now())
   firstAttemptAt DateTime?
-  lockedAt      DateTime?
-  lockToken     String?
-  providerId    String?
-  lastError     String?
-  createdAt     DateTime  @default(now())
-  sentAt        DateTime?
+  lockedAt       DateTime?
+  lockToken      String?
+  providerId     String?
+  lastError      String?
+  createdAt      DateTime  @default(now())
+  sentAt         DateTime?
 
   @@index([status, availableAt])
 }

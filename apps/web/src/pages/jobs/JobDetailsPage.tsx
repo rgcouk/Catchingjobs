@@ -28,6 +28,7 @@ import { JobPostingData, TownData } from '../../types';
 import { resolveTown } from '../../data/locations';
 import HeroTriageForm from '../../components/triage/HeroTriageForm';
 import JobShareModal from '../../components/jobs/JobShareModal';
+import { MobileApplyBar } from '../../components/jobs/MobileApplyBar';
 import { toast } from 'sonner';
 
 export default function JobDetailsPage() {
@@ -253,7 +254,7 @@ export default function JobDetailsPage() {
             <button
               type="button"
               onClick={() => setRetry((value) => value + 1)}
-              className="min-h-11 rounded border border-brand-border px-5 font-semibold hover:bg-brand-ivory"
+              className="min-h-11 rounded border border-brand-border px-5 font-semibold hover:bg-brand-mist"
             >
               Retry vacancy
             </button>
@@ -310,8 +311,11 @@ export default function JobDetailsPage() {
 
       {/* Top Breadcrumb Bar */}
       <div className="bg-white">
-        <div className="max-w-[1280px] mx-auto px-6 xl:px-0 py-3 flex items-center justify-between gap-4">
-          <nav className="flex items-center gap-2 text-xs font-mono text-slate-500 overflow-x-auto whitespace-nowrap scrollbar-none font-bold">
+        <div className="max-w-[1440px] mx-auto px-6 xl:px-20 py-3 flex items-center justify-between gap-4">
+          <nav
+            aria-label="Breadcrumb"
+            className="min-w-0 flex items-center gap-2 text-xs font-mono text-slate-500 overflow-x-auto whitespace-nowrap scrollbar-none font-bold"
+          >
             <Link to="/" className="hover:text-black transition-colors">
               Home
             </Link>
@@ -341,7 +345,7 @@ export default function JobDetailsPage() {
               onClick={handleCopyLink}
               aria-label="Copy job link"
               title="Copy Job Link"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-mono text-slate-700 hover:text-black hover:border-brand-orange transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 min-h-11 min-w-11 justify-center px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-mono text-slate-700 hover:text-black hover:border-brand-orange transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-obsidian cursor-pointer"
             >
               {copiedLink ? (
                 <>
@@ -357,7 +361,7 @@ export default function JobDetailsPage() {
             </button>
             <button
               onClick={handleNativeShare}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-orange hover:bg-brand-obsidian hover:text-white text-brand-obsidian text-xs font-display font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1.5 min-h-11 min-w-11 justify-center px-3 py-1.5 rounded-lg bg-brand-orange hover:bg-brand-obsidian hover:text-white text-brand-obsidian text-xs font-display font-bold uppercase tracking-wider transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-obsidian cursor-pointer shadow-xs"
             >
               <Share2 className="w-3.5 h-3.5" />
               <span>Share</span>
@@ -368,28 +372,37 @@ export default function JobDetailsPage() {
 
       {/* White-led vacancy hero */}
       <section className="bg-white border-b border-brand-border text-brand-obsidian">
-        <div className="max-w-[1280px] mx-auto px-6 xl:px-0 py-6 lg:pb-8">
+        <div className="max-w-[1440px] mx-auto px-6 xl:px-20 py-6 lg:pb-8">
           <div className="space-y-4">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display tracking-[-0.03em] text-brand-obsidian leading-[1.12]">
-              {job.title}
-            </h1>
-            <p className="text-base">
-              {locationDisplay} · {sectorName}
-            </p>
-            <p className="text-2xl font-display font-bold">{payDisplay}</p>
-            <div className="grid gap-4 rounded-xl bg-brand-ivory p-5 md:grid-cols-[200px_1fr_320px] md:gap-8 text-base">
-              <h2 className="font-semibold">Role at a glance</h2>
-              <p className="font-medium">
-                {job.shiftPattern || 'Shift pattern: confirm with dispatch'}
+            <div className="flex items-center gap-3 font-display font-bold text-lg sm:text-xl">
+              <BrandIcon name="location" size={24} />
+              <span>{locationDisplay}</span>
+            </div>
+            <div className="flex items-start gap-4">
+              <BrandIcon name={sectorId} size={64} className="!h-10 !w-10 sm:!h-12 sm:!w-12 mt-1" />
+              <div className="min-w-0 space-y-3">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display tracking-[-0.03em] text-brand-obsidian leading-[1.12]">
+                  {job.title}
+                </h1>
+                <p className="text-sm text-slate-600">{sectorName}</p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:gap-8">
+              <p className="text-2xl font-display font-bold tabular-nums">{payDisplay}</p>
+              <p className="flex items-start gap-2 text-sm text-slate-700">
+                <BrandIcon name="hours" size={24} />
+                <span className="max-w-[55ch]">
+                  {job.shiftPattern || 'Shift pattern: confirm with dispatch'}
+                </span>
               </p>
-              <p>UK right to work required</p>
             </div>
 
             {/* Action Bar */}
             <div className="flex flex-wrap items-center gap-3 pt-3">
               <a
+                id="job-primary-apply"
                 href="#hero-triage-form"
-                className="inline-flex items-center gap-2 bg-brand-orange hover:bg-brand-obsidian hover:text-white text-black font-display font-black text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg transition-all shadow-xs no-underline"
+                className="inline-flex items-center gap-2 bg-brand-orange hover:bg-brand-obsidian hover:text-white text-black font-display font-black text-sm px-6 py-3.5 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-obsidian no-underline"
               >
                 <span>Apply for this Role (60s)</span>
                 <ArrowRight className="w-4 h-4" />
@@ -397,7 +410,7 @@ export default function JobDetailsPage() {
 
               <button
                 onClick={handleNativeShare}
-                className="inline-flex items-center gap-2 bg-white hover:bg-brand-ivory text-brand-obsidian border border-brand-border font-display font-bold text-xs uppercase tracking-wider px-4 py-3.5 rounded-lg transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 bg-white hover:bg-brand-mist text-brand-obsidian border border-brand-border font-display font-bold text-xs uppercase tracking-wider px-4 py-3.5 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-obsidian cursor-pointer"
                 title="Share this Job Opening"
               >
                 <Share2 className="w-4 h-4 text-brand-obsidian" />
@@ -406,7 +419,7 @@ export default function JobDetailsPage() {
 
               <button
                 onClick={handleCopyLink}
-                className="inline-flex items-center gap-2 bg-white hover:bg-brand-ivory text-brand-obsidian border border-brand-border font-display font-bold text-xs uppercase tracking-wider px-4 py-3.5 rounded-lg transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 bg-white hover:bg-brand-mist text-brand-obsidian border border-brand-border font-display font-bold text-xs uppercase tracking-wider px-4 py-3.5 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-obsidian cursor-pointer"
                 title="Copy direct URL"
               >
                 {copiedLink ? (
@@ -427,54 +440,32 @@ export default function JobDetailsPage() {
       </section>
 
       {/* Main 2-Column Content Layout */}
-      <main className="max-w-[1280px] mx-auto px-6 xl:px-0 py-10">
+      <main className="max-w-[1440px] mx-auto px-6 xl:px-20 pt-10 pb-28 lg:pb-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Left Column: Full Specifications & Duties */}
           <div className="lg:col-span-7 space-y-8">
-            {/* Quick Spec Highlights Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-brand-ivory border border-brand-border p-4 rounded-lg shadow-xs">
-              <div className="space-y-1 p-2">
-                <span className="text-[11px] font-mono text-slate-500 uppercase font-bold block">
-                  Est. Weekly
-                </span>
-                <span className="text-sm font-bold font-mono text-black block">
+            <dl className="grid gap-x-8 gap-y-5 border-y border-brand-border py-5 sm:grid-cols-2">
+              <div>
+                <dt className="text-sm text-slate-600">Estimated weekly pay</dt>
+                <dd className="mt-1 font-display font-bold tabular-nums">
                   {job.weeklyPayEst || 'Confirm with dispatch'}
-                </span>
-                <span className="text-[10px] text-slate-500 font-mono">Friday BACS</span>
+                </dd>
+                <dd className="mt-1 text-xs text-slate-600">Friday BACS</dd>
               </div>
-              <div className="space-y-1 p-2 border-l border-brand-border">
-                <span className="text-[11px] font-mono text-slate-500 uppercase font-bold block">
-                  Shift Type
-                </span>
-                <span className="text-sm font-bold font-mono text-black block">
-                  {job.shiftPattern || 'Confirm with dispatch'}
-                </span>
+              <div>
+                <dt className="text-sm text-slate-600">Home pickup</dt>
+                <dd className="mt-1 font-display font-bold">Free door-to-door transport</dd>
+                <dd className="mt-1 text-xs text-slate-600">
+                  Confirm coverage for your address with dispatch
+                </dd>
               </div>
-              <div className="space-y-1 p-2 border-l border-brand-border">
-                <span className="text-[11px] font-mono text-slate-500 uppercase font-bold block">
-                  Transit
-                </span>
-                <span className="text-sm font-bold font-mono text-black block">Door-to-Door</span>
-                <span className="text-[10px] text-slate-500 font-mono">Heated minibus</span>
-              </div>
-              <div className="space-y-1 p-2 border-l border-brand-border">
-                <span className="text-[11px] font-mono text-slate-500 uppercase font-bold block">
-                  Welfare
-                </span>
-                <span className="text-sm font-bold font-mono text-black block">
-                  Confirm with dispatch
-                </span>
-              </div>
-            </div>
+            </dl>
 
             {/* Role Overview */}
-            <section className="bg-white border border-slate-200 rounded-lg p-6 sm:p-8 space-y-6 shadow-xs">
+            <section className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-6">
               <div className="space-y-2 border-b border-slate-100 pb-4">
-                <span className="text-xs font-mono font-bold text-black uppercase tracking-wider">
-                  Role Overview
-                </span>
                 <h2 className="text-2xl font-black font-display tracking-tight text-black">
-                  About This Poultry Catching Position
+                  About the role
                 </h2>
               </div>
 
@@ -489,7 +480,7 @@ export default function JobDetailsPage() {
               {/* Shift Patterns */}
               <div className="pt-2 space-y-3">
                 <h3 className="text-base font-bold font-display text-black flex items-center gap-2">
-                  <BrandIcon name="hours" size={24} /> Shift Structure &amp; Working Hours
+                  <BrandIcon name="hours" size={24} /> Shifts &amp; working hours
                 </h3>
                 <div className="p-4 bg-slate-50 border border-brand-border rounded-lg text-xs font-mono text-slate-700 space-y-1.5">
                   <p className="font-bold text-black">
@@ -504,11 +495,8 @@ export default function JobDetailsPage() {
             </section>
 
             {/* Candidate Requirements & Right to Work */}
-            <section className="bg-white border border-slate-200 rounded-lg p-6 sm:p-8 space-y-6 shadow-xs">
+            <section className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-6">
               <div className="space-y-2 border-b border-slate-100 pb-4">
-                <span className="text-xs font-mono font-bold text-black uppercase tracking-wider">
-                  Eligibility
-                </span>
                 <h2 className="text-2xl font-black font-display tracking-tight text-black">
                   Candidate Requirements
                 </h2>
@@ -531,8 +519,8 @@ export default function JobDetailsPage() {
                 ))}
               </div>
 
-              <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 flex items-start gap-2.5">
-                <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+              <div className="p-4 bg-brand-mist border border-brand-border rounded-lg text-sm text-slate-700 flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 text-brand-obsidian shrink-0 mt-0.5" />
                 <p className="font-sans">
                   <strong>Important Notice:</strong> Pullum Ltd enforces strict GLAA compliance and
                   does not charge any recruitment or transit fees. UK right to work is required;
@@ -542,11 +530,8 @@ export default function JobDetailsPage() {
             </section>
 
             {/* Welfare & Training Standards */}
-            <section className="bg-white border border-slate-200 rounded-lg p-6 sm:p-8 space-y-6 shadow-xs">
+            <section className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-6">
               <div className="space-y-2 border-b border-slate-100 pb-4">
-                <span className="text-xs font-mono font-bold text-black uppercase tracking-wider">
-                  Accreditations
-                </span>
                 <h2 className="text-2xl font-black font-display tracking-tight text-black">
                   Training &amp; Welfare
                 </h2>
@@ -615,14 +600,10 @@ export default function JobDetailsPage() {
           <div className="lg:col-span-5 space-y-6 lg:self-start lg:sticky lg:top-28">
             {/* Quick Apply Card */}
             <div
-              id="hero-triage-form"
-              className="scroll-mt-8 bg-white border border-brand-border rounded-lg p-6 sm:p-7 shadow-sm space-y-5"
+              id="job-application-panel"
+              className="scroll-mt-8 bg-white border border-brand-border rounded-xl p-6 sm:p-7 space-y-5"
             >
               <div className="space-y-1.5 border-b border-slate-100 pb-4">
-                <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-black uppercase tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-brand-orange" />
-                  Quick Apply
-                </div>
                 <h3 className="text-xl font-black font-display text-black">
                   Apply for {job.title}
                 </h3>
@@ -633,15 +614,17 @@ export default function JobDetailsPage() {
 
               {town && (
                 <HeroTriageForm
+                  jobPostingId={job.id}
+                  jobTitle={job.title}
                   town={town}
                   sectorId={sectorId}
-                  className="pt-0 shadow-none border-0 p-0"
+                  className="pt-0 shadow-none border-0 p-0 sm:p-0"
                 />
               )}
             </div>
 
             {/* Transport & Roster Assurance Box */}
-            <div className="bg-brand-ivory border border-brand-border rounded-lg p-5 space-y-3.5 text-xs font-mono text-slate-700">
+            <div className="bg-brand-mist border border-brand-border rounded-lg p-5 space-y-3.5 text-xs font-mono text-slate-700">
               <div className="font-bold text-sm text-black flex items-center gap-2 font-display">
                 <BrandIcon name="pickup" size={24} /> Free Door-to-Door Home Transit
               </div>
@@ -658,6 +641,8 @@ export default function JobDetailsPage() {
           </div>
         </div>
       </main>
+
+      <MobileApplyBar jobId={job.id} location={locationDisplay} pay={payDisplay} />
 
       {/* Share Modal Dialog */}
       <JobShareModal

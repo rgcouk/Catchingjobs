@@ -54,7 +54,7 @@ test('desktop navigation uses page context and opens keyboard-accessible menus',
   const trigger = page.getByRole('button', { name: 'Catching Jobs', exact: true });
   await trigger.focus();
   await page.keyboard.press('Enter');
-  await expect(page.getByRole('menu')).toHaveCSS('background-color', 'rgb(255, 124, 32)');
+  await expect(page.getByRole('menu')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
   await page
@@ -94,9 +94,10 @@ test('vacancies can be searched, filtered by sector and reset', async ({ page })
   await page.route('**/api/jobs', (route) => route.fulfill({ json: jobs }));
   await page.goto('/jobs');
   await expect(page.getByRole('heading', { name: '2 matching roles' })).toBeVisible();
-  await page.getByRole('textbox', { name: 'Search by job title or town' }).fill('Boston');
+  await page.getByRole('textbox', { name: 'Town or pickup area' }).fill('Boston');
   await expect(page.getByRole('heading', { name: 'Night Shift Broiler Catcher' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Commercial Turkey Catcher' })).not.toBeVisible();
+  await page.getByText('More filters', { exact: true }).click();
   await page.getByRole('checkbox', { name: 'Commercial Turkey', exact: true }).check();
   await expect(page.getByRole('heading', { name: 'No roles match your search' })).toBeVisible();
   await page.getByRole('button', { name: 'Clear filters' }).click();
@@ -146,18 +147,27 @@ for (const width of [390, 1440]) {
   }
 }
 
-test('updated home map hero searches by pickup area with reduced motion', async ({ page }) => {
+test('approved home pickup hero links to jobs and directory searches by area', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   const hero = page.locator('#home');
-  const image = hero.locator('picture img');
-  await expect(image).toHaveAttribute('src', /home-hero-map\/HT8IN\.png$/);
+  await expect(hero.getByRole('heading', { level: 1 })).toHaveText(
+    'UK poultry catching jobs with door-to-door home pickup.',
+  );
+  const image = hero.getByRole('img', {
+    name: 'CatchingJobs minibus and crew providing home pickup',
+  });
+  await expect(image).toHaveAttribute('src', /home-pickup\/roDLt\.png$/);
+  await expect(hero.getByRole('link', { name: 'Find Catching Jobs Near You' })).toHaveAttribute(
+    'href',
+    '/jobs',
+  );
   await expect
     .poll(() => image.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0))
     .toBe(true);
   const search = page.getByRole('form', { name: 'Search catching jobs by home location' });
-  await search.getByRole('textbox').fill('Boston');
+  await search.getByRole('textbox', { name: 'Enter your town or area' }).fill('Boston');
   await search.getByRole('button', { name: 'Find jobs near me' }).click();
   await expect(page).toHaveURL(/\/jobs\?town=Boston$/);
   await expect(page.getByRole('heading', { name: 'Night Shift Broiler Catcher' })).toBeVisible();
@@ -230,7 +240,7 @@ test('brand fonts load when external font services are unavailable', async ({ pa
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
   const loaded = await page.evaluate(() => ({
-    navigation: document.fonts.check('700 16px "Manrope Variable"'),
+    navigation: document.fonts.check('700 16px "Plus Jakarta Sans Variable"'),
     heading: document.fonts.check('700 54px "Plus Jakarta Sans Variable"'),
   }));
   expect(loaded).toEqual({ navigation: true, heading: true });
@@ -238,5 +248,5 @@ test('brand fonts load when external font services are unavailable', async ({ pa
     page
       .getByRole('navigation', { name: 'Main navigation' })
       .getByRole('link', { name: 'Home', exact: true }),
-  ).toHaveCSS('font-family', /Manrope Variable/);
+  ).toHaveCSS('font-family', /Plus Jakarta Sans Variable/);
 });

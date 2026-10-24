@@ -107,6 +107,37 @@ describe('Application security and concurrency', () => {
       service.updateMyDraftApplication('owner', { phone: '07700900222' }),
     ).rejects.toThrow(/already been submitted/);
   });
+  it('persists the versioned application fields without changing status or deciding eligibility', async () => {
+    const fields = {
+      applicationFormVersion: 'jotform-v1',
+      positionAppliedFor: 'Catcher',
+      pendingCharges: true,
+      pendingChargesDetail: 'Applicant disclosure',
+      employmentHistory: [{ employerName: 'Example Farm', from: '2021-01', to: '2026-01' }],
+      socialMediaSignature: 'Example Applicant',
+    };
+    await service.updateMyDraftApplication('owner', fields);
+    expect(db.application.updateMany).toHaveBeenCalledWith({
+      where: { id: 1, status: 'Draft' },
+      data: fields,
+    });
+    expect(enqueueOnboardingEmails).not.toHaveBeenCalled();
+  });
+  it('rejects final submission when the versioned form is incomplete', async () => {
+    db.application.findUnique.mockResolvedValue({ ...draft, applicationFormVersion: 'jotform-v1' });
+    await expect(service.submitMyDraftApplication('owner')).rejects.toThrow(
+      /employment application/,
+    );
+    expect(db.application.updateMany).not.toHaveBeenCalled();
+    expect(enqueueOnboardingEmails).not.toHaveBeenCalled();
+  });
+  it('cannot downgrade a versioned draft to bypass completeness checks', async () => {
+    db.application.findUnique.mockResolvedValue({ ...draft, applicationFormVersion: 'jotform-v1' });
+    await expect(
+      service.updateMyDraftApplication('owner', { applicationFormVersion: null }),
+    ).rejects.toThrow(/version/);
+    expect(db.application.updateMany).not.toHaveBeenCalled();
+  });
   it('requires explicit declaration before submission', async () => {
     db.application.findUnique.mockResolvedValue({ ...draft, declarationSigned: false });
     await expect(service.submitMyDraftApplication('owner')).rejects.toThrow(/declaration/);

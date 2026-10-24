@@ -29,6 +29,7 @@ app.post('/api/triage', async (c) => {
       town: body.town,
       sector: body.sector,
       hasRightToWork: body.hasRightToWork === true,
+      jobPostingId: body.jobPostingId,
     });
     return c.json({ success: true, application }, 201);
   } catch (error) {

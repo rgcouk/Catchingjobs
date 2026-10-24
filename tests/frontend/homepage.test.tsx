@@ -67,6 +67,7 @@ describe('Homepage vacancy and application journeys', () => {
   afterEach(() => {
     cleanup();
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
   it('links role categories to real vacancy filters and submits the town search', async () => {
@@ -132,7 +133,9 @@ describe('Homepage vacancy and application journeys', () => {
       'href',
       'tel:01205330190',
     );
-    expect(screen.getByRole('button', { name: 'Apply in 60 Seconds (No CV)' })).toBeEnabled();
+    screen.getAllByRole('button', { name: 'Apply in 60 Seconds (No CV)' }).forEach((action) => {
+      expect(action).toBeEnabled();
+    });
   });
 
   it('submits turkey intake, exposes errors, and retries without losing entered details', async () => {
@@ -176,8 +179,13 @@ describe('Homepage vacancy and application journeys', () => {
     });
     expect(triage).toHaveBeenCalledTimes(2);
     expect(form.queryByRole('alert')).not.toBeInTheDocument();
-    fireEvent.click(form.getByRole('button', { name: 'Close modal' }));
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    expect(screen.queryByText('Verify Your Application')).not.toBeInTheDocument();
+    expect(screen.getByLabelText(/Full Name/)).toHaveValue('Alex Test');
+    expect(screen.getByLabelText(/Email Address/)).toHaveValue('alex@example.com');
+    fireEvent.click(screen.getByRole('button', { name: /Submit 60-Second Application/ }));
+    await screen.findByText('Verify Your Application');
+    expect(triage).toHaveBeenCalledTimes(2);
   });
   it('ignores an old submission after closing and reopening the application', async () => {
     let resolve!: (value: unknown) => void;
@@ -212,6 +220,62 @@ describe('Homepage vacancy and application journeys', () => {
     expect(screen.getByLabelText(/Full Name/)).toHaveValue('New Applicant');
     expect(screen.queryByText('Verify Your Application')).not.toBeInTheDocument();
     expect(sessionStorage.getItem('cj_active_draft')).toBeNull();
+  });
+
+  async function openApplication() {
+    render(
+      <MemoryRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/employee" element={<h1>Employee onboarding</h1>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Apply Turkey Team/ }));
+    fireEvent.change(screen.getByLabelText(/Full Name/), { target: { value: 'Alex Test' } });
+    fireEvent.change(screen.getByLabelText(/UK Mobile Phone/), {
+      target: { value: '07700900123' },
+    });
+    fireEvent.change(screen.getByLabelText(/Email Address/), {
+      target: { value: 'alex@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/Home Town/), { target: { value: 'Norwich' } });
+    fireEvent.click(screen.getByRole('checkbox'));
+  }
+  it('validates mobile format before saving a draft', async () => {
+    await openApplication();
+    fireEvent.change(screen.getByLabelText(/UK Mobile Phone/), { target: { value: 'abcde' } });
+    fireEvent.click(screen.getByRole('button', { name: /Submit 60-Second Application/ }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Enter a UK mobile number');
+    expect(triage).not.toHaveBeenCalled();
+  });
+  it('continues verification when storage is unavailable', async () => {
+    triage.mockResolvedValue({ ok: true, json: async () => ({ id: 42, rosterRef: 'REF42' }) });
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('Blocked');
+    });
+    await openApplication();
+    fireEvent.click(screen.getByRole('button', { name: /Submit 60-Second Application/ }));
+    await screen.findByText('Verify Your Application');
+    expect(triage).toHaveBeenCalledTimes(1);
+  });
+  it('retries authenticated linking without creating a duplicate draft', async () => {
+    clerk.user = { isSignedIn: true, user: { id: 'user42' } };
+    triage.mockResolvedValue({ ok: true, json: async () => ({ id: 42, rosterRef: 'REF42' }) });
+    let claims = 0;
+    vi.mocked(fetch).mockImplementation(async (url, options) => {
+      if (url === '/api/triage') return triage(options);
+      if (url === '/api/triage/claim') return { ok: ++claims > 1 } as Response;
+      return { ok: true, json: async () => (url === '/api/jobs' ? jobs : []) } as Response;
+    });
+    await openApplication();
+    fireEvent.click(screen.getByRole('button', { name: /Submit 60-Second Application/ }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('could not link your application');
+    expect(screen.getByLabelText(/Email Address/)).toHaveValue('alex@example.com');
+    fireEvent.click(screen.getByRole('button', { name: /Submit 60-Second Application/ }));
+    await screen.findByText('Employee onboarding');
+    expect(triage).toHaveBeenCalledTimes(1);
+    expect(claims).toBe(2);
   });
 
   it('claims a signed-in applicant draft before opening onboarding', async () => {

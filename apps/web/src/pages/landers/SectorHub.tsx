@@ -8,6 +8,7 @@ import { PublicHeader } from '../../components/layout/PublicHeader';
 export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any) {
   const navigate = useNavigate();
   const [jobs, setJobs] = useState<any[]>([]);
+  const [loadingJobs, setLoadingJobs] = useState(true);
   const [locations, setLocations] = useState<any[]>([]);
 
   const [dataError, setDataError] = useState(false);
@@ -16,6 +17,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
   useEffect(() => {
     let active = true;
     setDataError(false);
+    setLoadingJobs(true);
     fetch('/api/jobs')
       .then(async (res) => {
         if (!res.ok) throw new Error('Unable to load live data');
@@ -28,6 +30,9 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
       })
       .catch(() => {
         if (active) setDataError(true);
+      })
+      .finally(() => {
+        if (active) setLoadingJobs(false);
       });
 
     fetch('/api/locations')
@@ -72,7 +77,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
           <button
             type="button"
             onClick={() => setRetry((value) => value + 1)}
-            className="mt-3 min-h-11 rounded border border-brand-border px-4 font-semibold hover:bg-brand-ivory"
+            className="mt-3 min-h-11 rounded border border-brand-border px-4 font-semibold hover:bg-brand-mist"
           >
             Retry live data
           </button>
@@ -82,7 +87,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
       {/*  2. SECTOR HERO SECTION  */}
       <section
         data-od-id="sector-hero"
-        className="relative bg-brand-ivory text-brand-obsidian py-12 lg:py-16 border-b border-black/10 overflow-hidden"
+        className="relative bg-brand-mist text-brand-obsidian py-12 lg:py-16 border-b border-black/10 overflow-hidden"
       >
         <div className="relative max-w-[1280px] mx-auto px-6 xl:px-0 space-y-5 z-10 lg:pr-[352px]">
           {/*  Badges  */}
@@ -143,7 +148,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
             {/*  Summary Card  */}
             <div className="flex flex-col lg:flex-row gap-12 items-center justify-between">
               <div className="max-w-2xl space-y-4">
-                <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-brand-obsidian bg-brand-ivory px-3 py-1 rounded-full">
+                <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-brand-obsidian bg-brand-mist px-3 py-1 rounded-full">
                   <span className="w-2 h-2 rounded-full bg-brand-orange"></span>
                   YEAR-ROUND CONTRACT OPERATIONS
                 </div>
@@ -232,7 +237,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
             {/*  Summary Card  */}
             <div className="flex flex-col lg:flex-row gap-12 items-center justify-between">
               <div className="max-w-2xl space-y-4">
-                <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-brand-obsidian bg-brand-ivory border border-brand-border px-3 py-1 rounded-full">
+                <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-brand-obsidian bg-brand-mist border border-brand-border px-3 py-1 rounded-full">
                   <span className="w-2 h-2 rounded-full bg-brand-orange"></span>
                   SEASONAL &amp; COMMERCIAL MODULE CONTRACTS
                 </div>
@@ -323,37 +328,47 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
 
       <section id="vacancies" className="py-16 bg-slate-50 border-t border-slate-200">
         <div className="max-w-[1280px] mx-auto px-6 xl:px-0 space-y-8">
-          <div className="text-center space-y-4">
+          <div className="space-y-4">
             <h2 className="text-3xl font-display font-black text-slate-900">
               Live {sectorId === 'chicken' ? 'Broiler' : 'Turkey'} Vacancies
             </h2>
-            <p className="text-slate-600 font-sans max-w-2xl mx-auto">
+            <p className="text-slate-600 font-sans max-w-2xl">
               Ready to deploy? Apply now to join our {sectorId === 'chicken' ? 'Broiler' : 'Turkey'}{' '}
               squads with guaranteed Friday pay.
             </p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-            {jobs.filter((j) => j.sector === sectorId).length > 0 ? (
+            {loadingJobs ? (
+              <div
+                role="status"
+                className="col-span-full rounded-lg border border-brand-border bg-white p-6 text-slate-600"
+              >
+                Loading vacancies…
+              </div>
+            ) : jobs.filter((j) => j.sector === sectorId).length > 0 ? (
               jobs
                 .filter((j) => j.sector === sectorId)
                 .map((job) => (
                   <Link to={`/jobs/${job.id}`} key={job.id} className="block group">
-                    <div className="bg-white rounded-sm border border-slate-200 p-6 h-full flex flex-col transition-shadow hover:shadow-md">
+                    <div className="bg-white rounded-lg border border-brand-border p-6 h-full flex flex-col gap-4 transition-colors hover:border-brand-orange">
                       <div className="mb-4">
-                        <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded-sm mb-3">
+                        <span className="inline-block text-xs font-mono font-medium uppercase tracking-wide text-slate-600 mb-3">
                           {job.sector === 'chicken' ? 'Broiler Chicken' : 'Commercial Turkey'}
                         </span>
-                        <h3 className="text-lg font-bold font-display text-slate-900 group-hover:text-brand-yellow transition-colors leading-tight">
+                        <h3 className="text-2xl font-bold font-display text-brand-obsidian tracking-tight leading-tight">
                           {job.title}
                         </h3>
                         <p className="text-sm text-slate-500 mt-1">{job.townName || job.townId}</p>
                       </div>
 
-                      <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
-                        <span className="font-bold text-slate-900">{job.payRate}</span>
-                        <span className="text-brand-obsidian font-bold group-hover:underline">
-                          View details
+                      <div className="mt-auto space-y-4 text-sm">
+                        {job.payRate && (
+                          <p className="font-bold text-brand-obsidian">{job.payRate}</p>
+                        )}
+                        {job.shiftPattern && <p>{job.shiftPattern}</p>}
+                        <span className="flex min-h-12 items-center justify-center rounded bg-brand-orange px-6 font-display font-bold text-brand-obsidian group-hover:bg-brand-obsidian group-hover:text-white">
+                          View job →
                         </span>
                       </div>
                     </div>
@@ -376,7 +391,7 @@ export default function SectorHub({ sectorId, onSelectRegion, onNavigate }: any)
             Apply in 60 Seconds (No CV)
           </h2>
           <Link
-            to="/jobs"
+            to="/#quick-apply"
             className="inline-flex min-h-12 items-center justify-center rounded bg-brand-orange px-6 font-display text-sm font-bold hover:bg-brand-obsidian hover:text-white"
           >
             Quick Apply →

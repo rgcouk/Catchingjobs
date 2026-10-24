@@ -1,5 +1,18 @@
 import { test, expect } from '@playwright/test';
 
+test('public browser fixtures stay signed out and reject API writes', async ({ page, request }) => {
+  await page.goto('/');
+  await expect.poll(() => page.evaluate(() => Boolean((window as any).Clerk?.loaded))).toBe(true);
+  expect(await page.evaluate(() => (window as any).Clerk.user)).toBeNull();
+  const protectedPage = await request.get('/employee', { maxRedirects: 0 });
+  // Without backend credentials production authentication fails closed (503).
+  // A developer with Clerk configured gets the normal sign-in redirect instead.
+  expect([302, 503]).toContain(protectedPage.status());
+  if (protectedPage.status() === 302) expect(protectedPage.headers().location).toContain('/login');
+  const write = await request.post('/api/applications', { data: {} });
+  expect(write.status()).toBe(405);
+});
+
 test('public routes deliver real HTML and job metadata before JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();

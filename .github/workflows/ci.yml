@@ -37,6 +37,10 @@ jobs:
 
       - name: Run Build
         run: npm run build
+        env:
+          # Synthetic public identifier for the read-only browser fixture server.
+          # This is not a Clerk instance or an authentication credential.
+          VITE_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcmsuZXhhbXBsZS5pbnZhbGlkJA
 
       - name: Install Chromium
         run: npx playwright install --with-deps chromium

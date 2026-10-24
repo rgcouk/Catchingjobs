@@ -28,6 +28,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { BrandIcon } from '@/components/brand/BrandIcon';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -208,15 +209,20 @@ const PortalDashboard = () => {
         content="Your CatchingJobs application, onboarding and home pickup details."
       />
       <div className="mx-auto max-w-[1440px] px-6 py-6 md:px-16 md:py-16 space-y-8 font-sans">
-        {searchParams.get('applied') === 'true' && applications.length > 0 && (
-          <div
-            role="status"
-            className="flex items-center gap-3 rounded-lg border border-slate-200 bg-brand-ivory p-5"
-          >
-            <CheckCircle2 className="size-5 shrink-0" />
-            <p>Your application has been received. Complete your onboarding details below.</p>
-          </div>
-        )}
+        {(searchParams.get('applied') === 'true' || searchParams.get('wizard') === 'active') &&
+          applications.length > 0 &&
+          !app?.profileFormCompleted && (
+            <div
+              role="status"
+              className="flex items-center gap-3 rounded-lg border border-slate-200 bg-brand-ivory p-5"
+            >
+              <CheckCircle2 className="size-5 shrink-0" />
+              <p>
+                Your interest is saved. Complete the remaining sections when you’re ready, then
+                submit your application.
+              </p>
+            </div>
+          )}
         <header
           id="account-overview"
           className="scroll-mt-24 rounded-lg border border-slate-200 bg-brand-ivory p-6 md:p-8 space-y-4"
@@ -228,7 +234,8 @@ const PortalDashboard = () => {
             <h1 className="flex-1 font-display text-[28px] md:text-[32px] font-extrabold tracking-tight leading-tight">
               Welcome back, {user?.firstName || user?.fullName || app?.name || 'Operative'}
             </h1>
-            <User className="size-6 shrink-0 md:hidden" aria-hidden="true" />
+            <BrandIcon name="team" size={64} className="hidden md:block" />
+            <BrandIcon name="team" size={32} className="md:hidden" />
           </div>
           <p className="text-base text-slate-600 leading-relaxed">
             Pullum Ltd Employee &amp; Compliance Portal. View your application status, manage your
@@ -295,13 +302,14 @@ const PortalDashboard = () => {
         <div className="grid gap-8 lg:grid-cols-2">
           <section id="account-onboarding" className="scroll-mt-24 space-y-6">
             <h2 className="font-display text-2xl font-bold tracking-tight">
-              Complete your onboarding
+              Complete your application
             </h2>
             {[
               {
-                title: 'Right to Work',
-                description: 'Complete your eligibility details and upload identification.',
-                label: 'Upload documents',
+                title: 'Your application',
+                description:
+                  'Short, saved sections. Continue now or return later without starting again.',
+                label: app?.profileFormCompleted ? 'Review application' : 'Continue application',
                 icon: ShieldCheck,
                 section: 'onboarding' as const,
               },
@@ -320,7 +328,10 @@ const PortalDashboard = () => {
                 section: 'edit' as const,
               },
             ].map(({ title, description, label, icon: Icon, section }) => (
-              <div key={title} className="rounded-lg border border-slate-200 p-5 space-y-3">
+              <div
+                key={title}
+                className="rounded-lg border border-slate-200 bg-slate-50 p-5 space-y-3"
+              >
                 <h3 className="flex items-center gap-3 font-display text-lg font-bold">
                   <Icon className="size-5 shrink-0" aria-hidden="true" />
                   {title}
@@ -328,7 +339,7 @@ const PortalDashboard = () => {
                 <p className="text-sm text-slate-600 leading-relaxed">{description}</p>
                 <Button
                   variant="outline"
-                  className="min-h-12 rounded-sm"
+                  className="min-h-12 rounded-sm bg-white"
                   onClick={() =>
                     openAccountDialog(section === 'edit' && !app ? 'onboarding' : section)
                   }
@@ -395,43 +406,43 @@ const PortalDashboard = () => {
             </section>
           </section>
         </div>
-        <Dialog open={isEditingWizard} onOpenChange={setIsEditingWizard}>
-          <DialogContent
-            onCloseAutoFocus={restoreDialogFocus}
-            className="max-h-[90dvh] overflow-y-auto sm:max-w-3xl bg-white"
-          >
-            <DialogHeader>
-              <DialogTitle>Onboarding &amp; profile details</DialogTitle>
-              <DialogDescription>
-                Complete your contact, eligibility and compliance information.
-              </DialogDescription>
-            </DialogHeader>
+        {isEditingWizard && (
+          <section aria-label="Application details" className="scroll-mt-24">
             <IntakeWizard
               sectorId={app?.sector || 'chicken'}
               initialData={app}
+              onDraftSaved={(data) => {
+                setProfile((current) =>
+                  current
+                    ? {
+                        ...current,
+                        application: { ...current.application, ...data },
+                      }
+                    : current,
+                );
+              }}
               onSuccess={async (data) => {
-                try {
-                  const token = await getToken();
-                  const res = await fetch(`/api/portal/onboarding`, {
-                    method: 'PATCH',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({ ...data, profileFormCompleted: true }),
-                  });
-                  if (!res.ok) throw new Error('Failed to submit application');
-                  setIsEditingWizard(false);
-                  await fetchData();
-                } catch (error) {
-                  const err = error as Error;
-                  alert(err.message);
+                const token = await getToken();
+                if (!token)
+                  throw new Error('Your session has expired. Please sign in and try again.');
+                const res = await fetch('/api/portal/onboarding', {
+                  method: 'PATCH',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({ ...data, profileFormCompleted: true }),
+                });
+                if (!res.ok) {
+                  throw new Error('Your profile could not be submitted. Please try again.');
                 }
+                setIsEditingWizard(false);
+                await fetchData();
               }}
               onClose={() => setIsEditingWizard(false)}
             />
-          </DialogContent>
-        </Dialog>
+          </section>
+        )}
 
         {/* 1. VIEW FULL APPLICATION MODAL */}
         <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>

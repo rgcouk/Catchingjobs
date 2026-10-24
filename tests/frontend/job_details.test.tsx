@@ -3,6 +3,10 @@ import { render, screen, waitFor, fireEvent, within } from '@testing-library/rea
 import { MemoryRouter, Routes, Route } from 'react-router';
 import { HelmetProvider } from 'react-helmet-async';
 
+vi.mock('@/components/triage/PasswordlessOTPModal', () => ({
+  default: () => <div>Application verification pending</div>,
+}));
+
 // Mock Clerk
 vi.mock('@clerk/clerk-react', () => ({
   useSignIn: () => ({ isLoaded: true, signIn: {}, setActive: vi.fn() }),
@@ -125,14 +129,12 @@ describe('Dedicated Job Details Page & Sharing Unit Tests', () => {
     };
     vi.stubGlobal(
       'fetch',
-      vi
-        .fn()
-        .mockImplementation((url: string) =>
-          Promise.resolve({
-            ok: true,
-            json: () => Promise.resolve(url.includes('/api/jobs/1') ? vacancy : []),
-          }),
-        ),
+      vi.fn().mockImplementation((url: string) =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(url.includes('/api/jobs/1') ? vacancy : []),
+        }),
+      ),
     );
     const { container } = render(
       <MemoryRouter initialEntries={['/jobs/1']}>
@@ -162,6 +164,47 @@ describe('Dedicated Job Details Page & Sharing Unit Tests', () => {
       '#hero-triage-form',
     );
   });
+
+  it.each(['/jobs/1', '/jobs/1?jobId=999&jobTitle=Other%20role'])(
+    'keeps the selected vacancy in the draft from %s',
+    async (entry) => {
+      const mockedFetch = vi.mocked(fetch);
+      mockedFetch.mockImplementation(async (url) => {
+        if (url === '/api/applications/draft') {
+          return { ok: true, json: async () => ({ id: 42, rosterRef: 'REF42' }) } as Response;
+        }
+        return {
+          ok: true,
+          json: async () => (String(url).includes('/api/jobs/1') ? mockJob : []),
+        } as Response;
+      });
+      render(
+        <MemoryRouter initialEntries={[entry]}>
+          <Routes>
+            <Route path="/jobs/:id" element={<JobDetailsPage />} />
+          </Routes>
+        </MemoryRouter>,
+      );
+      const name = await screen.findByTestId('triage-name');
+      fireEvent.change(name, { target: { value: 'Alex Test' } });
+      fireEvent.change(screen.getByTestId('triage-phone'), { target: { value: '07700900123' } });
+      fireEvent.change(screen.getByTestId('triage-email'), {
+        target: { value: 'alex@example.com' },
+      });
+      fireEvent.click(screen.getByRole('radio', { name: /^Yes$/ }));
+      fireEvent.click(screen.getByTestId('triage-submit'));
+      await waitFor(() => {
+        const draftCall = mockedFetch.mock.calls.find(([url]) => url === '/api/applications/draft');
+        expect(draftCall).toBeDefined();
+        expect(JSON.parse(String(draftCall?.[1]?.body))).toMatchObject({
+          jobPostingId: 1,
+          town: 'Boston',
+          sector: 'chicken',
+        });
+      });
+      expect(screen.queryByText('Role: Other role')).not.toBeInTheDocument();
+    },
+  );
 
   it('renders SSR preloaded initial data without loading spinner', () => {
     const initialData = {

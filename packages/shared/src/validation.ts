@@ -18,6 +18,45 @@ export const draftSchema = z
     jobPostingId: z.number().int().positive().nullable().optional(),
   })
   .strict();
+// Employment application rows are bounded and reject undeclared fields.
+export const employmentHistoryRowSchema = z
+  .object({
+    employerName: text,
+    employerAddress: text,
+    position: text,
+    from: text.max(7),
+    to: text.max(7),
+    hours: text.max(100),
+    reasonForLeaving: text,
+  })
+  .strict();
+export const educationRowSchema = z
+  .object({
+    provider: text,
+    course: text,
+    from: text.max(7),
+    to: text.max(7),
+    qualification: text,
+  })
+  .strict();
+export const referenceRowSchema = z
+  .object({
+    name: text,
+    title: text,
+    company: text,
+    address: text,
+    phone: text.max(40),
+    email: text.max(254),
+  })
+  .strict();
+export const convictionRowSchema = z
+  .object({
+    sentencingDate: text.max(30),
+    court: text,
+    offence: text,
+    sentence: text,
+  })
+  .strict();
 export const workerProfileSchema = z
   .object({
     name: text.min(2).optional(),
@@ -27,6 +66,23 @@ export const workerProfileSchema = z
     dateOfBirth: text.max(30).nullable().optional(),
     addressLine1: text.nullable().optional(),
     postcode: text.max(20).nullable().optional(),
+    applicationFormVersion: z.literal('jotform-v1').nullable().optional(),
+    privacyNoticeVersion: z.literal('Pullum Privacy Policy V2 April 2026').nullable().optional(),
+    positionAppliedFor: text.nullable().optional(),
+    vacancySource: text.nullable().optional(),
+    addressLine2: text.nullable().optional(),
+    city: text.nullable().optional(),
+    county: text.nullable().optional(),
+    currentlyEmployed: flag.nullable().optional(),
+    noticePeriod: text.nullable().optional(),
+    poultryExperienceDetails: text.nullable().optional(),
+    pendingCharges: flag.nullable().optional(),
+    pendingChargesDetail: text.nullable().optional(),
+    convictionHistory: z.array(convictionRowSchema).max(50).nullable().optional(),
+    socialMediaSignature: z.string().max(500000).nullable().optional(),
+    socialMediaSignedDate: text.max(30).nullable().optional(),
+    declarationSignature: z.string().max(500000).nullable().optional(),
+    declarationSignedDate: text.max(30).nullable().optional(),
     bankName: text.nullable().optional(),
     bankAccountName: text.nullable().optional(),
     bankAccountNumber: text.max(20).nullable().optional(),
@@ -62,6 +118,162 @@ export const workerProfileSchema = z
     privacyPolicyConsent: flag.nullable().optional(),
   })
   .strict();
+export function hasFiveYearEmploymentCoverage(
+  rows: readonly { from?: unknown; to?: unknown }[],
+  now = new Date(),
+): boolean {
+  const current = now.getUTCFullYear() * 12 + now.getUTCMonth();
+  const month = (value: unknown, allowPresent = false): number | null => {
+    if (allowPresent && typeof value === 'string' && /^(present|current)$/i.test(value.trim()))
+      return current;
+    if (typeof value !== 'string' || !/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) return null;
+    const [year, part] = value.split('-').map(Number);
+    return year * 12 + part - 1;
+  };
+  const ranges: [number, number][] = [];
+  for (const row of rows) {
+    const from = month(row.from);
+    const to = month(row.to, true);
+    if (from === null || to === null || from > to || to > current) return false;
+    ranges.push([from, to]);
+  }
+  ranges.sort((a, b) => a[0] - b[0]);
+  let coveredThrough = current - 60;
+  for (const [from, to] of ranges) {
+    if (to < coveredThrough) continue;
+    if (from > coveredThrough + 1) return false;
+    coveredThrough = Math.max(coveredThrough, to);
+  }
+  return coveredThrough >= current;
+}
+
+// Final validation applies only to the versioned Jotform replacement, never legacy drafts.
+export const employmentApplicationSchema = workerProfileSchema.superRefine((data, ctx) => {
+  if (data.applicationFormVersion !== 'jotform-v1') return;
+  const requiredText = [
+    'name',
+    'phone',
+    'positionAppliedFor',
+    'vacancySource',
+    'addressLine1',
+    'city',
+    'county',
+    'postcode',
+    'dateOfBirth',
+    'niNumber',
+    'poultryExperience',
+    'socialMediaSignature',
+    'socialMediaSignedDate',
+    'declarationSignature',
+    'declarationSignedDate',
+  ] as const;
+  for (const key of requiredText)
+    if (!data[key]?.trim())
+      ctx.addIssue({ code: 'custom', path: [key], message: 'This detail is required.' });
+  for (const key of [
+    'currentlyEmployed',
+    'hasDrivingLicense',
+    'restrictionsOnWork',
+    'abusedPosition',
+    'reasonableAdjustments',
+    'pendingCharges',
+    'hasConvictions',
+  ] as const)
+    if (typeof data[key] !== 'boolean')
+      ctx.addIssue({ code: 'custom', path: [key], message: 'Choose yes or no.' });
+  for (const [flagKey, detailKey] of [
+    ['currentlyEmployed', 'noticePeriod'],
+    ['restrictionsOnWork', 'restrictionsDetail'],
+    ['abusedPosition', 'abusedPositionDetail'],
+    ['reasonableAdjustments', 'adjustmentsDetail'],
+    ['pendingCharges', 'pendingChargesDetail'],
+  ] as const)
+    if (data[flagKey] === true && !data[detailKey]?.trim())
+      ctx.addIssue({ code: 'custom', path: [detailKey], message: 'Please provide details.' });
+  if (!['true', 'false'].includes(data.poultryExperience || ''))
+    ctx.addIssue({ code: 'custom', path: ['poultryExperience'], message: 'Choose yes or no.' });
+  if (data.poultryExperience === 'true' && !data.poultryExperienceDetails?.trim())
+    ctx.addIssue({
+      code: 'custom',
+      path: ['poultryExperienceDetails'],
+      message: 'Please describe your experience.',
+    });
+  for (const key of ['declarationSigned', 'socialMediaConsent'] as const)
+    if (data[key] !== true)
+      ctx.addIssue({ code: 'custom', path: [key], message: 'Please confirm this statement.' });
+  if (!hasFiveYearEmploymentCoverage(data.employmentHistory || []))
+    ctx.addIssue({
+      code: 'custom',
+      path: ['employmentHistory'],
+      message: 'Cover the last five years without gaps, including periods of unemployment.',
+    });
+  const validPastDate = (value: unknown): boolean => {
+    if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const date = new Date(`${value}T00:00:00Z`);
+    return (
+      Number.isFinite(date.getTime()) &&
+      date.toISOString().slice(0, 10) === value &&
+      value <= new Date().toISOString().slice(0, 10)
+    );
+  };
+  for (const key of ['dateOfBirth', 'socialMediaSignedDate', 'declarationSignedDate'] as const)
+    if (!validPastDate(data[key]))
+      ctx.addIssue({
+        code: 'custom',
+        path: [key],
+        message: 'Enter a valid date that is not in the future.',
+      });
+  const rowGroups = [
+    ['employmentHistory', employmentHistoryRowSchema, 1],
+    ['education', educationRowSchema, 0],
+    ['references', referenceRowSchema, 2],
+    ['convictionHistory', convictionRowSchema, data.hasConvictions ? 1 : 0],
+  ] as const;
+  for (const [key, schema, minimum] of rowGroups) {
+    const rows = data[key] || [];
+    if (rows.length < minimum)
+      ctx.addIssue({ code: 'custom', path: [key], message: `Add at least ${minimum} entries.` });
+    rows.forEach((row, index) => {
+      if (key === 'convictionHistory' && !validPastDate(row.sentencingDate))
+        ctx.addIssue({
+          code: 'custom',
+          path: [key, index, 'sentencingDate'],
+          message: 'Enter a valid date that is not in the future.',
+        });
+      if (key === 'references' && row.email && !z.email().safeParse(row.email).success)
+        ctx.addIssue({
+          code: 'custom',
+          path: [key, index, 'email'],
+          message: 'Enter a valid email address.',
+        });
+      const parsed = schema.safeParse(row);
+      if (!parsed.success)
+        ctx.addIssue({
+          code: 'custom',
+          path: [key, index],
+          message: 'Complete the entry using the required fields.',
+        });
+      else
+        for (const [field, value] of Object.entries(parsed.data))
+          if (!value.trim() && !(key === 'references' && (field === 'email' || field === 'phone')))
+            ctx.addIssue({
+              code: 'custom',
+              path: [key, index, field],
+              message: 'This detail is required.',
+            });
+      if (
+        key === 'references' &&
+        !String(row.phone || '').trim() &&
+        !String(row.email || '').trim()
+      )
+        ctx.addIssue({
+          code: 'custom',
+          path: [key, index, 'phone'],
+          message: 'Provide a phone number or email.',
+        });
+    });
+  }
+});
 export const applicationStatusSchema = z.enum([
   'Draft',
   'NEW',

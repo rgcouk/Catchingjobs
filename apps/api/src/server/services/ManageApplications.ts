@@ -4,6 +4,7 @@ import { EmailService, enqueueOnboardingEmails } from './EmailService.js';
 import { randomBytes } from 'node:crypto';
 import {
   workerProfileSchema,
+  employmentApplicationSchema,
   adminApplicationSchema,
   paginationSchema,
 } from '@catchingjobs/shared/validation';
@@ -317,6 +318,11 @@ export class ManageApplications {
     }
 
     const fields = workerProfileSchema.parse(data);
+    if (
+      application.applicationFormVersion === 'jotform-v1' &&
+      fields.applicationFormVersion === null
+    )
+      throw new ValidationError('The application form version cannot be removed.');
     if (!(await validateDocumentReferences(clerkUserId, fields)))
       throw new ValidationError('Invalid document reference.');
     const updated = await this.prisma.application.updateMany({
@@ -350,6 +356,18 @@ export class ManageApplications {
         !application.town
       )
         throw new ValidationError('Complete required details and declaration before submitting.');
+      const { success } = employmentApplicationSchema.safeParse(
+        Object.fromEntries(
+          Object.keys(workerProfileSchema.shape).map((key) => [
+            key,
+            application[key as keyof typeof application],
+          ]),
+        ),
+      );
+      if (!success)
+        throw new ValidationError(
+          'Complete the employment application details and declarations before submitting.',
+        );
       const result = await tx.application.updateMany({
         where: { id: application.id, status: 'Draft' },
         data: { status: 'NEW', profileFormCompleted: true },

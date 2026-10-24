@@ -3,7 +3,7 @@ import { createRequestHandler } from 'react-router';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
-import { readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 import { jobs, locations } from './public-fixtures';
@@ -46,6 +46,14 @@ for (const [id, loader] of Object.entries(loaderFixtures))
   build.routes[id].module = { ...build.routes[id].module, loader };
 const handler = createRequestHandler(build, 'production');
 const app = new Hono();
+// Public visual checks exercise signed-out rendering without Clerk's network service.
+// This fixture can neither authenticate a user nor reach a protected API.
+app.get('/__browser-fixtures/signed-out-clerk.js', (c) =>
+  c.body(readFileSync('tests/support/signed-out-clerk.js', 'utf8'), 200, {
+    'Content-Type': 'application/javascript',
+    'Cache-Control': 'no-store',
+  }),
+);
 app.use('/assets/*', serveStatic({ root: './dist/client' }));
 app.use('/images/*', serveStatic({ root: './dist/client' }));
 app.get('/api/jobs', (c) => c.json(jobs));
@@ -55,5 +63,15 @@ app.get('/api/jobs/:id', (c) => {
   return job ? c.json(job) : c.json({ error: 'Not found' }, 404);
 });
 app.use('/api/*', async (c) => c.json({ error: 'Read-only browser fixture server' }, 405));
-app.all('*', (c) => handler(c.req.raw));
+app.all('*', async (c) => {
+  const response = await handler(c.req.raw);
+  if (!response.headers.get('content-type')?.includes('text/html')) return response;
+  const html = (await response.text()).replace(
+    '<head>',
+    '<head><script src="/__browser-fixtures/signed-out-clerk.js"></script>',
+  );
+  const headers = new Headers(response.headers);
+  headers.delete('content-length');
+  return new Response(html, { status: response.status, headers });
+});
 serve({ fetch: app.fetch, port: 3100, hostname: '127.0.0.1' });

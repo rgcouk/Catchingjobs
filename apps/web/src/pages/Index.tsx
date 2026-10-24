@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { ArrowRight, Cog } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { HomeHero } from '../components/home/HomeHero';
 import { matchesRoleCategory } from '../lib/job-discovery';
-import { JobCard } from '../components/jobs/JobCard';
+import { JobCard, JobCardSkeleton } from '../components/jobs/JobCard';
 import { PublicHeader } from '../components/layout/PublicHeader';
 import { PublicFooter } from '../components/layout/PublicFooter';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '../components/ui/dialog';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import PasswordlessOTPModal from '../components/triage/PasswordlessOTPModal';
-import type { TriageFormData } from '../components/triage/HeroTriageForm';
+import { triageSchema, type TriageFormData } from '../components/triage/HeroTriageForm';
 import { cn } from '../lib/utils';
 import { BrandIcon } from '../components/brand/BrandIcon';
 
@@ -37,6 +37,16 @@ export default function Index(_props: { onNavigate?: unknown }) {
   const { isSignedIn, user } = useUser();
   const { getToken } = useAuth();
   const activeSubmission = useRef<AbortController | null>(null);
+  const submitting = useRef(false);
+  const savedDraft = useRef<{ key: string; draft: { id: number; rosterRef: string } } | null>(null);
+  const [applicationValues, setApplicationValues] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    town: '',
+    rightToWork: false,
+  });
+  const [applicationError, setApplicationError] = useState('');
   const [verification, setVerification] = useState<{
     formData: TriageFormData;
     draft: { id: number; rosterRef: string };
@@ -97,7 +107,12 @@ export default function Index(_props: { onNavigate?: unknown }) {
     <div className="min-h-dvh bg-white text-brand-obsidian">
       <PublicHeader />
       <main>
-        <HomeHero />
+        <HomeHero
+          onQuickApply={() => {
+            setApplicationSector('chicken');
+            setIsApplyModalOpen(true);
+          }}
+        />
         <section id="vacancies" data-od-id="live-vacancies" className="bg-white py-8 lg:py-10">
           <div className="mx-auto max-w-[1440px] space-y-5 px-6 lg:px-20">
             <h2 className="text-center font-display text-[28px] font-bold lg:text-[32px]">
@@ -105,6 +120,52 @@ export default function Index(_props: { onNavigate?: unknown }) {
             </h2>
             <p className="text-center text-xs text-slate-600">
               Browse current vacancies. Confirm pay and availability when applying.
+            </p>
+            <form
+              aria-label="Search catching jobs by home location"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const fields = new FormData(event.currentTarget);
+                const filters = new URLSearchParams();
+                const keyword = String(fields.get('q') || '').trim();
+                const town = String(fields.get('town') || '')
+                  .trim()
+                  .replace(/\s+/g, ' ');
+                if (keyword) filters.set('q', keyword);
+                if (town) filters.set('town', town);
+                navigate(`/jobs${filters.size ? `?${filters}` : ''}`);
+              }}
+              className="grid gap-3 rounded-lg border border-brand-border bg-white p-3 text-left lg:grid-cols-[1fr_1fr_auto]"
+            >
+              <label className="flex flex-col gap-2 rounded bg-brand-mist px-4 py-3">
+                <span className="text-xs font-semibold">ROLE OR KEYWORD</span>
+                <input
+                  name="q"
+                  aria-label="Role or keyword"
+                  placeholder="Catcher, driver or crew leader"
+                  className="min-h-6 min-w-0 bg-transparent text-sm outline-offset-4"
+                />
+              </label>
+              <label className="flex flex-col gap-2 rounded bg-brand-mist px-4 py-3">
+                <span className="text-xs font-semibold">HOME PICKUP AREA</span>
+                <input
+                  name="town"
+                  aria-label="Enter your town or area"
+                  aria-describedby="home-search-hint"
+                  autoComplete="address-level2"
+                  placeholder="Enter your town or area"
+                  className="min-h-6 min-w-0 bg-transparent text-sm outline-offset-4"
+                />
+              </label>
+              <button
+                type="submit"
+                className="min-h-12 rounded bg-brand-obsidian px-7 text-sm font-semibold text-white hover:bg-brand-obsidian/90"
+              >
+                Find jobs near me
+              </button>
+            </form>
+            <p id="home-search-hint" className="text-xs text-slate-600">
+              Search listed towns and regions; confirm home pickup when applying.
             </p>
             <div className="hidden flex-wrap justify-center gap-2 lg:flex">
               {[
@@ -133,7 +194,7 @@ export default function Index(_props: { onNavigate?: unknown }) {
                     'min-h-11 rounded border px-4 py-2 text-sm font-semibold',
                     jobFilter === f.value
                       ? 'border-brand-orange bg-brand-orange'
-                      : 'border-brand-border bg-brand-mist hover:bg-brand-ivory',
+                      : 'border-brand-border bg-brand-mist hover:bg-white',
                   )}
                 >
                   {f.label}
@@ -161,12 +222,12 @@ export default function Index(_props: { onNavigate?: unknown }) {
                   ? 'Live vacancies could not be loaded.'
                   : `Showing ${visibleJobs.length} of ${jobs.filter((job) => jobFilter === 'all' || (jobFilter === 'driver' ? matchesRoleCategory(job, 'driver') : job.sector === jobFilter)).length} matching roles`}
             </p>
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {visibleJobs.map((job) => (
-                <JobCard key={job.id} job={job} />
-              ))}
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4" aria-busy={jobsLoading}>
+              {jobsLoading
+                ? Array.from({ length: 4 }, (_, index) => <JobCardSkeleton key={index} />)
+                : !jobsError && visibleJobs.map((job) => <JobCard key={job.id} job={job} />)}
             </div>
-            {!visibleJobs.length && (
+            {!jobsLoading && !visibleJobs.length && (
               <div className="py-6 text-center text-sm text-slate-600">
                 {jobsLoading
                   ? 'Loading live vacancies...'
@@ -231,7 +292,7 @@ export default function Index(_props: { onNavigate?: unknown }) {
                     to: '/jobs?role=driver',
                   },
                   {
-                    name: null,
+                    name: 'moffett',
                     title: 'Moffett training',
                     copy: 'Learn about specialist machinery training and make an enquiry.',
                     to: '/training/moffett',
@@ -241,13 +302,9 @@ export default function Index(_props: { onNavigate?: unknown }) {
                 <Link
                   key={c.title}
                   to={c.to}
-                  className="group flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-lg border border-brand-border bg-brand-mist p-3 text-center transition-colors hover:border-brand-orange hover:bg-brand-ivory lg:min-h-[302px] lg:p-6"
+                  className="group flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-lg border border-brand-border bg-brand-mist p-3 text-center transition-colors hover:border-brand-orange hover:bg-white lg:min-h-[302px] lg:p-6"
                 >
-                  {c.name ? (
-                    <BrandIcon name={c.name} size={64} className="size-12 lg:size-24" />
-                  ) : (
-                    <Cog className="size-12 lg:size-24" strokeWidth={1.5} aria-hidden="true" />
-                  )}
+                  <BrandIcon name={c.name} size={64} className="size-12 lg:size-24" />
                   <h3 className="font-display text-base font-bold lg:text-[22px]">{c.title}</h3>
                   <p className="text-sm leading-snug text-slate-600">{c.copy}</p>
                   <ArrowRight className="hidden size-5 lg:block" aria-hidden="true" />
@@ -319,7 +376,7 @@ export default function Index(_props: { onNavigate?: unknown }) {
                         'min-h-11 rounded px-4 py-2 text-sm font-semibold',
                         (activeRegion || locations[0]?.id) === loc.id
                           ? 'bg-brand-orange'
-                          : 'bg-brand-mist hover:bg-brand-ivory',
+                          : 'bg-brand-mist hover:bg-white',
                       )}
                     >
                       {loc.name}
@@ -415,6 +472,7 @@ export default function Index(_props: { onNavigate?: unknown }) {
           if (!open) {
             activeSubmission.current?.abort();
             activeSubmission.current = null;
+            submitting.current = false;
             setApplicationState('idle');
             setVerification(null);
           }
@@ -432,69 +490,121 @@ export default function Index(_props: { onNavigate?: unknown }) {
               Apply in 60 Seconds
             </DialogTitle>
             <DialogDescription className="text-pretty text-sm text-slate-500 font-sans mt-2">
-              Our dispatch team will call you to confirm your heated minibus pickup address.
+              Save your contact details, verify your email, then complete your application.
             </DialogDescription>
           </div>
 
-          {applicationState !== 'success' && (
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                activeSubmission.current?.abort();
-                const controller = new AbortController();
-                activeSubmission.current = controller;
-                setApplicationState('submitting');
-                const form = e.currentTarget;
-                const formData = new FormData(form);
-                const data = {
-                  name: String(formData.get('name') || '').trim(),
-                  phone: String(formData.get('phone') || '').trim(),
-                  email: String(formData.get('email') || '').trim(),
-                  town: formData.get('town'),
-                  hasRightToWork: formData.get('rightToWork') === 'on',
-                  sector: applicationSector,
-                };
-                try {
+          <form
+            noValidate
+            hidden={!!verification}
+            aria-busy={applicationState === 'submitting'}
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (submitting.current) return;
+              setApplicationError('');
+              const parsed = triageSchema.safeParse({
+                name: applicationValues.name,
+                phone: applicationValues.phone,
+                email: applicationValues.email,
+                hasRightToWork: applicationValues.rightToWork,
+              });
+              if (
+                !parsed.success ||
+                !applicationValues.rightToWork ||
+                !applicationValues.town.trim()
+              ) {
+                setApplicationError(
+                  !parsed.success
+                    ? parsed.error.issues[0].message
+                    : !applicationValues.rightToWork
+                      ? 'Confirm that you have the right to work in the UK before continuing.'
+                      : 'Enter your home town or postcode.',
+                );
+                setApplicationState('error');
+                return;
+              }
+              submitting.current = true;
+              const controller = new AbortController();
+              activeSubmission.current = controller;
+              setApplicationState('submitting');
+              const data = {
+                ...parsed.data,
+                town: applicationValues.town.trim(),
+                sector: applicationSector,
+              };
+              const key = JSON.stringify(data);
+              try {
+                let draft = savedDraft.current?.key === key ? savedDraft.current.draft : null;
+                if (!draft) {
                   const res = await fetch('/api/triage', {
                     method: 'POST',
                     signal: controller.signal,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
+                    body: key,
                   });
-                  if (!res.ok) throw new Error('Unable to submit application');
+                  if (!res.ok)
+                    throw new Error(
+                      'We could not save your application. Your details are still here. Please try again.',
+                    );
                   const result = await res.json();
                   if (controller.signal.aborted) return;
-                  const draft = result.application || result;
-                  if (!draft.id || !draft.rosterRef)
-                    throw new Error('Missing application reference');
+                  const created = result.application || result;
+                  if (
+                    !Number.isSafeInteger(created.id) ||
+                    created.id <= 0 ||
+                    typeof created.rosterRef !== 'string' ||
+                    !created.rosterRef
+                  )
+                    throw new Error(
+                      'We could not confirm your application reference. Please try again.',
+                    );
+                  draft = { id: created.id, rosterRef: created.rosterRef };
+                  savedDraft.current = { key, draft };
+                }
+                try {
                   sessionStorage.setItem('cj_active_draft', JSON.stringify({ ...draft, ...data }));
-                  if (isSignedIn && user) {
-                    const token = await getToken();
-                    if (controller.signal.aborted) return;
-                    const claim = await fetch('/api/triage/claim', {
-                      method: 'POST',
-                      signal: controller.signal,
-                      headers: {
-                        'Content-Type': 'application/json',
-                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-                      },
-                      body: JSON.stringify({ rosterRef: draft.rosterRef, email: data.email }),
-                    });
-                    if (!claim.ok) throw new Error('Unable to link application');
-                    if (controller.signal.aborted) return;
-                    navigate('/employee?wizard=active');
-                  } else {
-                    setApplicationState('success');
-                    setVerification({ formData: data, draft });
-                  }
-                } catch (err) {
+                } catch {
+                  /* Continue when browser storage is unavailable. */
+                }
+                if (isSignedIn && user) {
+                  const token = await getToken();
                   if (controller.signal.aborted) return;
-                  console.error(err);
+                  if (!token)
+                    throw new Error('We could not confirm your sign-in. Please try again.');
+                  const claim = await fetch('/api/triage/claim', {
+                    method: 'POST',
+                    signal: controller.signal,
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ rosterRef: draft.rosterRef, email: data.email }),
+                  });
+                  if (!claim.ok)
+                    throw new Error(
+                      'Your details are saved, but we could not link your application. Check your account email and try again.',
+                    );
+                  if (!controller.signal.aborted) navigate('/employee?wizard=active');
+                } else {
+                  setApplicationState('idle');
+                  setVerification({ formData: parsed.data, draft });
+                }
+              } catch (err) {
+                if (!controller.signal.aborted) {
+                  setApplicationError(
+                    err instanceof Error
+                      ? err.message
+                      : 'Unable to connect. Your details are still here. Please try again.',
+                  );
                   setApplicationState('error');
                 }
-              }}
-              className="space-y-4 text-xs font-sans"
-            >
+              } finally {
+                if (activeSubmission.current === controller) submitting.current = false;
+              }
+            }}
+            className="space-y-4 text-sm font-sans"
+          >
+            <fieldset disabled={applicationState === 'submitting'} className="space-y-4">
               <div>
                 <label htmlFor="apply-name" className="block font-bold text-slate-800 mb-1">
                   Full Name *
@@ -502,11 +612,16 @@ export default function Index(_props: { onNavigate?: unknown }) {
                 <input
                   id="apply-name"
                   name="name"
+                  value={applicationValues.name}
+                  maxLength={2000}
+                  onChange={(event) =>
+                    setApplicationValues((current) => ({ ...current, name: event.target.value }))
+                  }
                   type="text"
                   autoComplete="name"
                   required={true}
                   placeholder="e.g. David Jones"
-                  className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-sm"
+                  className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-base"
                 />
               </div>
 
@@ -517,11 +632,16 @@ export default function Index(_props: { onNavigate?: unknown }) {
                 <input
                   id="apply-phone"
                   name="phone"
+                  value={applicationValues.phone}
+                  maxLength={40}
+                  onChange={(event) =>
+                    setApplicationValues((current) => ({ ...current, phone: event.target.value }))
+                  }
                   type="tel"
                   autoComplete="tel"
                   required={true}
                   placeholder="e.g. 07123 456789"
-                  className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-sm font-mono"
+                  className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-base font-mono"
                 />
               </div>
 
@@ -532,11 +652,16 @@ export default function Index(_props: { onNavigate?: unknown }) {
                 <input
                   id="apply-email"
                   name="email"
+                  value={applicationValues.email}
+                  maxLength={254}
+                  onChange={(event) =>
+                    setApplicationValues((current) => ({ ...current, email: event.target.value }))
+                  }
                   type="email"
                   autoComplete="email"
                   required
                   placeholder="e.g. david@example.com"
-                  className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-sm"
+                  className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-base"
                 />
               </div>
 
@@ -547,30 +672,42 @@ export default function Index(_props: { onNavigate?: unknown }) {
                 <input
                   id="apply-town"
                   name="town"
+                  value={applicationValues.town}
+                  maxLength={150}
+                  onChange={(event) =>
+                    setApplicationValues((current) => ({ ...current, town: event.target.value }))
+                  }
                   type="text"
                   required={true}
                   placeholder="e.g. Boston, PE21 8TR"
-                  className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-sm"
+                  className="w-full px-4 py-2.5 rounded-md border border-slate-300 focus:border-black focus:ring-1 focus:ring-black outline-none transition-colors text-base"
                 />
               </div>
 
               <div>
-                <label className="flex items-start gap-2.5 cursor-pointer pt-1">
+                <label className="flex min-h-11 items-center gap-2.5 cursor-pointer pt-1">
                   <input
                     name="rightToWork"
+                    checked={applicationValues.rightToWork}
+                    onChange={(event) =>
+                      setApplicationValues((current) => ({
+                        ...current,
+                        rightToWork: event.target.checked,
+                      }))
+                    }
                     type="checkbox"
                     required={true}
                     className="mt-0.5 rounded text-black focus:ring-black"
                   />
-                  <span className="text-[11px] text-slate-600 leading-snug">
-                    I confirm that I have legal Right to Work in the UK and am 18+ years of age.
+                  <span className="text-sm text-slate-600 leading-snug">
+                    I confirm that I have the right to work in the UK.
                   </span>
                 </label>
               </div>
 
               {applicationState === 'error' && (
                 <p role="alert" className="text-sm text-red-700">
-                  We couldn’t submit your application. Please try again or call 01205 330 190.
+                  {applicationError}
                 </p>
               )}
               <button
@@ -583,18 +720,18 @@ export default function Index(_props: { onNavigate?: unknown }) {
                   : 'Submit 60-Second Application →'}
               </button>
 
-              <p className="text-pretty text-[11px] text-slate-400 text-center font-mono">
-                🔒 GLAA Protected Recruitment · Zero Fees
+              <p className="flex items-center justify-center gap-2 text-xs text-slate-600">
+                <BrandIcon name="verified" size={20} />
+                GLAA Protected Recruitment · Zero Fees
               </p>
-            </form>
-          )}
+            </fieldset>
+          </form>
 
           {verification && (
             <PasswordlessOTPModal
               isOpen
               onClose={() => {
                 setVerification(null);
-                setIsApplyModalOpen(false);
                 setApplicationState('idle');
               }}
               formData={verification.formData}
