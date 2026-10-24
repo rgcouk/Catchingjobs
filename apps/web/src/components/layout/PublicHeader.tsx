@@ -42,10 +42,7 @@ export function PublicHeader({ heroTone }: { heroTone?: 'orange' | 'light' } = {
   const jobsActive = ['/jobs', '/chickens', '/turkeys', '/training'].some(
     (path) => pathname === path || pathname.startsWith(path + '/'),
   );
-  const orangeSurface = pathname === '/' ? 'bg-[#FF7C20]' : 'bg-brand-orange';
-  const surface = isOrangeHero
-    ? `${orangeSurface} border-black/10`
-    : 'bg-white border-brand-border';
+  const surface = isOrangeHero ? 'bg-brand-orange border-black/10' : 'bg-white border-brand-border';
   const focus =
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-obsidian focus-visible:ring-offset-2';
   const action = cn(

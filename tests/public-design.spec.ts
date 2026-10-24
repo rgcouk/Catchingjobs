@@ -50,7 +50,7 @@ test('desktop navigation uses page context and opens keyboard-accessible menus',
   page,
 }) => {
   await page.goto('/');
-  await expect(page.locator('header')).toHaveCSS('background-color', 'rgb(255, 124, 32)');
+  await expect(page.locator('header')).toHaveCSS('background-color', 'rgb(255, 118, 5)');
   const trigger = page.getByRole('button', { name: 'Catching Jobs', exact: true });
   await trigger.focus();
   await page.keyboard.press('Enter');
@@ -70,7 +70,7 @@ test('desktop navigation uses page context and opens keyboard-accessible menus',
 });
 
 for (const [route, colour] of [
-  ['/', 'rgb(255, 124, 32)'],
+  ['/', 'rgb(255, 118, 5)'],
   ['/jobs', 'rgb(255, 255, 255)'],
 ] as const) {
   test(`mobile menu follows ${route} context and closes after navigation`, async ({ page }) => {
